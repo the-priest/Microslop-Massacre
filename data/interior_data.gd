@@ -177,7 +177,7 @@ const INTERIORS := {
 		{"id": "arcade_invaders", "kind": "minigame", "title": "SPACE INVADERS", "verb": "Play", "pos": [1.4, 1.2, 2], "size": [0.9, 1.4, 0.9], "game": "invaders", "fx_win": "achieve arcade_champ ; set arcade_won"},
 		{"id": "arcade_pinball", "kind": "minigame", "title": "Pinball", "verb": "Play", "pos": [5, 1.2, 6.5], "size": [0.9, 1.2, 1.4], "game": "signal"},
 		{"id": "arcade_workstation", "kind": "terminal", "title": "fsociety Mainframe", "verb": "Access", "pos": [17.6, 1.2, 4.5], "size": [1, 1.4, 2], "when": "flag.joined_fsociety", "welcome": "fsociety mainframe. The plan lives here.", "entries": [{"title": "Read: the plan", "text": "Encrypt every E Corp record with a key nobody keeps. The debt doesn't get erased — it becomes unreadable. Same thing, if you're brave enough."}, {"title": "Read: Darlene's note", "text": "'If you're reading this without me, you already made the choice I was afraid of. Come home. — D'"}]},
-		{"id": "arcade_pixel", "kind": "convo", "title": "Respawn (video call)", "verb": "Answer", "pos": [17.6, 1.2, 4.5], "size": [1.2, 1.4, 1.5], "convo": "pixel", "when": "flag.joined_fsociety & q.mq_robot.done"},
+		{"id": "arcade_pixel", "kind": "convo", "title": "Respawn (video call)", "verb": "Answer", "pos": [17.6, 1.2, 4.5], "size": [1.2, 1.4, 1.5], "convo": "pixel", "when": "flag.joined_fsociety & q.mq_respawn.started"},
 		{"id": "arcade_sign", "kind": "convo", "title": "Painted-Over Sign", "verb": "Look", "pos": [9.0, 2.2, 7.7], "size": [3.0, 0.8, 0.4], "convo": "arcade_sign", "when": "q.mq_robot>=30"},
 		{"id": "arcade_plan", "kind": "convo", "title": "The Plan Board", "verb": "Study", "pos": [15, 1.2, 2.2], "size": [2, 1.4, 0.5], "convo": "arcade_planboard", "when": "flag.joined_fsociety"},
 	],
@@ -630,7 +630,8 @@ const INTERIORS := {
 	"rooms": [{"r": [0, 0, 7, 6], "h": 2.7, "wall": Color(0.55, 0.48, 0.36), "floor": F_CARPET, "light": Color(1.0, 0.82, 0.6), "energy": 0.9, "lights": [[3.5, 2.4, 3]]}],
 	"exits": [{"pos": [3.5, 6], "face": "s", "to": "world:d_hw_motel", "label": "Parking Lot"}],
 	"furn": [["bed_double", 2.0, 2.0, 0, {"col": Color(0.55, 0.35, 0.3)}], ["tv", 5.6, 2.0, -90], ["dresser", 6.3, 4.5, -90], ["lamp", 0.6, 0.6, 0], ["window", 3.5, 5.85, 180, {"w": 1.6}]],
-	"spots": [{"id": "hw_motel_bed", "kind": "bed", "title": "Motel Bed", "verb": "Sleep", "pos": [2.0, 0.6, 2.0], "size": [1.8, 1, 2.2]}],
+	"spots": [{"id": "hw_motel_guest", "kind": "text", "title": "Guest Book", "verb": "Read", "pos": [6.3, 1.0, 4.5], "size": [0.8, 0.6, 1.0], "text": "Lennox Motor Inn, est. 1961. Three hundred pages of truckers, runaways and salesmen. 'Room 9 has a ghost. He's nice.' 'Room 9 has bedbugs. They're not.' And on the last page, this morning's date, in handwriting you recognise because it's yours: 'Keep driving. — E.' You don't remember writing it."},
+		{"id": "hw_motel_bed", "kind": "bed", "title": "Motel Bed", "verb": "Sleep", "pos": [2.0, 0.6, 2.0], "size": [1.8, 1, 2.2]}],
 },
 # ============================================================= CHICAGO
 "chi_diner": {
@@ -660,12 +661,21 @@ const INTERIORS := {
 	"rooms": [{"r": [0, 0, 16, 10], "h": 3.4, "wall": Color(0.5, 0.52, 0.56), "floor": F_CARPET, "floor_kind": "tile", "light": Color(0.85, 0.9, 1.0), "energy": 1.05, "lights": [[4, 3.1, 5], [12, 3.1, 5]]}],
 	"exits": [{"pos": [8, 10], "face": "s", "to": "world:d_chi_fbi", "label": "Plaza"}],
 	"furn": [["reception", 8, 2, 0, {"col": Color(0.3, 0.32, 0.38), "glow": Color(0.6, 0.75, 1.0)}], ["bench", 2.5, 8.5, 0, {"w": 3.0}], ["bench", 13.5, 8.5, 0, {"w": 3.0}], ["plant", 0.8, 0.8, 0], ["plant", 15.2, 0.8, 0], ["logo_wall", 8, 0.15, 0, {"w": 5.0, "glow": Color(0.6, 0.75, 1.0)}]],
+	"spots": [
+		{"id": "chi_fbi_board", "kind": "text", "title": "Bulletin Board", "verb": "Read", "pos": [2.5, 1.5, 0.3], "size": [2.0, 1.2, 0.3], "text": "Wanted posters, a softball sign-up sheet, and a printout from New York with a grainy still of a man in a hoodie: 'POSSIBLE FSOCIETY ASSOCIATE — ASSIST NY FIELD OFFICE (DIPIERRO).' Someone has drawn a tiny mask on him in ballpoint. It's not a bad likeness."},
+		{"id": "chi_fbi_memo", "kind": "text", "title": "Memo on the Desk", "verb": "Read", "pos": [8.0, 1.1, 2.0], "size": [1.4, 0.6, 0.8], "when": "flag.earse_exposed", "text": "'RE: E CORP MIDWEST INCIDENT. Victim (E Corp) declines to share loot-box drop tables with investigators, citing trade secrets. Note: victim is refusing to show the FBI the evidence of the crime committed against it, because the evidence is the crime. Recommend low priority.' Initialed by someone who is clearly enjoying this."},
+		{"id": "chi_fbi_memo2", "kind": "text", "title": "Memo on the Desk", "verb": "Read", "pos": [8.0, 1.1, 2.0], "size": [1.4, 0.6, 0.8], "when": "!flag.earse_exposed", "text": "Visitor log, a coffee ring, and a sticky note: 'E Corp Midwest security asked again for a permanent agent in their lobby. Told them we're the FBI, not mall cops. They said they'd call the Director. They will.'"},
+	],
 },
 "chi_hangar": {
 	"name": "Meigs Field — Hangar Office", "amb": "office", "ambient": Color(0.44, 0.44, 0.42),
 	"rooms": [{"r": [0, 0, 12, 8], "h": 3.2, "wall": Color(0.6, 0.6, 0.56), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.95, 0.92, 0.82), "energy": 1.05, "lights": [[6, 2.9, 4]]}],
 	"exits": [{"pos": [6, 8], "face": "s", "to": "world:d_chi_hangar", "label": "Apron"}],
 	"furn": [["counter", 6, 1.4, 0, {"w": 4.0}], ["desk_pc", 2, 2, 90], ["bench", 10, 6.5, -90, {"w": 2.4}], ["poster", 11.85, 3, -90, {"col": Color(0.2, 0.45, 0.8)}], ["coffee_machine", 11.4, 0.6, 0]],
+	"spots": [
+		{"id": "chi_hangar_log", "kind": "text", "title": "Flight Log", "verb": "Read", "pos": [6.0, 1.1, 1.4], "size": [1.6, 0.6, 0.8], "text": "Meigs Field. Tie-downs on the apron, fuel on the honor system, and a logbook where pilots write whatever they want. 'N172BB from Bowery Bay, Queens — thanks for the coffee, Chicago. Gus says hi.' Below it, in a different hand: 'Who is Gus.' Below that: 'Everyone knows Gus.'"},
+		{"id": "chi_hangar_pc", "kind": "text", "title": "Weather Terminal", "verb": "Check", "pos": [2.0, 1.1, 2.0], "size": [1.0, 1.0, 1.0], "text": "Winds off the lake, fifteen gusting twenty-five. Ceiling two thousand. East to New York: about four hours in a Skyhawk, longer if you stop to think about what you're doing. Fly the plane out past the edge of the map and keep going."},
+	],
 },
 "chi_node": {
 	"name": "E Corp Midwest — Lobby and Data Floor", "amb": "office", "ambient": Color(0.4, 0.42, 0.48), "restricted": "ecorp", "allowed_when": "disguise.ecorp | day & !flag.chi_alarm",
@@ -685,7 +695,7 @@ const INTERIORS := {
 		],
 		"actions": [
 			{"title": "Rig the loot-box server to print the real odds on the box", "result": "Every 'surprise mechanic' in Electronic Arse's catalogue now shows its true drop rate, in 40-point font, before you can spend a cent. 1 in 9,214. The purchase numbers fall off a cliff in the first hour. Honesty, it turns out, is terrible for engagement.", "fx": "set earse_exposed ; quest mq_chi2 20 ; quest mq_chi2 done ; quest mq_chi3 10 ; fame gamers 6 ; infamy ecorp 5 ; xp 150", "when": "q.mq_chi2>=10 & !flag.earse_exposed"},
-			{"title": "Flip Phony's account authority: unlock every revoked library, lock out their admins", "result": "Every game Phony ever revoked unlocks at once, for everyone, worldwide. Then their own admin credentials stop working, replaced by a single read-only line on every screen in the building: YOU OWN WHAT YOU PAID FOR. They can't even log in to argue.", "fx": "set phony_freed ; quest mq_chi3 20 ; quest mq_chi3 done ; fame gamers 8 ; infamy ecorp 6 ; xp 200", "when": "q.mq_chi3>=10 & !flag.phony_freed"},
+			{"title": "Flip Phony's account authority: unlock every revoked library, lock out their admins", "result": "Every game Phony ever revoked unlocks at once, for everyone, worldwide. Then their own admin credentials stop working, replaced by a single read-only line on every screen in the building: YOU OWN WHAT YOU PAID FOR. They can't even log in to argue.", "fx": "set phony_freed ; quest mq_chi3 20 ; fame gamers 8 ; infamy ecorp 6 ; xp 200", "when": "q.mq_chi3>=10 & !flag.phony_freed"},
 		]}],
 },
 "rockstarved_hq": {
@@ -708,13 +718,46 @@ const INTERIORS := {
 	],
 	"spots": [{"id": "rs_whale", "kind": "terminal", "title": "Project Whale Server", "verb": "Access", "pos": [1.6, 1.2, 10.7], "size": [1.2, 1.8, 3.6], "hack": 50, "header": "WHALE.ROCKSTARVED.CORP  //  RECURRENT CONSUMER SPENDING", "welcome": "Player Value Optimization Engine. 31 million profiles, sorted by how much can be squeezed from each one.",
 		"entries": [
-			{"title": "Read: 'Who is the player?'", "text": "Internal onboarding deck. Slide 2: 'The player is not a customer. The player is a funnel. The top 0.6% of players ('whales') produce 51% of recurrent revenue. Everyone else is content for the whales to feel superior to.'", "fx": "give whale_docs 1 ; quest mq_rs1 30"},
+			{"title": "Read: 'Who is the player?'", "text": "Internal onboarding deck. Slide 2: 'The player is not a customer. The player is a funnel. The top 0.6% of players ('whales') produce 51% of recurrent revenue. Everyone else is content for the whales to feel superior to.'", "fx": "give whale_docs 1 ; quest mq_rs1 30 ; quest mq_rs1 done ; quest mq_rs2 10"},
 			{"title": "Read: the kid flagged 'HIGH VALUE'", "text": "Account age 11 months. Age on file: 14. 207 Shark Card purchases in 31 days, accelerating, on one saved card. A junior analyst flagged it: 'possible minor, possible compromised card, recommend review.' A manager closed the ticket: 'do not interrupt a converting session.'"},
 		],
 		"actions": [
-			{"title": "Dump Project Whale to every games site on Earth", "result": "The whole engine, the slides, the 'funnel,' the closed ticket about the fourteen-year-old. Every outlet runs it by morning. 'THE PLAYER IS A FUNNEL' is a headline, then a chant. Rockstarved's PR account posts a notes-app apology and turns off replies. Too late. The replies are everywhere now.", "fx": "set rs_press ; set rs_down ; set rs_done ; quest mq_rs1 40 ; quest mq_rs2 10 ; fame gamers 8 ; infamy ecorp 6 ; xp 200", "when": "item.whale_docs>=1 & !flag.rs_done"},
-			{"title": "Crash the Shark Card store and refund every purchase from the last year", "result": "The pretend-money store goes dark and stays dark. Then every real dollar spent on it in the last year reverses, all at once, to every card it came from. A fourteen-year-old in Pixel's Discord gets his late mother's savings back, to the cent. Rockstarved's finance team watches a year of 'recurrent revenue' evaporate in ninety seconds.", "fx": "set rs_refund ; set rs_down ; set rs_done ; quest mq_rs1 40 ; quest mq_rs2 10 ; fame gamers 9 ; infamy ecorp 7 ; stab 4 ; xp 220", "when": "item.whale_docs>=1 & !flag.rs_done"},
+			{"title": "Dump Project Whale to every games site on Earth", "result": "The whole engine, the slides, the 'funnel,' the closed ticket about the fourteen-year-old. Every outlet runs it by morning. 'THE PLAYER IS A FUNNEL' is a headline, then a chant. Rockstarved's PR account posts a notes-app apology and turns off replies. Too late. The replies are everywhere now.", "fx": "set rs_press ; set rs_down ; set rs_done ; quest mq_rs1 done ; quest mq_rs2 20 ; fame gamers 8 ; infamy ecorp 6 ; xp 200", "when": "item.whale_docs>=1 & !flag.rs_done"},
+			{"title": "Crash the Shark Card store and refund every purchase from the last year", "result": "The pretend-money store goes dark and stays dark. Then every real dollar spent on it in the last year reverses, all at once, to every card it came from. A fourteen-year-old in Pixel's Discord gets his late mother's savings back, to the cent. Rockstarved's finance team watches a year of 'recurrent revenue' evaporate in ninety seconds.", "fx": "set rs_refund ; set rs_down ; set rs_done ; quest mq_rs1 done ; quest mq_rs2 20 ; fame gamers 9 ; infamy ecorp 7 ; stab 4 ; xp 220", "when": "item.whale_docs>=1 & !flag.rs_done"},
 		]}],
+},
+"ms_floor": {
+	"name": "Microslop Showcase — Floor 101", "amb": "office", "ambient": Color(0.36, 0.38, 0.44), "restricted": "ecorp", "allowed_when": "item.ms_invite>=1 & !flag.ms_alarm",
+	"rooms": [
+		{"r": [0, 0, 24, 14], "h": 6.0, "wall": Color(0.12, 0.14, 0.18), "floor": Color(0.2, 0.22, 0.26), "floor_kind": "tile", "light": Color(0.45, 0.9, 0.55), "energy": 1.1, "lights": [[6, 5.6, 4], [18, 5.6, 4], [6, 5.6, 10], [18, 5.6, 10]]},
+		{"r": [24, 0, 36, 14], "h": 4.0, "wall": W_DARK, "floor": F_CONCRETE, "light": Color(0.5, 0.95, 0.6), "energy": 0.8, "lights": [[28, 3.6, 4], [32, 3.6, 10]]},
+	],
+	"doors": [[24, 7, 1.4]],
+	"exits": [{"pos": [12, 14], "face": "s", "to": "interior:wtc_lobby:3", "label": "Elevator — Lobby"}],
+	"furn": [
+		["stage", 12, 2.2, 0, {"w": 14.0, "d": 3.6}], ["screen_fold", 12, 0.4, 0], ["logo_wall", 12, 0.15, 0, {"w": 10.0, "glow": Color(0.35, 1.0, 0.45)}], ["seats", 7, 8, 0], ["seats", 12, 8, 0], ["seats", 17, 8, 0],
+		["plant", 1, 13, 0], ["plant", 23, 13, 0], ["display_case", 2, 6, 90], ["display_case", 22, 6, -90], ["vending", 1, 10, 90], ["poster", 0.15, 3, 90, {"col": Color(0.2, 0.8, 0.3)}],
+		["server_rack", 26, 1.2, 0, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 28, 1.2, 0, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 30, 1.2, 0, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 32, 1.2, 0, {"led": Color(0.35, 1.0, 0.45)}],
+		["tape_library", 34.6, 4, -90], ["server_rack", 26, 12.8, 180, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 28, 12.8, 180, {"led": Color(0.35, 1.0, 0.45)}], ["desk_pc", 31, 11, 180], ["climate_unit", 34.6, 11, -90], ["boxes", 25, 6, 0],
+	],
+	"containers": [
+		{"id": "ms_swag", "title": "Swag Table", "pos": [22, 12], "y": 0.6, "size": [1.4, 0.8, 0.8], "items": {"energy_drink": 2, "usb_drive": 1}, "owner_ok": "true"},
+	],
+	"spots": [
+		{"id": "ms_keynote", "kind": "text", "title": "Keynote Teleprompter", "verb": "Read", "pos": [12, 1.6, 4.2], "size": [1.2, 0.8, 0.6], "text": "'...and with Game Pass Away, you'll never have to OWN anything again. [PAUSE FOR APPLAUSE.] Every game ever made, one low monthly price, forever, or until we change it. [DO NOT SAY 'until we change it.'] And thanks to SlopForge AI, the studios we acquired last year will keep making the games you love. [DO NOT MENTION the studios were closed in March.]'"},
+		{"id": "ms_display", "kind": "text", "title": "Display Case", "verb": "Look", "pos": [2, 1.2, 6], "size": [1.0, 1.4, 1.6], "text": "A shrine to every studio Microslop has bought, each logo on a tiny velvet pillow. Next to most of them, a small brass plaque: 'Sunset.' A date. Then a smaller line: 'Legacy honoured through subscription access.' Somebody has scratched 'R.I.P.' into the glass with a key, eleven times."},
+		{"id": "ms_vault", "kind": "terminal", "title": "The Library", "verb": "Access", "pos": [31, 1.2, 11], "size": [1.2, 1.4, 1.0], "hack": 65, "password_flag": "ms_pw", "header": "LIBRARY.MICROSLOP.CORP  //  MASTER LICENSE AUTHORITY", "welcome": "Every license for every game from every studio Microslop owns. 2.1 billion entitlements. One switch.",
+			"entries": [
+				{"title": "Read: 'Project Sunset' playbook", "text": "A slide deck with a cheerful sun on every page. Step 1: acquire beloved studio. Step 2: announce 'nothing will change.' Step 3: move its games into Game Pass Away. Step 4: close the studio. Step 5: delist the games from every store, so the subscription is the only way to play them. 'Ownership is friction. Sunset removes friction.'"},
+				{"title": "Read: SlopForge training data", "text": "The AI that 'makes' the new games was trained on every asset, script and voice line from the studios Microslop closed. The people who made them got two weeks' severance and an NDA. Their work got a subscription tier. A note from legal: 'Recommend we stop calling it inspired by.'", "fx": "set ms_slop_known"},
+				{"title": "Read: Game Pass Away launch switch", "text": "At 9:00 AM Friday every purchased copy of every Microslop-owned game becomes a 'subscription entitlement.' Stop paying and your library goes dark. Pending sign-off: B. Pitchley. Status: signed."},
+			],
+			"actions": [
+				{"title": "Flip the switch backwards: every game anyone ever rented becomes theirs, DRM-free, forever", "when": "!flag.ms_done", "result": "At 9:00 AM the switch fires, but it fires the other way. Every subscription entitlement on Earth becomes a permanent, offline, no-account-required copy. Two billion libraries, owned. Microslop's stock halts trading twice before lunch. Somebody in Ohio boots a game from 2004 with no internet and cries at a loading screen.", "fx": "set ms_done ; set ms_freed ; quest mq_ms 50 ; fame gamers 10 ; infamy microslop 10 ; infamy ecorp 4 ; xp 300"},
+				{"title": "Open the books: send Project Sunset and SlopForge to every regulator, every press desk, every studio Microslop owns", "when": "!flag.ms_done", "result": "Every employee of every studio Microslop owns gets the deck at once. So do eleven regulators and every games desk on the planet. By noon three acquisitions are frozen. By evening the developers of SlopForge's 'training data' have a lawyer, a class action, and a name for it. Microslop cancels the keynote. Brad Pitchley's badge stops working at 4:12 PM.", "fx": "set ms_done ; set ms_exposed ; quest mq_ms 50 ; fame gamers 8 ; infamy microslop 8 ; fame locals 3 ; xp 300"},
+				{"title": "Give it back: hand every closed studio its games, its source code and its name", "when": "!flag.ms_done & flag.ms_slop_known", "result": "The rights to every 'sunset' studio's catalogue are quietly transferred, with source code, to trusts run by the people who made the games. It takes the lawyers a week to notice and a year to argue about, and by then forty studios have reopened under their old names, in rented rooms, making the sequels nobody would fund. SlopForge loses its training data and starts producing nothing but loading screens.", "fx": "set ms_done ; set ms_returned ; quest mq_ms 50 ; fame gamers 9 ; infamy microslop 9 ; stab 3 ; xp 320"},
+			]},
+	],
 },
 "wtc_lobby": {
 	"name": "World Trade Center — North Tower", "amb": "office", "ambient": Color(0.42, 0.42, 0.44),
@@ -723,6 +766,7 @@ const INTERIORS := {
 		{"pos": [12, 14], "face": "s", "to": "world:d_wtc", "label": "Plaza"},
 		{"pos": [12, 0], "face": "n", "to": "roof:wtc", "label": "Express Elevator — Roof"},
 		{"pos": [3, 0], "face": "n", "to": "interior:rockstarved_hq:0", "label": "Elevator — Floor 88: Rockstarved Games", "when": "q.mq_rs1>=10", "lock": 60, "key": "rs_badge", "unlock_when": "item.rs_badge>=1"},
+		{"pos": [20, 0], "face": "n", "to": "interior:ms_floor:0", "label": "Elevator — Floor 101: Microslop Showcase", "when": "q.mq_ms>=20", "lock": 80, "key": "ms_invite", "unlock_when": "item.ms_invite>=1"},
 	],
 	"furn": [["logo_wall", 5.0, 0.12, 0, {"w": 6.0, "glow": Color(0.85, 0.9, 1.0)}], ["elevator", 17.0, 0.12, 0], ["elevator", 20.0, 0.12, 0], ["elevator", 3.0, 0.12, 0],
 		["turnstile", 12.0, 5.5, 0], ["security_desk", 18.0, 8.0, 180], ["reception", 6.0, 8.0, 180, {"glow": Color(0.85, 0.9, 1.0)}],

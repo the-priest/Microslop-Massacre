@@ -7,7 +7,7 @@ const LANDMARKS := {
 	"highway": {
 		"hw_diner": {"rect": [24, 20, 60, 50], "h": 6.0, "style": 2, "color": Color(0.7, 0.2, 0.18), "sign": "BIG RIG DINER", "sign_col": Color(1.0, 0.3, 0.3), "door": "d_hw_diner", "awning": Color(0.8, 0.8, 0.82)},
 		"hw_gas": {"rect": [24, 70, 50, 92], "h": 5.0, "style": 2, "color": Color(0.85, 0.85, 0.8), "sign": "GAS · FOOD · LIVE BAIT", "sign_col": Color(1.0, 0.85, 0.2), "door": "d_hw_gas"},
-		"hw_motel": {"rect": [24, 930, 70, 960], "h": 7.0, "style": 1, "color": Color(0.55, 0.45, 0.35), "sign": "LENNOX MOTOR INN", "sign_col": Color(1.0, 0.5, 0.7), "door": "d_hw_motel"},
+		"hw_motel": {"rect": [24, 600, 70, 630], "h": 7.0, "style": 1, "color": Color(0.55, 0.45, 0.35), "sign": "LENNOX MOTOR INN", "sign_col": Color(1.0, 0.5, 0.7), "door": "d_hw_motel"},
 	},
 	"chicago": {
 		"chi_node": {"rect": [-130, -150, -20, -60], "h": 120.0, "style": 7, "color": Color(0.18, 0.2, 0.26), "sign": "E CORP MIDWEST", "sign_col": Color(0.35, 0.55, 1.0), "door": "d_chi_node"},
@@ -23,7 +23,7 @@ const DOORS := {
 	"highway": {
 		"d_hw_diner": {"pos": [24, 35], "face": "w", "interior": "hw_diner", "name": "Big Rig Diner"},
 		"d_hw_gas": {"pos": [24, 81], "face": "w", "interior": "hw_gas", "name": "Gas Station"},
-		"d_hw_motel": {"pos": [24, 945], "face": "w", "interior": "hw_motel", "name": "Lennox Motor Inn"},
+		"d_hw_motel": {"pos": [24, 615], "face": "w", "interior": "hw_motel", "name": "Lennox Motor Inn"},
 	},
 	"chicago": {
 		"d_chi_node": {"pos": [-75, -60], "face": "s", "interior": "chi_node", "name": "E Corp Midwest"},
@@ -38,7 +38,7 @@ const DOORS := {
 const POIS := {
 	"highway": {
 		"poi_hw_rest": {"pos": [40, 55], "name": "Big Rig Rest Stop", "r": 60.0},
-		"poi_hw_town": {"pos": [60, 1000], "name": "Lennox, Pennsylvania", "r": 80.0},
+		"poi_hw_town": {"pos": [60, 680], "name": "Lennox, Pennsylvania", "r": 80.0},
 	},
 	"chicago": {
 		"poi_chi_loop": {"pos": [-75, -100], "name": "The Loop", "r": 80.0},

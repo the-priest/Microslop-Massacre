@@ -36,6 +36,7 @@ var values := {
 	"gfx_rev": GFX_REV,
 	"crt": false,
 	"fov": 75.0,
+	"night_bright": 0.5, # 0 = moody and dark, 1 = easy to see at night
 	"mouse_sens": 1.0,
 	"invert_y": false,
 	"master_volume": 0.8,

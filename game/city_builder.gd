@@ -62,6 +62,8 @@ func build_all() -> void:
 	rng.seed = WorldLayout.SEED
 	if WorldLayout.region != "nyc":
 		_build_region()
+		_fill_country()
+		_neighbour_skylines()
 		return
 	_reserve_landmarks()
 	_roads()
@@ -76,6 +78,16 @@ func build_all() -> void:
 	_subways()
 	_coney()
 	_edges()
+	_fill_country()
+	_neighbour_skylines()
+
+
+## Every light pool on the map (street lamps, floodlights), for NightLights.
+func lamp_points() -> Array:
+	var out: Array = []
+	for k in chunks.keys():
+		out.append_array((chunks[k] as BuildCtx).lamps)
+	return out
 
 
 func commit(parent: Node3D, far: float) -> void:
@@ -220,6 +232,10 @@ func _region_edges() -> void:
 		if WorldLayout.region == "chicago" and cx > x1 + 200.0:
 			a += 0.08
 			continue
+		if WorldLayout.region == "highway" and absf(cos(a)) < 0.55:
+			# North and south are the cities; the hills are east and west.
+			a += 0.08
+			continue
 		if WorldLayout.region == "highway":
 			far.props.box(Vector3(cx, r2.randf_range(10.0, 40.0), cz), Vector3(r2.randf_range(200.0, 500.0), r2.randf_range(40.0, 110.0), r2.randf_range(200.0, 400.0)), Color(0.16, 0.22, 0.12), a)
 		else:
@@ -245,6 +261,120 @@ func _gate_signs(_grass: Color) -> void:
 		c.props.box(p + Vector3(0, 7.2, 0), Vector3(18.0, 2.4, 0.2), Color(0.05, 0.35, 0.2), yaw)
 		c.label(p + Vector3(0, 7.2, 0) + Vector3(sin(yaw), 0, cos(yaw)) * 0.15, str(g["sign"]), 96, Color(0.95, 0.95, 0.95), yaw, 600.0, 0.02)
 		c.label(p + Vector3(0, 7.2, 0) - Vector3(sin(yaw), 0, cos(yaw)) * 0.15, str(g["sign"]), 96, Color(0.95, 0.95, 0.95), yaw + PI, 600.0, 0.02)
+
+
+# ------------------------------------------------------- the world between
+## The country between the cities: patchwork fields over every bit of land
+## in the whole world's airspace (this map's and its neighbours') that no
+## city covers, so from anywhere you see farmland run on to the next skyline.
+func _fill_country() -> void:
+	var here := WorldLayout.region
+	var crops := [Color(0.3, 0.34, 0.13), Color(0.4, 0.36, 0.16), Color(0.23, 0.29, 0.12), Color(0.44, 0.39, 0.23), Color(0.19, 0.25, 0.1), Color(0.34, 0.31, 0.2)]
+	var burbs := [Color(0.3, 0.32, 0.22), Color(0.36, 0.36, 0.3), Color(0.26, 0.3, 0.18), Color(0.4, 0.38, 0.3)]
+	var T := 200.0
+	var fc := landmark_far
+	var my_city: Rect2 = Regions.CITY.get(here, Rect2())
+	for reg in Regions.SKY.keys():
+		var rs: Rect2 = Regions.SKY[reg]
+		var r2 := RandomNumberGenerator.new()
+		r2.seed = hash(str(reg)) + 31
+		var gz := rs.position.y
+		while gz < rs.end.y - 1.0:
+			var gx := rs.position.x
+			while gx < rs.end.x - 1.0:
+				var tw := minf(T, rs.end.x - gx)
+				var td := minf(T, rs.end.y - gz)
+				var tile_r := Rect2(gx, gz, tw, td) # local to `reg`
+				var roll := r2.randf()
+				var pick := r2.randi()
+				var vertical := r2.randf() < 0.5
+				var n := 2 + r2.randi() % 2
+				# I-80's own farm blocks are only built on its own map; from the
+				# cities it's just more country.
+				var country := Regions.is_country(str(reg), tile_r.get_center()) or (str(reg) == "highway" and here != "highway")
+				if country:
+					# Into this map's coordinates.
+					var o := Regions.to_local(here, Regions.to_world(str(reg), tile_r.position))
+					var tile := Rect2(o, tile_r.size)
+					var pal: Array = burbs if str(reg) == "chicago" else crops
+					if str(reg) == here and my_city.intersects(tile):
+						for piece in _rect_minus(tile, my_city):
+							var pr: Rect2 = piece
+							if pr.size.x > 2.0 and pr.size.y > 2.0:
+								fc.props.flat(Vector3(pr.get_center().x, 0.005, pr.get_center().y), pr.size.x - 1.0, pr.size.y - 1.0, pal[pick % pal.size()], 0.0, Vector2(1, 0))
+					else:
+						var w := (tile.size.x if vertical else tile.size.y) / float(n)
+						for k in n:
+							var col: Color = pal[(pick + k * 7) % pal.size()]
+							if vertical:
+								fc.props.flat(Vector3(tile.position.x + w * (float(k) + 0.5), 0.005, tile.get_center().y), w - 1.5, tile.size.y - 1.5, col, 0.0, Vector2(1, 0))
+							else:
+								fc.props.flat(Vector3(tile.get_center().x, 0.005, tile.position.y + w * (float(k) + 0.5)), tile.size.x - 1.5, w - 1.5, col, 0.0, Vector2(1, 0))
+						# Now and then a farmhouse and silo, or a wood lot.
+						var c := tile.get_center()
+						if roll < 0.16:
+							fc.props.box(Vector3(c.x - 30.0, 3.5, c.y), Vector3(12.0, 7.0, 18.0), Color(0.55, 0.16, 0.1))
+							fc.props.cyl(Vector3(c.x - 18.0, 0, c.y), 3.0, 3.0, 15.0, Color(0.7, 0.7, 0.68), 10)
+						elif roll < 0.3:
+							for t in 7:
+								fc.props.box(Vector3(c.x + r2.randf_range(-24.0, 24.0), 5.0, c.y + r2.randf_range(-24.0, 24.0)), Vector3(7.0, 10.0, 7.0), Color(0.12, 0.2, 0.09))
+				gx += T
+			gz += T
+	# The interstate itself, seen from the cities: a ribbon of asphalt north
+	# to south through the country, so you can follow it from the air.
+	if here != "highway":
+		var hs: Rect2 = Regions.SKY["highway"]
+		var a := Regions.to_local(here, Regions.to_world("highway", Vector2(0.0, hs.position.y)))
+		fc.props.flat(Vector3(a.x, 0.02, a.y + hs.size.y * 0.5), 14.0, hs.size.y, Color(0.14, 0.14, 0.15), 0.0, Vector2(1, 0))
+		fc.props.flat(Vector3(a.x, 0.03, a.y + hs.size.y * 0.5), 0.5, hs.size.y, Color(0.75, 0.62, 0.2))
+
+
+## The parts of rectangle `r` outside rectangle `c` (up to four pieces).
+func _rect_minus(r: Rect2, c: Rect2) -> Array:
+	var out: Array = []
+	var i := r.intersection(c)
+	if i.size.x <= 0.0 or i.size.y <= 0.0:
+		return [r]
+	if i.position.x > r.position.x:
+		out.append(Rect2(r.position.x, r.position.y, i.position.x - r.position.x, r.size.y))
+	if i.end.x < r.end.x:
+		out.append(Rect2(i.end.x, r.position.y, r.end.x - i.end.x, r.size.y))
+	if i.position.y > r.position.y:
+		out.append(Rect2(i.position.x, r.position.y, i.size.x, i.position.y - r.position.y))
+	if i.end.y < r.end.y:
+		out.append(Rect2(i.position.x, i.end.y, i.size.x, r.end.y - i.end.y))
+	return out
+
+
+## The other cities, where they really are: a skyline of lit towers on the
+## horizon (only drawn at long range, so it costs a handful of boxes).
+func _neighbour_skylines() -> void:
+	for reg in Regions.SKYLINE.keys():
+		if str(reg) == WorldLayout.region:
+			continue
+		var S: Dictionary = Regions.SKYLINE[reg]
+		var cw := Regions.to_world(str(reg), S["c"])
+		var c := Regions.to_local(WorldLayout.region, cw)
+		var r2 := RandomNumberGenerator.new()
+		r2.seed = hash(str(reg)) + WorldLayout.SEED
+		var spread := float(S["spread"])
+		for i in int(S["n"]):
+			var ang := r2.randf() * TAU
+			var d := sqrt(r2.randf()) * spread
+			var px := c.x + cos(ang) * d
+			var pz := c.y + sin(ang) * d * 0.7
+			# Taller in the middle, like any downtown.
+			var h := float(S["h"]) * lerpf(1.0, 0.2, d / spread) * r2.randf_range(0.45, 1.0)
+			var w := r2.randf_range(28.0, 60.0)
+			_facade_box(landmark_far, Rect2(px - w * 0.5, pz - w * 0.5, w, w * r2.randf_range(0.7, 1.3)), 0.0, maxf(18.0, h), [2, 3, 4, 8][r2.randi() % 4], Color(0.32, 0.33, 0.36).lerp(Color(0.45, 0.3, 0.25), r2.randf()), r2.randf_range(1.0, 90.0))
+			# Lit floors at night, so the next city glows on the horizon.
+			var fy := 8.0
+			while fy < h - 4.0:
+				if r2.randf() < 0.45:
+					landmark_far.glow.box(Vector3(px, fy, pz), Vector3(w + 0.6, 1.2, w * 0.9), Color(1.0, 0.82, 0.55).lerp(Color(0.7, 0.85, 1.0), r2.randf() * 0.5), 0.0, Vector2(Props.K_NIGHT, 0))
+				fy += r2.randf_range(6.0, 14.0)
+			if h > float(S["h"]) * 0.7:
+				Props.place(landmark_far, "beacon", Vector3(px, maxf(18.0, h) + 0.5, pz))
 
 
 # ------------------------------------------------------------ reservations

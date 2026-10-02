@@ -83,6 +83,25 @@ static func slides(ending: String) -> Array:
 		out.append(_s("PHILLIP PRICE", "Agent DiPierro walked Phillip Price out of his own building in handcuffs on a Tuesday morning. He was out by Wednesday. But the photograph ran everywhere, and men like Price live on the belief that it can't happen to them. For one Tuesday, it did."))
 	elif GS.has_flag("five_nine_done") and str(GS.flags.get("after_path", "")) == "settle":
 		out.append(_s("E COIN", "You let it settle. E Coin rolled out on schedule, and by spring half the country was paid in it, owed in it, and watched in it. The new ledger was cleaner than the old one. That was the problem."))
+	# Respawn: the games.
+	if GS.has_flag("rs_refund"):
+		out.append(_s("ROCKSTARVED", "A year of Shark Card money went back to the cards it came from, in one night, to the cent. Rockstarved's next game shipped without a store in it, because nobody in the building was willing to be the one who put it back. A fourteen-year-old in Ohio got his mother's savings back and spent exactly none of it. He keeps the refund email printed out in a drawer."))
+	elif GS.has_flag("rs_press"):
+		out.append(_s("ROCKSTARVED", "'THE PLAYER IS A FUNNEL' ran on every games site and then every news site, and then it was a question in a congressional hearing that no executive could answer with a straight face. Rockstarved survived. Its business model didn't. Three countries now print the odds on every box by law."))
+	if GS.has_flag("kenny_badge") and GS.has_flag("rs_done"):
+		out.append(_s("KENNYQA", "Kenny never went back to QA. He started a union for game testers instead, out of the back of The Rabbit Hole, with a laminated badge from Crunch Team C framed over the bar. Membership: eleven thousand. Every studio that hires them gets the same first note: the quit button should work as well as the buy button."))
+	if GS.has_flag("phony_freed") and GS.has_flag("earse_exposed"):
+		out.append(_s("CHICAGO", "Every revoked library came back at once, worldwide, and Phony's lawyers spent a year trying to explain to a judge why they should be allowed to take it away again. They lost. 'You own what you paid for' is a law now, in a few places, and a tattoo in a lot more. Ansel's brother is fourteen, and he's making a game. It has no store in it."))
+	elif GS.has_flag("earse_exposed"):
+		out.append(_s("CHICAGO", "Once the real odds were printed on the box, nobody bought the box. Electronic Arse called it 'a temporary shift in player sentiment.' It has been temporary for six years. Phony still owns your library. Somewhere in a South Side warehouse, Ansel keeps the terminal credentials taped under her one chair, waiting."))
+	if GS.has_flag("ms_freed"):
+		out.append(_s("MICROSLOP", "At 9:00 on a Friday morning two billion rented libraries became owned ones, and no lawyer on Earth could work out how to take them back without admitting what they'd been about to do. 'Game Pass Away' became a joke, then a verb. To get Microslopped: to find out you never owned it. Fewer people get Microslopped now. Nobody at Microslop will say why."))
+	elif GS.has_flag("ms_exposed"):
+		out.append(_s("MICROSLOP", "Project Sunset ran on every front page for a week, and SlopForge ran in a courtroom for three years. The developers whose work had trained it won, and the settlement had a clause nobody expected: credit. Every game the AI ever touched now opens with a list of the human names it was built from. The list takes four minutes to scroll. You can't skip it."))
+	elif GS.has_flag("ms_returned"):
+		out.append(_s("MICROSLOP", "Forty studios reopened under their own names, in rented rooms over laundromats and dentists, making the sequels nobody would fund. Most of them are broke. Some of them are thriving. All of them own what they make. Microslop still exists; it just has much less to subscribe you to."))
+	if GS.has_flag("pixel_home"):
+		out.append(_s("RESPAWN", "Respawn outgrew its forum, then its servers, then its name. Dev went back to fixing arcade cabinets in Yonkers. Somebody else runs it now, and somebody else after them, which is the point. Every year on the anniversary of Floor 88, thirty thousand people log into the same old game at the same minute, just because they can."))
 	if GS.has_flag("bodega_thanked"):
 		out.append(_s("OMAR'S", "Omar's bodega is still open, nineteen years and counting. Coffee is free on Fridays for one particular customer, who pays exact change anyway. Omar keeps the change in a jar marked ELLIOT, for emergencies."))
 	if GS.has_flag("darlene_bond"):

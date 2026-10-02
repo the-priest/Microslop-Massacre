@@ -4,9 +4,13 @@
 
 === pixel
 -- start
+? q.mq_ms.done -> ms_after
+? q.mq_ms>=50 -> ms_win
+? flag.chi_home -> home
 ? q.mq_chi1.started -> chi
+? flag.rs_done -> rs_after
 ? flag.joined_respawn -> member
-? q.mq_respawn.started -> met
+? flag.pixel_met -> met
 > The arcade's back terminal lights up with a video call. A mask on the other end, a cartoon pixel-heart with an arrow through it, voice run through the same cheap filter Mr. Robot uses.
 PIXEL: fsociety. Finally. I've been screaming into E Corp's feedback form for three years. You know what a feedback form is? It's a trash can with a progress bar.
 PIXEL: I run Respawn. Ten thousand of us. People who bought games E Corp switched off. Accounts E Corp locked for a refund request. Studios E Corp bought and turned into a logo on a launcher. We're not asking for the world back. We're asking for the games we paid for.
@@ -22,19 +26,19 @@ PIXEL: Bigger. Sure. The debt, the banks, the whole machine. And who do you thin
 -> first
 -- first
 PIXEL: Start small. Start cruel. Rockstarved Games. One masterpiece a decade, and in between they sell pretend money for real money and call it a 'live service.' A kid in my Discord spent his late mom's savings on their Shark Cards. Fourteen. They sent him a thank-you email with a confetti gif.
-PIXEL: Their studio's on Floor 88 of the E Corp tower. Burn them down — not the building, the business model — and nine thousand people watch the little guy win for once. Then the next nine corps get scared.
+PIXEL: Their studio's on Floor 88 of the North Tower. E Corp owns the building through four shell companies and a sense of humor. Burn them down — not the building, the business model — and nine thousand people watch the little guy win for once. Then the next nine corps get scared.
 * "I'm in. Respawn's got a hacker now." -> join
 * "I'll think about it." -> think
 -- join
-PIXEL: PRESS START, baby. Okay. Okay okay okay. I'm putting the word out. Rockstarved. Floor 88. Make it hurt where they keep their quarterly earnings.
-! set joined_respawn ; quest mq_respawn 20 ; quest mq_rs1 10 ; trust robot 1 ; fame gamers 5 ; xp 60
+PIXEL: PRESS START, baby. Okay. Okay okay okay. I'm putting the word out. Rockstarved. Floor 88, North Tower. Make it hurt where they keep their quarterly earnings.
+! set joined_respawn ; set pixel_met ; quest mq_respawn 20 ; quest mq_rs1 10 ; trust robot 1 ; fame gamers 5 ; xp 60
 -> END
 -- think
 PIXEL: Think. We've been thinking for three console generations. Door's open. The forum's always open. That's the whole problem with the forum.
-! quest mq_respawn 20
+! set pixel_met ; quest mq_respawn 20
 -> END
 -- met
-PIXEL: Rockstarved. Floor 88, E Corp tower. You'll need a way up past the lobby — try the ex-QA guys who drink their feelings at The Rabbit Hole. They kept their badges. Nobody at Rockstarved ever turns anything off. That's sort of the point.
+PIXEL: Rockstarved. Floor 88, North Tower. You'll need a way up past the lobby — try the ex-QA guys who drink their feelings at The Rabbit Hole. They kept their badges. Nobody at Rockstarved ever turns anything off. That's sort of the point.
 * "On it." -> go
 * "Tell me about Respawn." -> about
 -- about
@@ -55,7 +59,98 @@ PIXEL: There's more. Electronic Arse. Phony. They run their whole racket out of 
 ! quest mq_rs2 20 ; quest mq_rs2 done ; quest mq_respawn done ; quest mq_chi1 10 ; fame gamers 4 ; xp 40
 -> END
 -- chi
+? flag.phony_freed -> chi_done
+? flag.earse_exposed -> chi_half
 PIXEL: Chicago. The South Side warehouse. Electronic Arse and Phony are both out there. Go west, friend. Drive it or fly it, but go.
+* "How do I get there?" -> chi_how
+* "Who's Ansel?" -> chi_ansel
+* "On my way." -> END
+-- chi_how
+PIXEL: West side of the city, there's an on-ramp with a big green sign. I-80. Follow it till the trees get boring, then keep going till they get interesting again. There's a diner on the way with pie that Respawn has a forty-page thread about. Or steal a plane. I'm not your dad.
+-> END
+-- chi_ansel
+PIXEL: Runs the Chicago cell. Hardware genius, soldered her first mod chip at twelve. She's also the only one of us who's met a real E Corp lawyer in person. She says they don't blink. I think she's exaggerating. I hope she's exaggerating.
+-> END
+-- chi_half
+PIXEL: The loot-box odds are on every storefront in the world right now and the forum crashed. Twice. We crashed our own forum celebrating. Phony's next, same floor. Finish it.
+-> END
+-- chi_done
+PIXEL: Every revoked library, unlocked. My inbox is just people posting screenshots of games they thought were gone forever. Somebody got back the game their dad bought them the year before he died. That's it. That's the whole reason. Come home, friend.
+-> END
+-- home
+? flag.pixel_home -> home_again
+> The video call connects. For the first time, there's no mask. A tired guy in his thirties with a cartoon heart tattooed on his wrist, in a bedroom full of old cartridges.
+PIXEL: Figured you'd earned the face. I'm Dev. I fix arcade cabinets in Yonkers. That's all I ever wanted to do, and the company that bought the last cabinet factory shut it down to sell a subscription.
+PIXEL: Three corps in two cities. Rockstarved, Electronic Arse, Phony. Every one of them said the same thing in their apology posts: 'we hear you.' They didn't hear us for ten years. They heard YOU. In a week.
+* "It wasn't me. It was ten thousand of you." -> home_crowd
+* "Microslop's next." -> home_next
+* "Was it worth it?" -> home_worth
+-- home_crowd
+PIXEL: ...Yeah. Yeah, okay. I'm going to screenshot that and put it on the forum banner. Don't argue. You can't argue with a banner.
+! set pixel_home ; fame gamers 4 ; stab 2 ; xp 50
+-> ms_plan
+-- home_next
+PIXEL: Microslop. The big one. Buys a studio a quarter and turns it into a tile on a subscription menu. You read my mind. Or Darlene told you. Probably Darlene.
+! set pixel_home ; set microslop_rattled ; fame gamers 2 ; xp 50
+-> ms_plan
+-- home_worth
+PIXEL: My kid sister played her first game this weekend. Bought it, downloaded it, owns it. Nobody can take it back. She doesn't know there was ever a world where they could. ...So, yeah. It was worth it.
+! set pixel_home ; stab 3 ; xp 50
+-> ms_plan
+-- ms_plan
+PIXEL: Okay. One more. The one Respawn's been too scared to say out loud. Microslop.
+PIXEL: Friday morning, Floor 101 of the North Tower, they unveil 'Game Pass Away.' Every game from every studio they ever bought, moved into one subscription, and then, at nine AM, every copy anybody ever PAID for gets converted into a rental. Stop paying, your library goes dark. Forever.
+PIXEL: And the studios? Closed. All of them. They trained an AI on everything those people ever made and called it SlopForge. It's going to 'make' the sequels. They're doing it live on stage. As a bit.
+* "How do we get in?" -> ms_how
+* "Why is this the one?" -> ms_why
+-- ms_why
+PIXEL: Because the others sold you a bad game. Microslop's selling the idea that you'll never own anything again, and that the people who make the stuff you love are a cost to be optimized out. If that works on games, it works on everything. Books. Music. Your car's heated seats. It's the beta test, remember? This is the launch.
+-> ms_how
+-- ms_how
+PIXEL: Here's the funny part. They invited kennyQA. As a 'community voice.' They want the guy who took down Rockstarved standing in the front row clapping, so it looks like we approve. Kenny's at The Rabbit Hole, drinking about it. Get his invitation. Get on that floor. Find the Library: the license server behind the stage.
+PIXEL: What you do when you're in there is up to you. You've earned that. Just... make it the kind of thing they put in the title.
+! quest mq_ms 20 ; xp 40
+-> END
+-- home_again
+? q.mq_ms>=40 -> nag_floor
+? q.mq_ms>=30 -> nag_lobby
+? q.mq_ms>=20 -> nag_kenny
+PIXEL: Respawn's never been bigger. Thirty thousand now. Half of them want to be you and the other half want to be Kenny. Kenny has a fan club. Kenny is not handling it well.
+-> END
+-- nag_kenny
+PIXEL: Kenny. The Rabbit Hole. The invitation. He keeps texting me pictures of it on fire and then saying 'jk.' Get it before he's not joking.
+-> END
+-- nag_lobby
+PIXEL: You've got the invite? The far-right elevator in the WTC lobby. Floor 101. Try to look enthusiastic. Practice in a mirror. No, not like that. Worse.
+-> END
+-- nag_floor
+PIXEL: You're on the floor? Behind the stage. The Library. Whatever you're going to do, do it before Brad Pitchley says 'one more thing.'
+-> END
+-- ms_win
+? flag.ms_freed -> win_freed
+? flag.ms_returned -> win_returned
+PIXEL: The deck is everywhere. Every studio Microslop owns read it at the same time, and you know what developers do when they all find out at once? They talk to each other. Three acquisitions frozen. A class action with SlopForge's name on it. Brad Pitchley's out. The keynote never happened.
+-> win_end
+-- win_freed
+PIXEL: Two billion libraries. OWNED. No account, no internet, no 'until we change it.' My mom just texted me a photo of her playing the card game that came free with her first computer. She's never texted me a photo of anything. Microslop's stock halted. Twice.
+-> win_end
+-- win_returned
+PIXEL: Forty studios. Their names, their games, their code, back in the hands of the people who made them. One of them already posted a job listing. For a QA tester. It says 'no crunch.' It says it in bold. Kenny applied in eleven seconds.
+-> win_end
+-- win_end
+PIXEL: They'll come back. They always do. But they'll come back knowing that ten thousand people and one very strange hacker can find the switch. ...Thank you, friend. Respawn's yours, whenever you want it.
+* "It was always yours." -> win_yours
+* "Go fix some arcade cabinets, Dev." -> win_dev
+-- win_yours
+PIXEL: Then it's ours. Okay. Okay okay okay. GG.
+! quest mq_ms done ; achieve microslop ; fame gamers 5 ; stab 3 ; xp 150
+-> END
+-- win_dev
+PIXEL: Ha. Yeah. There's a Galaga in Yonkers with a dead joystick that's been waiting for me since before all this. First thing tomorrow. GG, friend.
+! quest mq_ms done ; achieve microslop ; fame gamers 5 ; stab 3 ; xp 150
+-> END
+-- ms_after
+PIXEL: Respawn's thread about you is four thousand pages now. Half of it is people arguing about whether you're real. I told them you're a very committed bit. Go outside. Touch grass. That's an order from your guild leader.
 -> END
 
 === kenny
@@ -100,7 +195,34 @@ KENNY: Hey — hey, that's mine. That's the only thing I kept. Don't. Please don
 ELLIOT (V.O.): Too slow. I palm nothing and leave him his one souvenir. There's another way up.
 -> END
 -- after
+? q.mq_ms.done -> ms_done
+? q.mq_ms>=20 & !item.ms_invite>=1 -> ms
+? !flag.rs_done -> waiting
 KENNY: Did it work? ...It worked. My phone hasn't stopped. kennyQA is trending. People are sending me money. Strangers. For a badge. I'm going to cry into a better drink.
+-> END
+-- ms
+> Kenny is turning a heavy embossed card over and over in his hands. MICROSLOP · FLOOR 101 · COMMUNITY VOICE.
+KENNY: They want me in the front row. Clapping. While they announce they're closing eleven studios and replacing the testers with an AI that 'never needs a weekend.' They put a little confetti emoji in the email. Again with the confetti.
+* "Give me the invitation. I'll clap for you." -> ms_give
+* [SPEECH 40] "You don't have to be in the front row. You can be the reason there isn't one." -> ms_win | ms_give
+* "Burn it. Don't go." -> ms_burn
+-- ms_give
+KENNY: You'll clap. Sure. You've got the face of a man who's about to clap REALLY hard on something. ...Take it. The chip in the corner calls the far-right elevator in the lobby. Floor 101.
+! give ms_invite 1 ; quest mq_ms 30 ; xp 40
+-> END
+-- ms_win
+KENNY: The reason there isn't one. ...Yeah. Take it. And hey: I tested their elevator firmware once, back at Rockstarved, freelance. The service hatch behind the stage isn't on any floor plan. It's where they keep the Library. You didn't hear that from kennyQA. You heard it from a tester who always reads the logs.
+! give ms_invite 1 ; set ms_kenny_tip ; quest mq_ms 30 ; fame gamers 2 ; xp 60
+-> END
+-- ms_burn
+KENNY: Burn it? That's... honestly the most tempting thing anyone's said to me since 'your severance is ready.' But no. You'd use it better. Here.
+! give ms_invite 1 ; quest mq_ms 30 ; xp 40
+-> END
+-- ms_done
+KENNY: A QA union. Me. Eleven thousand testers and a laminated badge over the bar. Every time I see a studio post a job with 'no crunch' in bold, I buy a round. I'm very poor now. It's great.
+-> END
+-- waiting
+KENNY: You're still here? Floor 88. The service elevator in the WTC lobby, far left. Badge goes on the reader, reader goes beep, you go up. I've done it nine hundred times. Never once on a day I wanted to.
 -> END
 
 === chi_cell
@@ -122,5 +244,77 @@ ANSEL: My little brother. He's eleven. He asked me if he was 'bad at the game' o
 ! trust robot 1
 -> boxes
 -- again
+? flag.phony_freed -> done
+? flag.earse_exposed -> half
 ANSEL: Data floor's at the back of E Corp Midwest. Loot-box server, then the account authority. One trip if you're fast and nobody sounds the alarm.
+* "How do I get past the lobby?" -> lobby
+* "See you." -> END
+-- lobby
+ANSEL: Daytime, it's just a lobby, walk in like you're late for a meeting. Night, they lock it down: you'll want an E Corp uniform. Every one of these towers buys the same security package. If you got into the one in New York, you know this one already.
+-> END
+-- half
+ANSEL: My brother texted me a screenshot. The real odds, right there on the box, 1 in 9,214. He wrote 'lol no.' Two words. Best review that company ever got. Now go flip Phony. Same terminal.
+-> END
+-- done
+? flag.ansel_bye -> done_again
+ANSEL: You did both. Both! Okay. I'm not crying, the space heater makes my eyes water. It does. It's a known issue.
+ANSEL: Go home, fsociety. Tell Darlene the Chicago cell says thanks. And if you ever need a mod chip, a drone, or a very angry eleven-year-old's opinion on game design, you know where the warehouse is.
+* "Look after your brother." -> bye_bro
+* "Keep the cell running. They'll come back." -> bye_cell
+-- bye_bro
+ANSEL: Always. He wants to be a game designer now. An HONEST one. I told him that's the most punk thing a person can be.
+! set ansel_bye ; trust robot 1 ; stab 2 ; xp 30
+-> END
+-- bye_cell
+ANSEL: They always come back. That's what live service means: it never ends, and neither do we.
+! set ansel_bye ; give usb_drive 2 ; xp 30
+-> END
+-- done_again
+ANSEL: Still here. Still one chair. Still mine.
+-> END
+
+=== brad
+-- start
+? flag.ms_done -> after
+? flag.ms_pw -> again
+> A man in a black blazer over a T-shirt that costs more than the blazer, practicing a laugh in a reflective screen. CHIEF GAMING OFFICER, says the lanyard. He clocks your invitation and his smile switches on like a sign.
+BRAD: kennyQA! Or... kennyQA's plus-one? Love it. Love the energy. You're going to be SO excited at about nine-oh-four. That's when I say 'one more thing.'
+* "What's the one more thing?" -> thing
+* "You're closing the studios today." -> studios
+* "Nice to meet you." -> END
+-- thing
+BRAD: Can't spoil it! But imagine: every game you've ever loved, forever, for one low monthly price. And imagine never having to worry about owning anything again. Ownership is so stressful. We're removing the stress. We're removing the friction. We're removing...
+BRAD: ...anyway. Pastries are by the elevator.
+-> hook
+-- studios
+BRAD: 'Closing' is such a negative word. We're SUNSETTING. The studios' legacies live on, through subscription access and our generative partner, SlopForge, which honours their style at a fraction of the... honour.
+ELLIOT (V.O.): He believes it. That's the worst part. He's the kind of man who believes whatever is on the slide in front of him, and he's never once been in the room where the slides get written.
+-> hook
+-- hook
+ELLIOT (V.O.): The Library's behind the stage. He signed the launch switch. He'll have the password somewhere he can reach it quickly. Men like Brad never make anything hard for Brad.
+* [SPEECH 55] "Brad, I'm from the board. Security audit before the switch. I need the Library credentials, now, quietly." -> pw | pw_fail
+* [HACKING 45] (His phone's on the stage, unlocked, mid-rehearsal. Glance at the password manager while he practices his laugh.) -> peek | peek_fail
+* "Enjoy your keynote, Brad." -> END
+-- pw
+BRAD: The board? Oh god. Oh, okay, yes. Totally. Quietly. It's 'GamePassAway!' Capital G, capital P, capital A, exclamation point, I'm very security-minded. Please tell them I was helpful. Please tell them I'm a culture fit.
+! set ms_pw ; xp 60
+-> END
+-- pw_fail
+BRAD: The board would have emailed. The board always emails. With, like, a calendar invite. ...Security? No, you know what, I don't want to make a thing. Enjoy the pastries. Far, far from the stage.
+ELLIOT (V.O.): He'll keep an eye on me now. The Library will have to be done the hard way.
+-> END
+-- peek
+> He turns to the screen to rehearse. His phone lies face-up beside the podium, the password manager open to a single entry: LIBRARY MASTER. You read it twice and look away before he turns back.
+ELLIOT (V.O.): 'GamePassAway!' Of course it is.
+! set ms_pw ; xp 50
+-> END
+-- peek_fail
+> You lean toward the phone. Brad turns, and the phone goes into his blazer with a practiced hand. He winks at you like you're both in on something.
+BRAD: Ah-ah. No spoilers.
+-> END
+-- again
+BRAD: Two minutes to keynote! Find your seat! Actually, stand. Standing reads as excitement on camera.
+-> END
+-- after
+BRAD: Do you know what happened? Nobody knows what happened. My badge doesn't work. My phone keeps showing me a little line of text that says YOU OWN WHAT YOU PAID FOR and I don't know how to make it stop.
 -> END

@@ -8,6 +8,7 @@ var ground := MeshBatch.new()
 var props := MeshBatch.new()
 var glow := MeshBatch.new()
 var pool := MeshBatch.new()
+var lamps: Array = [] # [pos: Vector3 (ground under the head), radius, color]: NightLights
 var solids: Array = [] # [center: Vector3, size: Vector3, rot_y: float]
 var labels: Array = [] # {pos, text, size, color, rot, range, outline}
 var props_mat: Material = null # city chunks use Mats.city_lit / city_glow

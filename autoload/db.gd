@@ -175,6 +175,7 @@ const ITEMS := {
 	"key_arcade": {"name": "Arcade Back Room Key", "type": "key", "value": 0, "quest": true, "desc": "fsociety HQ, behind the pinball machines."},
 	"key_ron_backroom": {"name": "Ron's Back Room Key", "type": "key", "value": 0, "quest": true, "desc": "Behind the espresso machine."},
 	"ecoin_plan": {"name": "E Coin Rollout Deck", "type": "misc", "value": 0, "quest": true, "desc": "Phillip Price's internal plan for E Coin. Slide 9: 'The crisis is the onboarding.'"},
+	"ms_invite": {"name": "Microslop Showcase Invitation", "type": "key", "value": 0, "quest": true, "desc": "Heavy card stock, embossed. 'kennyQA — COMMUNITY VOICE. Floor 101. Please arrive with enthusiasm.' The elevator reads the chip in the corner."},
 	"rs_badge": {"name": "Rockstarved QA Badge", "type": "key", "value": 0, "quest": true, "desc": "CRUNCH TEAM C. Laminated, never deactivated. Opens the Floor 88 service elevator."},
 	"whale_docs": {"name": "Project Whale Deck", "type": "misc", "value": 0, "quest": true, "desc": "Rockstarved's internal deck on 'whales'. The player is a funnel."},
 	"jet_keys": {"name": "Citation Keys", "type": "key", "value": 0, "quest": true, "desc": "Keys, logbook and a one-dollar lease from Bowery Bay Flight School. The jet in hangar two is legally yours. Gus stamped it himself."},

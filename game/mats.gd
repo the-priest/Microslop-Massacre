@@ -52,7 +52,13 @@ static func set_hidden_cars(boxes: Array) -> void:
 		m.set_shader_parameter("hide_n", mini(boxes.size(), 32))
 
 
+## Last value handed to the shaders (reading a global shader parameter back
+## is editor-only).
+static var night: float = 0.0
+
+
 static func set_night(n: float) -> void:
+	night = n
 	RenderingServer.global_shader_parameter_set("night_amt", n)
 
 

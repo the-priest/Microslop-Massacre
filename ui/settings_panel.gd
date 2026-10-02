@@ -35,6 +35,7 @@ func _ready() -> void:
 	_toggle("CRT scanlines", "crt")
 	_toggle("Skip New Game intro", "skip_intro")
 	_choice("Frame cap", "max_fps", ["Unlimited", "30", "60", "120"], [0, 30, 60, 120])
+	_slider("Night brightness", "night_bright", 0.0, 1.0, 0.05)
 	_slider("Field of view", "fov", 60.0, 100.0, 1.0)
 	_slider("Mouse sensitivity", "mouse_sens", 0.2, 3.0, 0.05)
 	_slider("Gamepad look sensitivity", "pad_sens", 0.3, 2.5, 0.05)

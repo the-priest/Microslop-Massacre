@@ -315,6 +315,7 @@ static func car_meshes(name: String) -> Array:
 # ------------------------------------------------------------------ builders
 static func light_pool(ctx: BuildCtx, pos: Vector3, radius: float, col: Color = LAMP_COL) -> void:
 	ctx.pool.flat(Vector3(pos.x, 0.04, pos.z), radius * 2.0, radius * 2.0, col)
+	ctx.lamps.append([pos, radius, col])
 
 
 static func street_lamp(ctx: BuildCtx, pos: Vector3, rot_y: float) -> void:

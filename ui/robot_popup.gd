@@ -166,7 +166,7 @@ func is_showing() -> bool:
 
 # ------------------------------------------------------------------ playback
 func _pump() -> void:
-	if _busy or _queue.is_empty():
+	if _busy or _queue.is_empty() or not is_inside_tree():
 		return
 	_busy = true
 	var item: Dictionary = _queue.pop_front()
@@ -226,6 +226,8 @@ func _show(item: Dictionary) -> void:
 		# Don't talk over a conversation or a cutscene: wait for it.
 		var w := 0.0
 		while game.hud.hidden_all and w < 120.0:
+			if not is_inside_tree():
+				return
 			await get_tree().process_frame
 			w += get_process_delta_time()
 	if not _queue.is_empty() and kind == "objective":
@@ -239,6 +241,8 @@ func _show(item: Dictionary) -> void:
 	var tw := create_tween()
 	tw.tween_property(_card, "position:x", 24.0, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.tween_property(_line, "visible_ratio", 1.0, 1.4)
+	if not is_inside_tree():
+		return
 	await get_tree().create_timer(dur, true, false, true).timeout
 	var tw2 := create_tween()
 	tw2.tween_property(_card, "position:x", -W - 40.0, 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)

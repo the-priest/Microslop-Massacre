@@ -4,6 +4,7 @@ render_mode diffuse_lambert, specular_schlick_ggx;
 // UV2.x: 1 = ground (gets wet in rain), 2 = glossy paint (cars),
 // UV2.y: emission 0..n (dim self-glow).
 #include "res://shaders/detail.gdshaderinc"
+#include "res://shaders/lamps.gdshaderinc"
 global uniform float wet_amt;
 global uniform float night_amt;
 varying flat vec2 info;
@@ -82,8 +83,11 @@ void fragment() {
 	}
 	float w2 = max(wet, puddle);
 	c *= 1.0 - wet * 0.42 - puddle * 0.2;
+	// Anything you walk on (tagged ground, or just flat and low) gets the
+	// night lift, so pavements never vanish into black.
+	float flr = max(ground, step(0.8, wnrm.y) * (1.0 - step(0.8, wpos.y))) * step(0.8, length(VERTEX));
 	ALBEDO = c;
 	ROUGHNESS = clamp(mix(rough, 0.16, wet) * (1.0 - puddle * 0.85), 0.03, 1.0);
 	SPECULAR = mix(spec, 0.75, w2);
-	EMISSION = c * info.y + (c + vec3(0.004)) * vec3(1.0, 0.85, 0.66) * night_amt * (0.14 + 0.2 * ground);
+	EMISSION = c * info.y + (c + vec3(0.004)) * vec3(1.0, 0.85, 0.66) * night_amt * (0.17 + 0.22 * ground) + (c * 0.7 + vec3(0.008 + 0.09 * flr)) * lamp_light(wpos, normalize(wnrm)) * mix(0.35, 1.0, step(0.8, length(VERTEX))) + (c * 0.22 + vec3(0.006 + 0.07 * flr)) * vec3(0.78, 0.74, 0.9) * night_lift;
 }
