@@ -5,6 +5,7 @@ render_mode diffuse_lambert, specular_schlick_ggx;
 // COLOR = wall color (sRGB). Style 0 = plain surface (roofs, trims).
 
 #include "res://shaders/detail.gdshaderinc"
+#include "res://shaders/lamps.gdshaderinc"
 global uniform float night_amt;
 global uniform float wet_amt;
 global uniform vec4 sky_col;
@@ -12,6 +13,7 @@ global uniform vec4 sky_col;
 varying vec2 fuv;
 varying flat vec2 finfo;
 varying vec3 wpos;
+varying vec3 wnrm;
 
 const float FLOOR_H[11] = float[](3.2, 3.1, 3.4, 3.8, 3.8, 5.0, 3.0, 4.0, 3.6, 3.5, 4.0);
 const float SPACING[11] = float[](3.0, 2.8, 3.2, 2.6, 1.6, 6.0, 2.6, 1.4, 2.2, 4.0, 8.0);
@@ -36,6 +38,7 @@ void vertex() {
 	fuv = UV;
 	finfo = UV2;
 	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	wnrm = normalize(mat3(MODEL_MATRIX) * NORMAL);
 }
 
 void fragment() {
@@ -163,8 +166,12 @@ void fragment() {
 	rough = mix(rough, 0.25, wet);
 	// Night: sodium streetlight spill on the lower floors and city glow higher
 	// up, so walls read as walls instead of black voids between the windows.
-	float spill = (1.0 - smoothstep(0.0, 14.0, wpos.y)) * 0.55 + 0.14;
+	float spill = (1.0 - smoothstep(0.0, 14.0, wpos.y)) * 0.6 + 0.17;
 	emit += (albedo + vec3(0.006)) * vec3(1.0, 0.8, 0.6) * spill * night_amt;
+	emit += (albedo + vec3(0.01)) * lamp_light(wpos, normalize(wnrm));
+	float flr = step(0.8, wnrm.y) * (1.0 - step(0.8, wpos.y));
+	emit += (albedo * 0.5 + vec3(0.006 + 0.07 * flr)) * vec3(0.78, 0.74, 0.9) * night_lift;
+	emit += vec3(0.09) * flr * lamp_light(wpos, normalize(wnrm));
 	if (gfx_detail > 0.6 && st > 0) {
 		// Relief only up close; far away it would only shimmer.
 		float near = 1.0 - smoothstep(12.0, 30.0, length(VERTEX));

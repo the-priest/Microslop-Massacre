@@ -8,5 +8,5 @@ void fragment() {
 	float r = length(d) * 2.0;
 	float a = smoothstep(1.0, 0.0, r);
 	a *= a;
-	ALBEDO = lin(COLOR.rgb) * a * night_amt * 0.22;
+	ALBEDO = lin(COLOR.rgb) * a * night_amt * 0.3;
 }

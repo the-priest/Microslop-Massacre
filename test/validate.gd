@@ -138,10 +138,29 @@ func _check_quests() -> void:
 				started = true
 				break
 		for t in WorldObjects.TRIGGERS:
-			if str(t.get("fx", "")).contains("quest " + str(qid)):
+			if str(t.get("fx", "")).contains("quest " + str(qid) + " "):
 				started = true
+		if not started and _data_fx_mentions("quest " + str(qid) + " "):
+			started = true
 		if str(qid) != "mq_hello" and not started:
 			_warn("quest %s is never started by any dialogue/trigger" % qid)
+
+
+## Any interior/world spot, entry or action effect containing `needle`.
+func _data_fx_mentions(needle: String) -> bool:
+	var spots: Array = WorldObjects.SPOTS.duplicate()
+	for iid in InteriorData.INTERIORS.keys():
+		spots.append_array((InteriorData.INTERIORS[iid] as Dictionary).get("spots", []))
+	for sp in spots:
+		var sd: Dictionary = sp
+		var all: Array = [sd]
+		all.append_array(sd.get("entries", []))
+		all.append_array(sd.get("actions", []))
+		for e in all:
+			for k in ["fx", "fx_hack"]:
+				if (str((e as Dictionary).get(k, "")) + " ").contains(needle):
+					return true
+	return false
 
 
 func _convo_starts_quest(cid: String, qid: String) -> bool:
@@ -181,12 +200,22 @@ func _check_interiors() -> void:
 func _check_link(to: String, where: String) -> void:
 	if to.begins_with("world:"):
 		var door := to.substr(6)
-		if door != "subway" and not WorldLayout.all_doors().has(door):
+		if door != "subway" and not _any_door(door):
 			_err("%s: unknown world door '%s'" % [where, door])
 	elif to.begins_with("interior:"):
 		var parts := to.split(":")
 		if not InteriorData.INTERIORS.has(str(parts[1])) and str(parts[1]) != "subway":
 			_err("%s: unknown interior '%s'" % [where, parts[1]])
+
+
+## A door on any map: NYC's (loaded by default) or another region's.
+func _any_door(door: String) -> bool:
+	if WorldLayout.all_doors().has(door):
+		return true
+	for reg in RegionContent.DOORS.keys():
+		if (RegionContent.DOORS[reg] as Dictionary).has(door):
+			return true
+	return false
 
 
 func _check_npcs() -> void:
@@ -243,8 +272,19 @@ func _marker_ok(m: String) -> bool:
 		return true
 	if m.begins_with("pos:"):
 		return true
-	if WorldLayout.all_doors().has(m):
+	if m.begins_with("region:"):
+		return m.substr(7) == "nyc" or Regions.DEFS.has(m.substr(7))
+	if m.begins_with("gate:"):
+		var g := m.substr(5)
+		for reg in Regions.GATES.keys():
+			if (Regions.GATES[reg] as Dictionary).has(g):
+				return true
+		return false
+	if _any_door(m):
 		return true
+	for reg2 in RegionContent.POIS.keys():
+		if (RegionContent.POIS[reg2] as Dictionary).has(m):
+			return true
 	if WorldLayout.POIS.has(m):
 		return true
 	if InteriorData.INTERIORS.has(m):

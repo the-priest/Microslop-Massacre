@@ -342,7 +342,8 @@ func _over_water() -> bool:
 	return p.x < -WorldLayout.WORLD_X or p.x > WorldLayout.WORLD_XE or p.z < WorldLayout.WORLD_ZN - 2.0 or p.z > WorldLayout.BEACH_Z1 + 2.0 and (p.x < WorldLayout.PIER_X0 or p.x > WorldLayout.PIER_X1)
 
 
-## Past the edge of the map: the plane banks itself back toward the city.
+## Past the edge of the map: fly on into the next one if it borders here,
+## otherwise the plane banks itself back toward the city.
 func _check_airspace(delta: float) -> void:
 	if not airborne:
 		return
@@ -351,9 +352,10 @@ func _check_airspace(delta: float) -> void:
 	if sky.has_point(p):
 		_turn_back_t = 0.0
 		return
-	_turn_back_t += delta
 	if driving and game != null and game.has_method("airspace_exit"):
-		game.airspace_exit(self)
+		if game.airspace_exit(self):
+			return
+	_turn_back_t += delta
 	var to_c := sky.get_center() - p
 	var want := atan2(-to_c.x, -to_c.y)
 	heading = lerp_angle(heading, want, minf(1.0, delta * 0.6 * minf(_turn_back_t, 3.0)))
@@ -462,7 +464,11 @@ func _process(delta: float) -> void:
 	if cam.global_position.distance_to(look) > 0.1:
 		cam.look_at(look, Vector3.UP.lerp(b.y, 0.35).normalized())
 	cam.fov = lerpf(cam.fov, 70.0 + speed * 0.12, minf(1.0, delta * 2.0))
-	cam.far = 3400.0 if global_position.y > 40.0 else Settings.view_far()
+	# Up high you can see the next city on the horizon.
+	cam.far = 7000.0 if global_position.y > 40.0 else Settings.view_far()
+	# A far plane kilometres out needs a near plane further than a few
+	# centimetres, or the fields z-fight with the ground under them.
+	cam.near = clampf(global_position.y * 0.01, 0.1, 2.0)
 	if speed > 15.0:
 		cam_yaw = lerp_angle(cam_yaw, 0.0, minf(1.0, delta * 1.0))
 

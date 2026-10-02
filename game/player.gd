@@ -78,9 +78,9 @@ func _ready() -> void:
 	_lamp = SpotLight3D.new()
 	_lamp.position = Vector3(0.1, -0.05, 0.0)
 	_lamp.light_color = Color(1.0, 0.95, 0.85)
-	_lamp.light_energy = 2.2
-	_lamp.spot_range = 22.0
-	_lamp.spot_angle = 32.0
+	_lamp.light_energy = 3.4
+	_lamp.spot_range = 34.0
+	_lamp.spot_angle = 38.0
 	_lamp.spot_attenuation = 0.8
 	_lamp.visible = false
 	cam.add_child(_lamp)

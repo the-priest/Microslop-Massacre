@@ -122,7 +122,10 @@ func _make_loading() -> void:
 	_loading_lbl.size = Vector2(600, 40)
 	_loading_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_loading.add_child(_loading_lbl)
-	var tip := UI.label(_loading_tip(), 16, UI.GREEN_DIM)
+	var tip_text := _loading_tip()
+	if SaveManager.pending_load.has("travel"):
+		tip_text = _crossing_line(str(GameState.flags.get("region_from", "")), GameState.region)
+	var tip := UI.label(tip_text, 16, UI.GREEN_DIM)
 	tip.set_anchors_preset(Control.PRESET_CENTER)
 	tip.position = Vector2(-420, 40)
 	tip.size = Vector2(840, 80)
@@ -130,6 +133,18 @@ func _make_loading() -> void:
 	tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_loading.add_child(tip)
 	_loading_lbl.text = "> booting city.sys ..."
+
+
+## What the loading card says while you cross from one map into the next.
+func _crossing_line(from: String, to: String) -> String:
+	match to:
+		"highway":
+			return "Interstate 80. Three kilometres of Pennsylvania farmland, a diner, a motel, and billboards with opinions. " + ("Chicago is straight ahead." if from == "nyc" else "New York is straight ahead.")
+		"chicago":
+			return "Chicago. The Loop to the west of the lake, Meigs Field on the shore, and somewhere on the South Side a warehouse waiting for you."
+		"nyc":
+			return "New York. The Bronx under you, the towers on the horizon, and all of it exactly as loud as you left it."
+	return _loading_tip()
 
 
 func _loading_tip() -> String:
@@ -204,13 +219,18 @@ func _build_world() -> void:
 	ground.add_child(gs)
 	add_child(ground)
 	var base := MeshBatch.new()
-	base.flat(Vector3(0, -0.35, 0), 6000.0, 6000.0, Color(0.06, 0.06, 0.065))
+	# Big enough to run under every map in the shared world (see Regions).
+	base.flat(Vector3(0, -0.35, 0), 24000.0, 24000.0, Color(0.06, 0.06, 0.065))
 	base.commit(city_extras, Mats.lit, 0.0, "BaseGround")
 	_loading_lbl.text = "> mapping ..."
 	await get_tree().process_frame
 	map_image = MapRender.render(city_buildings)
 	env_ctl = WorldEnv.new()
 	add_child(env_ctl)
+	night_lights = NightLights.new()
+	night_lights.name = "NightLights"
+	night_lights.setup(cb.lamp_points())
+	add_child(night_lights)
 	fx = FX.new()
 	add_child(fx)
 	npcs = NPCManager.new()
@@ -1631,8 +1651,7 @@ func _gate_marker(gid: String) -> Dictionary:
 	if g.is_empty():
 		return {}
 	var gp: Array = g["pos"]
-	if GameState.cell != "world":
-		return _marker_target("")  # inside: handled by marker_pos exit routing
+	# Indoors, marker_pos routes this through the interior's exit.
 	return {"cell": "world", "pos": Vector3(float(gp[0]), 0, float(gp[1]))}
 
 
@@ -1691,6 +1710,14 @@ func _marker_target(m: String) -> Dictionary:
 	# A travel gate (highway on-ramp / city exit), by its id.
 	if m.begins_with("gate:"):
 		return _gate_marker(m.substr(5))
+	# A destination city: the on-ramp toward it from whatever map you're on
+	# (nothing once you're there; the arrival rule moves the quest on).
+	if m.begins_with("region:"):
+		var dest := m.substr(7)
+		if dest == WorldLayout.region:
+			return {}
+		var gr := RegionContent.gate_toward(WorldLayout.region, dest)
+		return _gate_marker(gr) if gr != "" else {}
 	# If the marker points into another region, steer the player to the gate
 	# that heads there instead of a door that isn't on this map.
 	var mr := _marker_region(m)
@@ -1908,6 +1935,7 @@ func _update_high_mode() -> void:
 			mi.visibility_range_end = 3200.0 if high else float(e[1])
 	if player != null and player.cam != null:
 		player.cam.far = 3400.0 if high else Settings.view_far()
+		player.cam.near = 0.25 if high else 0.05
 
 
 var _cop_count: int = 0
@@ -2096,6 +2124,7 @@ func _hide_parked(id: String, e: Dictionary) -> void:
 
 # ---------------------------------------------------------------- aircraft
 var planes: Dictionary = {} # airfield slot -> Aircraft
+var night_lights: NightLights
 var airfield_slots: Array = [] # from CityBuilder.airfield_planes
 var _af_filled: Dictionary = {} # slot -> true once spawned this session
 var rings: Node3D = null
@@ -2481,7 +2510,6 @@ func _carjack(car: Traffic.Car) -> void:
 ## whole car down the road to the next map; planes fly out of the airspace.
 var _gate_hold := 0.0
 var region_requested := ""
-var _air_asked := false
 
 
 func _update_gates() -> void:
@@ -2512,32 +2540,42 @@ func _update_gates() -> void:
 	go_region(str(dest[0]), str(dest[1]), false)
 
 
-## Called by a plane that has flown out of this map's airspace.
-func airspace_exit(a: Aircraft) -> void:
-	if _air_asked or ui_depth > 0 or player.driving != a:
-		return
-	_air_asked = true
-	var t := "=== _fly_away\n-- start\n"
-	t += "> You're over the edge of %s. The radio hisses. Somewhere out there, other cities.\n" % Regions.region_name(WorldLayout.region)
-	for r in Regions.FLY_IN.keys():
-		if str(r) == WorldLayout.region or str(r) == "highway":
-			continue
-		t += "* Set course for %s. -> go_%s\n" % [Regions.region_name(str(r)), str(r)]
-	t += "* Turn back. -> END\n"
-	for r2 in Regions.FLY_IN.keys():
-		t += "-- go_%s\n! set travel_pick=%s\n-> END\n" % [str(r2), str(r2)]
-	DialogueManager.convos.erase("_fly_away")
-	DialogueManager.parse_text(t, "runtime:fly")
-	GameState.flags.erase("travel_pick")
-	await dialog.run("_fly_away", null)
-	var pick := str(GameState.flags.get("travel_pick", ""))
-	GameState.flags.erase("travel_pick")
-	if pick != "" and player.driving == a:
-		go_region(pick, "", true)
-	else:
-		# Give the pilot a few seconds to turn around before asking again.
-		await get_tree().create_timer(6.0).timeout
-		_air_asked = false
+## Called by a plane that has flown out of this map's airspace. If another
+## map borders it there, carry on into it mid-flight (true). Otherwise warn
+## and let the plane turn itself back (false).
+var _air_warn_t := 0.0
+
+
+func airspace_exit(a: Aircraft) -> bool:
+	if busy_transition or ui_depth > 0 or player.driving != a:
+		return busy_transition
+	var w := Regions.to_world(WorldLayout.region, Vector2(a.global_position.x, a.global_position.z))
+	var nb := Regions.region_at(w, WorldLayout.region)
+	if nb == "":
+		var now := Time.get_ticks_msec() / 1000.0
+		if now - _air_warn_t > 6.0:
+			_air_warn_t = now
+			hud.notify("Nothing out that way but haze and open water. The cities are north and south of here: New York, I-80, Chicago.", "warn")
+		return false
+	# Come in just over the line, same height, heading and speed.
+	var lp := Regions.to_local(nb, w)
+	var fwd := Vector2(-sin(a.heading), -cos(a.heading))
+	lp += fwd * 40.0
+	go_region_air(nb, Vector3(lp.x, a.global_position.y, lp.y), a)
+	return true
+
+
+## Fly into a neighbouring map at a precise spot (see airspace_exit).
+var _air_arrive := Vector3.INF
+var _air_heading := 0.0
+var _air_throttle := 0.7
+
+
+func go_region_air(region: String, local_pos: Vector3, a: Aircraft) -> void:
+	_air_arrive = local_pos
+	_air_heading = a.heading
+	_air_throttle = a.throttle
+	go_region(region, "", true)
 
 
 ## Leave this map for another. By road: arrive at the matching gate with the
@@ -2558,7 +2596,13 @@ func go_region(region: String, gate: String, by_air: bool) -> void:
 	GameState.region = region
 	GameState.cell = "world"
 	GameState.pos_local = false
-	if by_air and Regions.FLY_IN.has(region):
+	if by_air and _air_arrive != Vector3.INF:
+		GameState.player_pos = _air_arrive
+		GameState.player_yaw = _air_heading
+		carry["heading"] = _air_heading
+		carry["throttle"] = _air_throttle
+		_air_arrive = Vector3.INF
+	elif by_air and Regions.FLY_IN.has(region):
 		var f: Array = Regions.FLY_IN[region]
 		GameState.player_pos = Vector3(float(f[0]), float(f[1]), float(f[2]))
 		GameState.player_yaw = float(f[3])
@@ -2603,9 +2647,10 @@ func _arrive_with(carry: Dictionary, by_air: bool) -> void:
 	if nv is Aircraft and by_air:
 		var ac := nv as Aircraft
 		ac.airborne = true
-		ac.heading = yaw
-		ac.speed = float(ac.spec.get("vmax", 66.0)) * 0.7
-		ac.throttle = 0.7
+		ac.heading = float(carry.get("heading", yaw))
+		var vmax := float(ac.spec.get("vmax", 66.0))
+		ac.speed = clampf(float(carry.get("speed", vmax * 0.7)), float(ac.spec.get("stall", 22.0)) * 1.3, vmax)
+		ac.throttle = float(carry.get("throttle", 0.7))
 	hud.center(Regions.region_name(WorldLayout.region).to_upper(), 3.0)
 
 

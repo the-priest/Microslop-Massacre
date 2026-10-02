@@ -33,6 +33,7 @@ const ACHIEVEMENTS := {
 	"overlap": ["THE OVERLAP", "Find the hidden ending."],
 	"arcade_champ": ["HIGH SCORE", "Top the Fun Society leaderboard."],
 	"ghost": ["GHOST", "Get through Steel Mountain without being detected."],
+	"microslop": ["MICROSLOP MASSACRE", "Find the switch on Floor 101."],
 }
 
 # ------------------------------------------------------------------ state

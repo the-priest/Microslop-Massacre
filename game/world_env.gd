@@ -153,6 +153,10 @@ func _process(delta: float) -> void:
 	rain_amt = move_toward(rain_amt, target_rain, delta * 0.08)
 	_wet = move_toward(_wet, target_rain, delta * (0.05 if target_rain > _wet else 0.01))
 	var gloom := clampf(over * 0.6 + rain_amt * 0.5, 0.0, 1.0)
+	# Night brightness (Settings): how much moon, sky glow and exposure lift
+	# the dark. 0.5 is the default; even 0 keeps streets readable.
+	var nb := float(Settings.get_v("night_bright"))
+	var nightf := 1.0 - dayf
 	# Sky colors.
 	var top_n := Vector3(0.01, 0.015, 0.035)
 	var top_d := Vector3(0.22, 0.38, 0.66).lerp(Vector3(0.35, 0.38, 0.42), gloom)
@@ -176,23 +180,25 @@ func _process(delta: float) -> void:
 	var sun_col := Color(0.55, 0.65, 1.0).lerp(Color(1.0, 0.94, 0.84), dayf).lerp(Color(1.0, 0.55, 0.3), golden * 0.6)
 	sky_mat.set_shader_parameter("sun_col", Vector3(sun_col.r, sun_col.g, sun_col.b) * (1.0 - gloom * 0.8))
 	sun.light_color = sun_col
-	sun.light_energy = lerpf(0.18, 1.35, dayf) * (1.0 - gloom * 0.6)
+	sun.light_energy = lerpf(0.2 + 0.3 * nb, 1.35, dayf) * (1.0 - gloom * 0.6)
 	sun.look_at_from_position(Vector3.ZERO, -sun_dir, Vector3.UP if absf(sun_dir.y) < 0.99 else Vector3.FORWARD)
 	# Ambient + fog.
-	var amb_n := Color(0.3, 0.34, 0.5)
+	var amb_n := Color(0.3, 0.34, 0.5).lerp(Color(0.4, 0.43, 0.56), nb)
 	var amb_d := Color(0.58, 0.62, 0.7)
 	env.ambient_light_color = amb_n.lerp(amb_d, dayf).lerp(Color(0.4, 0.42, 0.45), gloom * 0.5)
-	env.ambient_light_energy = lerpf(1.45, 1.0, dayf)
-	var fog_n := Color(0.05, 0.05, 0.075)
+	env.ambient_light_energy = lerpf(1.55 + 0.9 * nb, 1.0, dayf)
+	env.tonemap_exposure = 1.0 + nightf * (0.06 + 0.22 * nb)
+	# City sky glow: night fog is lit sodium-orange from below, never pure black.
+	var fog_n := Color(0.07, 0.07, 0.095).lerp(Color(0.13, 0.12, 0.15), nb)
 	var fog_d := Color(0.6, 0.65, 0.72)
 	env.fog_light_color = fog_n.lerp(fog_d, dayf).lerp(Color(0.35, 0.37, 0.4) * lerpf(0.3, 1.0, dayf), gloom)
 	var far := Settings.view_far()
 	var base_density := 1.1 / far
-	env.fog_density = base_density * (1.0 + rain_amt * 1.6 + over * 0.3) * lerpf(1.6, 1.0, dayf)
+	env.fog_density = base_density * (1.0 + rain_amt * 1.6 + over * 0.3) * lerpf(lerpf(1.5, 1.1, nb), 1.0, dayf)
 	# Up high (the Twin Towers' roof) the haze thins so you can see the city.
 	var cam0 := get_viewport().get_camera_3d()
 	if cam0 != null and cam0.global_position.y > 30.0:
-		env.fog_density *= lerpf(1.0, 0.18, clampf((cam0.global_position.y - 30.0) / 250.0, 0.0, 1.0))
+		env.fog_density *= lerpf(1.0, 0.08, clampf((cam0.global_position.y - 30.0) / 160.0, 0.0, 1.0))
 	Mats.set_night(1.0 - dayf)
 	Mats.set_wet(_wet)
 	Mats.set_sky_col(Color(hor.x, hor.y, hor.z).lerp(Color(top.x, top.y, top.z), 0.4))

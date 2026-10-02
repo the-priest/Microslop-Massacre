@@ -3,9 +3,22 @@ extends RefCounted
 ## Renders the city map once into an Image (green phosphor style).
 
 const SIZE := 1536
-const X0 := -950.0
-const Z0 := -1750.0
-const SPAN := 2800.0
+## The square of ground the map covers, per map (x0, z0, span).
+const FRAMES := {
+	"nyc": [-950.0, -1750.0, 2800.0],
+	"highway": [-1000.0, -1000.0, 2000.0],
+	"chicago": [-900.0, -900.0, 1900.0],
+}
+static var X0 := -950.0
+static var Z0 := -1750.0
+static var SPAN := 2800.0
+
+
+static func use_region(region: String) -> void:
+	var f: Array = FRAMES.get(region, FRAMES["nyc"])
+	X0 = float(f[0])
+	Z0 = float(f[1])
+	SPAN = float(f[2])
 
 
 static func to_px(x: float, z: float) -> Vector2:
@@ -26,6 +39,7 @@ static func _rect(img: Image, x0: float, z0: float, x1: float, z1: float, c: Col
 
 
 static func render(buildings: Array) -> Image:
+	use_region(WorldLayout.region)
 	var img := Image.create(SIZE, SIZE, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0.0, 0.05, 0.03))
 	# Water.

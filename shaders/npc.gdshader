@@ -8,6 +8,10 @@ instance uniform float pose = 0.0;
 instance uniform float flash = 0.0;
 instance uniform float talk = 0.0;
 instance uniform float raise = 0.0; // right arm up overhead (a raised fist)
+#include "res://shaders/lamps.gdshaderinc"
+global uniform float night_amt;
+varying vec3 wpos;
+varying vec3 wnrm;
 vec3 lin(vec3 c) { return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c)); }
 void vertex() {
 	float limb = UV2.x;
@@ -30,10 +34,14 @@ void vertex() {
 		vec3 n = NORMAL;
 		NORMAL = vec3(n.x, n.y * c - n.z * sn, n.y * sn + n.z * c);
 	}
+	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	wnrm = normalize(mat3(MODEL_MATRIX) * NORMAL);
 }
 void fragment() {
 	vec3 c = lin(COLOR.rgb);
 	ALBEDO = mix(c, vec3(1.0, 0.25, 0.2), flash * 0.6);
 	ROUGHNESS = 0.85;
-	EMISSION = vec3(1.0, 0.2, 0.15) * flash * 0.5;
+	// At night people pick up the street's glow and the lamps they walk under,
+	// so a figure on a dark corner still reads as a person.
+	EMISSION = vec3(1.0, 0.2, 0.15) * flash * 0.5 + (c + vec3(0.01)) * (vec3(0.11, 0.1, 0.12) * night_lift + lamp_light(wpos, normalize(wnrm)));
 }

@@ -28,6 +28,7 @@ var _mesh: MeshInstance3D
 var _glow: MeshInstance3D
 var _smoke: MeshInstance3D
 var _engine: AudioStreamPlayer3D
+var _headlights: SpotLight3D
 var _hit_cool: float = 0.0
 var _burn_t: float = 0.0
 var _last_hit_ped: float = 0.0
@@ -114,10 +115,26 @@ func begin_drive() -> void:
 		_engine.bus = "SFX" if AudioServer.get_bus_index("SFX") >= 0 else "Master"
 		add_child(_engine)
 	_engine.play()
+	# Headlights: one real light for the car you're driving (the glow mesh
+	# already paints the lamps themselves), on when it's dark.
+	if _headlights == null:
+		_headlights = SpotLight3D.new()
+		_headlights.light_color = Color(1.0, 0.95, 0.85)
+		_headlights.light_energy = 4.0
+		_headlights.spot_range = 48.0
+		_headlights.spot_angle = 34.0
+		_headlights.spot_attenuation = 0.7
+		_headlights.shadow_enabled = false
+		_headlights.position = Vector3(0, 0.9, -2.4)
+		_headlights.rotation.x = -0.09
+		add_child(_headlights)
+	_headlights.visible = false
 
 
 func end_drive() -> void:
 	driving = false
+	if _headlights != null:
+		_headlights.visible = false
 	if _engine != null:
 		_engine.stop()
 	if cam != null:
@@ -321,6 +338,9 @@ func _burn(delta: float) -> void:
 func _process(delta: float) -> void:
 	if not driving or cam == null:
 		return
+	if _headlights != null:
+		var night := Mats.night
+		_headlights.visible = night > 0.2 or GameState.weather == "rain"
 	# Chase camera: behind the car, swings with the mouse, never inside a wall.
 	var back := global_transform.basis.z
 	back.y = 0.0

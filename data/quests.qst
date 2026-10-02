@@ -18,6 +18,7 @@
 +++ respawn | Respawn
 +++ rockstarved | Rockstarved Games
 +++ chicago | The Windy City
++++ microslop | Microslop
 
 === mq_hello | Hello, Friend | main | 150 | fsociety
 Elliot Alderson. Cybersecurity engineer by day. By night, he reads people. Something was on his computer this morning that he doesn't remember putting there.
@@ -77,12 +78,12 @@ Steel Mountain made the news. Now Special Agent Dominique DiPierro of the FBI's 
 === mq_respawn | Press Start | main | 250 | respawn
 Darlene found a forum. Ten thousand people who paid for games E Corp switched off, accounts E Corp locked, studios E Corp bought and buried. They call themselves Respawn. They just need somebody to hand them a win.
 10 Darlene's lead runs an invite-only board out of a shut-down game store. Meet Pixel at the arcade's back terminal @cell:arcade:17.6,4.5
-20 Respawn wants proof the little guy can win. Pick E Corp's smallest, cruelest target first: Rockstarved Games, up in the E Corp tower, Floor 88 @d_wtc
+20 Respawn wants proof the little guy can win. Pick E Corp's smallest, cruelest target first: Rockstarved Games, Floor 88 of the World Trade Center's North Tower, which E Corp quietly owns @d_wtc
 30 done
 
 === mq_rs1 | Shark Bait | main | 300 | rockstarved
 Rockstarved makes one great game a decade and sells pretend money for real money in between. 'Shark Cards.' A kid in Respawn spent his dead mother's savings on them. Get inside.
-10 Rockstarved's floor is in the E Corp tower, up the lobby elevator. You need a way up: lift a crunch-team badge off Kenny, the ex-QA tester who drinks at The Rabbit Hole, or talk him into giving you his @npc:kenny
+10 Rockstarved's floor is Floor 88 of the North Tower, up the WTC lobby's service elevator. You need a way up: lift a crunch-team badge off Kenny, the ex-QA tester who drinks at The Rabbit Hole, or talk him into giving you his @npc:kenny
 20 Ride the WTC lobby elevator to Floor 88 and get onto the Rockstarved floor @d_wtc
 30 Find Project Whale: the server that sorts every player by how much money can be squeezed out of them @cell:rockstarved_hq:1.6,10.7
 40 done
@@ -95,7 +96,7 @@ You've seen how the sausage is made. Now break the machine and show the world th
 
 === mq_chi1 | The Windy City | main | 300 | chicago
 Electronic Arse and Phony both run their live-service empires out of Chicago, 790 miles west. Respawn has a cell there, in a dead warehouse on the South Side. Time to leave New York.
-10 Get to Chicago: drive the interstate west out of the city, or fly there if you've got wings. It's a long way @gate:nyc_west
+10 Get to Chicago: drive the interstate west out of the city, or fly there if you've got wings. It's a long way @region:chicago
 20 Find the fsociety cell: a boarded warehouse on the Chicago South Side. Darlene set it up @d_chi_safe
 30 done
 
@@ -108,8 +109,17 @@ Electronic Arse calls its loot boxes 'surprise mechanics' and sells them to kids
 === mq_chi3 | Account Suspended | main | 400 | chicago
 Phony Interactive can revoke your library, your purchases, your account, any time, for any reason. So can you. Give every player their games back and lock Phony out of its own store.
 10 Phony runs its account authority through the same Chicago data floor. Get back in and flip it: unlock every revoked library, and lock Phony's admins out of their own kingdom @cell:chi_node:31,12
-20 Chicago's done. The cell says Microslop and the rest are rattled. Head back to New York and tell the crew @gate:chi_south
+20 Chicago's done, and every game company in the world just felt it. Head back to New York: I-90 east out of the South Side, or fly @region:nyc
 30 done
+
+=== mq_ms | Microslop Massacre | main | 600 | microslop
+Microslop buys the studios people love and shuts them down. On Friday, on Floor 101 of the North Tower, it unveils Game Pass Away: every game ever made, rented back to you forever, and an AI that 'makes' the next ones. Respawn's last fight. The big one.
+10 Pixel has a plan for Microslop. Take his call at the arcade's back terminal @cell:arcade:17.6,4.5
+20 Microslop invited kennyQA to its showcase as a 'community voice.' Kenny's at The Rabbit Hole, and he's not going @npc:kenny
+30 The showcase is on Floor 101 of the North Tower. Show Kenny's invitation at the WTC lobby's far-right elevator @d_wtc
+40 Behind the stage is the Library: the license server for every studio Microslop ever bought. Find it in the back, or get its keeper, Brad Pitchley, to open it for you @cell:ms_floor:31,11
+50 It's done. Tell Pixel. Tell everyone @cell:arcade:17.6,4.5
+60 done
 
 === mq_robot | Who Is Mr. Robot | main | 400 | fsociety
 Darlene looks at you like she's waiting for you to remember something. The man in the jacket finishes your sentences. The arcade's sign was painted over another sign. You are going to have to look.
