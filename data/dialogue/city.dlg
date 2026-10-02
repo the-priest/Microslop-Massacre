@@ -1,0 +1,28 @@
+### Street life: people the city throws at you.
+
+=== enc_dealer
+-- start
+? hostile.darkarmy -> start_plain
+DEALER: You look like a man who needs something he can't get at a pharmacy. Or a man who has something to sell. Either way, keep your hands where I can see them.
+* "Let's see what you've got." -> trade
+* "What do you buy?" -> buys
+* [SPEECH 40] "Who's your supplier? I might have work for them." -> supplier | brush
+* "Not interested." -> END
+-- start_plain
+DEALER: Quiet night. Keep it that way. You buying?
+* "Show me." -> trade
+* "No." -> END
+-- trade
+! barter fence
+-> END
+-- buys
+DEALER: Cards, drives, jewelry, guns with the serials filed off. I pay less than a pawn shop and ask fewer questions than a priest.
+* "Let's trade." -> trade
+* "Maybe later." -> END
+-- supplier
+DEALER: ...Down by the piers there's a man who calls himself the Candyman. Everything on these corners comes through him. You didn't hear that from me. You didn't hear anything from me.
+! set heard_candyman
+-> END
+-- brush
+DEALER: Nice try. Buy something or keep walking.
+-> END

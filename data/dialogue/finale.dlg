@@ -1,0 +1,115 @@
+### The finale: the hack, the choice, the endings.
+### Launched from Mr. Robot at the arcade once the pieces are gathered.
+
+=== finale_check
+-- start
+? !flag.joined_fsociety -> notready
+? !flag.rootkit_planted -> need_rootkit
+? !q.mq_steel.done -> need_steel
+? !flag.ally_secured -> need_ally
+? !flag.ecorp_door_tyrell & !flag.ecorp_foothold -> need_door
+-> ready
+-- notready
+MR. ROBOT: You're not even one of us yet, kid. Join fsociety first. Then we talk about ending the world's debt.
+-> END
+-- need_rootkit
+MR. ROBOT: We've got no foothold. Ron's server, the rootkit — that's the first thread. Pull it before you dream about the tapestry.
+-> END
+-- need_steel
+MR. ROBOT: The backups. Steel Mountain. Until those tapes are ash, deleting E Corp's records is like erasing a chalkboard someone photographed. Go cook the mountain.
+-> END
+-- need_ally
+MR. ROBOT: We can't do this with five people and a soldering iron. Get an army behind us — the Dark Army, or turn the FBI into our blind spot. Pick a door.
+-> END
+-- need_door
+MR. ROBOT: We need inside the tower. Tyrell hands us the keys, or you take a keycard off a guard and let yourself in. No inside man, no Five/Nine.
+-> END
+-- ready
+MR. ROBOT: Look at me. Everything's in place. The rootkit, the mountain, the army, the door. This is it. This is the night we've been walking toward your whole life. Are you ready to press the key?
+* "Do it. Encrypt everything. Free them." -> hack
+* "Wait. Once I do this, there's no undo." -> wait
+* [require stab<30] "Are you even real? Am I about to blow up the world because a voice in my head told me to?" -> doubt
+-- wait
+MR. ROBOT: There's never an undo, kid. That's what makes it a choice instead of a rehearsal. Come back when your hands stop shaking. Or don't. Shaking hands still type.
+-> END
+-- doubt
+MR. ROBOT: Real. Not real. Wrong question. The debt is real. The people crushed under it are real. This key is real. Press it and it doesn't matter what I am. It only matters what you did. That's the only honesty left.
+! glitch 0.7 ; stab 5
+-> hack
+-- hack
+> You run the exploit. E Corp's records, seventy percent of the world's consumer debt, begin to encrypt behind a key that will exist for exactly as long as it takes to throw it away.
+! minigame cascade
+? won -> hacked
+MR. ROBOT: The cascade broke. Steady your hands and run it again — we don't get a second window like this.
+-> ready
+-- hacked
+> Progress bars crawl toward 100%. Somewhere, a mortgage becomes a rumor. A student loan becomes a story. The number that ruled millions of lives becomes noise.
+MR. ROBOT: It's done. It's actually done. Five/Nine. Now — the last thing. The people who really run this world want to meet the man who just rewrote it. There's an invitation waiting. The Salina Hotel. Room 6.
+! set five_nine_done ; quest mq_finale 30 ; quest mq_finale 40 ; xp 200 ; fame fsociety 10 ; glitch 1.0 ; give deus_invite 1
+MR. ROBOT: Go. Sit at their table. And decide, once and for all, whose ending this is.
+-> END
+
+=== finale_choose
+### Reached at the Salina after the deus table. Resolves the ending.
+-- start
+? flag.ending_path=overlap -> overlap_path
+? flag.ending_path=deus -> deus_path
+? flag.ending_path=defy -> defy_path
+-> pick
+-- pick
+ELLIOT (V.O.): The hack is done. The city is already changing outside. Now I decide who I hand the smoke to.
+* "fsociety keeps it. The debt stays dead. We disappear." -> e_fsociety
+* [require q.mq_darkarmy.done] "The Dark Army finishes it. Stage two. Burn the building too." -> e_darkarmy
+* [require flag.fbi_informant | flag.fbi_bigger] "I give the FBI everything. Clean hands. Let the law sort the rubble." -> e_fbi
+* [require flag.ecorp_door_tyrell] "I take E Corp's offer. A seat at the table. Power, not a basement." -> e_ecorp
+* "None of them. I destroy the key and the records both. No masters. Just gone." -> e_reboot
+* [require flag.township_public] "All of it goes to the press. The hack, the Township memos, this table, every name. Let the world decide." -> e_press
+* [require stab<25] "...I'm tired. You do it. Let him have it." -> e_robot
+* [require flag.kingpin] "When the banks go dark, cash is king. And I own the cash." -> e_kingpin
+* [require innocents>=12] "Let it burn. The records, the city, all of them. It's what I'm for now." -> e_monster
+-- overlap_path
+ELLIOT (V.O.): There's a version of tonight where nobody has to lose. Where Darlene's still my sister, and Krista's truth is out, and the whole broken family of this city stands in one room and refuses to be sorted. I saw the seam. I can pull it.
+* [require flag.darlene_bond & flag.knows_darlene_sister & flag.krista_truth & stab>=60] "We do it together. All of us. The Overlap." -> e_overlap
+* "...No. That's a dream. Pick a real ending." -> pick
+-- deus_path
+ELLIOT (V.O.): I already sat at their table and nodded. The ending they wanted is the ending they get. I tell myself I'm the exception. Everyone at that table told themselves that once.
+-> e_ecorp
+-- defy_path
+ELLIOT (V.O.): I looked the men who own the world in the eye and told them no. Now I have to make the no mean something.
+* "fsociety keeps it. The debt stays dead." -> e_fsociety
+* "Destroy it all. No masters." -> e_reboot
+* [require flag.township_public] "Give everything to the press." -> e_press
+-- e_fsociety
+! ending fsociety
+-> END
+-- e_darkarmy
+! ending darkarmy
+-> END
+-- e_fbi
+! ending fbi
+-> END
+-- e_ecorp
+! ending ecorp
+-> END
+-- e_reboot
+! ending reboot
+-> END
+-- e_press
+! ending press
+-> END
+-- e_robot
+ELLIOT (V.O.): I stop holding on. It's so easy. He's been waiting at the edge of every thought for years. He steps in, and his hand closes around mine, and it's his hand now.
+MR. ROBOT: Good kid. I've got it from here.
+! ending robot
+-> END
+-- e_kingpin
+ELLIOT (V.O.): The world's debt is gone. Every card declines, every bank is dark. And nine corners in the Bronx still take cash, and the cash comes to me.
+! ending kingpin
+-> END
+-- e_monster
+ELLIOT (V.O.): I used to tell myself they were bad people. Then I stopped telling myself anything. The debt was never the point. The point was how quiet it gets, after.
+! ending monster
+-> END
+-- e_overlap
+! ending overlap
+-> END

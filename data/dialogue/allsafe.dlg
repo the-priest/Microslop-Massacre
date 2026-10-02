@@ -1,0 +1,116 @@
+### Allsafe: Gideon, Angela, the servers.
+
+=== gideon
+-- start
+? flag.knows_allsafe_ecorp & !flag.gideon_leverage_done -> know
+? q.mq_rootkit.started -> later
+GIDEON: Elliot. E Corp flagged anomalies on their network overnight. I need your eyes. Not your attitude — your eyes. Can you do that?
+* "Anomalies are the only thing I trust. Show me." -> trace
+* [SPEECH 25] "Tell me the truth first — how bad is it for Allsafe if E Corp walks?" -> pressure | trace
+* "Not tonight, Gideon." -> refuse
+-- know
+! set gideon_leverage_done
+GIDEON: You've been in the files. I can tell. You know what E Corp is to this company. To all of us.
+ELLIOT (V.O.): One client. Fifty jobs. Gideon's whole life, balanced on the goodwill of the thing I want to destroy. If I burn E Corp, I burn him too.
+* "Your company's clean, Gideon. Whatever happens, that's on them." -> clean ! trust krista 0
+* [SPEECH 40] "You should get out. Sell Allsafe while it's worth something." -> warn | clean
+-- clean
+GIDEON: I hope you're right. I've spent ten years being right about machines and wrong about people. Don't be the thing that proves the pattern.
+-> after_know
+-- warn
+GIDEON: ...You know something. I've known you long enough to hear it. I won't ask. But Elliot — if this ship goes down, get yourself off it first. Promise me that much.
+! set gideon_warned ; fame allsafe 3
+-> after_know
+-- after_know
+? !q.mq_rootkit.started -> trace
+-> END
+-- later
+? q.mq_rootkit>=40 -> later_done
+GIDEON: Anything on the honeypot? Ron's Coffee, a few blocks from your place. It's always the small ones. Go look before E Corp's people do.
+-> END
+-- later_done
+GIDEON: The coffee shop server went quiet. Whatever was knocking on E Corp's door stopped. I'd call that a win if my stomach agreed. You look like someone who knows more than he's saying. You always do.
+-> END
+-- pressure
+GIDEON: Bad. If E Corp walks, Allsafe is gone in a quarter. Everyone here — Angela, the new kids — out. So when I say I need your eyes, I mean I need them clean. No ghosts.
+! set knows_allsafe_ecorp
+-> trace
+-- trace
+GIDEON: Here's the inbound trace. E Corp's edge servers. Find out who was knocking. And Elliot — sleep sometime this week. That's an order I know you'll ignore.
+! quest mq_rootkit 10 ; quest mq_hello done ; fame allsafe 2
+GIDEON: There's a coffee shop, Ron's, a few blocks from your place on the Lower East Side. Their server pinged E Corp's honeypot last night. Start there. It's always the small ones.
+-> END
+-- refuse
+GIDEON: Fine. Go home. But the anomaly doesn't sleep just because you do. Neither do I.
+-> END
+
+=== angela
+-- start
+? item.colby_archive>=1 & !flag.township_resolved -> colby
+? flag.knows_angela_plan -> plan
+? flag.angela_ecorp -> ecorp
+ANGELA: Elliot! You look like you slept in a server rack. Again. Allsafe's whole future is E Corp, and E Corp's having a bad night, so today matters. Are you with me?
+* "I'm with you. I'm always with you." -> warm ! trust angela 1
+* "Focus. E Corp logs first, feelings never." -> cold
+* [SPEECH 30] "Angela. Why do you really work here? It's not the money." -> probe | cold
+-- warm
+ANGELA: You fixed my laptop once with a forum post and pure spite. Never change. Okay — change a little. Sleep.
+-> hook
+-- cold
+ANGELA: You always do this. Go cold right when it's about to be real. Fine. Logs. Feelings later. There's always a later with you, and it never comes.
+-> hook
+-- probe
+ANGELA: ...Because E Corp took something from me. From both of us, actually. Washington Township. You were there. You were a kid, but you were there.
+! set knows_township_hint ; trust angela 1
+ANGELA: I'm going to make them pay for it. I don't know how yet. But I will. Don't you dare tell me it's impossible.
+-> hook
+-- hook
+ANGELA: Whatever it is you go off and do at night — I've got your back. Even when you go full ghost mode on me. Even then.
+-> END
+-- colby
+ELLIOT (V.O.): I have it. Colby's emails from 1993. E Corp knew about the leak. They ran the numbers on our parents' lives and decided the settlement was cheaper than the cleanup. It's all here, in his own words.
+ANGELA: Is that— Elliot. Is that what I think it is. After all these years. We could sue. We could put it in every paper. We could finally make them—
+* "Give it to the lawyers. Do it right. It'll take years but it'll be real." -> colby_legal
+* "Publish it. Tonight. Let everyone see what E Corp is." -> colby_leak
+* "Keep it. It's leverage. Worth more held than spent." -> colby_hold
+-- colby_legal
+ANGELA: The right way. The slow way. Our parents waited twenty years — I guess we can wait a few more. Thank you. For finding it. For handing it to me instead of using it. That's not like you, and I love that it happened anyway.
+! quest sq_colby done ; set township_resolved ; trust angela 3 ; fame locals 4 ; stab 5
+-> END
+-- colby_leak
+ANGELA: Do it. Burn them with it. I don't want careful. I want the whole world to know their names by morning.
+! quest sq_colby done ; set township_resolved ; set township_public ; infamy ecorp 5 ; fame fsociety 4 ; trust angela 2 ; stab 2
+-> END
+-- colby_hold
+ANGELA: ...You're keeping it. Of course you are. Everything's a weapon to you, even our dead parents. I understand it. I hate that I understand it. Just— don't lose it. Please.
+! quest sq_colby done ; set township_resolved ; set township_leverage ; trust angela -1
+-> END
+-- plan
+ANGELA: You went through my laptop. Don't lie, you've got that look. So you know. I'm going to work for them. Inside. Where the levers are.
+ELLIOT (V.O.): She wants to burn E Corp from the inside, one clean promotion at a time. I want to burn it from the outside, tonight. Same fire. Different fuse.
+* "It'll change you before you change it. It always does." -> plan_warn
+* "Then we're aiming at the same thing. Good." -> plan_ally ! trust angela 2 ; set angela_ally
+* [SPEECH 45] "Don't. Come with me instead. There's a faster way." -> plan_recruit | plan_warn
+-- plan_warn
+ANGELA: Maybe. But at least I'll be in the room. You blow things up from a basement, Elliot. I want to be at the table. Somebody has to be.
+-> END
+-- plan_ally
+ANGELA: Same thing. God. It's almost a relief to hear you say it. Don't blow me up by accident, okay? Warn me first.
+-> END
+-- plan_recruit
+ANGELA: A faster way. There's always a faster way with you, and it always has a body count. No. I'll do it my way. But... keep the door open. In case my way fails.
+! set angela_door_open
+-> END
+-- ecorp
+ANGELA: I did it. I took the job at E Corp. Don't look at me like that. I'm exactly where I need to be. So are you, probably. We just picked different doors into the same building.
+-> END
+
+=== allsafe_servers
+-- start
+ELLIOT (V.O.): The server room hums. Somewhere in this rack is CS30 — a honeypot, exposed on purpose. Somebody inside Allsafe left a door open for whoever comes knocking. It wasn't me. This time.
+* Trace the honeypot. -> trace
+* Leave it. -> END
+-- trace
+ELLIOT (V.O.): The logs point outward. Toward E Corp. Toward a name I don't have yet. Somebody's playing a longer game than I am. I hate that. I also respect it.
+! set knows_honeypot
+-> END

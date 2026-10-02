@@ -1,0 +1,307 @@
+### The Bronx: Candyman ("Sugar"), Mrs. Reyes, Lil' Tee, and Sgt. Brody at the 7th.
+
+=== reyes
+-- start
+? q.sq_candyman>=40 & !q.sq_candyman.done -> resolve
+? q.sq_candyman.done -> after
+? q.sq_candyman.started -> waiting
+> A woman in black kneels by a row of candles on the pavement, straightening a photograph of a boy in a graduation cap. She has been straightening it for a while.
+MRS. REYES: Sixteen. He was sixteen. He had a scholarship to Fordham for September. Engineering. He fixed my microwave with a butter knife.
+MRS. REYES: They sell it right there. In front of the building where he was born. And the police drive past with the windows up.
+* "Who's selling it?" -> who
+* "I'm sorry for your loss." -> sorry
+-- sorry
+MRS. REYES: Everybody's sorry. Sorry doesn't take the candy off the corner.
+* "Then tell me who's selling it." -> who
+* Leave her with the candles. -> END
+-- who
+MRS. REYES: Everybody knows and nobody says. They call him Candyman, like it's a joke. Little bags with a lollipop stamped on them. Ask the boy in the cap by the door. Tee. He was Danny's friend. He still is, somewhere in there.
+! quest sq_candyman 10
+ELLIOT (V.O.): A dealer, a dead kid, and a whole building that knows. I know how to find things people won't say. It's the only thing I've ever been good at.
+-> END
+-- waiting
+MRS. REYES: Did you find him? I light a candle for Danny every night. Tonight I'll light one for whoever you are.
+-> END
+-- resolve
+? flag.kingpin_dirty -> r_dirty
+? flag.kingpin -> r_clean
+? flag.candy_busted -> r_busted
+? flag.candy_framed -> r_gone
+? flag.candy_retired -> r_retired
+? flag.candy_dead -> r_dead
+-> r_burned
+-- r_busted
+MRS. REYES: They walked him out of that building in handcuffs this morning. The whole block came down to watch. Somebody clapped. I didn't. I just wanted him to see my face.
+MRS. REYES: Danny's still gone. But the next boy might get to be seventeen. Thank you. Whoever you are, thank you.
+! quest sq_candyman done ; fame harlem 6 ; fame locals 2 ; stab 5 ; xp 60
+-> END
+-- r_gone
+MRS. REYES: People say Candyman went away. Nobody says where. Nobody says it in a way that sounds like he's coming back. I hope wherever he went, it's cold.
+! quest sq_candyman done ; fame harlem 4 ; stab 1 ; xp 40
+-> END
+-- r_retired
+MRS. REYES: He's gone. Packed a car in the middle of the night, they say, and drove south with the radio loud. Nobody's selling on the corner this morning. The boys are just standing there, like they don't know what their hands are for.
+MRS. REYES: He gets to drive away. Danny doesn't get to drive anywhere. But the next boy might. I'll take that. God forgive me, I'll take it.
+! quest sq_candyman done ; fame harlem 4 ; stab 2 ; xp 45
+-> END
+-- r_dead
+MRS. REYES: They found him in his apartment. I thought I would feel something when I heard. I waited all morning to feel it. Danny's still gone.
+MRS. REYES: Go home. Don't come here with that look on your face again. I don't want to know what it cost you.
+! quest sq_candyman done ; fame harlem 3 ; stab -2 ; xp 40
+-> END
+-- r_burned
+MRS. REYES: The corners are empty. First time in a year. Somebody burned his kitchen over in Hunts Point, they say, and without it he's got nothing to sell and nobody to sell it for.
+MRS. REYES: Something else will come. Something always comes. But not tonight. Tonight I'm going to sleep.
+! quest sq_candyman done ; fame harlem 5 ; stab 4 ; xp 50
+-> END
+-- r_clean
+MRS. REYES: They tell me the corners are still working, but the kids have stopped dying. They tell me that's you. That you made him stop cutting it.
+MRS. REYES: I don't know what to call a man like you. I'm not going to thank you. I'm not going to curse you either. Go.
+! quest sq_candyman done ; fame harlem 1 ; stab -2 ; xp 30
+-> END
+-- r_dirty
+MRS. REYES: They're still selling it. The same candy. The same corner. And the boys say it's for you now.
+MRS. REYES: Get away from my son's candles.
+! quest sq_candyman done ; infamy harlem 8 ; stab -8
+-> END
+-- after
+? flag.kingpin_dirty -> after_dirty
+MRS. REYES: I still come down every night. The candles are for Danny. One of them is for the next boy, the one who gets to grow up. I think about him a lot.
+-> END
+-- after_dirty
+> She turns her back on you before you get close.
+-> END
+
+=== tee
+-- start
+? flag.kingpin -> boss
+? flag.candy_busted -> hot
+? flag.candy_resolved & !flag.tee_offered -> offer
+? flag.candy_invited -> invited
+? q.sq_candyman>=20 -> known
+TEE: You buying or you lost? You got the look of a dude who's lost AND buying.
+* "Who runs these corners?" -> who
+* [SPEECH 40] "Danny Reyes was your friend. His mother lights candles for him right there. Who cuts the product, Tee?" -> guilt | who
+* [if cash>=200] "Two hundred says you tell me who you work for." -> paid
+* "Nothing. Wrong corner." -> END
+-- who
+TEE: Ain't nobody run nothing. I'm out here for the air. Bronx air. Very healthy.
+ELLIOT (V.O.): He glances up at the seventh floor of Building C. Twice. Then a third time, like he's checking it's still there. Some people are born to keep secrets. Tee isn't one of them.
+! quest sq_candyman 10 ; quest sq_candyman 20
+-> END
+-- paid
+! cash -200
+TEE: ...You didn't hear it from me. Candyman. 7C, Building C. He's got the whole seventh floor holding. Don't go up there without somebody saying your name first.
+! quest sq_candyman 10 ; quest sq_candyman 20
+-> invite_offer
+-- guilt
+> Tee stops smiling. For a second he looks exactly as old as he is, which is not very.
+TEE: We played ball. Me and Danny. Every summer since third grade. He was going to Fordham, man. Actual college.
+TEE: Candyman. Seventh floor, Building C, 7C. He been cutting it with something since spring. I told him it's too strong, people dropping. He said kids is kids.
+! set tee_guilt ; quest sq_candyman 10 ; quest sq_candyman 20
+-> invite_offer
+-- invite_offer
+* "Get me in to see him." -> invite
+* "That's all I needed." -> END
+-- invite
+TEE: I'll tell the boys you're a buyer. Big buyer, college money. Walk in like you're bored. Don't make me a liar, 'cause lying to him is how people stop being people.
+! set candy_invited
+-> END
+-- invited
+TEE: You already in. Go up, 7C. Walk like you bored. Don't do nothing stupid in there.
+-> END
+-- known
+TEE: You again. Look, if you going up there, somebody gotta say your name first, or you coming back down the fast way.
+* [SPEECH 25] "So say it. Tell them I'm a buyer." -> invite | known_no
+* "I'll find my own way in." -> END
+-- known_no
+TEE: Nah. I don't know you like that.
+-> END
+-- hot
+TEE: Cops on every floor since they took Candyman out in cuffs. I'm done, man. My aunt's got a couch in Jersey. Don't look for me.
+-> END
+-- offer
+TEE: So it's true. Candyman's gone.
+TEE: Corners don't stop 'cause the man's gone. Somebody's stepping in by Friday. Could be the Fordham crew, could be worse. Could be you. You got that scary-quiet thing going.
+ELLIOT (V.O.): Nine corners. Money every morning. An army of kids who'd do what I say. I could make it clean. I could make it bigger. I could end it.
+* "I'll run it. Same product, same prices." -> dirty
+* "I'll run it. But the cut stops today. Clean product, or nothing." -> clean
+* [SPEECH 35] "Nobody runs it. Shut it down. All nine corners, tonight." -> shutdown | shutdown_fail
+* "Not my business." -> notmine
+-- dirty
+TEE: Same candy. ...Okay. Okay, boss. Envelope every morning, the usual spot.
+ELLIOT (V.O.): He doesn't look at the candles on the way past. Neither do I.
+! set kingpin ; set kingpin_dirty ; set tee_offered ; set candy_resolved ; quest sq_candyman 40 ; fame candyman 8 ; infamy harlem 4 ; stab -6
+-> END
+-- clean
+TEE: Clean. That's... less money, you know that. A lot less. ...Nobody's gonna die of it, though. Okay, boss. I can sell that. I can sleep behind that.
+! set kingpin ; set kingpin_clean ; set tee_offered ; set candy_resolved ; quest sq_candyman 40 ; fame candyman 5 ; stab -2
+-> END
+-- shutdown
+TEE: ...All of it? Man. Okay. Okay. I'll tell them the corner's closed. Some of them gonna go work for somebody else. Some of them gonna go home.
+TEE: I'm gonna go home. My aunt's got a couch in Jersey. Maybe I'll go to school or some shit. Danny would've laughed at that.
+! set candy_shutdown ; set tee_offered ; set candy_resolved ; quest sq_candyman 40 ; fame harlem 5 ; stab 5 ; xp 50
+-> END
+-- shutdown_fail
+TEE: Shut it down? Who's gonna pay these kids' rent, you? Somebody's running it by Friday. If it ain't you, it ain't gonna be somebody nice.
+* "I'll run it. Same product." -> dirty
+* "I'll run it clean." -> clean
+* "Then it's not my problem." -> notmine
+-- notmine
+TEE: Yeah. That's what everybody says about the Bronx.
+! set tee_offered
+-> END
+-- boss
+TEE: Boss. Corners are good. Envelope's at the usual spot every morning. Nobody's giving us trouble. Yet.
+* [if flag.kingpin_dirty] "Switch to clean product. The cut stops today." -> boss_clean
+* [if !flag.five_nine_done] "Forget fsociety, forget the revolution. This is the only system that works, and I'm on top of it." -> kingpin_end
+* "Shut it down. All of it." -> boss_shut
+* "Keep it quiet." -> END
+-- boss_clean
+TEE: For real? ...Okay. Nobody dies of it anymore. That's a good day, boss.
+! unset kingpin_dirty ; set kingpin_clean ; stab 3
+-> END
+-- boss_shut
+TEE: ...Okay. I'll tell them. I'm going to my aunt's. Thanks, I think.
+! unset kingpin ; unset kingpin_dirty ; unset kingpin_clean ; set candy_shutdown ; fame harlem 4 ; stab 4
+-> END
+-- kingpin_end
+ELLIOT (V.O.): Debt, money, power. fsociety wanted to delete the system. I found a smaller one I can actually hold in my hand. Nine corners, an envelope every morning, and nobody I have to ask.
+* "Tell the boys we're expanding." -> kingpin_go
+* "...No. Not yet." -> END
+-- kingpin_go
+! ending kingpin
+-> END
+
+=== candyman
+-- start
+? flag.candy_scared -> scared
+? flag.candy_talked -> again
+> Apartment 7C smells like bleach and money. A big man in a pink leather jacket and tinted glasses is watching a cooking show with the sound off. He doesn't look up.
+CANDYMAN: The college buyer. Tee said you'd look like a librarian. He undersold it.
+CANDYMAN: Sit. Word is you make computer problems go away for people. I got a computer problem.
+! set candy_talked ; quest sq_candyman 20
+-> talk
+-- again
+CANDYMAN: College. You thought about my little problem?
+-> talk
+-- scared
+> Candyman doesn't get up. Two of his crew are standing behind the couch now, and neither of them is watching the TV.
+CANDYMAN: You came back. I told you what happens if you came back.
+* [SPEECH 60] "Relax. Your ledger's still on its timer. I'm just here to talk about how you leave the Bronx." -> scared_talk | fight
+* "I'm leaving." -> END
+* "Then let's get it over with." -> fight
+-- scared_talk
+CANDYMAN: ...Talk fast.
+-> talk
+-- talk
+* "The candy on your corners is killing kids. Danny Reyes was sixteen." -> kids
+* "What are you cutting it with?" -> cut
+* "What's the computer problem?" -> offer
+* [if flag.candy_evidence] [SPEECH 70] "Here's the deal, Darnell. You retire. Tonight. Florida, Atlanta, anywhere. The corners are mine." -> retire | retire_fail
+* [if flag.candy_evidence] "I already went through your laptop, Darnell. The ledger. The pier guy. The skim." -> threat
+* "Just buying. What've you got?" -> buy
+* "I'll let you get back to your show." -> END
+-- kids
+CANDYMAN: Kids die in the Bronx, college. They died before me and they'll die after me. They got choices. I got overhead.
+ELLIOT (V.O.): He says it the way E Corp's lawyers say 'acceptable losses.' Different suit, same sentence.
+-> talk
+-- cut
+CANDYMAN: Trade secret. Makes one bag feel like three. Customers love it. Some of them love it a little too much, and that's a them problem.
+! quest sq_candyman 30
+-> talk
+-- offer
+CANDYMAN: My supplier's asking questions about short shipments. Accounting questions. Make the questions go away, computer-wise, and you eat with me for life.
+ELLIOT (V.O.): He's skimming from the people who sell to him. I'd bet my life I know who sells to him. Men who run shipping containers and keep a lot of clocks.
+! set candy_skims_da ; quest sq_candyman 30
+* "I'll think about it." -> END
+* "No." -> refused
+-- refused
+CANDYMAN: No. Okay. Then this was just a social visit. Tee'll walk you out.
+! set candy_refused
+-> END
+-- threat
+> He takes the glasses off. Without them he looks tired and very dangerous.
+CANDYMAN: Then you already know you ain't walking out of here.
+* [SPEECH 55] "If I don't walk out, your ledger goes to the pier guy on a timer. Every skim, every short shipment. Let me leave and you might see Christmas." -> standoff | fight
+* "Try it." -> fight
+-- standoff
+CANDYMAN: ...Get out. Get out of my house. And college? You ever come back up here, you come back ready.
+! set candy_scared
+-> END
+-- fight
+! hostile candyman ; hostile_faction candyman
+-> END
+-- retire
+> The cooking show goes to commercial. He watches the commercial all the way through.
+CANDYMAN: You know about the ledger. You know about the pier guy. You know what happens to me the day they find out, and you're telling me you're the one who decides when that day is.
+CANDYMAN: My mother's in Florida. She keeps asking. ...Tee's gonna want a boss. Don't let him be stupid about it.
+! set candy_retired ; set candy_fled ; set candy_resolved ; quest sq_candyman 30 ; quest sq_candyman 40 ; move candyman ; stab -1
+ELLIOT (V.O.): Just like that. The whole kingdom handed over because I said the right sentence in the right voice. That should feel like winning.
+-> END
+-- retire_fail
+CANDYMAN: You? My corners? Get this man out of my house before I stop being polite.
+! set candy_refused
+-> END
+-- buy
+CANDYMAN: Tee handles retail. But since you came all this way.
+! barter fence
+-> END
+
+=== candy_notebook
+-- start
+> A spiral notebook next to the remote. Phone numbers, sports bets, a grocery list. On the inside cover, in careful block letters: LAPTOP = lollipop4life
+ELLIOT (V.O.): Every criminal empire has one guy who writes the password on the notebook. Sometimes it's the emperor.
+! set candy_pw
+-> END
+
+=== candy_lab
+-- start
+? flag.kingpin -> kingpin
+> Three folding tables of scales and baggies. Drums of solvent. A hot plate. A bucket of white powder labelled in marker: CUT. DO NOT TOUCH W/O GLOVES.
+ELLIOT (V.O.): This is where the funerals come from. It looks like a high school chemistry class run by nobody.
+* Open the solvent drums and light it. Now. -> burn
+* [HACKING 35] Rig the hot plate and the gas line to go up an hour after you leave. -> rig | burn
+* [once] Take a sample of the cut for evidence. -> sample
+* Leave it alone. -> END
+-- sample
+ELLIOT (V.O.): A bag of the cut goes in my pocket, wrapped twice. Proof, if anyone ever wants proof. Nobody ever does, until it's their kid.
+! give candy_product 1 ; set took_candy_sample
+-> start
+-- burn
+> The solvent goes up with a sound like a held breath let out. You're already running.
+! set candy_lab_burned ; set candy_resolved ; set candy_fled ; quest sq_candyman 30 ; quest sq_candyman 40 ; wanted 60 ; hostile_faction candyman ; fame harlem 4 ; xp 50
+ELLIOT (V.O.): No kitchen, no product. No product, no Candyman. It isn't justice. It's arithmetic.
+-> END
+-- rig
+ELLIOT (V.O.): A timer made out of a phone alarm and a relay. Nobody will be standing here when it goes. I make sure of that; I check the schedule on the wall. Cook day is Tuesday. Today is not Tuesday.
+! set candy_lab_burned ; set candy_resolved ; set candy_fled ; quest sq_candyman 30 ; quest sq_candyman 40 ; fame harlem 5 ; xp 70
+-> END
+-- kingpin
+ELLIOT (V.O.): My kitchen now. The tables, the scales, the bucket marked CUT. Whatever goes out of this room goes out with my name on it, even if nobody ever says it.
+? flag.kingpin_dirty -> END
+ELLIOT (V.O.): The bucket's empty. Tee kept his word. Nobody's dying of it this week.
+-> END
+
+=== brody
+-- start
+SGT. BRODY: Seventh Precinct. If it's a noise complaint, get in line. The line is the whole city.
+* [if item.candy_ledger & !flag.candy_resolved] "This is Candyman's ledger. Nine corners in the Carver Houses, and what he's cutting it with." -> ledger
+* [if item.keller_drive & !flag.keller_resolved] "I need to report a man who's going after kids. The evidence is on this drive." -> keller
+* [if q.sq_lopez>=10 & !q.sq_lopez.done] "Where can I find Detective Lopez?" -> lopez
+* "Nothing. Sorry." -> END
+-- ledger
+> He flips through three pages and stops being bored.
+SGT. BRODY: Where'd you get this. No. Don't tell me. I don't want to know, and a defense lawyer definitely doesn't.
+SGT. BRODY: Narcotics has been trying to get a warrant on Darnell Pryce for a year. This is the warrant. This is the warrant with a bow on it.
+! take candy_ledger 1 ; set candy_busted ; set candy_resolved ; quest sq_candyman 30 ; quest sq_candyman 40 ; fame nypd 4 ; fame harlem 3 ; infamy candyman 5 ; move candyman ; xp 60
+-> END
+-- keller
+> He reads the first page twice. Then he sets the drive down very carefully, like it might go off.
+SGT. BRODY: Special Victims will have him in cuffs tonight. I'll walk it over myself.
+SGT. BRODY: Whoever you are. You did right bringing it here and not doing something stupid with it. Most people with a drive like this do something stupid.
+! take keller_drive 1 ; set keller_arrested ; set keller_resolved ; quest sq_badco 40 ; fame nypd 3 ; fame harlem 4 ; stab 5 ; move keller ; xp 80
+-> END
+-- lopez
+SGT. BRODY: Homicide's through the back. She's the one who looks like she hasn't slept since the Clinton administration. Don't touch her coffee.
+-> END

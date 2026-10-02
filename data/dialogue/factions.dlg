@@ -1,0 +1,248 @@
+### Faction leaders: Whiterose, DiPierro, Tyrell, Price, Cisco, and finale.
+
+=== whiterose
+-- start
+? q.mq_darkarmy.done -> allied
+> A figure in a red coat stands among a hundred ticking clocks, none of which agree. She does not turn around when you enter. She already knew.
+WHITEROSE: You have exactly three minutes. I know, because I keep all of them. Time is the only thing I refuse to waste, and the only thing everyone else throws away. Speak.
+* "fsociety wants the Dark Army's help to take down E Corp." -> pitch
+* "Why do you keep all these clocks?" -> clocks
+* [SPEECH 55] "You're not helping E Corp fall. You're steering where it lands." -> steer | pitch
+-- pitch
+WHITEROSE: Your little revolution. Yes. It is convenient for me, at this precise moment, that E Corp bleeds. Not for your reasons. For mine, which you could not fit inside your lifetime. But convenience is a kind of alliance. Prove you can move on schedule, and my army moves behind you.
+-> task
+-- clocks
+WHITEROSE: Because a project of sufficient scale requires that nothing arrive late. Not a shipment. Not a war. Not a death. Every clock is a promise I have made to the future. You would not understand. You are still living inside a single one of them.
+! trust robot 0
+-> task
+-- steer
+WHITEROSE: ...You are cleverer than they said. Yes. A collapse is only chaos to those who did not plan it. I am not stopping your fire. I am choosing the direction of the wind. Help me, and I let you believe it was your idea. It is a generous offer. Take it.
+! trust robot 1 ; set knows_whiterose_game
+-> task
+-- task
+WHITEROSE: Cisco handles the details. Do your part — Steel Mountain, the tower — on time, and the Dark Army is yours for one night. Be late, and you will never see any of us again. That is not a threat. It is a timetable.
+! quest mq_darkarmy 40 ; set ally_secured ; fame darkarmy 5
+-> END
+-- allied
+WHITEROSE: You are on schedule. Good. When the night comes, my people will be where they need to be. See that you are where you need to be. Punctuality, Mr. Alderson, is the only virtue that survives contact with reality.
+-> END
+
+=== cisco
+-- start
+? q.mq_darkarmy>=30 -> go_in
+? q.mq_darkarmy>=20 -> waiting
+CISCO: You're fsociety's guy. Whiterose doesn't meet people who haven't earned it, so don't waste the audience. You want the Dark Army? Show us fsociety isn't just kids with masks. Hit Steel Mountain first. Then we'll talk like adults.
+* "Understood. Steel Mountain first." -> ok ! quest mq_darkarmy 20
+* "We don't need you." -> proud
+-- ok
+CISCO: Smart. There's a back way in — the tea house, the room behind the clocks. Come back when the mountain's cold ash. She'll see you then.
+-> END
+-- waiting
+CISCO: Mountain's still cold. Until it isn't, we have nothing to talk about. Tick tock.
+-> END
+-- go_in
+CISCO: Saw the news. 'HVAC failure at secure storage facility.' Cute. She's waiting in the back. Don't be late; she hates late more than she hates you.
+-> END
+-- proud
+CISCO: Everybody needs the Dark Army. That's the whole point of the Dark Army. Come back when you figure that out.
+-> END
+
+=== dipierro
+-- start
+? item.keller_drive & !flag.keller_resolved -> keller_offer
+-> main
+-- keller_offer
+DIPIERRO: You're carrying something like it weighs a hundred pounds. Put it down, Alderson.
+* "This isn't about fsociety. A youth coach in Astoria, and kids. It's all on this drive." -> keller_give
+* "Something else." -> main
+-- keller_give
+> She plugs it into a laptop. She reads for a minute. Then she closes the laptop very gently and doesn't say anything for a long moment.
+DIPIERRO: I'm walking this to Crimes Against Children myself. Tonight. He'll be in federal custody before he finishes his dinner.
+DIPIERRO: I'm not going to ask how you got this. And for the record, this doesn't buy you anything with me. ...But it should. God help me, it should.
+! take keller_drive 1 ; set keller_arrested ; set keller_resolved ; quest sq_badco 40 ; fame fbi 4 ; fame harlem 4 ; stab 5 ; move keller ; xp 80
+-> END
+-- main
+? q.mq_fbi.done -> after
+? q.mq_fbi>=20 -> deal
+DIPIERRO: You know what the worst part of this job is? It's not the crime. It's how boring the criminals turn out to be. Scared boys who found a keyboard. You're smarter than that, though. I can tell. Which makes you more interesting and more dangerous.
+ELLIOT (V.O.): She's fishing. She doesn't have my name yet — just a shape where a suspect should be. If I say the wrong thing, I hand her the outline.
+* "I don't know what you're talking about." -> deny
+* [SPEECH 40] "If I did know something, what would it be worth?" -> offer | deny
+* "You're closer than fsociety thinks. I'll say that much." -> tip
+* [if q.mq_fsociety>=20 & !flag.five_nine_done] "Stop fishing, agent. It's me. I'm the one you're looking for." -> confess
+-- deny
+DIPIERRO: Sure. Nobody ever knows anything. That's what makes the ones who do so valuable. Door's open, if you get tired of not knowing things.
+! set fbi_contact
+-> END
+-- offer
+DIPIERRO: Worth? Immunity, if it's real. A future, if you want one. The people you're running with — they don't get out clean. They can't. But a person who helps me? That person can walk into daylight and stay there.
+! quest mq_fbi 10 ; quest mq_fbi 20 ; set fbi_open ; set fbi_invited
+-> deal
+-- tip
+DIPIERRO: ...That's either a threat or a gift. With you I genuinely can't tell. I'll take it as a gift. And I'll remember who gave it.
+! quest mq_fbi 10 ; quest mq_fbi 20 ; fame fbi 2
+DIPIERRO: Come back when you've decided which side of the glass you want to be on. I'll have a chair ready either way.
+-> END
+-- deal
+DIPIERRO: So. You've seen enough now to know I'm right. fsociety burns. Everyone in that arcade goes down. Give me the plan — real details, real timing — and you're not on the list when it happens. Or don't, and take your chances with the others.
+* [require q.mq_steel.done] "I'll feed you the plan. But on my schedule." -> feed
+* [if !q.mq_steel.done] "What would you need from me, exactly?" -> need
+* "I'm not a rat. Find your own case." -> refuse
+* [once] [SPEECH 60] "Or you look the other way for one night, and I hand you something bigger than fsociety after." -> flip | flip_no
+-- feed
+DIPIERRO: Good boy. Careful boy. This buys you the daylight. Don't spend it being stupid.
+! set fbi_informant ; set ally_secured ; quest mq_fbi 30 ; fame fbi 6 ; infamy fsociety 4 ; stab -3
+DIPIERRO: When they go for it, the Bureau will be looking at the wrong screens. And when you want them gone before that, you come tell me, and they're gone.
+-> END
+-- need
+DIPIERRO: Proof you're inside. Not rumors, not a mask on the subway. Something real that fsociety did because you were there. Word is they're interested in a storage facility upstate. When that happens, come see me, and bring the details.
+-> END
+-- after
+DIPIERRO: Mr. Alderson. You have that look again. The one people get right before they say the thing they came here to say.
+* [if flag.fbi_informant & !flag.five_nine_done] "Take them. Tonight. The arcade, all of them." -> raid
+* [if q.mq_fsociety>=20 & !flag.five_nine_done] "It was me. All of it. I'm fsociety." -> confess
+* "Just making sure you're still watching the wrong screens." -> END
+-- raid
+DIPIERRO: You're sure. Once the vans roll there's no calling them back. Your friends will know it was you. Maybe not tonight. But they'll know.
+* "Do it." -> raid_go
+* "...Not yet." -> END
+-- raid_go
+ELLIOT (V.O.): She picks up the phone and says one word into it. Somewhere in Brooklyn, engines start. I keep thinking I'll feel something. I don't. That's the part that scares me.
+! set fsociety_raided ; ending informant
+-> END
+-- confess
+DIPIERRO: ...Say that again. Slowly. For the recording.
+* Say it again. All of it. -> confess_go
+* "I didn't say anything." -> took_back
+-- took_back
+DIPIERRO: Sure you didn't. The recording will be very disappointed. So am I, a little.
+-> END
+-- confess_go
+ELLIOT (V.O.): I say it again. Then I keep going: the honeypot, Ron's server, the arcade, the man in the jacket who isn't there. She doesn't interrupt once. When I'm done she turns off the recorder and just looks at me, for a long time, like she's sorry.
+! ending confession
+-> END
+-- refuse
+DIPIERRO: Loyalty. In this city. Almost makes me want to let you get away with it. Almost. I'll be seeing you, whether you like it or not.
+! quest mq_fbi 30 ; infamy fbi 2
+-> END
+-- flip_no
+DIPIERRO: Bigger. Everybody in this building has heard "bigger" from somebody who wanted to walk out the front door. No. Pick a real answer.
+-> deal
+-- flip
+DIPIERRO: Something bigger than fsociety. You mean whoever's really pulling the strings. The ones your friends don't even know they're working for. ...God help me, I'm listening. One night. And you'd better deliver.
+! set fbi_bigger ; set ally_secured ; quest mq_fbi 30 ; fame fbi 4
+-> END
+
+=== tyrell
+-- start
+? flag.met_tyrell_invite -> penthouse
+TYRELL: Elliot Alderson. The Allsafe engineer. I have read your file. There is almost nothing in it, which is itself the most interesting file I have read in years. A man who leaves no trace. I find that... beautiful.
+* "What do you want, Mr. Wellick?" -> want
+* [SPEECH 45] "You left the honeypot open. You're looking for fsociety. You want in." -> expose | want
+-- want
+TYRELL: To be CTO of the biggest company on Earth. And then more. I know something is coming for E Corp — I can feel it, the way you feel weather. I would rather be the storm than the roof. Bring me to the people behind it, and I will open every door you cannot pick.
+! set knows_tyrell_wants_in ; quest mq_ecorp 20
+-> want2
+-- expose
+TYRELL: ...Yes. Precisely. You are the first person to say it out loud. I do not want to stop the fire, Elliot. I want to be standing next to it when it is the only warm thing left. Take me to them.
+! trust tyrell 3 ; set tyrell_ally ; set knows_tyrell_wants_in ; quest mq_ecorp 20
+-> want2
+-- want2
+TYRELL: Come to my home. My wife will pretend not to listen and hear everything. We will talk properly. And you will decide whether the last door into E Corp opens because I chose to, or because you forced it.
+! set met_tyrell_invite ; set ecorp_invited
+-> END
+-- penthouse
+? flag.ecorp_door_tyrell -> allied
+? flag.tyrell_scorned -> scorned
+TYRELL: You came. Good. Then let us be honest, the way ambitious men are honest — briefly, and only about what we want. Give fsociety the keys to E Corp, and I stand at the center of the new world. Refuse me, and I become... unpredictable.
+* "Fine. You get the tower open. We use it. You get your storm." -> yes
+* "I'll take the keys myself. You get nothing." -> no
+* [require trust.tyrell>=3] "There's a table above E Corp. I can get you a seat. Help me, and it's yours." -> deus
+* [if flag.joined_fsociety & !flag.five_nine_done] "Forget the door. I'll give you fsociety itself. Names, the arcade, the plan. You walk it into the boardroom." -> sellout
+-- yes
+TYRELL: Then we are partners. It is the closest thing to love I am capable of. The network is yours. Do not waste what I am handing you.
+! set ecorp_door_tyrell ; quest mq_ecorp 30 ; quest mq_ecorp done ; trust tyrell 2 ; fame ecorp 3
+-> END
+-- no
+TYRELL: Then I will simply have to make myself necessary another way. I always do. Go. Take your keys. But remember who could have been your friend.
+! infamy ecorp 2 ; set tyrell_scorned ; quest mq_ecorp 30
+-> END
+-- deus
+TYRELL: A seat at the real table. You have no idea what you are offering, which is exactly why I believe you can deliver it. Yes. A thousand times yes. Whatever you need. I am yours.
+! set tyrell_deus ; set ecorp_door_tyrell ; quest mq_ecorp 30 ; quest mq_ecorp done ; trust tyrell 3
+-> END
+-- scorned
+TYRELL: You. You had the storm in your hands and you gave it back to me like a used napkin. I do not forget, Elliot. I simply wait. Leave my home.
+* [SPEECH 60] "I was wrong. The door's still worth opening. For both of us." -> yes | out
+* Leave. -> out
+-- out
+TYRELL: Goodbye, Elliot. For now.
+-> END
+-- allied
+TYRELL: My friend. The door is open. When the night comes, I will be inside, where the levers are. Do not be late. I have waited my whole life for a storm this size.
+* [if flag.joined_fsociety & !flag.five_nine_done] "Change of plans. I'll give you fsociety. All of it. You walk it into the boardroom." -> sellout
+* "Until then." -> END
+-- sellout
+> For a moment Tyrell doesn't move at all. Then he smiles, very slowly, the way a man smiles at a gift he has been imagining for years.
+TYRELL: fsociety. The ghosts in the machine. Delivered to the board by the man who is about to become their CTO. Elliot. Do you understand what you are offering me?
+ELLIOT (V.O.): I do. Darlene's face. Mobley's hands on his soldering iron. Trenton asking us to remember the number. All of it, handed to a man who thinks of people as furniture.
+* "Everything. Take it. And give me the office next to yours." -> sellout_go
+* "...No. Forget I said that." -> END
+-- sellout_go
+TYRELL: Done. And Elliot, I will never forget this. In the only way that matters in this building, you are now my family.
+! set sold_out_fsociety ; trust tyrell 5 ; ending company
+-> END
+
+=== price
+-- start
+PRICE: Sit. You must be the young man who has been causing my company such interesting problems. I am Phillip Price. I run the thing you are trying to break. I asked you here because breaking it is, frankly, an option I am willing to discuss.
+ELLIOT (V.O.): This is the top. Higher than Tyrell, higher than the tower. The man who decides which crises are useful. He's not afraid of me. That's the scariest thing about him.
+* "You want E Corp to fall?" -> fall
+* "Why would you help destroy your own company?" -> why
+-- fall
+PRICE: I want E Corp to become whatever comes next, on terms I choose. A controlled demolition is still, technically, a demolition. Your revolution can be the thing that saves us, if it happens in the right room at the right time. My room. My time.
+! set knows_price_game
+-> offer
+-- why
+PRICE: Because power is not a company, Mr. Alderson. Power is being the one who is still standing when the companies change their names. Let your friends push. I will decide where it all lands, and I will land on top. I always do. It is very boring, but there it is.
+-> offer
+-- offer
+PRICE: Consider this the only warning you will get that sounds like an invitation. There is a table above all of this. You have been invited. Whether that is a mercy or a leash — well. That is the only interesting question left.
+-> END
+
+=== deus_group
+-- start
+> A round table. A handful of people who own more than most countries. Whiterose. Price. Faces you half-recognize from the backs of magazines. They have been waiting for you, and they are not impatient, because they own time itself.
+PRICE: The wunderkind. Sit. You have accomplished something rare — you made us look up from the table. Now. The world you were about to break belongs to us. The question is whether you break it for us, or in spite of us.
+ELLIOT (V.O.): This is the real ending. Not fsociety's basement. This room. Where the outcome was decided before I bought my first bobby pin. Unless it wasn't. Unless I'm the variable they didn't price in.
+* Hear their offer. -> offer
+-- offer
+WHITEROSE: We will let your Five/Nine happen. It suits a timetable you cannot see. In exchange, you step aside afterward and let us shape the rubble. You will be rich. You will be safe. You will be irrelevant, which is the only true safety there is.
+* [require flag.darlene_bond] "No. I've got people. And a plan you didn't write." -> defy
+* [once] [SPEECH 70] "You need me to think it was my idea. That means I have a choice. So do all of us." -> overlap | offer_fail
+* "No. Whatever happens next, it happens without you." -> free
+* "Yes. Deal me in." -> yes
+-- offer_fail
+PRICE: A charming theory. Theories don't sit at this table, young man. People do. Yes or no.
+-> offer
+-- free
+WHITEROSE: Then you have chosen to be a variable instead of a partner. Variables are removed, eventually. It is never personal. It is only arithmetic.
+WHITEROSE: Go. Finish your little revolution. The clock is very patient, and so am I.
+ELLIOT (V.O.): I stand up. Nobody stops me. That's the scariest part: they don't need to.
+! set ending_path=free ; quest mq_finale done
+-> finale_launch
+-- yes
+PRICE: Then you are wiser than your friends, and poorer in soul, and much, much richer in every other way. Welcome to the table. Try not to enjoy it. The ones who enjoy it don't last.
+! set ending_path=deus ; quest mq_finale done
+-> finale_launch
+-- defy
+WHITEROSE: Sentiment. The one variable I can never fully model. Very well. Break it your way, then. We will simply be here, at the table, when your way ends. We always are.
+! set ending_path=defy ; quest mq_finale done
+-> finale_launch
+-- overlap
+WHITEROSE: ...He sees it. Price. He sees the seam. That is either the most dangerous thing that has happened at this table in a decade, or the most useful. We shall find out together, which is a sentence I have not said in a very long time.
+! set ending_path=overlap ; set overlap_unlocked ; quest mq_finale done
+-> finale_launch
+-- finale_launch
+ELLIOT (V.O.): The table has spoken. But my hands are on the keys, not theirs. The last choice is mine.
+-> finale_choose

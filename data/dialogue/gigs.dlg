@@ -1,0 +1,257 @@
+### Side gigs and contacts.
+
+=== gig_cat
+-- start
+? q.sq_cat.done -> after
+? item.flipper_leash>=1 -> found
+? q.sq_cat>=10 -> waiting
+WOMAN: You look like someone who notices things. My dog — Flipper — she slipped her leash by the water three days ago. Nobody's seen her. This city eats small things. Please.
+* "I'll look for her." -> accept ! quest sq_cat 10
+* "Sorry. Not my kind of problem." -> decline
+-- accept
+WOMAN: Thank you. She's brown, she answers to her name, and she trusts people she absolutely shouldn't. Like her owner. Try the pier — she loved the pier.
+-> END
+-- decline
+WOMAN: No. Of course not. Nobody's problem is anybody's problem out here.
+-> END
+-- waiting
+WOMAN: Anything? The pier at Coney Island. She loved the end of that pier. She'd sit there and judge the seagulls for hours.
+-> END
+-- found
+WOMAN: You found her. You actually — Flipper! Oh, you awful, wonderful animal. Here. Take this. It's not much. It's everything I had on me, which is the same thing, isn't it.
+! quest sq_cat 10 ; quest sq_cat done ; cash 60 ; fame locals 4 ; trust krista 0 ; stab 4 ; take flipper_leash 1
+WOMAN: You gave me back the only thing that was still glad to see me. I won't forget it.
+-> END
+-- after
+> Flipper is asleep across the woman's feet, one ear inside out, snoring like a much larger dog.
+WOMAN: Look at her. Three days in this city on her own and she came back without a scratch. You came back looking worse every time I see you. Eat something.
+-> END
+
+=== gig_courier
+-- start
+? q.sq_courier>=10 -> back
+DISPATCH: You got a face nobody remembers. That's a resume, around here. I need a package moved. No questions, no scanner, no name. Cash on return. You in?
+* "I'm in. Where's it going?" -> accept ! quest sq_courier 10
+* [SPEECH 30] "What's in it?" -> ask | accept
+* "Not today." -> END
+-- ask
+DISPATCH: In it? A better world, probably. Or a worse one. I don't open them and neither should you. That's the whole gig — the not-looking.
+-> accept
+-- accept
+DISPATCH: Chinatown. The tea house on Canal. Leave it with the gardener out front. Come back and I'll make it worth the walk.
+! give rose_package 1
+-> END
+-- back
+? q.sq_courier.done -> paid
+? item.rose_package>=1 -> nope
+? !q.sq_courier>=20 -> nope
+DISPATCH: Delivered. Good. You didn't peek, you didn't get caught, you didn't ask twice. That's rarer than you'd think. Here.
+! quest sq_courier done ; cash 80 ; fame darkarmy 2 ; set knows_rose_route
+DISPATCH: The people at that tea house — they run more of this city than the mayor does. You just did them a favor. Favors like that echo.
+-> END
+-- nope
+DISPATCH: You've still got the package, genius. Chinatown. Tea house. The gardener. Go.
+-> END
+-- paid
+DISPATCH: You again. You got paid, the tea house got its box, the city kept turning. That's a perfect transaction. Don't ruin it with conversation.
+-> END
+
+=== gig_busker
+-- start
+? q.sq_busker>=10 -> back
+BUSKER: Hey. You. You look like you know your way around a signal. I made a mixtape — a real one, says something real — and I can't get it past the plaza. The pirate relay up in the Heights could carry it citywide, but it's locked down. Fix that and half this city hears something true for once.
+* "I'll get your signal out." -> accept ! quest sq_busker 10 ; give cd_mixtape 1
+* "Music won't fix the city." -> decline
+-- accept
+BUSKER: The relay building. The Heights. Roof access. Get my track onto the pirate signal and let it fly. People are starving for something that isn't an ad.
+BUSKER: Here, my cousin supers that building. Roof key. And the relay's admin password is on a sticker under the keyboard, because of course it is: 'freebird92'. Or do your wizard thing, whatever's faster.
+! give key_roof 1 ; set relay_password
+-> END
+-- decline
+BUSKER: Everybody's a critic. Even the ghosts.
+-> END
+-- back
+? q.sq_busker.done -> done
+? !flag.pirate_radio -> notyet
+BUSKER: Did you— is that— that's MY track, on every speaker on the block! You beautiful stranger. Here. Take it. And keep the frequency. The Pirate Signal. Ninety-two point one. Tell your friends.
+! quest sq_busker done ; cash 40 ; fame fsociety 3 ; set pirate_radio_known
+-> done
+-- notyet
+BUSKER: Still just me and a guitar out here. The relay building, up in the Heights. Roof key's in your pocket, password's 'freebird92'. Go make some noise.
+-> END
+-- done
+BUSKER: Ninety-two point one. Loudest thing in the city that nobody paid for. That's yours now.
+-> END
+
+=== gig_super
+-- start
+? q.sq_super>=20 -> fixed
+? q.sq_super>=10 -> waiting
+SUPER: You in 4D, right? Half the building's got no heat and E Corp bought the boiler company that services the boiler company. You're clever. Fix my heat and I'll owe you the kind of favor a super owes — which is doors, kid. I open doors.
+* "I'll take a look at the boiler." -> accept ! quest sq_super 10
+* "Call a plumber." -> decline
+-- accept
+SUPER: Back of the hallway, by the stairs. Old controller, older wiring. If you can talk to a coffee shop's server you can talk to a boiler. Bring the building back and I'll never lock a door on you again.
+! set super_gig
+-> END
+-- decline
+SUPER: A plumber. Sure. And a unicorn. Same odds around here.
+-> END
+-- waiting
+SUPER: Boiler controller's at the back of the ground-floor hallway, by the stairs. Gray box, angry little light. Talk nice to it.
+-> END
+-- fixed
+? q.sq_super.done -> thanks
+SUPER: Radiators are clanking like it's 1974. Mrs. Ortiz in 2B cried. I'm not crying, I got something in my eye. Here. And from now on, any door in this building, you just ask.
+! quest sq_super done ; cash 50 ; give bobby_pin 5 ; fame locals 4 ; stab 2
+-> END
+-- thanks
+SUPER: Heat's holding. You're alright, 4D. Weird, but alright.
+-> END
+
+=== faction_fbi
+-- start
+AGENT: You don't know me. Good. Keep it that way in public. Agent DiPierro's people have been watching the arcade for weeks. If you're smart — and your file says you might be — there's a version of this where you walk away clean. Come see her at the Federal Building when you're ready to be smart.
+! quest mq_fbi 10 ; set fbi_contact
+-> END
+
+=== faction_rose
+-- start
+? item.rose_package>=1 -> package
+? q.mq_steel>=50 & !q.mq_darkarmy>=10 -> recruit
+GARDENER: The roses are not for sale. Neither am I. Good evening.
+-> END
+-- package
+> A man in a cap is trimming a rosebush that doesn't need trimming. He holds out a hand without looking at you, like he knew the exact minute you'd arrive.
+GARDENER: Red paper. Good. You didn't open it. People who open these packages stop getting packages, and then they stop getting anything at all.
+! take rose_package 1 ; quest sq_courier 20 ; fame darkarmy 1
+GARDENER: Tell Dispatch the roses are blooming on time. He'll understand. You don't need to.
+? q.mq_steel>=50 & !q.mq_darkarmy>=10 -> recruit
+-> END
+-- recruit
+GARDENER: You've been busy. The mountain, the little revolution. She noticed. She notices everything, on schedule. If fsociety wants the Dark Army standing behind it, come to the tea house on Canal. Bring your punctuality. She has no use for anything else.
+! quest mq_darkarmy 10
+-> END
+
+=== preacher
+-- start
+PREACHER: BROTHER! Do you know your number? Not your name — your NUMBER. The one E Corp assigned you the day you were born owing them your first breath! The end is coming! And the end, my friend, is a LEDGER, and it will be BALANCED!
+* "You're not entirely wrong." -> agree
+* "You're insane." -> insane
+* [SPEECH 25] "What if someone erased the ledger?" -> erase | insane
+-- agree
+PREACHER: Not wrong! The sanest words a stranger's said to me all week! Here — a blessing, and a warning: the ones who free you will want something too. There's no jubilee without a priest, and every priest wants tithe.
+! stab 3
+-> END
+-- insane
+PREACHER: INSANE is just SANE that read the terms and conditions! Walk on, unbeliever! Your interest is compounding!
+-> END
+-- erase
+PREACHER: ...Erase it? You'd need the hand of God. Or a very tired young man with a laptop. Ha! If you ever meet him — tell him the preacher on the corner said DO IT. And then RUN.
+! fame fsociety 1
+-> END
+
+=== memorial
+-- start
+ELLIOT (V.O.): Washington Township. 1993. A chemical leak the company swore never happened, on a monument the company quietly paid for. My father worked there. He got sick. He died small and slow while the men who signed the memos got bonuses.
+> Angela's mother is on this list too. Two kids, one town, one company, one grave-shaped hole where the truth should be.
+* Read every name. -> names
+* Look away. -> END
+-- names
+ELLIOT (V.O.): I read all of them. It's the least anyone's done for these people in twenty years. Somewhere in the tower, there's a file that says E Corp knew. I'm going to find it. And then everyone's going to read these names.
+! set read_memorial ; stab -2 ; set knows_township_hint ; quest sq_colby 10
+-> END
+
+=== steel_climate
+-- start
+? flag.steel_rigged -> done
+ELLIOT (V.O.): The climate control unit. Mobley's Raspberry Pi in my pocket like a live coal. Plug it in, and every analog backup in this mountain slow-cooks into garbage. No backups, no way to restore what fsociety's about to erase.
+* [HACKING 45] Rig the Pi to the controller. -> rig | rig_hack
+* Plug it in the crude way and run. -> crude
+* Not yet. -> END
+-- rig
+ELLIOT (V.O.): Clean. The Pi handshakes with the HVAC system and starts lying to it beautifully. The temperature will climb over hours. By the time anyone notices, the tapes will be modern art.
+! set steel_rigged ; quest mq_steel 40 ; quest mq_steel 50 ; xp 100 ; achieve ghost
+-> out
+-- rig_hack
+ELLIOT (V.O.): I fumble the config. The controller throws an alert. I kill it, but security's going to find this before the tapes finish. Loud, but done.
+! set steel_rigged ; quest mq_steel 40 ; quest mq_steel 50 ; xp 60 ; wanted 30
+-> out
+-- crude
+ELLIOT (V.O.): No finesse. I jam it in, spoof the setpoint to max, and walk fast. It'll work. It'll also scream. Alarms in three, two—
+! set steel_rigged ; quest mq_steel 40 ; quest mq_steel 50 ; xp 60 ; wanted 45
+-> out
+-- out
+ELLIOT (V.O.): It's cooking. Steel Mountain is going to burn itself down from the inside, quietly, for hours. One piece down. Get out before it does.
+-> END
+-- done
+ELLIOT (V.O.): It's already rigged. The mountain's dying slow. Nothing left to do here but leave.
+-> END
+
+=== leon
+-- start
+? companion.leon -> comp_leon
+? flag.met_leon -> again
+LEON: Yo. My man. You look like you're carrying the whole world's problems in that hoodie. Let me tell you something for free, 'cause I'm a giver. You gotta EAT, man. You gotta sit down, order the number four, and just... be a person for twenty minutes. The revolution can wait for the number four.
+* "Who are you?" -> who
+* "I don't have twenty minutes." -> busy
+* [SPEECH 30] "You talk like a guy who's watching me for someone." -> made | who
+-- who
+LEON: Me? I'm just a guy. A guy with opinions about television and the human condition, mostly in that order. Call me Leon. I'm around. Coney's my spot. Stop by. Eat something, for real.
+! set met_leon ; trust leon 1
+-> END
+-- busy
+LEON: Everybody's busy. Busy's just a word for scared with a calendar. But okay. You do you. I'll be here. Number four's always here.
+! set met_leon
+-> END
+-- made
+LEON: ...Ha. That's a heavy thing to say to a man eating a sandwich. Maybe I am. Maybe I'm just a philosopher with good timing. In this city, my man, what's the difference? Eat. We'll figure it out.
+! set leon_watcher ; set met_leon ; trust leon 1
+-> END
+-- again
+LEON: My man returns. Sit. You look worse. That's not a criticism, it's a diagnosis. Whatever you're about to do — and I know it's something — do it fed.
+? stab<40 & !flag.leon_fed_today -> heal
+-> ask
+-- ask
+* [if !flag.left_leon] "Come with me, Leon. I could use somebody who notices things." -> comp_leon.recruit
+* "Just saying hi." -> END
+-- heal
+LEON: Here. On me. Eat. The static in your head gets quieter on a full stomach. Trust me, I've studied this. Extensively.
+! heal ; stab 6 ; give sandwich 1 ; set leon_fed_today
+-> ask
+
+=== lenny
+-- start
+? flag.knows_lenny -> know
+LENNY: Do I know you? You've got a look. Like you're reading my receipts. I'm just a guy having a drink, friend. Krista's guy, actually — you know Krista? Sweet woman. Way too trusting.
+* "How do you know Krista?" -> krista
+* "You're lying to her." -> accuse
+* "Nothing. Wrong guy." -> END
+-- krista
+LENNY: We're seeing each other. It's casual. Very casual. On my end, anyway. Don't tell her I said that. Actually, don't tell her anything. We just met, right?
+! quest sq_krista 10 ; quest sq_krista 20 ; set knows_lenny
+-> END
+-- accuse
+LENNY: Whoa. Whoa. I don't know what you think you know, but you don't know anything. And a guy who runs his mouth in a bar — bad things happen to guys like that. Ask around.
+! set lenny_warned ; set knows_lenny ; quest sq_krista 10 ; quest sq_krista 20
+-> END
+-- know
+? flag.lenny_confess -> confessed
+? flag.has_lenny_phone -> confront
+LENNY: You again. The reader. What do you want, man? I'm just trying to have a normal thing with a nice woman for once in my life.
+-> END
+-- confront
+ELLIOT (V.O.): His phone told me everything. A wife in Jersey. Two other 'casual' things. A trail of women he treats like browser tabs. Krista deserves to know. Or she deserves to be spared. I've never been sure which mercy is real.
+* "I know about your wife. Stay away from Krista, or she finds out." -> threaten
+* "You're going to tell her the truth yourself. Tonight." -> truth
+-- threaten
+LENNY: ...Okay. Okay. I'm gone. You never saw me. She never met me. Everybody wins, especially me, which is how I like it.
+! set lenny_gone ; quest sq_krista 30
+-> END
+-- truth
+LENNY: You want me to— fine. Fine! I'll tell her. God. You people and your honesty like it's a gift and not a grenade.
+! set lenny_confess ; quest sq_krista 30
+-> END
+-- confessed
+LENNY: I told her. All of it. She threw a drink at me, which, fair. Are we done? Tell me we're done.
+-> END

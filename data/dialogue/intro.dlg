@@ -1,0 +1,69 @@
+### Intro: Krista's office (character creation frame) + apartment.
+
+=== intro_session
+-- start
+ELLIOT (V.O.): Hello, friend. Hello, friend? That's lame. Maybe I should give you a name. But that's a slippery slope. You're only in my head. We have to remember that.
+KRISTA: Elliot. You're here. You actually came this week.
+ELLIOT: I said I would.
+KRISTA: You say a lot of things. Some of them are even true. How do you feel today?
+-- feel
+ELLIOT (V.O.): She wants a number. A weather report for the inside of my skull. Pick one for me. I don't trust my own reading.
+* Cold. Functional. Nothing gets in. -> feel_cold ! set tone=cold
+* Angry. At all of it. At all of them. -> feel_angry ! set tone=angry ; stab -5
+* Tired. The kind sleep doesn't fix. -> feel_numb ! set tone=numb
+-- feel_cold
+KRISTA: Cold. Okay. Cold is a wall. Walls keep things out. They also keep you in.
+-> intake_prompt
+-- feel_angry
+KRISTA: Anger's honest, at least. Anger means you still think it could be different.
+-> intake_prompt
+-- feel_numb
+KRISTA: Tired. That one worries me most. Tired people stop dodging the cars.
+-> intake_prompt
+-- intake_prompt
+KRISTA: Before we go further — I want you to fill this out. Properly, this time. Not the version you think I want to see. What you're good at. What I should know.
+ELLIOT (V.O.): A form. She thinks a form can hold me. Fine. Let's give her something to file.
+-> END
+
+=== intro_after
+-- start
+KRISTA: Thank you. That's... more than you usually give me.
+ELLIOT: Don't get used to it.
+KRISTA: I never do. Elliot — whatever you're doing at night. Whatever it is that makes you look like you haven't slept since Tuesday. I can't help you if you don't let me see it.
+ELLIOT (V.O.): I could tell her. About the files. The people I watch. The debt I want to burn down. I could hand it all over, right here, and let someone else hold it for fifty minutes.
+* "Maybe next time." -> soft ! trust krista 1
+* "There's nothing to see." -> deflect
+* [SPEECH 30] "If I told you, you'd have to report me. So don't ask." -> honest | deflect
+-- soft
+KRISTA: Next time. You always say next time. One day I'm going to hold you to it.
+-> out
+-- deflect
+KRISTA: Nothing to see. Right. You're the most nothing-to-see man I've ever met, Elliot.
+-> out
+-- honest
+KRISTA: ...That's the most honest thing you've ever said in this room. And I'm not going to ask what it means. God help me.
+! trust krista 2 ; set krista_suspects
+-> out
+-- out
+KRISTA: Go home. Feed your fish. Try to sleep. That's your homework. I know you won't do it.
+ELLIOT (V.O.): She's right. I won't. There's a city out there that owes me an answer. Let's go get it.
+! quest mq_hello 10
+-> END
+
+=== apt_qwerty
+-- start
+ELLIOT (V.O.): Qwerty. My fish. He doesn't judge me. Or he judges me constantly and can't do anything about it. Either way, he's the only one who's never lied to me.
+* Feed him. -> feed
+* Just watch. -> watch
+* "You ever think about escaping, Qwerty?" -> escape
+-- feed
+ELLIOT (V.O.): The flakes hit the water. He rises. Simple needs, simple joys. I envy the little bastard.
+! trust krista 0
+-> END
+-- watch
+ELLIOT (V.O.): He does a lap. Then another. A tiny loop, forever, in a box he can see through but never leave. I know the feeling.
+-> END
+-- escape
+ELLIOT (V.O.): He doesn't answer. Fish never do. But I like to think, if he could, he'd say: the glass isn't the problem. It's that you keep feeding the thing that keeps you in.
+! stab 2
+-> END

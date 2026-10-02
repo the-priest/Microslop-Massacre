@@ -1,0 +1,310 @@
+### Companions: recruiting, the road, three heart-to-hearts each, and goodbye.
+### Each companion's own convo jumps here (? companion.<id> -> comp_<id>).
+### Affinity ("aff_<id>") is seconds spent together; talks open at 4, 15, 30 minutes.
+
+# ======================================================================= DARLENE
+=== comp_darlene_n
+-- start
+? aff_darlene_n>=1800 & flag.dtalk2 & !flag.dtalk3 -> nudge
+DARLENE: What. You're looking at me like I'm a bug in your code.
+-> hub
+-- nudge
+DARLENE: Hey. Before we go back out there. Can we actually talk? Like people? Just once?
+-> hub
+-- hub
+* [if aff_darlene_n>=240 & !flag.dtalk1] "Why fsociety? Really." -> t1
+* [if aff_darlene_n>=900 & flag.dtalk1 & !flag.dtalk2] "What happens to you after? When there's nothing left to burn?" -> t2
+* [if aff_darlene_n>=1800 & flag.dtalk2 & !flag.dtalk3] "Talk to me. You've been wanting to for days." -> t3
+* [if !aff_darlene_n>=240] "Can I ask you something?" -> soon
+* "How are you holding up?" -> mood
+* "Go back to the arcade. I'll find you." -> dismiss
+* "Let's move." -> END
+-- soon
+DARLENE: You can ask. I'm not promising to answer. Walk with me a while first. Earn it.
+-> hub
+-- mood
+? innocents>=1 -> mood_bad
+? flag.five_nine_done -> mood_after
+DARLENE: Honestly? Wired. Scared. Hungry. Mostly hungry. If we pass a halal cart and you don't stop, I'm leaving you for Mobley.
+-> hub
+-- mood_bad
+DARLENE: I keep thinking about that person back there. The one who didn't have anything to do with any of this. You don't get to make that my problem, Elliot. But you did.
+-> hub
+-- mood_after
+DARLENE: Every bank on Earth is screaming right now and I can't stop smiling. Is that bad? Don't answer. It's bad. I don't care.
+-> hub
+-- t1
+! set dtalk1
+DARLENE: Why fsociety. Okay. You want the T-shirt answer or the real one?
+DARLENE: Real one. My dad worked at E Corp's plant in Washington Township. Wiring, mostly. He liked his job. He liked that he could fix anything with a screwdriver and a bad mood.
+DARLENE: The plant was leaking. E Corp knew. They had memos. They ran the numbers and decided the funerals were cheaper than the cleanup. He got leukemia. He was dead in a year. Their lawyers sent flowers.
+? !flag.knows_darlene_sister -> t1_stranger
+ELLIOT (V.O.): Our dad. She means our dad. I knew that once. I keep losing it, like a word on the tip of my tongue that's actually a whole person.
+DARLENE: So that's why. Not anarchy. Not the internet. One man in a hospital bed who said 'I'm sorry' to his kids like it was his fault.
+! trust darlene 1 ; stab 2
+-> hub
+-- t1_stranger
+ELLIOT (V.O.): Something about the way she says 'my dad' makes my chest hurt, like a bruise I don't remember getting.
+DARLENE: So that's why. Not anarchy. Not the internet. One man in a hospital bed who said 'I'm sorry' to his kids like it was his fault.
+! trust darlene 1 ; stab 2
+-> hub
+-- t2
+! set dtalk2
+DARLENE: After. God. You really go for the throat.
+DARLENE: I've been angry since I was eleven. It's like a pilot light. I don't know what I am without it. What if we win and I'm just... a person? A person who has to get a job and a dentist and a lease?
+DARLENE: Mobley wants to open a bar. Trenton wants to go back to school. Romero wanted to grow weed on a farm and play bass. Everybody has an after but me.
+* "You get to find out. That's the whole point." -> t2_find
+* "Maybe the anger was always just love with nowhere to go." -> t2_love
+-- t2_find
+DARLENE: Find out. Like it's a fun little mystery. ...Okay. Okay, fine. If I find out I'm boring, I'm blaming you.
+! trust darlene 1
+-> hub
+-- t2_love
+DARLENE: ...Don't do that. Don't say something like that with that face. I don't have a counterattack for that.
+DARLENE: Yeah. Maybe. Shut up. Maybe.
+! trust darlene 2 ; stab 3
+-> hub
+-- t3
+! set dtalk3 ; set cperk_darlene_n ; xp 100
+? flag.knows_darlene_sister -> t3_sister
+DARLENE: You disappear sometimes. Did you know that? You're standing right there and someone else is answering. Someone who calls you 'kid'.
+DARLENE: I've been watching it happen for years. I keep thinking if I stand close enough you'll come back faster.
+ELLIOT (V.O.): She's been guarding a door I didn't know I had. That's what family does, I think. I wouldn't know.
+DARLENE: Here. My old exploit kit. All my tricks, commented, so even you can follow them. Don't make me regret it.
+> COMPANION PERK UNLOCKED: Family Business (+5 HACKING, for good)
+-> hub
+-- t3_sister
+DARLENE: You disappear sometimes. Did you know that? You're standing right there and someone else is answering. Someone who calls you 'kid'. Someone who sounds like Dad.
+DARLENE: I used to think if I was annoying enough you'd stay. That's the whole strategy. Be loud. Be there. Be the sister you can't delete.
+ELLIOT: You're not deleted. You're the only file I keep backing up.
+DARLENE: ...Okay that's the nerdiest thing anyone has ever said to me and I'm going to cry in an alley now. Give me a second.
+DARLENE: Here. My exploit kit. Every trick I've got, commented. Family business.
+> COMPANION PERK UNLOCKED: Family Business (+5 HACKING, for good)
+! trust darlene 2 ; stab 5
+-> hub
+-- recruit
+? party>=2 -> full
+DARLENE: Walk with you. Out there. Where people can see us together, like we're friends or something.
+DARLENE: Fine. But I'm not carrying anything, I'm not doing the talking, and if you get us shot I'm haunting you.
+! recruit darlene_n
+ELLIOT (V.O.): She types over my shoulder now. She's faster than me. I'll never tell her that.
+-> END
+-- full
+DARLENE: You've already got a whole entourage. I'm not walking at the back of a parade, Elliot. Send one home and ask me again.
+-> END
+-- dismiss
+DARLENE: Yeah, yeah. Back to the arcade. Text me if you're about to do something stupid. So, text me in like an hour.
+! dismiss darlene_n
+-> END
+
+# ========================================================================== LEON
+=== comp_leon
+-- start
+LEON: My man. What do you need? Advice, backup, or a sandwich? I got all three, in that order of quality.
+-> hub
+-- hub
+* [if aff_leon>=240 & !flag.ltalk1] "What's your deal with TV, Leon?" -> t1
+* [if aff_leon>=900 & flag.ltalk1 & !flag.ltalk2] "Who do you really work for?" -> t2
+* [if aff_leon>=1800 & flag.ltalk2 & !flag.ltalk3] "If they told you to kill me. What would you do?" -> t3
+* [if !aff_leon>=240] "Tell me something about yourself." -> soon
+* "How you doing, Leon?" -> mood
+* "Go back to Coney. I'll come find you." -> dismiss
+* "Let's go." -> END
+-- soon
+LEON: About me? Ha. Walk with me a while, my man. Then ask again. I'm a slow cooker, not a microwave.
+-> hub
+-- mood
+? innocents>=1 -> mood_bad
+LEON: Living the dream. Specifically the one where I'm walking around New York with a hacker who doesn't eat. Feels like a Tuesday night procedural.
+-> hub
+-- mood_bad
+LEON: Not gonna lie, my man, I'm a little troubled. Not judging. Observing. I'm a very observant guy. It's kind of my whole job.
+-> hub
+-- t1
+! set ltalk1
+LEON: TV. Okay. Sit down for this, this is a lecture.
+LEON: When I was a kid, my moms worked doubles. Me and my brother, we got raised by 'The Jeffersons' and 'Sanford and Son' and 'Knots Landing' when the reception was good. You know what a sitcom is? It's a promise. Twenty-two minutes, everybody yells, everybody makes up. Every week. Guaranteed.
+LEON: Real life don't make that promise. So I watch the ones that do. And I study 'em. Gary Ewing, man. That man was a disaster and he kept getting up. That's philosophy.
+ELLIOT (V.O.): He says it like a joke. It isn't one. He's describing a raft.
+! trust leon 1
+-> hub
+-- t2
+! set ltalk2
+LEON: Ah. There it is. You're a smart guy, I wondered when you'd ask.
+LEON: There's a lady. Very particular about time. She asked me to keep an eye on you. Make sure you eat, make sure you breathe, make sure nobody does anything permanent to that big brain before she needs it.
+LEON: I took the job 'cause it pays and 'cause you seemed like you needed somebody. Then I kept doing it 'cause I like you. Both of those are true. Life's a two-part episode, my man.
+* "So you're a spy." -> t2_spy
+* "Thanks for telling me." -> t2_thanks
+-- t2_spy
+LEON: Spy's a strong word. I'm more of a... nanny with a shotgun. You want me gone, say it. I'll go. I'll be sad. But I'll go.
+! trust leon 1
+-> hub
+-- t2_thanks
+LEON: Hey. Honesty's the best sauce. Not the best sauce. Third best. After honesty, it's a good tahini.
+! trust leon 2 ; stab 2
+-> hub
+-- t3
+! set ltalk3 ; set cperk_leon ; xp 100
+LEON: Huh. That's a real question. Okay. Real answer.
+LEON: They'd tell me on a Tuesday. I'd say 'sure, ma'am.' And then I'd come find you and we'd eat something, and I'd watch you talk about computers like they're your kids, and I'd think about it real hard.
+LEON: And then, I think, I'd find out how far a guy can get on a Greyhound with a shotgun and a really good playlist. You'd come with me. You'd complain the whole way.
+ELLIOT (V.O.): Nobody has ever told me they'd run instead of hurt me. I don't know where to put it. I put it next to Qwerty.
+LEON: Here, take this. My grandmother's rule: hold the stock tight and breathe out on the trigger. Works on everything. Works on life.
+> COMPANION PERK UNLOCKED: The Number Four (+5 GUNS, for good)
+! trust leon 3 ; stab 5
+-> hub
+-- recruit
+? party>=2 -> full
+LEON: Come with you? Out there? Where the bad guys are and the food trucks are? My man, I thought you'd never ask.
+LEON: Rules. One: we stop for lunch. Two: I pick the music. Three: nobody shoots at you while I'm standing there. That last one's more of a promise.
+! recruit leon
+-> END
+-- full
+LEON: Two's a crowd already, my man, and I'm a crowd all by myself. Send somebody home and I'm yours.
+-> END
+-- dismiss
+LEON: Back to Coney. I'll keep your seat warm and your sandwich cold. Or the other way around. I'll figure it out.
+! dismiss leon
+-> END
+
+# ======================================================================== TRENTON
+=== comp_trenton_n
+-- start
+TRENTON: You need something? I'm here. I'm always here, I just don't announce it.
+-> hub
+-- hub
+* [if aff_trenton_n>=240 & !flag.ttalk1] "Why do you keep a list?" -> t1
+* [if aff_trenton_n>=900 & flag.ttalk1 & !flag.ttalk2] "Tell me about your family." -> t2
+* [if aff_trenton_n>=1800 & flag.ttalk2 & !flag.ttalk3] "What do you need from me? When this is over." -> t3
+* [if !aff_trenton_n>=240] "Can we talk?" -> soon
+* "How are you?" -> mood
+* "Go back to the arcade. Keep the number." -> dismiss
+* "Let's keep going." -> END
+-- soon
+TRENTON: We can. Walk first. People talk better when they're walking next to each other instead of across from each other.
+-> hub
+-- mood
+? innocents>=1 -> mood_bad
+TRENTON: Tired. Careful. Mostly careful. Someone has to be. You and Darlene take turns being brave, so I take turns being careful.
+-> hub
+-- mood_bad
+TRENTON: I added a name. You know which one. I'm not going to say anything else about it. That is me saying something about it.
+-> hub
+-- t1
+! set ttalk1
+TRENTON: The list. Every system has a person at the bottom of it. When we erase the debt, most people get free. Some people lose the only record that they ever existed. A loan is a kind of proof. A credit score is a kind of name.
+TRENTON: So I write down the ones I can find. A woman in Queens whose house is in her late husband's name. A man whose disability payments run through a debt servicer. Little people in the gears.
+TRENTON: I don't want to stop. I just want someone to remember that we did this to them too. Even when it's good. Especially when it's good.
+ELLIOT (V.O.): Everyone else in fsociety is fire. Trenton is the smoke detector. We need her more than we admit.
+! trust trenton 1 ; stab 2
+-> hub
+-- t2
+! set ttalk2
+TRENTON: My parents ran a dry cleaner on Steinway Street for twenty-two years. They were proud of the steam press. My father would talk about it like it was a racehorse.
+TRENTON: E Corp's bank owned their loan. When the rent doubled, they borrowed. When the interest doubled, they borrowed to pay the interest. The press got repossessed on a Tuesday. My father stood on the sidewalk and watched them carry it out like a coffin.
+TRENTON: My little brother asked me why the bank wanted a dry cleaner. I didn't have an answer. I've been looking for one ever since.
+* "That's why you're here." -> t2_why
+* "I'm sorry." -> t2_sorry
+-- t2_why
+TRENTON: That's why I'm here. Not to burn anything. To get my father's racehorse back. Metaphorically. The press is in a landfill in New Jersey.
+! trust trenton 1
+-> hub
+-- t2_sorry
+TRENTON: Thank you. People never say it. They say 'that's capitalism' like it's the weather.
+! trust trenton 2 ; stab 2
+-> hub
+-- t3
+! set ttalk3 ; set cperk_trenton_n ; xp 100
+TRENTON: What I need. Okay.
+TRENTON: When it's over, someone will tell the story. The news, the FBI, E Corp's lawyers. They'll make us monsters or saints. Both are lies, and the lie will be what my brother reads.
+TRENTON: So promise me that if anyone ever asks you, you tell them the truth. That we were frightened and careful and wrong about some things and right about the big one. That we kept a list.
+* "I promise." -> t3_promise
+-- t3_promise
+TRENTON: Okay. Good. Then it's real.
+TRENTON: Here's what I know about talking to people who don't want to listen: let them finish. Agree with the first true thing they say. Then tell them the second true thing. It works on cops. It works on my mother.
+> COMPANION PERK UNLOCKED: Keep the Number (+5 SPEECH, for good)
+! trust trenton 3 ; stab 5
+-> hub
+-- recruit
+? party>=2 -> full
+TRENTON: With you. Out there. Okay. Someone should watch the cameras while you're watching the people.
+TRENTON: I have two rules. We don't hurt anyone who isn't part of this. And we stop when I say stop. If you can't live with those, I'll stay here and keep the books.
+! recruit trenton_n
+-> END
+-- full
+TRENTON: You've got two people with you already. Three is a procession. Processions get noticed. Send someone home first.
+-> END
+-- dismiss
+TRENTON: Back to the arcade. I'll update the list. Be careful. I mean it in the boring way, not the dramatic way.
+! dismiss trenton_n
+-> END
+
+# ========================================================================= SHAYLA
+=== comp_shayla_n
+-- start
+SHAYLA: Hi. Hey. What's up, roommate-who-lives-in-a-different-apartment.
+-> hub
+-- hub
+* [if aff_shayla_n>=240 & !flag.stalk1] "How did you end up dealing?" -> t1
+* [if aff_shayla_n>=900 & flag.stalk1 & !flag.stalk2] "Are you okay? After the cage?" -> t2
+* [if aff_shayla_n>=1800 & flag.stalk2 & !flag.stalk3] "What do you want, Shayla? For you." -> t3
+* [if !aff_shayla_n>=240] "Tell me something real." -> soon
+* "How are you holding up?" -> mood
+* "Go home. Lock your door. I'll knock." -> dismiss
+* "Come on." -> END
+-- soon
+SHAYLA: Something real? Ha. Buy me a coffee first. Walk me somewhere. Then ask me again, and I'll think about it.
+-> hub
+-- mood
+? innocents>=1 -> mood_bad
+SHAYLA: Honestly? Weirdly good. It's nice to walk around with someone who looks scarier than me. Nobody's tried to sell me anything in an hour.
+-> hub
+-- mood_bad
+SHAYLA: I keep seeing it. When I close my eyes. Can we— can we not, again? Please?
+-> hub
+-- t1
+! set stalk1
+SHAYLA: How'd I end up dealing. The after-school special version: nursing school, two years in. My mom got sick. Insurance said no. I said yes to the wrong guy at the right party.
+SHAYLA: Turns out I'm good at it. I know dosages. I know who's using to feel nothing and who's using to feel anything. I don't sell to the second kind. That's my one rule. People think dealers don't have rules. We have more rules than lawyers.
+ELLIOT (V.O.): She sells forgetting. I buy it. We've never once talked about that. We just did.
+! trust shayla 1 ; stab 2
+-> hub
+-- t2
+! set stalk2
+SHAYLA: After the cage. Yeah. I'm... I sleep with the light on. I didn't, before. I hear keys and I stop breathing for a second.
+SHAYLA: But you came. That's the part I hold on to. Everybody in my life said they'd come and nobody ever did, and then the weird guy from 4D walks through a stash house like it's a grocery store.
+* "I'll always come." -> t2_come
+* "You'd have gotten out. You're tougher than you think." -> t2_tough
+-- t2_come
+SHAYLA: Don't say always. Always is how people lie to me. Say 'today.'
+ELLIOT: Today.
+SHAYLA: ...Okay. Today. I'll take today.
+! trust shayla 2 ; stab 3
+-> hub
+-- t2_tough
+SHAYLA: Maybe. Probably not. But thanks for thinking it. You say things like you mean them. It's unsettling. Keep doing it.
+! trust shayla 1
+-> hub
+-- t3
+! set stalk3 ; set cperk_shayla_n ; xp 100
+SHAYLA: For me. Wow. Nobody asks that. Give me a second.
+SHAYLA: I want to finish nursing school. I want scrubs with little cartoon cats on them. I want to be the person in the ER who knows exactly what you took and doesn't make you feel like garbage about it.
+SHAYLA: I've been saving. Badly. In a coffee can. Like a grandma. Don't tell anyone.
+ELLIOT (V.O.): I could find her a scholarship in about four minutes. I won't tell her. I'll just make sure the email arrives.
+SHAYLA: Here. Real stuff, not street stuff: how to read a pupil, where to press, which pills fight each other. Free lesson. The first one's always free.
+> COMPANION PERK UNLOCKED: Neighbor (+5 MEDICINE, for good)
+! trust shayla 2 ; stab 5
+-> hub
+-- recruit
+? party>=2 -> full
+SHAYLA: Go with you? Out there? Into whatever it is you do at three in the morning?
+SHAYLA: ...Yeah. Okay. I've been in a cage. Everything else is an improvement. I'm bringing my bag. Don't ask about the bag.
+! recruit shayla_n
+-> END
+-- full
+SHAYLA: You've got a whole crew already. I'm not being the third wheel on a hacker bicycle. Ask me when there's room.
+-> END
+-- dismiss
+SHAYLA: Home. Light on. Door locked. Got it. Knock twice so I know it's you, not Vera's ghost.
+! dismiss shayla_n
+-> END

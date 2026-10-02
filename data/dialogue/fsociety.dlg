@@ -1,0 +1,182 @@
+### fsociety: Mr. Robot, Darlene, crew, plan board.
+
+=== mr_robot
+-- start
+? flag.joined_fsociety -> member
+? q.mq_fsociety>=20 -> arcade_intro
+> A man in a worn field jacket leans against the subway tile like he owns the whole line. He's been watching you since before you saw him.
+MR. ROBOT: There he is. Elliot Alderson. I've been waiting for you a long time. Longer than you'd believe.
+! quest mq_rootkit done
+ELLIOT: I don't know you.
+MR. ROBOT: You know me better than anyone alive. That's the whole problem, kid. Sit. Let me tell you what we're going to do to the biggest company on Earth.
+-> pitch
+-- pitch
+MR. ROBOT: E Corp. They own seventy percent of the consumer debt on this planet. Student loans. Mortgages. The little numbers that decide whether people eat. We're going to encrypt all of it. One night. One key. Then we throw the key in the ocean.
+ELLIOT (V.O.): It's insane. It's the only sane thing anyone's said to me in years. Both. Always both.
+* "You can't erase debt. The records are backed up." -> backups
+* "Why me?" -> whyme
+* [SPEECH 35] "This gets people killed. Chaos isn't freedom." -> chaos | backups
+-- backups
+MR. ROBOT: Analog backups. Steel Mountain. A literal mountain full of magnetic tape. That's the beautiful part. That's the part you solve, because you're the only one who can.
+-> whyme
+-- whyme
+MR. ROBOT: Because you already do this. Every night. You watch people, you judge them, you decide who's guilty. I'm just giving your habit a target that deserves it. I'm giving you a war instead of a hobby.
+-> join
+-- chaos
+MR. ROBOT: Chaos is what they sell you to keep you scared of the door. But a debt nobody can collect isn't chaos, kid. It's a jubilee. It's the oldest idea there is. We're not inventing it. We're just the first ones with the root password.
+! trust robot 1
+-> join
+-- join
+MR. ROBOT: The arcade. Coney Island. Fun Society. That's home. Come see what we've built, and then you tell me you can walk away from it. You won't be able to. I know you.
+! quest mq_fsociety 20
+-> END
+-- arcade_intro
+MR. ROBOT: You found it. Of course you did. This is fsociety. Darlene runs the code, Mobley builds the toys, Trenton keeps us honest. And you — you're the one who makes it real. So. Are you in?
+* "I'm in. Let's burn it down." -> yes ! set joined_fsociety ; quest mq_fsociety 40 ; trust robot 2 ; fame fsociety 6
+* "I need to think." -> think
+* [require trust.robot<0] "No. You're not real. I don't trust you." -> refuse
+-- yes
+MR. ROBOT: That's my kid. Welcome home. Three threads, and you pull all of them. Steel Mountain: Mobley's device cooks E Corp's backup tapes. An army: the Dark Army, or the FBI looking the wrong way. And a door inside E Corp itself. It's all on the board.
+! quest mq_steel 10 ; quest mq_darkarmy 10 ; quest mq_ecorp 10 ; quest mq_finale 10
+MR. ROBOT: Any order you like. When all three are done, you come back here and we press the key together.
+-> END
+-- think
+MR. ROBOT: Think. Sure. You'll think, and you'll come back, because thinking is just the noise you make on your way to the thing you were always going to do. Door's open.
+-> END
+-- refuse
+MR. ROBOT: Not real. That's cute. Ask yourself who's been finishing your sentences your whole life, kid. Then come find me when you're done pretending.
+! quest mq_fsociety 40 ; set refused_fsociety
+-> END
+-- member
+? flag.five_nine_done -> after_hack
+MR. ROBOT: Status report. We need Steel Mountain cooked, an ally faction on side, and E Corp's door open. Then we end the world's debt in one night. How close are we?
+* "Show me where we stand. Are we ready?" -> finale_check
+* [if stab<40] "Are you even real?" -> whisper
+* "Tell me again why we're doing this." -> why2
+-- after_hack
+MR. ROBOT: It's done, kid. Five/Nine happened. Now go sit at their table at the Salina and finish it. That's the last door. I'll be right here. I'm always right here.
+-> END
+-- close
+MR. ROBOT: Good. Keep moving. The window doesn't stay open forever, and neither do people.
+-> END
+-- why2
+MR. ROBOT: Because you tried it their way. You took the meds, you sat in Krista's chair, you guarded their networks like a good dog. And you still wanted to scream. This is the scream, kid. Let it out.
+! trust robot 1
+-> END
+-- whisper
+MR. ROBOT: You're fraying. I can see it. Take the meds if you have to — I'll get quieter, but I won't leave. I never leave. That's the deal we made. You just don't remember making it.
+! glitch 0.8 ; stab -2
+-> END
+
+=== darlene
+-- start
+? companion.darlene_n -> comp_darlene_n
+? flag.joined_fsociety -> crew
+? q.mq_fsociety>=10 -> street
+DARLENE: You don't remember me, do you. That's fine. That's on-brand. Just — walk with me. Don't make it weird.
+-> END
+-- street
+DARLENE: Okay. So. You met him. The jacket guy. He talks like a prophet and smells like a subway, and he's usually right, which is the annoying part.
+ELLIOT (V.O.): There's something about her. A familiarity that itches. Like a file I deleted but didn't overwrite.
+* "Who are you to me?" -> who
+* "Is he for real?" -> real
+* [SPEECH 40] "You look at me like you know me. Stop it." -> push | who
+-- who
+DARLENE: Wow. Okay. We'll get to that. When you're ready. Which is never, historically. Come to the arcade. Bring the mask energy.
+! trust darlene 1
+-> END
+-- real
+DARLENE: Real enough to blow up the world's biggest company. Real enough that I've been running his code for months. Whether he's REAL real — that's a you question. You've always had a complicated relationship with real.
+-> END
+-- push
+DARLENE: ...God, you're exhausting when you're like this. Fine. I'll stop. For now. But you're going to want the answer someday, and I'll be right here, being annoyed that I gave it to you.
+! trust darlene 1 ; set darlene_pushed
+-> END
+-- crew
+? trust.darlene>=6 -> bond
+DARLENE: There he is. My favorite disaster. We're this close, Elliot. This close to the biggest thing anyone's ever done. And you're going to try to do it alone, aren't you. Because that's your whole personality.
+* "Not alone. You're here." -> together ! trust darlene 2
+* [if !flag.left_darlene_n & !flag.five_nine_done] "Come with me. Out there. I could use you." -> comp_darlene_n.recruit
+* "Alone is safer. For you." -> alone
+* [SPEECH 45] "Tell me the truth about us. All of it." -> truth | alone
+-- together
+DARLENE: Yeah. I'm here. I'm always here, even when you forget I exist. Especially then. Don't get us killed, okay? I'd like to survive knowing you.
+! set darlene_close
+-> END
+-- alone
+DARLENE: Safer. Right. You keep everyone at arm's length and call it protection. It's not. It's just lonely with a better excuse.
+-> END
+-- truth
+DARLENE: We're family, Elliot. That's the truth you keep deleting. I'm your sister. You had a whole other version of tonight where you knew that the second you saw me. Come back to that version. I miss it.
+! trust darlene 3 ; set knows_darlene_sister
+-> END
+-- bond
+? flag.darlene_bond -> bond_again
+DARLENE: Hey. I know things are loud in there right now. Whatever happens with the hack — you're my brother. That's the one file that never corrupts. Come here, you idiot.
+! set darlene_bond ; heal
+-> bond_again
+-- bond_again
+DARLENE: What do you need, brother?
+* [if !flag.left_darlene_n & !flag.five_nine_done] "Come with me. Out there." -> comp_darlene_n.recruit
+* "Nothing. Just wanted to see you." -> END
+
+=== mobley
+-- start
+MOBLEY: You're the new guy. Or the old guy, depending who you ask around here. I built the thing for Steel Mountain — a Raspberry Pi that talks to the climate controllers and turns the whole vault into an oven. Elegant, right?
+* "Where's the device?" -> device
+* "Will it work?" -> work
+* [if !item.steel_badge] [HACKING 35] "Can you forge me a Steel Mountain visitor badge?" -> badge | nobadge
+-- device
+MOBLEY: In the stash, when you're ready to carry it in. Get past their security, plug it into the climate unit, and the tapes cook themselves. Don't get caught holding it. That's a felony you can't explain.
+! set has_pi_plan
+-> END
+-- badge
+MOBLEY: If you can pull their visitor schema off the public contractor portal — yeah, you just did, show-off — I can print it. Laminated. Barcode. A name that isn't yours. Don't smile in the photo; nobody who works there smiles.
+! give steel_badge 1 ; set steel_badge_used
+-> END
+-- nobadge
+MOBLEY: I'd need their badge schema and you'd need to not fumble the portal login. You fumbled. Buy the coveralls at Ricky's. Nobody looks at the maintenance guy.
+-> END
+-- work
+MOBLEY: It'll work. I don't build things that don't work. People, sure, those I'm bad at. Machines never disappoint me. That's why I like them.
+-> END
+
+=== trenton
+-- start
+? companion.trenton_n -> comp_trenton_n
+? flag.trenton_talked -> again
+! set trenton_talked
+TRENTON: I keep telling everyone — if we do this, we don't get to take it back. People think of debt as a chain. But for some of them it's the only record that they exist at all. Erase it and you erase them too. I still think we should do it. I just want us to know what we're doing.
+* "We're freeing people." -> free
+* "Nothing's ever clean. We do it anyway." -> anyway ! trust darlene 0
+-- free
+TRENTON: Most of them. Yeah. Just... not all. Keep that number in your head when it happens. Somebody should.
+-> END
+-- anyway
+TRENTON: That's honest, at least. I'll take honest over a hero any day. Heroes get people killed and feel great about it.
+-> END
+-- again
+TRENTON: Elliot. Still keeping the number in your head?
+* [if flag.joined_fsociety & !flag.left_trenton_n & !flag.five_nine_done] "Come with me. I want someone careful out there." -> comp_trenton_n.recruit
+* "Always." -> END
+
+=== arcade_planboard
+-- start
+ELLIOT (V.O.): The wall is covered in string and printouts. The whole plan, laid out like a nervous system. Steel Mountain. The Dark Army. E Corp's tower. Three threads, all leading to one night.
+> To finish this, you need three things: Steel Mountain's backups destroyed, one major faction backing the play, and a door open inside E Corp itself.
+* Study the Steel Mountain thread. -> steel
+* Study the faction thread. -> faction
+* Study the E Corp thread. -> ecorp
+* Step back. -> END
+-- steel
+ELLIOT (V.O.): Steel Mountain. Upstate-north. Mobley's device does the work — I just have to walk it past the guards. A badge, or a uniform, gets me in the door.
+! quest mq_steel 10
+-> END
+-- faction
+ELLIOT (V.O.): We can't do this alone. The Dark Army — Whiterose's people — could. Or the FBI could be fed just enough to look the wrong way. Two doors. Very different rooms.
+! quest mq_darkarmy 10
+-> END
+-- ecorp
+ELLIOT (V.O.): The tower. Tyrell Wellick wants to be CTO badly enough to hand us the keys. Or I take a keycard off a guard and let myself in. Either way, the last door is inside.
+! quest mq_ecorp 10
+-> END

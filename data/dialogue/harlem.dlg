@@ -1,0 +1,164 @@
+### Harlem: "Bad Company". A shelter counselor, a boy with a new phone, and the
+### man who gave it to him. Never graphic: this story is about stopping him.
+
+=== okafor
+-- start
+? q.sq_badco>=40 & !q.sq_badco.done -> resolve
+? q.sq_badco.done -> after
+? q.sq_badco.started -> waiting
+> A woman with reading glasses on a chain is doing three things at once: a phone call, a spreadsheet, and watching the dining hall through her office window.
+OKAFOR: You're not a parent and you're not a social worker. So you're either lost, or you want something, or you're from the city and you're about to cut my funding again.
+* "I heard you've been trying to get the police to look at something." -> hook
+* "Just looking around." -> END
+-- hook
+OKAFOR: Heard from who? ...Never mind. Nineteen years in this job, I stopped asking how word gets around.
+OKAFOR: One of my boys. Jaylen. Fourteen. Smart, funny, and nobody has ever given him anything in his life. Three weeks ago he shows up with new sneakers and a new phone from a 'mentor' he met online. A coach. Who's going to get him a tryout.
+OKAFOR: I took the phone. I called the precinct twice. They told me gifts aren't a crime.
+ELLIOT (V.O.): They aren't. But there's a pattern older than the internet, and she's seen it before. So have I.
+* "Let me look at the phone." -> accept
+* "The police aren't wrong. Gifts aren't a crime." -> decline
+-- accept
+OKAFOR: It's on my desk. It's locked, and I don't know how you'll get into it, and I'm choosing not to ask.
+OKAFOR: Whatever you find, you bring it to me. And you don't go near that boy with it. He's fourteen. He thinks this man is the best thing that ever happened to him.
+! quest sq_badco 10
+-> END
+-- decline
+OKAFOR: Then get out of my office. I have actual work to do.
+-> END
+-- waiting
+? flag.knows_keller -> waiting2
+OKAFOR: Anything? He keeps asking for the phone back. He thinks I'm jealous of his big chance.
+-> END
+-- waiting2
+OKAFOR: You have a name. I can see it on your face. Don't tell me yet. Tell me when there's something I can do with it.
+-> END
+-- resolve
+? flag.keller_arrested -> r_arrest
+? flag.keller_dead -> r_dead
+? flag.keller_extorted -> r_extort
+? flag.keller_exposed -> r_exposed
+-> r_gone
+-- r_arrest
+OKAFOR: Special Victims came to see me this morning. They had everything they needed. Some of it, they said, came from an anonymous source with very tidy file names.
+OKAFOR: There were others. Other boys, other teams. They're getting help now, all of them. That doesn't happen without a courtroom, and there's going to be a courtroom.
+OKAFOR: Jaylen's furious with me. He'll be furious for a while. He'll be alive and furious and fourteen. I'll take it.
+! quest sq_badco done ; fame harlem 8 ; stab 6 ; xp 80
+-> END
+-- r_exposed
+OKAFOR: Half of Astoria knows his face now. The parents found out all at once, and he went out the back with a gym bag before anyone could do anything official.
+OKAFOR: The police tell me the evidence is 'compromised' now. It's all over the internet. So he's somewhere else tonight, with a new name, being somebody's coach.
+ELLIOT (V.O.): I wanted everyone to see him. I didn't think about what happens after everyone sees him. Nobody ever does.
+! quest sq_badco done ; fame harlem 3 ; stab -2 ; xp 40
+-> END
+-- r_dead
+OKAFOR: They found Richard Keller in his apartment.
+OKAFOR: I'm not going to pretend I'm sorry. I'm also not going to ask you anything, and you're not going to tell me anything, and we are going to keep it that way for the rest of our lives.
+OKAFOR: The other boys he knew will never get to say it in a courtroom. I'm going to think about that. You should too.
+! quest sq_badco done ; fame harlem 4 ; stab -3 ; xp 40
+-> END
+-- r_extort
+OKAFOR: He stopped messaging Jaylen. Cancelled the tryout, just like that. But he's still coaching. There are fifteen boys on that team. What happened?
+ELLIOT (V.O.): I got paid. That's what happened. I told myself he'd be too scared to do it again. I don't believe me either.
+* "I handled it." -> r_extort_lie
+* "I took his money. He's still out there." -> r_extort_truth
+-- r_extort_lie
+OKAFOR: You handled it. Okay. I hope that's true. I have a feeling I'll find out.
+! quest sq_badco done ; stab -6 ; xp 20
+-> END
+-- r_extort_truth
+> She looks at you for a long time. Then she picks up the phone and dials a number from memory.
+OKAFOR: Get out of my building. I'm going to do this the slow way. The right way. Without you.
+! quest sq_badco done ; infamy harlem 6 ; stab -4
+-> END
+-- r_gone
+OKAFOR: He's gone. Moved out overnight. The league says he 'resigned for personal reasons.'
+OKAFOR: It's not justice. But Jaylen's here, and he's safe, and he's eating his third helping of my terrible lasagna. Tonight that's enough.
+! quest sq_badco done ; fame harlem 4 ; stab 2 ; xp 50
+-> END
+-- after
+OKAFOR: Jaylen asked about you. I told him you're a friend of the shelter. He said you look like you need a sandwich. He's not wrong. There's lasagna.
+! heal
+-> END
+
+=== jaylen
+-- start
+? q.sq_badco.done -> after
+JAYLEN: You work here? You don't look like you work here. Ms. Okafor took my phone. I got a tryout coming up. Real team. Real scouts.
+* "What kind of tryout?" -> tryout
+* "Ms. Okafor seems to care about you." -> care
+* "Good luck with it." -> END
+-- tryout
+JAYLEN: My coach set it up. He's mad cool. He gets me, you know? He said don't tell nobody 'cause the other kids would get jealous.
+ELLIOT (V.O.): 'Don't tell anybody.' That's the tell. That's always the tell.
+? !q.sq_badco.started -> tip
+-> END
+-- tip
+ELLIOT (V.O.): Somebody in this building already knows something is wrong. The woman in the glass office, watching this table like a hawk.
+-> END
+-- care
+JAYLEN: Yeah. She's alright. She notices stuff. It's annoying. She noticed I didn't have a winter coat and then I had a winter coat. That kind of annoying.
+-> END
+-- after
+? flag.keller_arrested -> after_arrest
+JAYLEN: You want to shoot around sometime? The hoop out back's busted, but whatever.
+-> END
+-- after_arrest
+JAYLEN: Ms. O told me what he was. I didn't believe it. Then I did. It's weird. I keep thinking about the sneakers.
+JAYLEN: ...Thanks, I guess. Whoever you are. You want to shoot around sometime? The hoop's busted, but whatever.
+-> END
+
+=== keller
+-- start
+> A man in a youth-league polo freezes in the middle of his living room. His eyes go to the computer in the other room, then to the door, then back to you.
+KELLER: Who the hell are you? How did you get in here? I'm calling the police.
+? !flag.keller_evidence -> early
+-> confront
+-- early
+ELLIOT (V.O.): Not yet. I need what's on his computer first. Proof, not a feeling. Feelings are what the precinct already ignored.
+* "Wrong apartment. Sorry." -> END
+-- confront
+ELLIOT: Call them. I'll wait. I have a drive they'd love to see.
+KELLER: I don't know what you think you found. I coach kids. I have coached kids for eleven years. I've got a wall of thank-you cards.
+ELLIOT (V.O.): He really believes the cards are a defense. That's how men like him survive: everyone around them believes the cards too.
+* "Jaylen isn't coming on Saturday. No one is ever coming again." -> ultimatum
+* "Never mind." -> END
+-- ultimatum
+* [SPEECH 60] "Walk to the 7th Precinct tonight and tell them everything. If you don't, I'll know, and so will everyone else." -> confess_ok | confess_fail
+* [SPEECH 45] "Leave the city tonight. Never coach again. Never go near a child again. I'll be watching every account you ever make." -> scare | scare_fail
+* "Two thousand dollars, and this drive stays in my pocket." -> extort
+* "No. No deals." -> end_it
+* Leave. -> END
+-- confess_ok
+> He looks at the drive in your hand, then at the thank-you cards, and something in him folds up like a lawn chair.
+KELLER: ...If I go in, you don't send it anywhere else. Not to the parents. Not to the internet. Please.
+ELLIOT (V.O.): He's still negotiating. He'll negotiate in the back of the squad car. But he'll be in the back of the squad car.
+! set keller_arrested ; set keller_resolved ; take keller_drive 1 ; quest sq_badco 40 ; stab 4 ; xp 60 ; move keller
+-> END
+-- confess_fail
+KELLER: You're bluffing. If you had anything real you'd have gone to the police. You're just some guy.
+-> ultimatum
+-- scare
+KELLER: Okay. Okay. Tonight. I'll go to my sister's in Ohio. I'll never, I swear to God, never.
+ELLIOT (V.O.): He's packing before I reach the stairs. It isn't justice. It's distance. Distance is what I could get tonight.
+! set keller_gone ; set keller_resolved ; quest sq_badco 40 ; stab 1 ; move keller
+-> END
+-- scare_fail
+KELLER: Watching me? From where, your mother's basement? Get out of my house.
+-> ultimatum
+-- extort
+> The fear leaves his face so fast it's obscene. He's relieved. He thinks this means it's over for him.
+KELLER: Yes. Yes, I can do that. I can do that tonight.
+! cash 2000 ; set keller_extorted ; set keller_resolved ; quest sq_badco 40 ; stab -12 ; move keller
+ELLIOT (V.O.): Two thousand dollars. I'll tell myself he's too scared to do it again now. I'll tell myself that for the rest of my life.
+-> END
+-- end_it
+ELLIOT (V.O.): He sees it on my face before I've decided. He runs for the door.
+! hostile keller
+-> END
+
+=== keller_bag
+-- start
+> Shin guards, a whistle, orange cones, a clipboard with a practice schedule. Clipped to the back of the clipboard, a card with the league's laptop login, and under it in pen a second password that isn't for the league.
+ELLIOT (V.O.): 'GoalKeeper#1'. Men like him think they're careful. They're just used to nobody looking.
+! set keller_pw
+-> END

@@ -1,0 +1,111 @@
+### Shayla, Vera, the rescue.
+
+=== shayla
+-- start
+? companion.shayla_n -> comp_shayla_n
+? flag.shayla_out -> saved
+? q.sq_shayla>=30 -> caged
+SHAYLA: Hey, neighbor. You look worse than me and I've been having a week. You want the good stuff or the bad stuff? I got both. Occupational hazard.
+* "You okay, Shayla?" -> okay
+* "What do you know about a guy named Vera?" -> vera
+* "Just checking on you." -> check ! trust shayla 1
+-- okay
+SHAYLA: Define okay. I'm alive, I'm funny, and I owe money to people who aren't. Two out of three. That's a good week for me.
+-> hook
+-- vera
+SHAYLA: Vera. Yeah. Don't. Just — don't. He's my supplier and he thinks that makes me his. He's been asking about you, actually. Says you've got skills he could use. That's never good, coming from Vera. I'm supposed to see his guys tonight about what I owe. It's fine. It's totally fine. Stop looking at me like that.
+! set knows_vera ; quest sq_shayla 10
+-> hook
+-- check
+SHAYLA: Checking on me. Nobody does that. It's weird. Do it again sometime. Bring worse coffee than Ron's, if that's even possible.
+-> hook
+-- hook
+ELLIOT (V.O.): Shayla's the closest thing I have to a normal that isn't a lie. Which means the city is already circling her. It always circles the soft ones first.
+-> END
+-- caged
+> Shayla is behind a wall of iron bars in Vera's stash house. She's trying very hard to look unafraid, and almost managing it.
+SHAYLA: Oh, thank god. Or thank you. Whatever's true. Vera wants something from you. That's why I'm alive and in a cage instead of just... not. Get me out. Please. Quietly if you can.
+* "I'll get you out. Whatever it takes." -> promise ! trust shayla 2
+* "What does Vera want?" -> want
+-- promise
+SHAYLA: Whatever it takes. You always say the intense thing. Just don't get killed being intense. I need a ride home after this.
+-> END
+-- want
+SHAYLA: Out. He's got a trial coming that puts him away for life — legally impossible to beat, but he heard you make impossible things happen with a keyboard. That's the deal. You make his case disappear on paper, he lets me go for real. Or you do it the other way. There's always another way with you, isn't there.
+-> END
+-- saved
+? flag.shayla_thanked -> neighbor
+SHAYLA: I'm out. I'm home. I'm never doing business with a man named after a truth serum again. Thank you, Elliot. I mean it. You're a weird, wonderful disaster and I'm glad you live next door.
+! trust shayla 2 ; set shayla_thanked
+-> neighbor
+-- neighbor
+SHAYLA: So. Neighbor. What's up?
+* [if !flag.left_shayla_n] "Come with me for a while. I'd feel better if you weren't alone." -> comp_shayla_n.recruit
+* "Just checking on you." -> END
+
+=== vera
+-- start
+? flag.vera_deal -> dealt
+VERA: So you're the wizard. Shayla's little genius neighbor. Look at you. All that power in your fingers and you use it to feel bad in the dark. Waste.
+ELLIOT (V.O.): He's calm. Calm like a man who's already decided he's holding all the cards. I hate how often those men are right.
+* "Let Shayla go. Now." -> demand
+* "What do you want, Vera?" -> want
+* [SPEECH 45] "You need me more than I need you. Say it." -> flip | want
+-- demand
+VERA: Now. Sure. Everybody wants everything now. That's the disease of this whole city. Here's my offer, wizard: you get me out of my legal problems — I got a case pending, you make it disappear — and Shayla walks. Refuse, and we find out how brave you really are.
+-> choice
+-- want
+VERA: You. I want you. Your gift. I got a court date I'd rather not keep. Make it go away, in the machine, where you live. Do that, and your girl goes home tonight. It's almost poetry.
+-> choice
+-- flip
+VERA: ...Ha. Maybe. Maybe I do. That's why you're still breathing and my guys aren't asking you questions with their hands. Respect. So here's the respectful version of the offer.
+! trust shayla 0 ; set vera_respects
+-> choice
+-- choice
+ELLIOT (V.O.): Erase his record and he owes me — a monster on a leash, but a leash. Or I take Shayla out the hard way and leave Vera to rot. Or I put him down and take his whole operation.
+* [require q.sq_shayla>=30] "Deal. I'll wipe your case. Let her go." -> deal
+* [require q.sq_shayla>=30] "No deal. I'm taking her and walking." -> defy
+* [require q.sq_shayla>=30 & item.pistol_9mm>=1] "Here's my counteroffer." (draw) -> fight
+-- deal
+VERA: Now we're talking. You feel it? That's power recognizing power. Wipe my case, wizard, and Shayla's yours. And hey — a man like me remembers a favor. Could be useful. Could be a nightmare. You'll find out.
+! set vera_deal ; set shayla_out ; quest sq_shayla done ; fame coney 3 ; infamy nypd 2 ; stab -2
+VERA: She's at the door. Go be a hero. It won't last, but enjoy it.
+-> END
+-- defy
+VERA: The hard way. I respect it and I'm gonna make you regret it. My guys are between you and her. Good luck, wizard.
+! set vera_hostile ; hostile_faction vera ; hostile vera ; quest sq_shayla 40
+-> END
+-- fight
+VERA: Oh, you brought a gun to a philosophy conversation. That's the most honest thing anyone's done all night.
+! hostile vera ; hostile_faction vera ; quest sq_shayla 40
+-> END
+-- dealt
+VERA: The wizard. My favorite ghost. Don't worry — I keep my deals. Bad for business otherwise. Shayla's free. And I'm free. Funny how that worked out for everyone except the court.
+-> END
+
+=== shayla_rescue
+-- start
+? flag.shayla_out -> done
+ELLIOT (V.O.): She's behind the bars. The lock is old, mechanical, honest — the kind that answers to a pin instead of a password. Or I find the key on whoever's got it.
+* [require item.key_vera_stash>=1] Try the enforcer's ring of keys. -> keyed
+* [require item.bobby_pin>=1] Pick the cell lock. -> pick
+* [if !item.key_vera_stash>=1] Look for the key. -> key
+* Step back. -> END
+-- pick
+! minigame lockpick 45
+? won -> freed
+ELLIOT (V.O.): The pin snaps. The lock holds. Try again, or find another way.
+-> END
+-- keyed
+ELLIOT (V.O.): Third key on the ring. It turns like it's been waiting for someone to ask it nicely.
+-> freed
+-- key
+ELLIOT (V.O.): Vera's enforcer has the key. Which means the quiet way just became the loud way, unless you can lift it clean.
+-> END
+-- freed
+SHAYLA: You actual magician. Okay. Okay okay okay. Which way is out. Behind you? Behind you. Go go go.
+! set shayla_out ; quest sq_shayla done ; trust shayla 3 ; achieve shayla_saved ; xp 60
+-> END
+-- done
+SHAYLA: I'm out. Let's never come back here. Ever. Agreed? Agreed.
+-> END

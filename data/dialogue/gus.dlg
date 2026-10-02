@@ -1,0 +1,132 @@
+### Gus Petrakis: thirty-one years running Bowery Bay Airfield, Queens.
+### Side quest "Wings": fly the ring course, land, then save the field from E Corp.
+
+=== gus
+-- start
+? q.sq_wings.done -> after
+? q.sq_wings>=50 -> lien_hub
+? q.sq_wings>=40 -> landed
+? q.sq_wings>=20 -> waiting
+? flag.gus_met -> again
+> A man in his sixties in a cracked leather flight jacket, reading glasses pushed up on his forehead, eating a gyro over a stack of invoices. Through the window behind him: one runway and a row of small white planes, shivering in the wind off the bay.
+GUS: We're closed. We've been closed since 1987, but people keep walking in anyway. What can I do for you?
+! set gus_met ; quest sq_wings 10
+-> intro
+-- again
+GUS: You again. Still closed. Still here. What?
+-> intro
+-- intro
+* "Those planes outside. Who flies them?" -> who
+* [if !flag.gus_lien_known] "Why is there an E Corp logo on your hangar?" -> ecorp
+* [once] "How do you run an airfield in the middle of the city?" -> history
+* "Teach me to fly." -> teach
+* "Wrong door. Sorry." -> END
+-- who
+GUS: Students, when I had students. Me, when my back lets me. Mostly they sit on the line and cost me tie-down fees I charge myself.
+GUS: Gus Petrakis. Thirty-one years running this field. Air Force before that, fixing things that went faster than God intended.
+-> intro
+-- history
+GUS: Badly. The city's been trying to close Bowery Bay since before you were born. Noise complaints, zoning, a councilman whose brother-in-law wanted condos.
+GUS: We survived all of them. You know what we couldn't survive? I got sick.
+-> ecorp
+-- ecorp
+GUS: Three years ago I spent a month in Mount Sinai. They billed me two hundred and eleven thousand dollars for not dying. E Corp bought the debt. Then E Corp Aviation Finance bought the note on the field, because of course they did.
+GUS: Then they parked their corporate jet in my best hangar and called it "collateral courtesy." Thirty days, the letter says. Then Bowery Bay becomes a logistics hub.
+ELLIOT (V.O.): Seventy percent of the world's consumer debt sounds like an abstraction. Sometimes it's one old man and a runway.
+! set gus_lien_known
+-> intro
+-- teach
+GUS: Ha. Everybody wants to fly. Nobody wants to land.
+GUS: ...Fine. Why not, I've got thirty days and no students. The Skyhawks are on the apron, keys are in them. Take one up.
+GUS: I used to hang five practice rings over the city for the kids. I'll light them up for you. Fly through all five, then bring her back down on my runway without bending anything.
+GUS: Do that, and you can take a plane whenever you want. Bend something, and you're paying for it. And you don't look like a man who can pay for things.
+* "Deal." -> deal
+* "What if I don't come back?" -> noback
+-- noback
+GUS: Then I report it stolen and say a prayer for whatever you hit. In that order.
+-> deal
+-- deal
+GUS: Listen to me, this is the whole lesson. Full throttle down the centreline. When she's going fast enough she gets light; that's when you ease back. Ease. The plane wants to fly, you just have to stop arguing with it.
+GUS: Pull back to climb. Bank to turn. And never let her get slow. Slow is how the ground wins.
+GUS: Coming home, line up with the runway from far out, throttle back, and let her settle. Nose up a hair, wings level. If it feels like you're landing, you're doing it wrong. It should feel like the runway came up to meet you.
+! quest sq_wings 20 ; set gus_plane_ok
+ELLIOT (V.O.): Five rings, one runway, a sixty-year-old airplane, and a man who has nothing left to lose but this. I like him. I don't like many people.
+-> END
+-- waiting
+? q.sq_wings>=30 -> waiting_land
+GUS: The rings are lit. The Skyhawks are on the line. I'm not getting any younger, and neither is the airplane.
+* "Run the lesson by me again." -> deal_again
+* "Going." -> END
+-- deal_again
+GUS: Throttle up on the centreline. Ease back when she's light. Bank to turn, don't get slow. Line up early, come down gently, nose up a hair. That's it. That's all flying is. The rest is nerve.
+-> END
+-- waiting_land
+GUS: I watched you thread the last ring from here. Good. Now the part that kills people: the ground. Bring her home.
+-> END
+-- landed
+> Gus is standing at the window with a cup of coffee he's forgotten to drink.
+GUS: ...Well. You landed. A little long, a little fast, you bounced like a kid on a trampoline. But the airplane's in one piece and so are you.
+GUS: You've got the hands for it. Better hands than I had at your age.
+GUS: Keys are yours whenever you want them. Any Skyhawk on the line. Bring them back with gas in them and we'll never fight.
+! set pilot_license ; quest sq_wings 50 ; xp 150
+ELLIOT (V.O.): A pilot's license from a man who has no authority to give one, for a field that won't exist in thirty days. It's the most legitimate thing anyone has handed me in years.
+-> lien_hub
+-- lien_hub
+GUS: Now. If you'll excuse me, I have thirty days to figure out how to un-borrow two hundred thousand dollars.
+* [if !flag.gus_lien_known] "Un-borrow?" -> lien_explain
+* [HACKING 45] "Let me use your computer. Debt is just a number in a database. Numbers change." -> hack | hack_low
+* [once] [SPEECH 55] "Their paperwork is the weak spot. A note bought out of a hospital bill is predatory lending. Send it to the state attorney general, today." -> speech_ok | speech_fail
+* "I can't help with that. I'm sorry." -> nohelp
+-- lien_explain
+GUS: The hospital, the debt, E Corp buying the note on the field. Thirty days and they turn Bowery Bay into a warehouse.
+! set gus_lien_known
+-> lien_hub
+-- hack_low
+ELLIOT (V.O.): E Corp Aviation Finance sits behind the same walls as the bank. I can see the door. I can't open it. Not yet.
+-> lien_hub
+-- hack
+GUS: My computer? It's from 2004. It mostly plays solitaire.
+ELLIOT (V.O.): It's connected to the internet. So is E Corp. That's all a door ever needs.
+! minigame exploit gus
+? won -> hacked
+ELLIOT (V.O.): Locked out. Their finance division runs tighter than their front door. Try again.
+-> END
+-- hacked
+> On the old monitor, the lien record for Bowery Bay Airfield, lot 1027-B, flickers. Then it's gone. Not paid. Not settled. Gone, along with the backups, the backups' backups, and an audit trail that now ends at an E Corp intern who has never existed.
+GUS: ...What did you just do?
+* "Nothing. There was a clerical error. You don't have a lien anymore." -> done_hack
+* "I deleted your debt. Don't tell anyone." -> done_hack
+-- done_hack
+> Gus sits down. Very slowly. He takes his glasses off and looks at them as if they belong to someone else.
+GUS: Thirty-one years. You know what, I don't want to know. I want to go fly.
+GUS: That jet in hangar two? It's parked on paperwork that doesn't exist anymore. If it happened to leave without a flight plan, I'd sleep like a baby.
+! set lien_killed ; set gus_jet_hint ; quest sq_wings done ; cash 500 ; fame fsociety 2 ; infamy ecorp 2
+ELLIOT (V.O.): One debt. Out of millions. It doesn't change anything. It changed everything for him. Both of those are true, and I'm getting tired of how often that's the case.
+-> END
+-- speech_ok
+GUS: The attorney general. You think they'd...
+GUS: You know, my niece works for a state senator. She's been telling me for a year to make noise. I thought noise was for people who could afford it.
+GUS: Fine. Noise. I'll call her tonight.
+! set lien_fought ; quest sq_wings done ; cash 200
+ELLIOT (V.O.): Paper against paper. It probably won't work. But he'll fight, and fighting is a kind of flying too.
+-> END
+-- speech_fail
+GUS: Lawyers cost money, kid. That's the whole trick of it. The law is a store, and I'm broke.
+-> lien_hub
+-- nohelp
+GUS: Nobody can. That's the trick of it. Go fly, while there's a runway.
+-> END
+-- after
+? flag.ecorp_jet_gone & !flag.gus_jet_seen -> jet_gone
+? flag.lien_fought & !flag.gus_fight_news -> fight_news
+GUS: Pilot. Take any Skyhawk on the line, and bring it back with the wings still attached.
+-> END
+-- jet_gone
+GUS: Somebody took E Corp's jet. The insurance people were here this morning with a lot of questions and very shiny shoes. I told them I was asleep.
+GUS: I was, too. Best sleep of my life.
+! set gus_jet_seen
+-> END
+-- fight_news
+GUS: My niece got the state AG's office to freeze the foreclosure. "Pending review." Pending review! Thirty-one years and I finally understand bureaucracy. It's a runway, kid. You just need enough of it.
+! set gus_fight_news
+-> END

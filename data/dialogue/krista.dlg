@@ -1,0 +1,91 @@
+### Krista, ongoing. Therapy, the Lenny quest resolution, and Elliot's truth.
+
+=== krista
+-- start
+? q.sq_krista>=30 & !q.sq_krista.done -> lenny_resolve
+? flag.krista_truth -> deep
+? flag.krista_visited -> again
+KRISTA: Elliot. Twice in one week. Either you're getting better or getting worse, and with you those look identical from the outside. Sit. Talk to me. Try.
+! set krista_visited
+-> hub
+-- again
+KRISTA: Elliot. Sit. You've got your Tuesday face on, and it isn't Tuesday.
+-> hub
+-- hub
+* "I've been... doing something. Something big." -> big
+* "How do you stay sane in a city like this?" -> sane
+* [if !flag.krista_truth] [SPEECH 40] "I want to tell you the truth. The real one. Once." -> truth | big
+* "I'm fine." -> fine
+* [if !q.sq_krista.started] "You seem lighter today. What's going on?" -> lenny_intro
+* [if q.mq_fsociety>=20 & !flag.five_nine_done] "I want to stop. All of it. I think I'm done." -> stop
+-- big
+KRISTA: Big. Okay. Big how? Big like a project, or big like the thing you never say and I never push on?
+ELLIOT (V.O.): She's giving me the door again. She always gives me the door. I'm the one who keeps installing new locks.
+! trust krista 1
+-> END
+-- stop
+KRISTA: Stop what, Elliot? Say it. You don't have to give me details. Just say what it is.
+ELLIOT: The nights. The people I watch. The people I've started listening to. The one who talks back. I'm standing next to something enormous and I think if I take one more step I won't be able to take it back.
+KRISTA: Then don't take the step. That's allowed, you know. Walking away is allowed. Nobody gets to draft you into their war. Not even the voice.
+ELLIOT (V.O.): If I say yes, it's over. No hack. No jubilee. E Corp stays E Corp. Darlene will never forgive me. And I'll finally be able to sleep.
+* "Help me stop. Every Tuesday. For as long as it takes." -> quiet
+* "...Not yet. I have to finish something first." -> notyet
+-- notyet
+KRISTA: Okay. The offer doesn't expire. I'll be here. I'm always here on Tuesdays.
+-> END
+-- quiet
+KRISTA: Every Tuesday. For as long as it takes. I'll be right here.
+ELLIOT (V.O.): I walk home the long way. I don't check my phone. When I get to my building, I feed Qwerty, and I go to sleep, and for the first time in years nobody wakes me up.
+! set chose_quiet ; ending quiet
+-> END
+-- lenny_intro
+KRISTA: Is it that obvious? I met someone. Lenny. He's funny, he's attentive, he texts back. You'd hate him. You hate everyone who texts back. We're getting drinks at The Rabbit Hole later.
+ELLIOT (V.O.): Lenny. No last name offered, which means she hasn't asked for one. I'll look him up. I always look them up. It's the only way I know how to care about people.
+! quest sq_krista 10
+-> END
+-- sane
+KRISTA: Who says I do? I listen to people's worst days for a living and go home to a man who — well. That's my problem. Sanity's not a state, Elliot. It's a practice. Like flossing. I skip it too.
+-> END
+-- fine
+KRISTA: Fine. The word people use right before the thing that isn't. I'll write it down. 'Patient reports fine.' It'll be a great exhibit someday.
+-> END
+-- truth
+KRISTA: The real one. Elliot — I've waited three years to hear you say that. I'm not going to flinch. Whatever it is.
+ELLIOT: There's a voice. My father's face on it. It tells me what to do, and lately I've been doing it. I don't always know what's real. I don't always know if I'm the one typing. And I think I'm about to change the whole world, and I can't tell if that's brave or if I'm just very, very sick.
+KRISTA: ...Thank you. For the first honest sentence you've ever handed me. You're not just sick, Elliot. And you're not just brave. You're a person, carrying something enormous, mostly alone. Let me help you carry the part that's mine to hold.
+! set krista_truth ; trust krista 3 ; stab 10
+-> deep
+-- deep
+KRISTA: Whatever you do out there — come back and tell me about it. Not the operation. The you. That's the only file I care about. The one you keep trying to delete.
+-> hub
+-- lenny_resolve
+? flag.lenny_dead -> widowed
+? flag.lenny_confess -> confessed
+? flag.lenny_gone -> gone
+-> unresolved
+-- unresolved
+KRISTA: You've got that look. The one where you know something about my life that I don't. Out with it. I mean it. Don't protect me. Everyone protects me and it's how I ended up dating a series of catastrophes.
+* "Lenny's married. And you're not the only one he's seeing." -> tell
+* "It's nothing. Forget it." -> hide
+-- tell
+KRISTA: ...Married. Of course he is. God, I can pick them. Thank you, Elliot. That cost you something — I can see it did. You spent it on me. Nobody does that.
+! quest sq_krista done ; trust krista 3 ; set krista_free ; stab 3
+-> END
+-- hide
+KRISTA: Nothing. Right. You and your nothings. Fine. Keep it. But you came here to say something, and you swallowed it, and that's going to sit in you like it always does.
+! quest sq_krista 30
+-> END
+-- gone
+KRISTA: Lenny ghosted me. Just — gone, overnight. Which is honestly the healthiest thing that's ever happened in one of my relationships. I have a feeling you know why. I'm not going to ask. Thank you for whatever it was.
+! quest sq_krista done ; trust krista 2 ; set krista_free
+-> END
+-- widowed
+KRISTA: Lenny's dead. Someone found him in the alley behind The Rabbit Hole. The police came to my office. They had his phone. They told me about his wife. They told me about the others.
+KRISTA: I grieved a man for about four hours. Then I found out he'd never existed. I don't know what you do with that. I'm a therapist and I don't know what you do with that.
+ELLIOT (V.O.): She looks at me for a long time. She doesn't ask. I think she's afraid of the answer, and I think she's right to be.
+! quest sq_krista done ; stab -4
+-> END
+-- confessed
+KRISTA: Lenny told me everything. The wife. The others. All of it, in one miserable honest hour. He said someone made him. I have a guess who. It hurt. But I'd rather hurt with the truth than be comfortable in a lie. You gave me that. Thank you.
+! quest sq_krista done ; trust krista 3 ; set krista_free ; set krista_truth
+-> END

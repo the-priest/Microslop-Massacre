@@ -1,0 +1,95 @@
+### Detective Maria Lopez: the Monster path's conscience with a badge.
+### Appears once Elliot has killed enough civilians (stat "innocents").
+
+=== lopez
+-- start
+? q.sq_lopez>=30 -> arrest
+? flag.lopez_talked -> again
+> A woman in a rumpled coat, at a desk buried under photographs. She doesn't get up. She looks at you like she's been looking at your picture for a week.
+LOPEZ: Mr. Alderson. Thanks for coming in. You didn't have to. That's what makes it interesting that you did.
+LOPEZ: I've got a board full of dead people who have nothing in common. Different ages, different blocks, different nights. Nobody robbed. Nobody even argued. They just stopped.
+LOPEZ: Except for one thing. Every one of them died within a mile of wherever you happened to be that night. Your MetroCard is very chatty.
+ELLIOT (V.O.): She's good. She's the first one who's been good. That should frighten me more than it does.
+! set lopez_talked ; quest sq_lopez 20
+-> choice
+-- choice
+* "I don't know what you're talking about." -> deny
+* [SPEECH 55] "A mile of me is half of Manhattan, detective. You've got a coincidence and a hunch." -> deflect | deny
+* [if cash>=2000 & !flag.lopez_bribe_tried] "What would it take for that board to get a lot emptier?" -> bribe
+* "It was me." -> confess
+-- deny
+LOPEZ: Sure. You don't. Nobody does, until they do. You're free to go, Mr. Alderson. I'll be seeing you. I'm very patient, and you, I think, are not.
+-> END
+-- deflect
+LOPEZ: ...Maybe. Maybe you're the unluckiest man in New York. I've met him before; he looked a lot like you.
+LOPEZ: Go home. Don't leave the city. If the pattern stops, I'll start believing in luck.
+! set lopez_doubt ; quest sq_lopez done
+-> END
+-- bribe
+! set lopez_bribe_tried
+LOPEZ: Two thousand dollars. You walked into a homicide squad room and offered me two thousand dollars. For them.
+* [SPEECH 45] "For a quiet retirement from one bad case. Nobody's bringing them back either way." -> bribe_ok | bribe_fail
+* "Forget I said anything." -> deny
+-- bribe_ok
+> She looks at the board for a long time. Then she opens a drawer and holds it open without looking at you.
+LOPEZ: Put it in the drawer. Then get out of my precinct and never, ever let me see your face near one of my scenes again.
+! cash -2000 ; set lopez_paid ; quest sq_lopez done ; stab -5
+ELLIOT (V.O.): Two grand. That's what it costs to make a good person stop looking. I'll remember that. I wish I could forget it.
+-> END
+-- bribe_fail
+LOPEZ: You know what, say that again, louder. No? Then here's what happens: I write down that you said it, and I start looking a lot harder.
+! set lopez_angry ; wanted 60
+-> END
+-- confess
+LOPEZ: ...Okay. Okay. Hands flat on the desk, Mr. Alderson. Slowly. Tell me the first one.
+* Put your hands on the desk. Tell her everything. -> confess_end
+* "...Forget it. I'm leaving." -> took_back
+-- took_back
+LOPEZ: You don't get to take that back. Not in this room. Not with me.
+! set lopez_heard_confession ; wanted 120
+-> END
+-- confess_end
+ELLIOT (V.O.): I tell her the first one. Then the next. She writes it all down in a small, neat hand and never once looks away from me. When I stop talking the room is very quiet. It's the quietest my head has been in years.
+! set confessed_murders ; quest sq_lopez done ; ending confession
+-> END
+-- again
+LOPEZ: Back again. Either you want to be caught or you want to watch me not catch you. Both are very bad signs.
+-> choice
+-- arrest
+> Lopez is sitting on the stairs of your building with a folder on her knees. Her hand rests near her holster, not on it. Not yet.
+LOPEZ: I've got the pattern, the times, the blocks, your MetroCard, and a witness who saw a man in a hoodie leave the last one. It's over, Elliot. Let's do this the quiet way. For both of us.
+* "You're right. It's over." -> surrender
+* [SPEECH 80] "You've got a hoodie, a train card and a feeling. Walk away, detective." -> talkdown | fight_warn
+* "You should've brought backup." -> fight
+-- surrender
+ELLIOT (V.O.): I hold my wrists out. The cuffs are colder than I expected, and lighter. Everything is lighter.
+! set confessed_murders ; quest sq_lopez done ; ending confession
+-> END
+-- talkdown
+LOPEZ: ...A feeling. Yeah. That's what they'll say, too. The DA, the captain, the lawyer E Corp would buy you. A feeling.
+LOPEZ: I'm going to walk away. Not because you're right. Because I can't prove you're wrong. Yet.
+! set lopez_doubt ; quest sq_lopez done
+-> END
+-- fight_warn
+LOPEZ: Wrong answer.
+-> fight
+-- fight
+! hostile lopez ; wanted 200
+-> END
+
+=== lopez_board
+-- start
+> Photographs, a street map, red pins. A timeline in Lopez's small, neat hand. Your building is circled twice. Under it, a word: PATIENT.
+ELLIOT (V.O.): She's drawn my life as a crime scene. The worst part is how accurate the map is.
+? flag.lopez_case_gone -> gone
+-> END
+-- gone
+ELLIOT (V.O.): The pins are still here. The file behind them isn't. She'll stare at this board every night and know. Knowing is all she'll ever have.
+-> END
+
+=== precinct_sticky
+-- start
+> A yellow sticky note on the monitor of the corner desk, in block capitals: CASETRACK PW = Yankees1996!  DO NOT REMOVE - SGT. BRODY
+ELLIOT (V.O.): The NYPD's cybersecurity strategy, in its entirety.
+! set precinct_pw
+-> END

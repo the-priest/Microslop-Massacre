@@ -1,0 +1,88 @@
+### Ron's Coffee. Ron runs a stalkerware / identity-tracking operation.
+
+=== ron
+-- start
+? flag.ron_resolved -> after
+? flag.knows_ron_secret -> confront
+RON: Welcome to Ron's. Best coffee in the neighborhood, which isn't saying much around here. What'll it be?
+* "Just coffee." -> coffee
+* [SPEECH 20] "You run the whole operation off the shop wifi? Brave." -> fish | coffee
+* "Nothing. Just looking." -> looking
+-- coffee
+RON: One coffee. On the house for a regular. You are a regular now. I decide that.
+! give coffee 1
+-> END
+-- fish
+RON: ...I don't know what you mean. It's a coffee shop. Beans, milk, a card reader. That's the whole business.
+ELLIOT (V.O.): He blinked twice on 'the whole business.' There's a back room. There's always a back room.
+! set found_ron_code ; set ron_backroom_hint
+-> END
+-- looking
+RON: Look all you want. Buy something eventually.
+-> END
+-- confront
+ELLIOT (V.O.): I know what he sells now. Not coffee. Access. The ability to follow people who spent everything to get away. He sells the leash back to the people they ran from.
+RON: You've been in my server. I can see it on your face, the way you're looking at me like I'm a thing under glass.
+* "Your customers are stalkers. Every one of them. You made that market." -> accuse
+* [HACKING 40] "I own your server now. Say one wrong word and it all goes to the FBI." -> own | accuse
+* "I don't care what you do. I need the server. That's all." -> transactional
+-- accuse
+RON: I sell software. What people do with it — that's on them. I never touched anyone.
+ELLIOT (V.O.): The oldest lie. The one that lets everyone with clean hands sleep. Build the weapon, sell the weapon, and it's never your finger on the trigger.
+-> decide
+-- own
+RON: ...Okay. Okay. What do you want. Money? I've got money. Just don't send it anywhere.
+ELLIOT (V.O.): Fear. Finally. The only language his kind ever really learns.
+! set ron_afraid
+-> decide
+-- transactional
+RON: A businessman. I can work with a businessman. The server's yours to poke at. Just leave my customer list out of it.
+-> decide
+-- decide
+ELLIOT (V.O.): I could report him. Slow, official, maybe nothing. I could expose him — dump the list, let his customers find out they're on it. I could take the list myself. Or I could just take what fsociety wants and walk.
+* [require q.sq_ron>=20] Report him to the FBI. Let the system be slow and sure. -> report
+* [require q.sq_ron>=20] Expose the whole operation. Publish everything. -> expose
+* [require q.sq_ron>=20] Take the customer list. Keep the leverage. -> take
+* "Just give me the server. I'm not the police." -> walk
+-- report
+ELLIOT (V.O.): I send the file to a tip line that actually reads them. Rare. It'll take months. But it's clean, and Ron's name is on a desk somewhere now, waiting.
+! quest sq_ron done ; fame nypd 4 ; fame locals 3 ; set ron_reported ; stab 4 ; set ron_resolved
+RON: You reported me. God. You people. You think a form fixes anything.
+-> plant_offer
+-- expose
+ELLIOT (V.O.): I push the whole thing live. Every customer, every victim, every card number. It's not justice. It's a bomb in a crowded room. Some of the people it frees, it also burns. I press the key anyway.
+! quest sq_ron done ; fame fsociety 5 ; infamy nypd 3 ; set ron_exposed ; stab -3 ; set ron_resolved
+RON: You have no idea what you just did. Those lists — some of those people were hiding for good reasons too.
+-> plant_offer
+-- take
+ELLIOT (V.O.): I copy the list to a drive and slip it in my pocket. Thousands of names. Power, distilled. I tell myself I'll use it well. Everyone tells themselves that.
+! give stalker_db 1 ; quest sq_ron done ; set ron_walked_away ; stab -2 ; infamy locals 1 ; set ron_resolved
+-> plant_offer
+-- walk
+ELLIOT (V.O.): Not my circus. Not tonight. I take what I came for and leave Ron to whatever finds him first.
+! quest sq_ron 50 ; set ron_walked_away ; set ron_resolved
+-> plant_offer
+-- after
+? !flag.rootkit_planted -> plant_offer
+? flag.ron_reported -> after_reported
+? flag.ron_exposed -> after_exposed
+RON: You. Coffee's four dollars. For you it's five. Get out of my line.
+-> END
+-- after_reported
+RON: A lawyer came by. Then two men in suits who didn't drink anything. Are you happy? Don't answer. Just leave.
+-> END
+-- after_exposed
+> Ron is wiping a counter that is already clean. He doesn't look up.
+RON: Half my regulars won't come in anymore. The other half come in to look at me. Go away, Elliot.
+-> END
+-- plant_offer
+ELLIOT (V.O.): Either way, the server's open now. And fsociety wants a rootkit in it — a doorway into E Corp's honeypot, one hop away.
+* Plant the rootkit. -> plant
+* Not yet. -> END
+-- plant
+? flag.rootkit_planted -> END
+ELLIOT (V.O.): The rootkit slides home. Ron's little server is a fsociety asset now. And through it, a thread runs all the way up to the top of the tower.
+! set rootkit_planted ; quest mq_rootkit 40 ; quest mq_rootkit 50 ; quest mq_rootkit done ; xp 40
+ELLIOT (V.O.): My phone buzzes. Unknown number. One line: 'Nice work. Come to the Delancey Street station. Alone. — a friend.' The city just got smaller.
+! quest mq_fsociety 10
+-> END
