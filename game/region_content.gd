@@ -7,6 +7,7 @@ const LANDMARKS := {
 	"highway": {
 		"hw_diner": {"rect": [24, 20, 60, 50], "h": 6.0, "style": 2, "color": Color(0.7, 0.2, 0.18), "sign": "BIG RIG DINER", "sign_col": Color(1.0, 0.3, 0.3), "door": "d_hw_diner", "awning": Color(0.8, 0.8, 0.82)},
 		"hw_gas": {"rect": [24, 70, 50, 92], "h": 5.0, "style": 2, "color": Color(0.85, 0.85, 0.8), "sign": "GAS · FOOD · LIVE BAIT", "sign_col": Color(1.0, 0.85, 0.2), "door": "d_hw_gas"},
+		"hw_pharmacy": {"rect": [24, 640, 50, 668], "h": 5.5, "style": 2, "color": Color(0.82, 0.8, 0.74), "sign": "LENNOX PHARMACY", "sign_col": Color(0.3, 1.0, 0.5), "door": "d_hw_pharmacy"},
 		"hw_motel": {"rect": [24, 600, 70, 630], "h": 7.0, "style": 1, "color": Color(0.55, 0.45, 0.35), "sign": "LENNOX MOTOR INN", "sign_col": Color(1.0, 0.5, 0.7), "door": "d_hw_motel"},
 	},
 	"chicago": {
@@ -23,6 +24,7 @@ const DOORS := {
 	"highway": {
 		"d_hw_diner": {"pos": [24, 35], "face": "w", "interior": "hw_diner", "name": "Big Rig Diner"},
 		"d_hw_gas": {"pos": [24, 81], "face": "w", "interior": "hw_gas", "name": "Gas Station"},
+		"d_hw_pharmacy": {"pos": [24, 654], "face": "w", "interior": "hw_pharmacy", "name": "Lennox Pharmacy"},
 		"d_hw_motel": {"pos": [24, 615], "face": "w", "interior": "hw_motel", "name": "Lennox Motor Inn"},
 	},
 	"chicago": {
@@ -38,6 +40,7 @@ const DOORS := {
 const POIS := {
 	"highway": {
 		"poi_hw_rest": {"pos": [40, 55], "name": "Big Rig Rest Stop", "r": 60.0},
+		"poi_hw_rig": {"pos": [-17, -300], "name": "Stalled Rig (I-80 shoulder)", "r": 30.0},
 		"poi_hw_town": {"pos": [60, 680], "name": "Lennox, Pennsylvania", "r": 80.0},
 	},
 	"chicago": {

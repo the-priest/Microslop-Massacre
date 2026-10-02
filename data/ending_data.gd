@@ -102,6 +102,19 @@ static func slides(ending: String) -> Array:
 		out.append(_s("MICROSLOP", "Forty studios reopened under their own names, in rented rooms over laundromats and dentists, making the sequels nobody would fund. Most of them are broke. Some of them are thriving. All of them own what they make. Microslop still exists; it just has much less to subscribe you to."))
 	if GS.has_flag("pixel_home"):
 		out.append(_s("RESPAWN", "Respawn outgrew its forum, then its servers, then its name. Dev went back to fixing arcade cabinets in Yonkers. Somebody else runs it now, and somebody else after them, which is the point. Every year on the anniversary of Floor 88, thirty thousand people log into the same old game at the same minute, just because they can."))
+	# Out of town.
+	if GS.has_flag("trevor_flipped"):
+		out.append(_s("LOU'S RED HOTS", "Lou's Red Hots made it to thirty-five years on the corner, then forty. The kid behind the grill now is a former review farmer named Trevor, who writes the specials board in a voice of authentic enthusiasm and means every word. EZeats paid a fine in Illinois. It was smaller than Lou's weekly order of celery salt."))
+	elif GS.has_flag("lou_truth"):
+		out.append(_s("LOU'S RED HOTS", "'Include one allegation of rudeness to a child' became the most quoted line in Chicago food writing that year. The line at Lou's went around the block for a month, and never quite stopped. Five of the six restaurants that closed reopened. Lou catered the parties."))
+	elif GS.has_flag("ezeats_bombed"):
+		out.append(_s("LOU'S RED HOTS", "Lou's rating never really recovered, and neither did EZeats', which was the part Lou liked. He got a laminated sign made: NOT ON THE APP. COME IN. The neighborhood did."))
+	if GS.has_flag("rig_freed"):
+		out.append(_s("FREIGHTOS", "Somewhere on I-80, a blue Peterbilt runs the only FreightOS license on Earth with the tier OWNER. Dolores has refused four buyout offers from E Corp's lawyers and one from a museum. When the CB asks who she is, she says 'a free woman,' and hangs up."))
+	elif GS.has_flag("rig_fuse"):
+		out.append(_s("FREIGHTOS", "Dolores drove another eight years without an autopilot, on maps she kept in her head. She framed E Corp's 'unauthorized modification' letter and hung it in the cab. Half the truckers on I-80 asked her which fuse. She told every one of them."))
+	if GS.has_flag("ruth_thanked") and GS.has_item("insulin_cooler") == false and GS.has_flag("rig_done") and not GS.has_flag("rig_freed") and not GS.has_flag("rig_fuse"):
+		out.append(_s("LENNOX", "Forty vials, eleven patients, one nine-year-old who grew up to be a nurse in the same clinic. On her first day she found a card taped inside the pharmacy register: 'To the stranger.' It had a dinosaur on it. She left it where it was."))
 	if GS.has_flag("bodega_thanked"):
 		out.append(_s("OMAR'S", "Omar's bodega is still open, nineteen years and counting. Coffee is free on Fridays for one particular customer, who pays exact change anyway. Omar keeps the change in a jar marked ELLIOT, for emergencies."))
 	if GS.has_flag("darlene_bond"):
