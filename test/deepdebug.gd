@@ -36,7 +36,8 @@ func _ready() -> void:
 	await game.enter_cell("world", Vector3(-466,0,318), 0, false, true); await _settle()
 	GameState.hp = 5.0
 	game.player.take_damage(999, game.player.global_position)
-	await _frames(60)
+	await get_tree().create_timer(1.4).timeout
+	await _frames(5)
 	problems.append_array(_expect(game.death_ui.is_open(), "death UI opens at 0 hp"))
 	game.death_ui.close_modal()
 	game._dead = false  # production recovers by reloading the scene; the harness reuses it

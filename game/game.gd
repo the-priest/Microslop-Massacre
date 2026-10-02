@@ -1056,6 +1056,8 @@ func interact(obj: Object) -> void:
 			await _use_atm(it)
 		"text":
 			hud.center(str(it.data.get("text", "")), 4.0)
+			if it.data.has("fx"):
+				await DialogueManager.run_effects(DialogueManager.parse_effects(str(it.data["fx"]), it.ident))
 		"effects":
 			await DialogueManager.run_effects(DialogueManager.parse_effects(str(it.data.get("fx", "")), it.ident))
 
