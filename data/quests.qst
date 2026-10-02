@@ -19,6 +19,7 @@
 +++ rockstarved | Rockstarved Games
 +++ chicago | The Windy City
 +++ microslop | Microslop
++++ road | Out of Town
 
 === mq_hello | Hello, Friend | main | 150 | fsociety
 Elliot Alderson. Cybersecurity engineer by day. By night, he reads people. Something was on his computer this morning that he doesn't remember putting there.
@@ -144,6 +145,22 @@ The debt is gone. The ATMs are dark. And Phillip Price is already on television 
 20 Darlene called. She's called eleven times. Meet the crew at the arcade @npc:darlene_n
 30 Stop Price from owning what comes next: poison the E Coin key batch at Consumer Credit branch 0419, take the story to the press, or hand Price to DiPierro @d_credit
 40 done
+
+=== sq_lou | Five Stars | side | 220 | road
+Lou has sold red hots on the same South Side corner for thirty-one years. Three weeks ago he quit the EZeats delivery app over its 35% cut. The next morning, his rating fell from 4.8 to 1.2 overnight.
+10 Lou keeps the reviews up on the tablet by his register, like a man pressing on a bruise. Read them @cell:chi_diner:8,1.4
+20 Every one of the fake reviews was posted from the same address: the Skyway Motel, Room 14, on the South Side @d_chi_motel
+30 Forty phones on a folding table, and a man named Trevor. Talk to him, or get into the review farm's laptop @cell:chi_motel:5,5.2
+40 It's done, one way or another. Tell Lou @npc:lou
+50 done
+
+=== sq_rig | Last Load | side | 200 | road
+Dolores has driven I-80 for twenty-two years. This morning her rig's autopilot subscription lapsed in a dead zone, and FreightOS locked the truck on the shoulder. In the trailer: insulin for the clinic in Lennox, with six hours of cold left.
+10 Dolores is at the Big Rig Diner, out of options. Hear her out @npc:dolores
+20 Her rig is locked on the west shoulder north of the diner. Jailbreak FreightOS, pull the telematics fuse, or take the insulin to Lennox yourself @poi_hw_rig
+30 Get the insulin cooler to Ruth at the Lennox Pharmacy, south down I-80 past the motel, before it warms @npc:ruth
+40 Let Dolores know how it went @npc:dolores
+50 done
 
 === sq_ron | The Product | side | 120 | les
 Ron doesn't sell coffee. He sells the ability to follow people who don't want to be followed. His customer list is a list of victims.

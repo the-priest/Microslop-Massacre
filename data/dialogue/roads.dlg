@@ -1,0 +1,225 @@
+### Out of town: side stories in Chicago and on I-80.
+### Lou and the review farm (sq_lou); Dolores, her rig and the insulin (sq_rig).
+
+=== lou
+-- start
+? q.sq_lou.done -> after
+? q.sq_lou>=40 -> news
+? q.sq_lou>=10 -> waiting
+> A big man in an apron, wiping a counter that's already clean. Behind him, a photo of the same counter in 1993 with a line out the door.
+LOU: Red hot? Fries? I'll throw in the fries. I throw in the fries for everybody now. Nobody's coming in for the fries.
+* "Slow day?" -> slow
+* "Just a red hot, thanks." -> order
+-- order
+LOU: Coming up. Mustard, relish, onion, sport peppers, tomato, pickle, celery salt. No ketchup. I'm not a monster. ...I'm not a monster. Whatever the internet says.
+-> slow
+-- slow
+LOU: Slow three weeks. Thirty-one years on this corner and I never had a slow three weeks, not in the blizzard of '99, not in the recession, not when the Bulls left town for a weekend.
+LOU: Three weeks ago I quit EZeats. The delivery app. They take thirty-five cents of every dollar and then they charge the customer a 'service fee' on top, and the driver gets bupkis. I told the rep on the phone, I said, I'll take my chances. He said, 'Okay, Lou. Good luck out there.' Like a threat. Like a movie.
+LOU: Next morning, two hundred one-star reviews. Hair in the food. Rude to a kid. I never been rude to a kid in my life. I GIVE kids hot dogs. That's my whole problem, I give everything away.
+* "Can I see the reviews?" -> help
+* [HACKING 30] "Somebody wrote those. I can find out who." -> help_hack | help
+* "That's rough. Good luck." -> bye
+-- help
+LOU: Knock yourself out. They're on the tablet by the register. I read them every morning. My daughter says stop. I can't stop. It's like pressing on a bruise.
+! quest sq_lou 10
+-> END
+-- help_hack
+LOU: You can do that? Find out who? ...Kid, if you can do that, you eat free here till one of us dies. Tablet's by the register.
+ELLIOT (V.O.): Two hundred reviews in three weeks, all one star, all fresh accounts. That's not angry customers. That's a job someone got paid for.
+! quest sq_lou 10 ; set lou_hacker
+-> END
+-- bye
+LOU: Yeah. Come back hungry.
+-> END
+-- waiting
+? q.sq_lou>=20 -> traced
+LOU: Tablet's by the register. Don't read them out loud, I know them by heart.
+-> END
+-- traced
+LOU: The Skyway Motel? That dump by the expressway? Somebody's sitting in a motel room making up stories about my hot dogs? ...I don't know whether to cry or go over there with a bat. I'm not going over there with a bat. I'm sixty-four. You go. Not with a bat.
+-> END
+-- news
+? flag.trevor_flipped -> news_flipped
+? flag.ezeats_bombed -> news_bombed
+LOU: It's on the news. 'Include one allegation of rudeness to a child.' They PAID somebody to say that about me. The Tribune called. The Sun-Times called. My daughter called crying. Forty-one restaurants, kid. Six of them closed.
+LOU: The line's out the door again. Half of them came in to be mad at EZeats in person, and I'm happy to let them, as long as they order.
+! quest sq_lou done ; set lou_saved ; fame locals 3 ; xp 60
+-> END
+-- news_bombed
+LOU: My rating's still in the toilet. But I opened my phone this morning and the EZeats app is the worst-rated app in America. 'Hair in the app.' That's... is that you? Don't tell me. I'm not a tech guy. I'm a hot dog guy who is suddenly feeling a lot of joy.
+LOU: Whoever did it, I'd give them free fries forever. Hypothetically.
+! quest sq_lou done ; fame locals 2 ; xp 60
+-> END
+-- news_flipped
+LOU: A kid in a hoodie came in this morning. Said his name was Trevor. Said he was sorry. Then he sat at the counter for six hours with his laptop and when he left I had four hundred new reviews. Real ones. People who ate here in 1995 and 2003 and last Christmas, who he found and asked.
+LOU: He's coming back tomorrow. I'm going to teach him to make a red hot. He's got the hands for it. Terrible posture, good hands.
+! quest sq_lou done ; set lou_saved ; fame locals 3 ; stab 2 ; xp 70
+-> END
+-- after
+? flag.lou_fed -> after_fed
+LOU: My hacker! Sit. Red hot, fries, a pop. On the house, like I said. Forever. I'm writing it on the wall so my daughter honors it when I'm gone.
+! set lou_fed ; heal 40
+-> END
+-- after_fed
+LOU: Back again! Same as always? Same as always. The line's been out the door since the newspapers. I had to hire. I hired Trevor's cousin. Everybody's somebody's cousin in Chicago.
+! heal 25
+-> END
+
+=== trevor
+-- start
+? flag.lou_done -> done
+> A man in his twenties at a folding table of forty phones, each in a little stand, each with a sticky note: a name, an age, a favorite food. He's eating cereal from the box. He does not look up.
+TREVOR: If you're from housekeeping, I'm good. If you're from the EZeats growth team, the batch is done, the invoice is in your inbox. If you're neither, wrong room.
+* "I'm here about Lou's Red Hots." -> lou
+* "What is all this?" -> what
+-- what
+TREVOR: Reputation management. I make the internet feel things about restaurants. Mostly nice things! I did a sushi place in Wicker Park, took it from a 3.1 to a 4.6. You're welcome, Wicker Park. And sometimes, the client wants the other kind.
+-> lou
+-- lou
+TREVOR: Lou's. Yeah. The hot dog guy. Look, I don't pick the targets. EZeats sends a name, a number of reviews, a 'tone.' I write the tone. It's freelance. It's a gig. Everything's a gig now.
+TREVOR: He quit their platform. They want the market to 'correct' him. That's their word. I just... type the correction.
+* [SPEECH 40] "You wrote that he yelled at a kid. You know he didn't. You're better than the brief." -> flip | flip_fail
+* [MELEE 40] (Put a hand flat on the table, next to the phones. Then take a phone and break it, slowly.) -> scare | scare_fail
+* "Give me the laptop password and I'm gone." -> pw
+* "Never mind." -> END
+-- flip
+TREVOR: ...I wrote the kid one at four in the morning and felt sick. I went and got a hot dog from a gas station. That was my apology. To nobody. To a gas station.
+TREVOR: You know what, fine. Fine! I know where every one of his old customers is, I've got scrapers for days. I could get him real reviews. Hundreds. People who actually ate there. That'd be... that'd be the first honest thing I've posted in two years.
+ELLIOT (V.O.): He means it. People who sell their voices are always the ones most surprised to find they still have one.
+! set lou_done ; set trevor_flipped ; quest sq_lou 40 ; fame locals 3 ; xp 130
+-> END
+-- flip_fail
+TREVOR: Better than the brief. Ha. I'm exactly as good as the brief, man. That's the job. You want to fix Lou, do it yourself.
+-> pw_no
+-- scare
+> The phone cracks down the middle. Then the next one. Trevor's spoon stops halfway to his mouth.
+TREVOR: Okay! Okay okay okay. Password's 'fivestars', lowercase, no space. Please don't do the Samsung, she's my best performer.
+! set trevor_pw ; xp 40
+-> END
+-- scare_fail
+> You reach for a phone. Trevor's faster: he slaps a big red button on the table and all forty screens go black at once.
+TREVOR: Kill switch. Every reputation guy has one. Now get out before I post a review of YOU.
+ELLIOT (V.O.): The laptop's still there. The laptop always has its own way in.
+-> END
+-- pw
+TREVOR: The password. Sure. And then I give you my bank PIN and the deed to my mom's house. ...Get out of my office, man. It's a motel room, but it's my office.
+-> pw_no
+-- pw_no
+ELLIOT (V.O.): The laptop's on the table by the window. Thirty-five-dollar laptop, thirty-five-cent security. I don't need his help.
+-> END
+-- done
+? flag.trevor_flipped -> done_flipped
+TREVOR: Whatever you did, the growth team won't return my emails, and I have never been so relieved to be ghosted in my life.
+-> END
+-- done_flipped
+TREVOR: Four hundred real reviews so far. Do you know how good it feels to write 'great food, nice guy' and have it be TRUE? I might go into journalism. No. I'll go into hot dogs. Lou says I've got the hands.
+-> END
+
+=== dolores
+-- start
+? q.sq_rig.done -> after
+? q.sq_rig>=40 -> report
+? q.sq_rig>=20 -> waiting
+> A woman in a red trucker's jacket in the back booth, phone on speaker, a hold tune playing for what sounds like the ninth time. A cup of coffee in front of her has gone cold.
+PHONE: ...your call is important to us. Please hold for the next available FreightOS success specialist...
+DOLORES: Twenty-two years on this road. I drove through the '96 ice storm. I drove the week my husband died because the clinic in Lennox needed its order. And this morning my own truck locked me out because a payment bounced in a dead zone.
+! quest sq_rig 10
+* "Your truck locked you out?" -> locked
+* "Rough morning. Coffee's on me." -> coffee
+-- coffee
+DOLORES: That's sweet, hon. Coffee won't fix a truck that thinks I'm a thief.
+-> locked
+-- locked
+DOLORES: The autopilot. FreightOS. E Corp makes you run it if you want insurance. The subscription renews at six every morning, and this morning I was in the hollow north of here where there's no signal, so the renewal failed, so the truck 'secured itself.' Doors locked, engine locked, hazards on. On the shoulder, like a dead deer.
+DOLORES: And in the trailer is forty vials of insulin for the Lennox clinic. It's cooled for maybe six hours on the ice packs. Ruth, the pharmacist, has eleven patients who need it by tonight. The hold music's on its ninth loop.
+* "I'll get you moving." -> yes
+* "Why not just pay them again?" -> pay
+* "Sorry. Good luck." -> END
+-- pay
+DOLORES: I did! Card went through ten minutes ago. Truck says 'reactivation pending manual review, 24-72 hours.' Manual review. There's no human in the building. I asked.
+-> yes
+-- yes
+DOLORES: You'd do that? She's on the west shoulder, about a quarter mile north of here. Big blue Peterbilt, hazards going. If you can talk sense into that computer, I'll owe you. If you can't, at least get the insulin to Ruth. She's in Lennox, south down the road, in the town with the motel sign.
+! quest sq_rig 20
+-> END
+-- waiting
+? item.insulin_cooler>=1 -> carrying
+DOLORES: She's on the west shoulder north of here. Hazards on. Can't miss her. FreightOS is still telling me my call is important.
+-> END
+-- carrying
+DOLORES: You've got the cooler? Go, hon. South down I-80 to Lennox, the pharmacy past the motel. Every minute counts on those ice packs.
+-> END
+-- report
+? flag.rig_freed -> report_freed
+? flag.rig_fuse -> report_fuse
+DOLORES: Ruth called. She got it. All forty vials, still cold, eleven patients sorted by suppertime. She said a stranger in a hoodie brought it in a car that, and I'm quoting, 'definitely wasn't his.'
+DOLORES: I'll sit here till FreightOS finishes its manual review. Seventy-two hours. I've got pie. I've got time. I've got eleven people in Lennox who are okay.
+! quest sq_rig done ; fame locals 3 ; xp 70
+-> END
+-- report_freed
+DOLORES: She started. She STARTED. And then she said 'FreightOS: subscription status UNLIMITED, account holder: OWNER.' Owner! Me! I own my truck! I've been paying for that truck for nine years and it's the first time it's admitted it.
+DOLORES: I took the insulin to Lennox myself. Ruth cried. I cried. A trucker at the next pump cried, and he didn't even know why.
+! quest sq_rig done ; fame locals 4 ; xp 80
+-> END
+-- report_fuse
+DOLORES: Fuse pulled, engine back, autopilot dead as a doornail. She drives like it's 1998 again, which is the year I liked her best. Insulin's in Lennox. Ruth's happy. E Corp's going to send me a letter about 'unauthorized modification,' and I'm going to frame it.
+! quest sq_rig done ; fame locals 3 ; xp 70
+-> END
+-- after
+DOLORES: There's my hacker. Pie's on me, hon, every time you come through. I tell every driver on the CB about you. They think I made you up. I tell them that's what people said about the yeti.
+-> END
+
+=== rig
+-- start
+? flag.rig_done -> done
+> A blue Peterbilt on the shoulder, hazards blinking in time with nothing. The cab door won't budge. A screen in the dash glows: FREIGHTOS · VEHICLE SECURED · REACTIVATION PENDING MANUAL REVIEW (24-72 HRS). Under the trailer, a fuse box with an E Corp tamper seal.
+* [HACKING 40] (The telematics port under the bumper. Jailbreak FreightOS from the inside and make it believe Dolores owns her truck.) -> hack | hack_fail
+* [LOCKPICK 35] (Break the tamper seal and pull the telematics fuse. The truck forgets it has an autopilot.) -> fuse | fuse_fail
+* (Open the trailer's side door and take the insulin cooler to Lennox yourself.) -> carry
+* "Not yet." -> END
+-- hack
+> You pop the port cover and plug in. FreightOS is three decades of code wearing a nice font. It takes four minutes to find the field that says SUBSCRIPTION_TIER and eleven seconds to change it to OWNER.
+ELLIOT (V.O.): The doors unlock with a sigh, like the truck's relieved too.
+! set rig_done ; set rig_freed ; quest sq_rig 40 ; fame locals 2 ; xp 110
+-> END
+-- hack_fail
+ELLIOT (V.O.): The port's encrypted better than the rest of it, which tells you exactly what E Corp thinks is worth protecting. Not the insulin. The subscription.
+-> start
+-- fuse
+> The tamper seal tears like a parking ticket. Fuse 14, TELEMATICS, comes out with a click, and the dash screen dies mid-sentence. Somewhere a server in Ohio stops being able to tell Dolores what to do.
+! set rig_done ; set rig_fuse ; quest sq_rig 40 ; fame locals 2 ; xp 90
+-> END
+-- fuse_fail
+ELLIOT (V.O.): The seal's a cheap one but the box is not, and the latch fights back. Not with these hands, not today.
+-> start
+-- carry
+> The trailer's side door was never on the system, because nobody at E Corp ever thought about the insulin. A white cooler, LENNOX COMMUNITY CLINIC in marker on the lid. It's lighter than it should be for something this important.
+ELLIOT (V.O.): South down I-80 to Lennox. A pharmacist named Ruth. Go.
+! set rig_done ; give insulin_cooler 1 ; quest sq_rig 30 ; xp 30
+-> END
+-- done
+> The hazards are off now. Just a truck on the shoulder, waiting for its driver.
+-> END
+
+=== ruth
+-- start
+? flag.ruth_thanked -> after
+? item.insulin_cooler>=1 -> deliver
+? q.sq_rig>=40 -> fine
+> A woman in a white coat behind the counter of the Lennox pharmacy, checking her watch, checking the window, checking her watch.
+RUTH: If you're not a blue Peterbilt, you're not what I'm waiting for. Sorry, hon. It's a long day. If you need something for a headache, the bandages are on the left. If you need something for the world, I'm out.
+-> END
+-- deliver
+RUTH: Is that... that's the clinic cooler. That's our cooler! Oh, thank God. Thank God and whoever you are.
+> She opens it right there on the counter, counting under her breath. Forty vials. The ice packs are soft but the inside is still cold.
+RUTH: Eleven people. One of them is nine years old. Her mother's been sitting in my waiting room since noon because she didn't know what else to do. I'm going to go tell her. ...What's your name? No? Fine. I'll just tell her a stranger brought it.
+! take insulin_cooler 1 ; set ruth_thanked ; quest sq_rig 40 ; fame locals 4 ; stab 3 ; xp 120
+-> END
+-- fine
+RUTH: Dolores came through in the end. Her truck, her insulin, eleven people fine. I heard someone helped her. You've got the look of someone who helps people and then pretends they didn't.
+! set ruth_thanked
+-> END
+-- after
+RUTH: The little one's doing great. Her mom made you a card. I don't know where to send it, so it's taped inside the register. 'To the stranger.' It has a dinosaur on it.
+-> END

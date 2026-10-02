@@ -634,13 +634,24 @@ const INTERIORS := {
 	"spots": [{"id": "hw_motel_guest", "kind": "text", "title": "Guest Book", "verb": "Read", "pos": [6.3, 1.0, 4.5], "size": [0.8, 0.6, 1.0], "text": "Lennox Motor Inn, est. 1961. Three hundred pages of truckers, runaways and salesmen. 'Room 9 has a ghost. He's nice.' 'Room 9 has bedbugs. They're not.' And on the last page, this morning's date, in handwriting you recognise because it's yours: 'Keep driving. — E.' You don't remember writing it."},
 		{"id": "hw_motel_bed", "kind": "bed", "title": "Motel Bed", "verb": "Sleep", "pos": [2.0, 0.6, 2.0], "size": [1.8, 1, 2.2]}],
 },
+"hw_pharmacy": {
+	"name": "Lennox Pharmacy", "amb": "office", "ambient": Color(0.44, 0.46, 0.44),
+	"rooms": [{"r": [0, 0, 10, 8], "h": 3.0, "wall": Color(0.86, 0.88, 0.84), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.92, 1.0, 0.95), "energy": 1.25, "lights": [[5, 2.7, 4]]}],
+	"exits": [{"pos": [5, 8], "face": "s", "to": "world:d_hw_pharmacy", "label": "Main Street"}],
+	"furn": [["counter", 5, 1.6, 0, {"w": 5.0}], ["register", 6.5, 1.5, 0], ["shelf", 0.6, 3, 90], ["shelf", 0.6, 5.5, 90], ["shelf", 9.4, 3, -90], ["shelf", 9.4, 5.5, -90], ["fridge_glass", 8.4, 0.6, 0], ["poster", 5, 0.12, 0, {"col": Color(0.3, 0.75, 0.45)}], ["plant", 1, 7.4, 0], ["bench", 5, 6.8, 0, {"w": 2.4}]],
+	"spots": [
+		{"id": "hw_pharm_shop", "kind": "shop", "title": "Pharmacy Counter", "verb": "Shop", "pos": [5, 1, 2.4], "size": [5, 2, 1.0], "shop": "lennox_pharmacy"},
+		{"id": "hw_pharm_board", "kind": "text", "title": "Community Board", "verb": "Read", "pos": [0.2, 1.5, 1.5], "size": [0.3, 1.0, 1.4], "text": "Lost cat (orange, answers to Mortgage). Choir practice Thursdays. A flyer from E Corp Health: 'Your prescriptions, now by subscription!' Someone has written underneath, in very neat pharmacist's handwriting: 'No.'"},
+	],
+},
 # ============================================================= CHICAGO
 "chi_diner": {
 	"name": "Lou's Red Hots", "amb": "jazz", "ambient": Color(0.42, 0.34, 0.28),
 	"rooms": [{"r": [0, 0, 12, 8], "h": 3.2, "wall": Color(0.6, 0.18, 0.14), "floor": Color(0.85, 0.85, 0.8), "floor_kind": "tile", "light": Color(1.0, 0.85, 0.65), "energy": 1.15, "lights": [[3, 2.9, 4], [9, 2.9, 4]]}],
 	"exits": [{"pos": [6, 8], "face": "s", "to": "world:d_chi_diner", "label": "Street"}],
 	"furn": [["bar_counter", 6, 1.3, 0, {"w": 7.0, "neon": Color(1.0, 0.85, 0.2)}], ["stool", 3.5, 2.5, 0], ["stool", 5, 2.5, 0], ["stool", 6.5, 2.5, 0], ["stool", 8, 2.5, 0], ["cafe_table", 2, 6, 0], ["cafe_table", 6, 6, 0], ["cafe_table", 10, 6, 0], ["poster", 0.15, 4, 90, {"col": Color(0.9, 0.7, 0.1)}]],
-	"spots": [{"id": "chi_diner_shop", "kind": "shop", "title": "Counter", "verb": "Order", "pos": [6, 1, 2.3], "size": [7, 2, 1.2], "shop": "gen_diner"}],
+	"spots": [{"id": "chi_diner_shop", "kind": "shop", "title": "Counter", "verb": "Order", "pos": [6, 1, 2.3], "size": [7, 2, 1.2], "shop": "gen_diner"},
+		{"id": "lou_tablet", "kind": "text", "title": "Lou's Tablet", "verb": "Read", "pos": [8, 1.3, 1.4], "size": [0.6, 0.4, 0.5], "when": "q.sq_lou>=10", "text": "EZeats reviews, newest first. 'Hair in the hot dog. Called police.' 'Worst food I've ever eaten, and I'm from Gary.' 'Owner yelled at my kid.' Two hundred and six of them in three weeks, all one star, all from accounts made the same night. Lou doesn't have a kid-yelling bone in his body. You tap one and check the metadata. Same IP block, every time: a residential line at the Skyway Motel. Room 14.", "fx": "set lou_traced ; quest sq_lou 20"}],
 },
 "chi_safe": {
 	"name": "fsociety Chicago — the Warehouse", "amb": "interior", "ambient": Color(0.26, 0.26, 0.28),
@@ -654,8 +665,18 @@ const INTERIORS := {
 	"name": "Skyway Motel — Room 14", "amb": "interior", "ambient": Color(0.32, 0.3, 0.3),
 	"rooms": [{"r": [0, 0, 7, 6], "h": 2.7, "wall": Color(0.45, 0.5, 0.5), "floor": F_CARPET, "light": Color(0.9, 0.85, 0.75), "energy": 0.85, "lights": [[3.5, 2.4, 3]]}],
 	"exits": [{"pos": [3.5, 0], "face": "n", "to": "world:d_chi_motel", "label": "Parking Lot"}],
-	"furn": [["bed_double", 2.2, 3.6, 0, {"col": Color(0.3, 0.4, 0.5)}], ["tv", 5.8, 3.6, -90], ["dresser", 6.3, 1.4, -90], ["lamp", 0.6, 5.4, 0]],
-	"spots": [{"id": "chi_motel_bed", "kind": "bed", "title": "Motel Bed", "verb": "Sleep", "pos": [2.2, 0.6, 3.6], "size": [1.8, 1, 2.2]}],
+	"furn": [["bed_double", 2.2, 3.6, 0, {"col": Color(0.3, 0.4, 0.5)}], ["tv", 5.8, 3.6, -90], ["dresser", 6.3, 1.4, -90], ["lamp", 0.6, 5.4, 0], ["table", 4.6, 5.3, 0, {"w": 2.4, "d": 0.9}], ["desk_pc", 5.0, 5.3, 180], ["boxes", 1.0, 1.0, 0], ["chair", 4.6, 4.5, 180]],
+	"spots": [
+		{"id": "review_farm", "kind": "terminal", "title": "Review Farm Laptop", "verb": "Use", "pos": [5.0, 1.0, 5.2], "size": [1.0, 0.8, 0.8], "hack": 35, "password_flag": "trevor_pw", "when": "q.sq_lou>=20", "header": "starsforhire.local  //  CLIENT: EZEATS GROWTH TEAM", "welcome": "Forty phones on a folding table, each with a name, a face from a stock photo, and a history of eating at restaurants that don't exist.",
+			"entries": [
+				{"title": "Client brief: 'Restaurant Retention'", "text": "From an EZeats address: 'Partners who leave the platform should experience the market reality of not being on it. 200 reviews over 21 days. Tone: authentic disappointment. Include one allegation of rudeness to a child.' Invoice: $1,400. Paid."},
+				{"title": "The other clients", "text": "Forty-one restaurants in Chicago. Every one of them quit EZeats in the last year. Every one of them is now a one-star restaurant. Six have closed."},
+			],
+			"actions": [
+				{"title": "Delete every fake review and post the client brief where Lou's customers will see it", "when": "!flag.lou_done", "result": "Two hundred and six reviews vanish from Lou's page, and the forty other restaurants' too. In their place, pinned, the EZeats brief: 'Include one allegation of rudeness to a child.' Chicago's food press has it by dinner. EZeats calls it 'a rogue vendor.' It has never used the word 'rogue' about a vendor before.", "fx": "set lou_done ; set lou_truth ; quest sq_lou 40 ; fame locals 4 ; xp 120"},
+				{"title": "Point all forty phones at EZeats itself", "when": "!flag.lou_done", "result": "By morning the EZeats app has eleven thousand new one-star reviews in every app store on Earth, each one written in the same voice of authentic disappointment Trevor perfected on Lou. 'Hair in the app.' 'Called police.' It drops out of the top 100. Lou's old rating stays wrecked, but the thing that wrecked it is on fire.", "fx": "set lou_done ; set ezeats_bombed ; quest sq_lou 40 ; infamy ecorp 2 ; xp 110"},
+			]},
+		{"id": "chi_motel_bed", "kind": "bed", "title": "Motel Bed", "verb": "Sleep", "pos": [2.2, 0.6, 3.6], "size": [1.8, 1, 2.2]}],
 },
 "chi_fbi": {
 	"name": "Federal Plaza — Chicago Field Office", "amb": "office", "ambient": Color(0.42, 0.44, 0.5),

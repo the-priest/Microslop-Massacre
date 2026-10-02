@@ -124,6 +124,8 @@ func _build_region() -> void:
 					_street_wall_block(bi, bj, r, d)
 	if WorldLayout.AIRFIELD["bi0"] <= WorldLayout.AIRFIELD["bi1"]:
 		_region_airfield()
+	if WorldLayout.region == "highway":
+		_stalled_rig(Vector3(-17.0, 0.0, -300.0))
 	_landmarks()
 	_region_edges()
 
@@ -161,7 +163,7 @@ func _farm_block(bi: int, bj: int, r: Rect2, rest: bool) -> void:
 		cb.props.box_xf(Transform3D(Basis(Vector3.FORWARD, 0.5), Vector3(bx + 4.5, 10.5, bz + 13.0)), Vector3(10.4, 0.3, 27.0), Color(0.25, 0.25, 0.27))
 		cb.props.box_xf(Transform3D(Basis(Vector3.FORWARD, -0.5), Vector3(bx + 13.5, 10.5, bz + 13.0)), Vector3(10.4, 0.3, 27.0), Color(0.25, 0.25, 0.27))
 		cb.solid(Vector3(bx + 9.0, 4.5, bz + 13.0), Vector3(18.0, 9.0, 26.0))
-		cb.props.cyl(Vector3(bx + 24.0, 0, bz + 6.0), 3.2, 3.2, 16.0, Color(0.7, 0.7, 0.68), 12)
+		cb.props.cyl(Vector3(bx + 24.0, 8.0, bz + 6.0), 3.2, 3.2, 16.0, Color(0.7, 0.7, 0.68), 12)
 		cb.solid(Vector3(bx + 24.0, 8.0, bz + 6.0), Vector3(6.0, 16.0, 6.0))
 	# Billboards facing the interstate.
 	if rng.randf() < 0.6:
@@ -173,6 +175,24 @@ func _farm_block(bi: int, bj: int, r: Rect2, rest: bool) -> void:
 		var ads := ["E CORP · OWN NOTHING · OWE EVERYTHING", "E COIN · THE FUTURE OF MONEY IS OURS", "LIVE SERVICE · NEVER FINISHED · NEVER YOURS", "ACCOUNT REQUIRED · FOR YOUR SAFETY", "SUBSCRIBE TO YOUR CAR'S HEATED SEATS", "JESUS SAVES · E CORP CHARGES INTEREST", "NOW WITH AI · YOU DIDN'T ASK"]
 		cbb.label(Vector3(bxx - 0.2, 8.5, by), ads[rng.randi() % ads.size()], 64, Color(0.12, 0.12, 0.14), -PI * 0.5, 260.0, 0.02)
 		cbb.solid(Vector3(bxx, 4.0, by), Vector3(0.4, 8.0, 0.4))
+
+
+## Dolores's blue Peterbilt, locked on the west shoulder with its hazards on
+## (Last Load). A cab, a reefer trailer, wheels and blinking corner lights.
+func _stalled_rig(p: Vector3) -> void:
+	var c := ctx_at(p.x, p.z)
+	var blue := Color(0.12, 0.25, 0.55)
+	c.props.box(p + Vector3(0, 2.0, -6.2), Vector3(2.5, 2.6, 3.2), blue)
+	c.props.box(p + Vector3(0, 1.1, -8.4), Vector3(2.4, 1.2, 1.4), blue.darkened(0.2))
+	c.props.box(p + Vector3(0, 2.6, -7.75), Vector3(2.2, 0.9, 0.1), Color(0.3, 0.45, 0.6))
+	c.props.box(p + Vector3(0, 2.3, 2.0), Vector3(2.6, 3.0, 12.5), Color(0.86, 0.86, 0.84))
+	c.label(p + Vector3(1.32, 2.6, 2.0), "LENNOX COMMUNITY CLINIC · KEEP COLD", 26, Color(0.15, 0.3, 0.6), PI * 0.5, 80.0, 0.02)
+	for wz in [-7.6, -5.0, 0.0, 6.0, 7.4]:
+		for sx in [-1.15, 1.15]:
+			c.props.box(Vector3(p.x + sx, 0.55, p.z + wz), Vector3(0.45, 1.1, 1.1), Color(0.08, 0.08, 0.08))
+	for corner in [Vector3(-1.2, 1.2, -8.9), Vector3(1.2, 1.2, -8.9), Vector3(-1.25, 1.0, 8.2), Vector3(1.25, 1.0, 8.2)]:
+		c.glow.box(p + corner, Vector3(0.25, 0.18, 0.12), Color(1.0, 0.6, 0.1), 0.0, Vector2(Props.K_BLINK, 0))
+	c.solid(p + Vector3(0, 2.0, 0.0), Vector3(2.6, 4.0, 17.5))
 
 
 ## A lakefront strip with one runway (Meigs Field) and room for two planes.
@@ -314,7 +334,7 @@ func _fill_country() -> void:
 						var c := tile.get_center()
 						if roll < 0.16:
 							fc.props.box(Vector3(c.x - 30.0, 3.5, c.y), Vector3(12.0, 7.0, 18.0), Color(0.55, 0.16, 0.1))
-							fc.props.cyl(Vector3(c.x - 18.0, 0, c.y), 3.0, 3.0, 15.0, Color(0.7, 0.7, 0.68), 10)
+							fc.props.cyl(Vector3(c.x - 18.0, 7.5, c.y), 3.0, 3.0, 15.0, Color(0.7, 0.7, 0.68), 10)
 						elif roll < 0.3:
 							for t in 7:
 								fc.props.box(Vector3(c.x + r2.randf_range(-24.0, 24.0), 5.0, c.y + r2.randf_range(-24.0, 24.0)), Vector3(7.0, 10.0, 7.0), Color(0.12, 0.2, 0.09))
