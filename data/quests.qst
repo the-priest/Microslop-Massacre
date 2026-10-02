@@ -162,6 +162,13 @@ Dolores has driven I-80 for twenty-two years. This morning her rig's autopilot s
 40 Let Dolores know how it went @npc:dolores
 50 done
 
+=== sq_ortiz | Final Notice | side | 160 | les
+Mrs. Ortiz in 2B has knitted for every tenant in the building, and buried a husband last spring. Now a collector from E Corp Consumer Credit calls her six times a day about Hector's funeral loan, a debt that died with him and was never hers to pay.
+10 Mrs. Ortiz is in the hallway of your building, by her door in 2B. She looks like she hasn't slept @npc:ortiz
+20 The calls come from Gary, top recovery agent at E Corp Consumer Credit, branch 0419. Pay him a visit during business hours, or get into the branch's records yourself @d_credit
+30 Gary's done calling, one way or another. Tell Mrs. Ortiz @npc:ortiz
+40 done
+
 === sq_ron | The Product | side | 120 | les
 Ron doesn't sell coffee. He sells the ability to follow people who don't want to be followed. His customer list is a list of victims.
 10 Find proof of what Ron really sells: his back-room server @cell:ron_coffee:12,3

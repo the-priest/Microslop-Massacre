@@ -67,6 +67,17 @@ MR. ROBOT: The cascade broke. Steady your hands and run it again — we don't ge
 > Progress bars crawl toward 100%. Somewhere, a mortgage becomes a rumor. A student loan becomes a story. The number that ruled millions of lives becomes noise.
 MR. ROBOT: It's done. It's actually done. Five/Nine.
 ! set five_nine_done ; quest mq_finale 30 ; quest mq_after 10 ; xp 300 ; fame fsociety 10 ; glitch 1.0
+? flag.ms_done -> games
+? flag.rs_done -> gamers
+-> home
+-- games
+> On a phone propped against a dead arcade cabinet, the Respawn forum refreshes itself over and over. Thirty thousand people, posting the same three words. PRESS START, FRIEND.
+MR. ROBOT: Your gamers are watching. Microslop tried to teach them nobody owns anything. You just taught them nobody owes anything either. Same lesson, kid. Louder.
+-> home
+-- gamers
+> Somewhere on the arcade floor a phone buzzes with a forum notification: Pixel, in all caps, saying nothing but OH MY GOD, over and over.
+-> home
+-- home
 MR. ROBOT: Go home, kid. Sleep, if you can. Turn on the news in the morning. Then we find out what we actually did.
 -> END
 

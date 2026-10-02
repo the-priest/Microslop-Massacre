@@ -19,11 +19,28 @@ func _ready() -> void:
 	GameState.set_flag("joined_fsociety")
 	GameState.raise_skill("hacking", 70)
 	GameState.game_minutes = GameState.day() * 1440.0 + 13 * 60.0
+	await _final_notice()
 	await _respawn()
 	await _chicago()
 	await _home()
 	print("RESPAWN WALK DONE fails=%d" % fails)
 	get_tree().quit()
+
+
+func _final_notice() -> void:
+	print("PHASE final notice")
+	await _enter_door("d_apt")
+	await _talk("ortiz", ["Who's on the phone", "Play it", "Don't pay him"])
+	_ok("heard the voicemail", GameState.has_flag("ortiz_voicemail"))
+	_expect("sq_ortiz", 20)
+	GameState.tracked_quest = "sq_ortiz"
+	await _follow("sq_ortiz") # -> branch 0419
+	await _talk("gary", ["Hector Ortiz", "I've got your voicemail"])
+	_ok("gary backed off", GameState.has_flag("ortiz_gary_scared"))
+	_expect("sq_ortiz", 30)
+	await _follow("sq_ortiz") # -> home
+	await _talk("ortiz", [])
+	_ok("final notice done", GameState.quest_state("sq_ortiz") == "done")
 
 
 func _respawn() -> void:
@@ -113,7 +130,7 @@ func _home() -> void:
 	var titles: Array = []
 	for s in EndingData.slides("fsociety"):
 		titles.append(str((s as Dictionary)["title"]))
-	for want in ["ROCKSTARVED", "KENNYQA", "CHICAGO", "RESPAWN", "MICROSLOP"]:
+	for want in ["ROCKSTARVED", "KENNYQA", "CHICAGO", "RESPAWN", "MICROSLOP", "2B"]:
 		_ok("epilogue has " + want, titles.has(want))
 
 

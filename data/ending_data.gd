@@ -102,6 +102,8 @@ static func slides(ending: String) -> Array:
 		out.append(_s("MICROSLOP", "Forty studios reopened under their own names, in rented rooms over laundromats and dentists, making the sequels nobody would fund. Most of them are broke. Some of them are thriving. All of them own what they make. Microslop still exists; it just has much less to subscribe you to."))
 	if GS.has_flag("pixel_home"):
 		out.append(_s("RESPAWN", "Respawn outgrew its forum, then its servers, then its name. Dev went back to fixing arcade cabinets in Yonkers. Somebody else runs it now, and somebody else after them, which is the point. Every year on the anniversary of Floor 88, thirty thousand people log into the same old game at the same minute, just because they can."))
+	if GS.has_flag("ortiz_saved"):
+		out.append(_s("2B", "Mrs. Ortiz's phone never rang about Hector again. She kept the tape, with his voice on the outgoing message, in the drawer with his watch. Sunday dinners at 2B became a building tradition: the Super, Shayla, whoever was hungry. There was always too much arroz con pollo. That was the point." + (" You wore the sweater to every one of them." if GS.has_item("ortiz_sweater") else "")))
 	# Out of town.
 	if GS.has_flag("trevor_flipped"):
 		out.append(_s("LOU'S RED HOTS", "Lou's Red Hots made it to thirty-five years on the corner, then forty. The kid behind the grill now is a former review farmer named Trevor, who writes the specials board in a voice of authentic enthusiasm and means every word. EZeats paid a fine in Illinois. It was smaller than Lou's weekly order of celery salt."))

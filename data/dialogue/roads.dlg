@@ -223,3 +223,113 @@ RUTH: Dolores came through in the end. Her truck, her insulin, eleven people fin
 -- after
 RUTH: The little one's doing great. Her mom made you a card. I don't know where to send it, so it's taped inside the register. 'To the stranger.' It has a dinosaur on it.
 -> END
+
+### ---------------------------------------------------------------- 2B
+### Mrs. Ortiz and Gary the collector (sq_ortiz). Your building and branch 0419.
+
+=== ortiz
+-- start
+? q.sq_ortiz.done -> after
+? q.sq_ortiz>=30 -> news
+? q.sq_ortiz>=10 -> waiting
+> A small woman in a cardigan by the door of 2B, a phone in one hand and knitting needles in the other, as if she's forgotten which one she meant to pick up.
+ORTIZ: Oh! 4D. The quiet one. Hector always said you were a good boy because you never slammed the door. ...Sorry. I'm sorry. I keep saying his name like he's in the kitchen.
+* "Are you okay, Mrs. Ortiz?" -> okay
+* "Who's on the phone?" -> phone
+* "Have a good night." -> END
+-- okay
+ORTIZ: Okay. Everyone asks. I'm sixty-eight, mijo, I've been okay and not okay at the same time for a whole year now. It's this phone that's not okay.
+-> phone
+-- phone
+ORTIZ: E Corp. Consumer Credit. A man called Gary. He calls six times a day about Hector's funeral. We took a loan for it, a nice one, with the white flowers. Hector would have hated the flowers.
+ORTIZ: Gary says now that Hector's gone, I have to pay. Eleven thousand dollars. He says if I don't, they can 'look at the apartment.' He said it on the machine, I kept it. I keep everything. Do you want to hear?
+* "Play it." -> machine
+* "That's not how it works. You don't owe his debt." -> law
+-- machine
+> She holds up a little answering machine, the kind nobody sells anymore, and presses play. A cheerful man's voice: "Mrs. Ortiz, Gary again from E Corp. Third notice today! Just want to remind you we can start looking at the apartment if we don't hear from you. Have a blessed day!"
+ELLIOT (V.O.): Threatening a widow with her home over a dead man's debt she never signed for. That's not collections. That's a crime with a smile on the voicemail.
+! set ortiz_voicemail
+-> law
+-- law
+ORTIZ: That's what my nephew said. He's a paralegal. But Gary says it so nice, and so often, and I'm so tired, mijo. Some nights I think I'll just give them the money I have and let them take the rest.
+* "Don't pay him anything. Let me talk to Gary." -> help
+* "I'll see what I can do." -> help
+-- help
+ORTIZ: You would? For me? ...Branch 0419. Downtown, by the Federal Building. He's there in the day, he tells me, 'nine to five, Mrs. Ortiz, always here for you.' Like a threat. Everything nice he says is like a threat.
+ORTIZ: Take the tape, if it helps. Bring it back. It has Hector on it, from before. The outgoing message.
+! quest sq_ortiz 10 ; quest sq_ortiz 20
+-> END
+-- waiting
+ORTIZ: Did you find Gary? He called twice this morning already. I let the machine get it. Hector's voice says 'we're not home right now' and then Gary talks over him. I hate that most of all.
+-> END
+-- news
+? flag.ortiz_gary_heart -> news_heart
+? flag.ortiz_gary_scared -> news_scared
+ORTIZ: A letter came. 'Account discharged. Estate insolvent.' I had to read it three times. My nephew read it five. No more calls. The phone just sits there now, being a phone.
+-> gift
+-- news_heart
+ORTIZ: Gary called. One last time. He said he was sorry. He said his mama had a funeral loan too, and he forgot what that felt like, and he was sorry. Then he said 'have a blessed day,' but softer. I believed him. Isn't that strange?
+-> gift
+-- news_scared
+ORTIZ: The branch called, a woman, not Gary. She said Gary 'no longer handles my account,' and the account is closed, and would I please not contact the newspapers or the federal government. I said I'd think about it. Hector would have laughed for an hour.
+-> gift
+-- gift
+? flag.heat_on -> gift_sweater
+ORTIZ: I don't have anything to give you, mijo. Come by for dinner. Sunday. I make Hector's arroz con pollo and nobody eats it anymore.
+! quest sq_ortiz done ; set ortiz_saved ; fame locals 3 ; stab 3 ; xp 60
+-> END
+-- gift_sweater
+ORTIZ: Wait. Wait here. I've been making you something since the heat came back. My hands needed something to do in the warm.
+> She comes back with a sweater. Four colours that have never agreed on anything. One sleeve longer than the other. It's still warm from her lap.
+ORTIZ: Hector's color was the green. I ran out halfway, so I used the orange. He'd say it looks terrible. Wear it anyway.
+! give ortiz_sweater 1 ; quest sq_ortiz done ; set ortiz_saved ; fame locals 3 ; stab 4 ; xp 60
+ELLIOT (V.O.): It's the ugliest thing I've ever owned. I'm never taking it off.
+-> END
+-- after
+ORTIZ: 4D! Sunday dinner, don't forget. You're too thin. Everybody in this building is too thin, but you're the worst.
+-> END
+
+=== gary
+-- start
+? flag.ortiz_done -> after
+? q.sq_ortiz>=20 -> ortiz
+> A man in a pressed shirt behind teller station 2, under a framed certificate: TOP RECOVERY AGENT, Q3. He smiles like a man who's been trained to.
+GARY: Welcome to E Corp Consumer Credit! Have you checked your E Coin readiness score? It's free! It's the only free thing in here, ha ha. Have a blessed day!
+-> END
+-- ortiz
+GARY: Welcome to E Corp Consumer Credit! How can I make your financial journey a blessed one today?
+* "Hector Ortiz. You're calling his widow six times a day." -> confront
+* "Never mind." -> END
+-- confront
+GARY: Ortiz... Ortiz. Oh, the funeral! Lovely service, I'm told. Look, I just work the queue, friend. The queue says Ortiz, I call Ortiz. The leaderboard says Gary, I'm Gary. You understand.
+* [SPEECH 45] "She's sixty-eight and she sleeps with the phone off now. Who taught you to talk to people like that, Gary?" -> heart | heart_fail
+* [if flag.ortiz_voicemail] "I've got your voicemail. 'We can start looking at the apartment.' Want to hear what a regulator thinks of that?" -> tape
+* [MELEE 45] (Lean over the counter. Quietly. Let him see exactly how little you care about his leaderboard.) -> scare | scare_fail
+* "I'll handle it another way." -> END
+-- heart
+> He opens his mouth to say the line, whatever the line is, and nothing comes out.
+GARY: ...My mama had a funeral loan. For my dad. I was nineteen. A man called the house every night at dinner and she'd smile at us and take it in the hall. I used to hate that man.
+GARY: I'm that man. Oh my God. I'm that man and I have a certificate.
+> He types. A long time. Then he turns the screen so you can see it: ORTIZ, HECTOR - DISCHARGED - ESTATE INSOLVENT.
+GARY: It was always supposed to say that. The queue just... never told me to. Tell her I'm sorry. No. I'll tell her. I'll call one more time. A nice call.
+! set ortiz_done ; set ortiz_gary_heart ; quest sq_ortiz 30 ; fame locals 3 ; xp 90
+-> END
+-- heart_fail
+GARY: Who taught me? E Corp did, friend. Four-day training and a laminated script. Next customer!
+-> END
+-- tape
+> You hold up the little tape. His smile stays where it is, but everything behind it goes somewhere else.
+GARY: That's... that's out of context. I say 'blessed' after. Doesn't the 'blessed' count? ...Okay. Okay. Put that away. The account's closed. It's closed! Look. Discharged. I've never seen this account in my life. Please don't send that anywhere.
+! set ortiz_done ; set ortiz_gary_scared ; set ortiz_gary_gone ; quest sq_ortiz 30 ; fame locals 2 ; infamy ecorp 1 ; xp 80
+-> END
+-- scare
+> You don't say anything. You just lean on the counter until Gary's certificate starts to look very far away to him.
+GARY: I'm closing it. I'm closing it right now. See? Gone. Ortiz who? I'm going to take my lunch. I'm going to take a very long lunch.
+! set ortiz_done ; set ortiz_gary_scared ; set ortiz_gary_gone ; quest sq_ortiz 30 ; infamy ecorp 2 ; stab -1 ; xp 60
+-> END
+-- scare_fail
+GARY: Are you... are you threatening me? Security! Ha ha, just kidding, we don't have security, we have a guy named Sal who sits by the door. Sal! ...Have a blessed day, sir. Please leave.
+-> END
+-- after
+GARY: Oh. You. Hi. I'm working on a new script. It has fewer threats in it. Corporate hates it. Have a... have a nice day. Just nice.
+-> END
