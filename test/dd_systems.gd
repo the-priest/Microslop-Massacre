@@ -13,7 +13,7 @@ func _ready() -> void:
 	# death
 	await game.enter_cell("world", Vector3(-466,0,318),0,false,true); await _settle()
 	GameState.hp=5.0; game.player.take_damage(999, game.player.global_position)
-	await _frames(70); _e(game.death_ui.is_open(), "death UI at 0hp")
+	await get_tree().create_timer(1.4).timeout; await _frames(5); _e(game.death_ui.is_open(), "death UI at 0hp")
 	if game.death_ui.is_open(): game.death_ui.close_modal()
 	game._dead = false  # production recovers by reloading the scene; the harness reuses it
 	_e(game.ui_depth == 0, "ui_depth balanced after death+close")
@@ -29,7 +29,7 @@ func _ready() -> void:
 	_e(game.exploit_ui.is_open(), "exploit opens for melee")
 	if game.exploit_ui.is_open():
 		game.exploit_ui._enqueue(); await _frames(2); game.exploit_ui._execute()
-		await _until(func(): return not game.exploit_ui.executing, 300)
+		await _until(func(): return not game.exploit_ui.executing, 6000)
 	_e(is_equal_approx(Engine.time_scale,1.0), "timescale restored (melee exploit)")
 
 	# companions

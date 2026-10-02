@@ -1,4 +1,4 @@
-# HELLO, FRIEND — Master Roadmap
+# MICROSLOP MASSACRE — Master Roadmap
 
 **The goal:** New Vegas-grade story, choice and consequence, with a sandbox that
 plays like a modern crime open world, inside Mr. Robot's New York. Every path is
@@ -35,6 +35,15 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       relative to the interior; dozens of placement, dialogue-gate and writing fixes
 
 ---
+
+- [x] **Pass 3 (connected world + game war):** New York, I-80 and Chicago share one
+      world (~3 km of farmland between cities, skylines on each other's horizons,
+      planes fly straight across map edges, world view on the phone map); the Respawn
+      arc repaired end to end (Rockstarved, Chicago's two hacks, the drive home) and a
+      new closing chapter, **Microslop Massacre**, with its own epilogue slides;
+      street lamps that really light the street at night, headlights, a Night
+      brightness setting; validator clean on every map; `respawn_walk` plays the
+      whole arc
 
 ## 1. World and exploration
 

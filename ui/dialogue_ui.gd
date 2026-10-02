@@ -77,6 +77,9 @@ func is_open() -> bool:
 
 
 func _process(delta: float) -> void:
+	if _typing and auto_advance:
+		# Automated tests don't wait for the typewriter.
+		_type_t = float(_full_len)
 	if _typing:
 		_type_t += delta * 55.0 * float(Settings.get_v("subtitles_speed"))
 		var shown := int(_type_t)

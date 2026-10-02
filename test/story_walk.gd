@@ -267,6 +267,8 @@ func _finale() -> void:
 	_expect("mq_after", 30)
 	GameState.game_minutes = GameState.day() * 1440.0 + 13 * 60.0
 	await _follow("mq_after") # -> branch 0419
+	await _spot("credit_gary", [])
+	_ok("found Gary's password", GameState.has_flag("credit_pw"))
 	await _term("credit_mgr", [], ["Poison"])
 	_ok("after done", GameState.quest_state("mq_after") == "done")
 	_expect("mq_finale", 40)
