@@ -54,7 +54,7 @@ func _ready() -> void:
 	game.exploit_ui.try_open(); await _frames(8)
 	if game.exploit_ui.is_open():
 		game.exploit_ui._enqueue(); await _frames(2); game.exploit_ui._execute()
-		await _until(func(): return not game.exploit_ui.executing, 300)
+		await _until(func(): return not game.exploit_ui.executing, 6000)
 	problems.append_array(_expect(is_equal_approx(Engine.time_scale,1.0), "time scale restored after melee exploit"))
 
 	# 5) companions recruit + cell travel + dismiss

@@ -83,6 +83,7 @@ const ITEMS := {
 	"ammo_45": {"name": ".45 ACP Rounds", "type": "ammo", "value": 2, "desc": "Fat, slow, persuasive."},
 	"ammo_44": {"name": ".44 Magnum Rounds", "type": "ammo", "value": 4, "desc": "For the magnum."},
 	# ---------------------------------------------------------------- apparel
+	"ortiz_sweater": {"name": "Mrs. Ortiz's Sweater", "type": "apparel", "slot": "body", "value": 5, "dt": 2, "bonus": {"speech": 5}, "look": "hoodie", "desc": "Hand-knitted, four colours that have never agreed on anything, one sleeve slightly longer. It is the warmest thing you have ever owned. People trust a man in a sweater like this."},
 	"hoodie_black": {"name": "Black Hoodie", "type": "apparel", "slot": "body", "value": 20, "dt": 1, "bonus": {"sneak": 5}, "look": "hoodie", "desc": "Your uniform. The hood does half the work."},
 	"work_clothes": {"name": "Allsafe Work Clothes", "type": "apparel", "slot": "body", "value": 40, "dt": 0, "bonus": {"hacking": 5, "speech": 3}, "look": "office", "desc": "Button-down, lanyard, soul optional."},
 	"leather_jacket": {"name": "Leather Jacket", "type": "apparel", "slot": "body", "value": 120, "dt": 4, "bonus": {"melee": 5}, "look": "leather", "desc": "Scuffed. Earned."},

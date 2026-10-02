@@ -32,7 +32,10 @@ func _ready() -> void:
 		var r = func(): await game.dialog.run(str(cid), null); done[0]=true
 		r.call()
 		var t := 0
-		while not done[0] and t < 500: await get_tree().process_frame; t+=1
+		while not done[0] and t < 500:
+			await get_tree().process_frame; t+=1
+			# A player closes the shop / minigame a conversation opens.
+			if game.barter_ui.is_open(): game.barter_ui.close_modal()
 		if not done[0]:
 			problems.append("HUNG: "+str(cid)); if game.dialog.is_open(): game.dialog.abort(); await _frames(3)
 		# Reset transient world state so effects don't accumulate across convos
