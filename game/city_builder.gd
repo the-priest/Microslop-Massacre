@@ -60,6 +60,9 @@ func ctx_at(x: float, z: float) -> BuildCtx:
 
 func build_all() -> void:
 	rng.seed = WorldLayout.SEED
+	if WorldLayout.region != "nyc":
+		_build_region()
+		return
 	_reserve_landmarks()
 	_roads()
 	for bj in WorldLayout.NBJ:
@@ -84,6 +87,164 @@ func commit(parent: Node3D, far: float) -> void:
 		bc.props_mat = Mats.city_lit
 		bc.glow_mat = Mats.city_glow
 		bc.commit(n, far)
+
+
+# ------------------------------------------------------------- other regions
+## Chicago, the interstate, and anywhere else: the same grid, the same
+## building kit, a different map. No NYC set pieces.
+func _build_region() -> void:
+	_reserve_landmarks()
+	_roads()
+	for bj in WorldLayout.NBJ:
+		for bi in WorldLayout.NBI:
+			var d := WorldLayout.district(bi, bj)
+			var r := WorldLayout.block_rect(bi, bj)
+			match d:
+				"airfield":
+					pass
+				"farm", "reststop":
+					_farm_block(bi, bj, r, d == "reststop")
+				"loop":
+					_midtown_block(bi, bj, r)
+				"river":
+					_industrial_block(bi, bj, r)
+				_:
+					_street_wall_block(bi, bj, r, d)
+	if WorldLayout.AIRFIELD["bi0"] <= WorldLayout.AIRFIELD["bi1"]:
+		_region_airfield()
+	_landmarks()
+	_region_edges()
+
+
+## Interstate country: fields in strips, tree lines, a barn now and then,
+## and billboards that tell you exactly what kind of country this is.
+func _farm_block(bi: int, bj: int, r: Rect2, rest: bool) -> void:
+	var crops := [Color(0.32, 0.36, 0.14), Color(0.42, 0.38, 0.16), Color(0.24, 0.3, 0.12), Color(0.46, 0.4, 0.24), Color(0.2, 0.26, 0.1)]
+	var x := r.position.x
+	while x < r.end.x - 1.0:
+		var w := minf(rng.randf_range(24.0, 60.0), r.end.x - x)
+		var col: Color = crops[rng.randi() % crops.size()]
+		var z := r.position.y
+		while z < r.end.y - 1.0:
+			var dz := minf(100.0, r.end.y - z)
+			ctx_at(x + w * 0.5, z + dz * 0.5).ground.flat(Vector3(x + w * 0.5, 0.01, z + dz * 0.5), w - 0.6, dz, col, 0.0, Vector2(1, 0))
+			z += dz
+		x += w
+	if rest:
+		return
+	# Tree line along the field edge nearest the road.
+	var tz := r.position.y + 6.0
+	while tz < r.end.y:
+		var tx := r.position.x + rng.randf_range(4.0, 10.0)
+		var c := ctx_at(tx, tz)
+		Props.place(c, ["tree_a", "tree_b", "tree_c"][rng.randi() % 3], Vector3(tx, 0, tz), rng.randf() * TAU, rng.randf_range(1.0, 1.6))
+		c.solid(Vector3(tx, 1.4, tz), Vector3(0.5, 2.8, 0.5))
+		tz += rng.randf_range(14.0, 30.0)
+	# A barn and a silo.
+	if rng.randf() < 0.7:
+		var bx := r.position.x + rng.randf_range(80.0, r.size.x - 60.0)
+		var bz := r.position.y + rng.randf_range(40.0, r.size.y - 60.0)
+		var cb := ctx_at(bx, bz)
+		_facade_box(cb, Rect2(bx, bz, 18.0, 26.0), 0.0, 9.0, 0, Color(0.5, 0.14, 0.1), 0.0)
+		cb.props.box_xf(Transform3D(Basis(Vector3.FORWARD, 0.5), Vector3(bx + 4.5, 10.5, bz + 13.0)), Vector3(10.4, 0.3, 27.0), Color(0.25, 0.25, 0.27))
+		cb.props.box_xf(Transform3D(Basis(Vector3.FORWARD, -0.5), Vector3(bx + 13.5, 10.5, bz + 13.0)), Vector3(10.4, 0.3, 27.0), Color(0.25, 0.25, 0.27))
+		cb.solid(Vector3(bx + 9.0, 4.5, bz + 13.0), Vector3(18.0, 9.0, 26.0))
+		cb.props.cyl(Vector3(bx + 24.0, 0, bz + 6.0), 3.2, 3.2, 16.0, Color(0.7, 0.7, 0.68), 12)
+		cb.solid(Vector3(bx + 24.0, 8.0, bz + 6.0), Vector3(6.0, 16.0, 6.0))
+	# Billboards facing the interstate.
+	if rng.randf() < 0.6:
+		var by := r.position.y + rng.randf_range(30.0, r.size.y - 30.0)
+		var bxx := r.position.x + 22.0
+		var cbb := ctx_at(bxx, by)
+		cbb.props.box(Vector3(bxx, 4.0, by), Vector3(0.3, 8.0, 0.3), Color(0.3, 0.3, 0.3))
+		cbb.props.box(Vector3(bxx, 8.5, by), Vector3(0.3, 4.0, 12.0), Color(0.92, 0.92, 0.88))
+		var ads := ["E CORP · OWN NOTHING · OWE EVERYTHING", "E COIN · THE FUTURE OF MONEY IS OURS", "LIVE SERVICE · NEVER FINISHED · NEVER YOURS", "ACCOUNT REQUIRED · FOR YOUR SAFETY", "SUBSCRIBE TO YOUR CAR'S HEATED SEATS", "JESUS SAVES · E CORP CHARGES INTEREST", "NOW WITH AI · YOU DIDN'T ASK"]
+		cbb.label(Vector3(bxx - 0.2, 8.5, by), ads[rng.randi() % ads.size()], 64, Color(0.12, 0.12, 0.14), -PI * 0.5, 260.0, 0.02)
+		cbb.solid(Vector3(bxx, 4.0, by), Vector3(0.4, 8.0, 0.4))
+
+
+## A lakefront strip with one runway (Meigs Field) and room for two planes.
+func _region_airfield() -> void:
+	var r := WorldLayout.airfield_rect()
+	var G := Vector2(1, 0)
+	var gz := r.position.y
+	while gz < r.end.y:
+		var d := minf(100.0, r.end.y - gz)
+		ctx_at(r.get_center().x, gz + d * 0.5).ground.flat(Vector3(r.get_center().x, 0.008, gz + d * 0.5), r.size.x, d, Color(0.22, 0.28, 0.15), 0.0, G)
+		gz += d
+	var rx := WorldLayout.RUNWAY_X
+	var hw := WorldLayout.RUNWAY_HW
+	var z := WorldLayout.RUNWAY_Z0
+	while z < WorldLayout.RUNWAY_Z1:
+		var L := minf(60.0, WorldLayout.RUNWAY_Z1 - z)
+		var c := ctx_at(rx, z + L * 0.5)
+		c.ground.flat(Vector3(rx, 0.02, z + L * 0.5), hw * 2.0, L, Color(0.16, 0.16, 0.17), 0.0, G)
+		c.props.flat(Vector3(rx, 0.03, z + L * 0.5), 0.9, L * 0.5, Color(0.85, 0.85, 0.82))
+		for s in [-1.0, 1.0]:
+			c.glow.box(Vector3(rx + s * (hw + 1.0), 0.45, z + L * 0.5), Vector3(0.22, 0.12, 0.22), Color(1.0, 0.95, 0.75), 0.0, Vector2(Props.K_NIGHT, 0))
+		z += 60.0
+	# Apron and two tie-downs west of the runway.
+	var ax := rx - hw - 30.0
+	ctx_at(ax, -200.0).ground.flat(Vector3(ax, 0.02, -200.0), 40.0, 120.0, Color(0.2, 0.2, 0.21), 0.0, G)
+	airfield_planes.append({"slot": "chi_a", "model": "skyhawk", "pos": Vector3(ax, 0.0, -240.0), "yaw": PI * 0.5})
+	airfield_planes.append({"slot": "chi_b", "model": "skyhawk", "pos": Vector3(ax, 0.0, -170.0), "yaw": PI * 0.5})
+
+
+## Edge of a non-NYC map: walls, ground beyond the grid, water (Chicago's
+## lake), distant hills, and the travel gates with their highway signs.
+func _region_edges() -> void:
+	var x0 := -WorldLayout.WORLD_X
+	var x1 := WorldLayout.WORLD_XE
+	var z0 := WorldLayout.WORLD_ZN
+	var z1 := WorldLayout.BEACH_Z1
+	var root_c := ctx_at(0, 0)
+	root_c.solid(Vector3(x0 - 1.0, 10.0, (z0 + z1) * 0.5), Vector3(2.0, 40.0, z1 - z0 + 20.0), 0.0, "bounds")
+	root_c.solid(Vector3(x1 + 1.0, 10.0, (z0 + z1) * 0.5), Vector3(2.0, 40.0, z1 - z0 + 20.0), 0.0, "bounds")
+	root_c.solid(Vector3((x0 + x1) * 0.5, 10.0, z0 - 1.0), Vector3(x1 - x0 + 20.0, 40.0, 2.0), 0.0, "bounds")
+	root_c.solid(Vector3((x0 + x1) * 0.5, 10.0, z1 + 1.0), Vector3(x1 - x0 + 20.0, 40.0, 2.0), 0.0, "bounds")
+	var grass := Color(0.2, 0.26, 0.13) if WorldLayout.region == "highway" else Color(0.26, 0.26, 0.27)
+	var wb := MeshBatch.new()
+	if WorldLayout.region == "chicago":
+		# Lake Michigan to the east, as far as you can see.
+		wb.flat(Vector3(x1 + 1500.0, -0.4, (z0 + z1) * 0.5), 3000.0, 6000.0, Color(0.1, 0.22, 0.32))
+	wb.commit(_water_parent_holder(), Mats.water, 0.0, "Water")
+	var far := BuildCtx.new()
+	var r2 := RandomNumberGenerator.new()
+	r2.seed = WorldLayout.SEED + 7
+	# Hills (the interstate) or suburbs (Chicago) on the horizon.
+	var a := 0.0
+	while a < TAU:
+		var dist := r2.randf_range(2200.0, 2800.0)
+		var cx := (x0 + x1) * 0.5 + cos(a) * dist
+		var cz := (z0 + z1) * 0.5 + sin(a) * dist
+		if WorldLayout.region == "chicago" and cx > x1 + 200.0:
+			a += 0.08
+			continue
+		if WorldLayout.region == "highway":
+			far.props.box(Vector3(cx, r2.randf_range(10.0, 40.0), cz), Vector3(r2.randf_range(200.0, 500.0), r2.randf_range(40.0, 110.0), r2.randf_range(200.0, 400.0)), Color(0.16, 0.22, 0.12), a)
+		else:
+			var w := r2.randf_range(30.0, 70.0)
+			_facade_box(far, Rect2(cx, cz, w, w), 0.0, r2.randf_range(12.0, 60.0), [1, 2, 8][r2.randi() % 3], _palette("brick").darkened(0.35), r2.randf_range(1, 90))
+		a += 0.08
+	far_skyline = far
+	_gate_signs(grass)
+
+
+## Green highway signs and a ramp of asphalt at every travel gate.
+func _gate_signs(_grass: Color) -> void:
+	for gid in Regions.gates(WorldLayout.region).keys():
+		var g: Dictionary = Regions.gates(WorldLayout.region)[gid]
+		var gp: Array = g["pos"]
+		var p := Vector3(float(gp[0]), 0.0, float(gp[1]))
+		var c := ctx_at(p.x, p.z)
+		var yaw := float(g.get("yaw", 0.0))
+		c.ground.flat(p, 16.0, 60.0, Color(0.15, 0.15, 0.16), yaw, Vector2(1, 0))
+		var side := Vector3(cos(yaw), 0, -sin(yaw))
+		for s in [-1.0, 1.0]:
+			c.props.box(p + side * (9.0 * s) + Vector3(0, 3.5, 0), Vector3(0.3, 7.0, 0.3), Color(0.35, 0.35, 0.37))
+		c.props.box(p + Vector3(0, 7.2, 0), Vector3(18.0, 2.4, 0.2), Color(0.05, 0.35, 0.2), yaw)
+		c.label(p + Vector3(0, 7.2, 0) + Vector3(sin(yaw), 0, cos(yaw)) * 0.15, str(g["sign"]), 96, Color(0.95, 0.95, 0.95), yaw, 600.0, 0.02)
+		c.label(p + Vector3(0, 7.2, 0) - Vector3(sin(yaw), 0, cos(yaw)) * 0.15, str(g["sign"]), 96, Color(0.95, 0.95, 0.95), yaw + PI, 600.0, 0.02)
 
 
 # ------------------------------------------------------------ reservations
@@ -116,8 +277,7 @@ func _reserve_landmarks() -> void:
 		var b := _block_of(rect.get_center().x, rect.get_center().y)
 		_reserve(b.x, b.y, rect)
 		# Keep a walkway clear in front of the door to the block edge.
-		var did := str(L.get("door", ""))
-		if did != "":
+		for did in WorldLayout.landmark_doors(L):
 			var dw := WorldLayout.door_world(did)
 			if not dw.is_empty():
 				var p: Vector3 = dw["pos"]
@@ -378,6 +538,11 @@ const DIST_PARAMS := {
 	"bronx": {"lot": [10.0, 18.0], "depth": [24.0, 30.0], "h": [14.0, 24.0], "styles": [1, 1, 2], "fe": 0.6, "shops": 0.55, "tall": 0.22, "tall_h": [40.0, 70.0], "alley": 0.45, "cols": "brick"},
 	"inwood": {"lot": [10.0, 16.0], "depth": [22.0, 28.0], "h": [12.0, 22.0], "styles": [2, 1, 8], "fe": 0.4, "shops": 0.4, "tall": 0.1, "tall_h": [25.0, 40.0], "alley": 0.35, "cols": "stone"},
 	"astoria": {"lot": [7.0, 12.0], "depth": [18.0, 24.0], "h": [8.0, 14.0], "styles": [1, 2, 6], "fe": 0.3, "shops": 0.55, "tall": 0.03, "tall_h": [20.0, 30.0], "alley": 0.5, "cols": "mixed"},
+	# Chicago and the road.
+	"west": {"lot": [10.0, 18.0], "depth": [24.0, 30.0], "h": [10.0, 22.0], "styles": [1, 1, 5, 2], "fe": 0.4, "shops": 0.5, "tall": 0.08, "tall_h": [30.0, 45.0], "alley": 0.6, "cols": "brick"},
+	"south": {"lot": [8.0, 14.0], "depth": [22.0, 28.0], "h": [8.0, 16.0], "styles": [1, 2, 1], "fe": 0.35, "shops": 0.55, "tall": 0.04, "tall_h": [20.0, 30.0], "alley": 0.55, "cols": "brick"},
+	"lake": {"lot": [18.0, 30.0], "depth": [26.0, 30.0], "h": [28.0, 60.0], "styles": [8, 2, 4], "fe": 0.0, "shops": 0.3, "tall": 0.35, "tall_h": [70.0, 120.0], "alley": 0.1, "cols": "stone"},
+	"town": {"lot": [8.0, 14.0], "depth": [18.0, 22.0], "h": [6.0, 11.0], "styles": [1, 2], "fe": 0.1, "shops": 0.7, "tall": 0.0, "tall_h": [12.0, 14.0], "alley": 0.4, "cols": "mixed"},
 	"lic": {"lot": [16.0, 30.0], "depth": [26.0, 30.0], "h": [14.0, 30.0], "styles": [5, 4, 3, 1], "fe": 0.1, "shops": 0.35, "tall": 0.35, "tall_h": [80.0, 160.0], "alley": 0.2, "cols": "stone"},
 }
 
@@ -1583,6 +1748,10 @@ func _landmarks() -> void:
 			var out: Vector3 = dw["out"]
 			var dc := ctx_at(dp.x, dp.z)
 			Props.door(dc, dp, out, L.get("sign_col", Color(0.9, 0.75, 0.45)), bool(L.get("boarded", false)))
+			for did2 in L.get("doors_extra", []):
+				var dw2 := WorldLayout.door_world(str(did2))
+				if not dw2.is_empty():
+					Props.door(ctx_at((dw2["pos"] as Vector3).x, (dw2["pos"] as Vector3).z), dw2["pos"], dw2["out"], Color(0.5, 0.5, 0.45), false)
 			if bool(L.get("stoop", false)):
 				for k in 4:
 					dc.props.box(dp + out * (0.6 + float(k) * 0.35) + Vector3(0, 0.45 - float(k) * 0.13, 0), Vector3(2.4, 0.13, 0.35) if absf(out.z) > 0.5 else Vector3(0.35, 0.13, 2.4), Color(0.4, 0.36, 0.32))
@@ -1801,9 +1970,10 @@ func _rect_free_global(r: Rect2) -> bool:
 		var lr := Rect2(float(rr[0]), float(rr[1]), float(rr[2]) - float(rr[0]), float(rr[3]) - float(rr[1]))
 		if lr.grow(1.0).intersects(r):
 			return false
-		var did := str(L.get("door", ""))
-		if did != "":
+		for did in WorldLayout.landmark_doors(L):
 			var dw := WorldLayout.door_world(did)
+			if dw.is_empty():
+				continue
 			var p: Vector3 = dw["pos"]
 			var o: Vector3 = dw["out"]
 			var a := Vector2(p.x, p.z)

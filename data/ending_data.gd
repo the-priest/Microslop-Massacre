@@ -69,6 +69,22 @@ static func slides(ending: String) -> Array:
 		out.append(_s("SHAYLA", "You never went back for Shayla. Vera's world closed over her the way water closes over a stone. You told yourself you'd had bigger things to do. The city is very good at making that feel true."))
 	if GS.has_flag("krista_free"):
 		out.append(_s("KRISTA", "Krista left Lenny, and then left the practice, and then left the city. She sends you an email on the anniversary of your first real session. You never write back. You always read it twice."))
+	if GS.has_flag("robot_accepted"):
+		out.append(_s("THE PIER", "You stopped fighting the man in the jacket. You didn't lose yourself; you found the rest of yourself, the part that had been carrying your father's anger since you were eight. Some mornings you wake up humming songs you never learned. You let him have that."))
+	elif GS.has_flag("robot_truce"):
+		out.append(_s("THE PIER", "You and the man in the jacket kept your deal. You drive. He rides. Now and then you feel his hand reach for the wheel, and you say no, and more often than not he listens. Krista calls it progress. He calls it a hostage situation. Both of them are a little bit right."))
+	elif GS.has_flag("robot_rejected"):
+		out.append(_s("THE PIER", "You told the man in the jacket to get out of your head. He didn't. He just went quiet, and the quiet has teeth. You lose an afternoon now and then. You find notes in your own handwriting that you don't remember writing. You've stopped reading them."))
+	if GS.has_flag("ecoin_exposed"):
+		out.append(_s("E COIN", "Nora Kessler's story ran for eleven days. 'The crisis is the onboarding' became a protest sign, then a T-shirt, then a line in a Senate hearing. E Coin was 'paused pending review.' It is still paused. Phillip Price has not given an interview since."))
+	elif GS.has_flag("ecoin_broken"):
+		out.append(_s("E COIN", "E Coin launched on a Friday and failed on a Friday, in front of every camera in the country, forty thousand wallets rejecting their own signatures at once. 'A software issue,' E Corp said. Nobody believed them about anything after that."))
+	elif GS.has_flag("price_fbi"):
+		out.append(_s("PHILLIP PRICE", "Agent DiPierro walked Phillip Price out of his own building in handcuffs on a Tuesday morning. He was out by Wednesday. But the photograph ran everywhere, and men like Price live on the belief that it can't happen to them. For one Tuesday, it did."))
+	elif GS.has_flag("five_nine_done") and str(GS.flags.get("after_path", "")) == "settle":
+		out.append(_s("E COIN", "You let it settle. E Coin rolled out on schedule, and by spring half the country was paid in it, owed in it, and watched in it. The new ledger was cleaner than the old one. That was the problem."))
+	if GS.has_flag("bodega_thanked"):
+		out.append(_s("OMAR'S", "Omar's bodega is still open, nineteen years and counting. Coffee is free on Fridays for one particular customer, who pays exact change anyway. Omar keeps the change in a jar marked ELLIOT, for emergencies."))
 	if GS.has_flag("darlene_bond"):
 		out.append(_s("DARLENE", "Darlene stayed. Through all of it — the loud parts, the lost hours, the mornings you didn't recognize her. She's your sister. It's the one file that never corrupted. Wherever you ended up, she's one wall over, being annoyed that she loves you."))
 	if GS.has_flag("township_public"):
@@ -90,7 +106,13 @@ static func slides(ending: String) -> Array:
 		out.append(_s("VERA", "The wizard erased Vera's court date, and Vera walked. He kept his word about Shayla and he kept his business about everyone else. The docks got a little worse after that. Everyone knew who had signed the release. They just didn't know it was you."))
 	elif GS.is_dead("vera"):
 		out.append(_s("VERA", "Vera never made it to his court date. The crew he left behind fought over the docks for a month, then got bored and sold them. Nobody held a funeral. Shayla sent flowers anyway, to nobody in particular."))
-	if GS.has_flag("gideon_warned"):
+	if GS.has_flag("gideon_framed") and not GS.has_flag("gideon_cleared"):
+		out.append(_s("GIDEON", "Gideon Goddard was indicted as fsociety's inside man. The evidence was perfect. It took eleven minutes to build, and his lawyers spent two years and every dollar he had failing to take it apart. He wrote you one letter. You never opened it. You keep it in the drawer with your pills."))
+	elif GS.has_flag("ghost_insider"):
+		out.append(_s("GIDEON", "The FBI spent eight months hunting a contractor named R. Kovac who had never been born. Gideon was questioned twice and released twice. He never learned how close he came. Some nights you think that's the kindest thing you've ever done. Some nights you think it's just the cleverest."))
+	elif GS.has_flag("gideon_warned_frame") or GS.has_flag("gideon_cleared"):
+		out.append(_s("GIDEON", "Gideon walked out of the federal building a free man, a lawyer on each side and no idea who had saved him. You did it knowing exactly what it would cost with the woman who keeps the clocks. It cost that. You'd pay it again."))
+	elif GS.has_flag("gideon_warned"):
 		out.append(_s("GIDEON", "Gideon sold Allsafe two weeks before the world changed. He never asked you why he did it. He sends you a card every Christmas with a picture of a sailboat on it and no message, which is the most eloquent thing he's ever said."))
 	elif GS.has_flag("five_nine_done"):
 		out.append(_s("GIDEON", "When E Corp fell, Allsafe fell with it. Gideon lost the company, the house, and eventually the husband. The FBI questioned him for days about the engineer he trusted most. He never gave them your name. Not once."))
@@ -152,7 +174,9 @@ static func slides(ending: String) -> Array:
 		out.append(_s("BOWERY BAY", "The state attorney general froze the foreclosure on Bowery Bay \"pending review,\" and the review is still pending. Gus calls it the best thing a bureaucracy ever did for him. On clear mornings you can hear his Skyhawk over Astoria, running late and very happy about it."))
 	elif GS.quest_state("sq_wings") == "active" and GS.quest_stage("sq_wings") >= 50:
 		out.append(_s("BOWERY BAY", "Thirty days came and went. Bowery Bay became a logistics hub: a warehouse with a press release. Gus sold his last Skyhawk to a flight school in Ohio and moved in with his niece. He still looks up every time a small plane goes over."))
-	if GS.has_flag("ecorp_jet_gone"):
+	if GS.has_flag("jet_owned"):
+		out.append(_s("THE CITATION", "E Corp's lawyers spent two years trying to get their jet back from a flight school in Queens with a one-dollar lease and a 1987 stamp. They lost. Gus framed the judgment and hung it over the coffee machine. On clear evenings you can still see the Citation go out over the water, running lights on, nobody chasing it."))
+	elif GS.has_flag("ecorp_jet_gone"):
 		out.append(_s("THE CITATION", "E Corp's corporate jet was never recovered. Its tail number turned up years later in a story about planes that do not officially exist. In the photograph, someone had painted over the logo with a smiling mask."))
 	# Mr. Robot's final word.
 	if GS.stability >= 60:

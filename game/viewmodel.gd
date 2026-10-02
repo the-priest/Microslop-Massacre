@@ -17,21 +17,21 @@ static func mesh_for(model: String, sleeve: Color) -> ArrayMesh:
 	match model:
 		"fists":
 			for s in [-1.0, 1.0]:
-				b.box(Vector3(0.2 * s, -0.24, -0.42), Vector3(0.09, 0.09, 0.11), skin, 0.0, E)
-				b.box(Vector3(0.21 * s, -0.27, -0.28), Vector3(0.1, 0.1, 0.24), sleeve, 0.0, E)
+				_hand(b, Vector3(0.2 * s, -0.24, -0.42), Vector3(0.09, 0.09, 0.11), skin, E)
+				_sleeve(b, Vector3(0.21 * s, -0.27, -0.28), Vector3(0.1, 0.1, 0.24), sleeve, E)
 		"knife":
-			b.box(Vector3(0.2, -0.24, -0.4), Vector3(0.08, 0.09, 0.1), skin, 0.0, E)
-			b.box(Vector3(0.21, -0.27, -0.26), Vector3(0.1, 0.1, 0.24), sleeve, 0.0, E)
+			_hand(b, Vector3(0.2, -0.24, -0.4), Vector3(0.08, 0.09, 0.1), skin, E)
+			_sleeve(b, Vector3(0.21, -0.27, -0.26), Vector3(0.1, 0.1, 0.24), sleeve, E)
 			b.box(Vector3(0.2, -0.2, -0.47), Vector3(0.025, 0.03, 0.08), Color(0.15, 0.1, 0.08), 0.0, E)
 			b.box(Vector3(0.2, -0.2, -0.56), Vector3(0.01, 0.025, 0.12), steel, 0.0, E)
 		"knuckles":
 			for s in [-1.0, 1.0]:
-				b.box(Vector3(0.2 * s, -0.24, -0.42), Vector3(0.09, 0.09, 0.11), skin, 0.0, E)
-				b.box(Vector3(0.21 * s, -0.27, -0.28), Vector3(0.1, 0.1, 0.24), sleeve, 0.0, E)
+				_hand(b, Vector3(0.2 * s, -0.24, -0.42), Vector3(0.09, 0.09, 0.11), skin, E)
+				_sleeve(b, Vector3(0.21 * s, -0.27, -0.28), Vector3(0.1, 0.1, 0.24), sleeve, E)
 			b.box(Vector3(0.2, -0.215, -0.475), Vector3(0.1, 0.035, 0.03), Color(0.75, 0.62, 0.3), 0.0, Vector2(0, 0.6))
 		"machete", "katana":
-			b.box(Vector3(0.2, -0.24, -0.4), Vector3(0.08, 0.09, 0.1), skin, 0.0, E)
-			b.box(Vector3(0.21, -0.27, -0.26), Vector3(0.1, 0.1, 0.24), sleeve, 0.0, E)
+			_hand(b, Vector3(0.2, -0.24, -0.4), Vector3(0.08, 0.09, 0.1), skin, E)
+			_sleeve(b, Vector3(0.21, -0.27, -0.26), Vector3(0.1, 0.1, 0.24), sleeve, E)
 			var L := 0.42 if model == "machete" else 0.62
 			b.box(Vector3(0.2, -0.2, -0.45), Vector3(0.03, 0.035, 0.1), Color(0.12, 0.08, 0.06) if model == "machete" else Color(0.1, 0.05, 0.05), 0.0, E)
 			if model == "katana":
@@ -42,8 +42,8 @@ static func mesh_for(model: String, sleeve: Color) -> ArrayMesh:
 			if model == "baton":
 				col = Color(0.08, 0.08, 0.09)
 			var r := 0.03 if model == "bat" else 0.018
-			b.box(Vector3(0.2, -0.26, -0.4), Vector3(0.08, 0.09, 0.1), skin, 0.0, E)
-			b.box(Vector3(0.21, -0.29, -0.26), Vector3(0.1, 0.1, 0.24), sleeve, 0.0, E)
+			_hand(b, Vector3(0.2, -0.26, -0.4), Vector3(0.08, 0.09, 0.1), skin, E)
+			_sleeve(b, Vector3(0.21, -0.29, -0.26), Vector3(0.1, 0.1, 0.24), sleeve, E)
 			var shaft := Transform3D(Basis(Vector3.RIGHT, 1.1), Vector3(0.2, -0.05, -0.55))
 			b.box_xf(shaft, Vector3(r * 2.0, 0.62, r * 2.0), col, E)
 			if model == "axe":
@@ -58,8 +58,8 @@ static func mesh_for(model: String, sleeve: Color) -> ArrayMesh:
 				body = Color(0.55, 0.56, 0.6)
 			elif model == "pistol45":
 				body = Color(0.12, 0.11, 0.1)
-			b.box(Vector3(0.16, -0.22, -0.38), Vector3(0.08, 0.09, 0.1), skin, 0.0, E)
-			b.box(Vector3(0.18, -0.26, -0.24), Vector3(0.1, 0.1, 0.24), sleeve, 0.0, E)
+			_hand(b, Vector3(0.16, -0.22, -0.38), Vector3(0.08, 0.09, 0.1), skin, E)
+			_sleeve(b, Vector3(0.18, -0.26, -0.24), Vector3(0.1, 0.1, 0.24), sleeve, E)
 			b.box(Vector3(0.16, -0.2, -0.36), Vector3(0.035, 0.1, 0.05), body, 0.0, E)
 			b.box(Vector3(0.16, -0.155, -0.43), Vector3(0.04, 0.045, 0.2), body, 0.0, E)
 			if model == "revolver" or model == "magnum":
@@ -70,8 +70,8 @@ static func mesh_for(model: String, sleeve: Color) -> ArrayMesh:
 			elif model == "pistol_sil":
 				b.box(Vector3(0.16, -0.155, -0.6), Vector3(0.03, 0.03, 0.16), Color(0.15, 0.15, 0.15), 0.0, E)
 			# Left hand supporting.
-			b.box(Vector3(0.11, -0.25, -0.36), Vector3(0.08, 0.08, 0.09), skin, 0.0, E)
-			b.box(Vector3(0.02, -0.3, -0.24), Vector3(0.1, 0.1, 0.24), sleeve, 0.0, E)
+			_hand(b, Vector3(0.11, -0.25, -0.36), Vector3(0.08, 0.08, 0.09), skin, E)
+			_sleeve(b, Vector3(0.02, -0.3, -0.24), Vector3(0.1, 0.1, 0.24), sleeve, E)
 		"smg", "shotgun", "rifle", "carbine", "smg_sil", "sawed", "ar", "sniper":
 			var L := {"smg": 0.36, "shotgun": 0.7, "rifle": 0.8, "carbine": 0.6, "smg_sil": 0.36, "sawed": 0.36, "ar": 0.66, "sniper": 0.95}[model] as float
 			var stock := Color(0.35, 0.22, 0.12) if model in ["shotgun", "rifle", "sawed"] else gun
@@ -90,16 +90,39 @@ static func mesh_for(model: String, sleeve: Color) -> ArrayMesh:
 				b.box(Vector3(0.14, -0.145, -0.4), Vector3(0.035, 0.035, 0.2), gun, 0.0, E)
 			if model in ["smg", "carbine", "smg_sil"]:
 				b.box(Vector3(0.14, -0.28, -0.4), Vector3(0.035, 0.12, 0.05), gun, 0.0, E)
-			b.box(Vector3(0.16, -0.26, -0.24), Vector3(0.08, 0.09, 0.1), skin, 0.0, E)
-			b.box(Vector3(0.18, -0.3, -0.12), Vector3(0.1, 0.1, 0.2), sleeve, 0.0, E)
-			b.box(Vector3(0.1, -0.24, -0.28 - L * 0.6), Vector3(0.08, 0.08, 0.1), skin, 0.0, E)
-			b.box(Vector3(0.02, -0.3, -0.3 - L * 0.4), Vector3(0.1, 0.1, 0.3), sleeve, 0.0, E)
+			_hand(b, Vector3(0.16, -0.26, -0.24), Vector3(0.08, 0.09, 0.1), skin, E)
+			_sleeve(b, Vector3(0.18, -0.3, -0.12), Vector3(0.1, 0.1, 0.2), sleeve, E)
+			_hand(b, Vector3(0.1, -0.24, -0.28 - L * 0.6), Vector3(0.08, 0.08, 0.1), skin, E)
+			_sleeve(b, Vector3(0.02, -0.3, -0.3 - L * 0.4), Vector3(0.1, 0.1, 0.3), sleeve, E)
 	var m := b.to_mesh()
 	_cache[key] = m
 	return m
 
 
 ## Muzzle position in camera space for flash effects.
+## A hand that reads as a hand: back of the hand, four knuckles, a thumb, a
+## wrist. c/sz are the old single-box bounds (camera space, -Z forward).
+static func _hand(b: MeshBatch, c: Vector3, sz: Vector3, skin: Color, E0: Vector2) -> void:
+	var E := E0 * 0.4
+	var side := -1.0 if c.x < 0.0 else 1.0
+	var shade := skin.darkened(0.12)
+	b.box(c + Vector3(0, -sz.y * 0.05, sz.z * 0.1), Vector3(sz.x, sz.y * 0.8, sz.z * 0.8), skin, 0.0, E)
+	for k in 4:
+		var fx := (float(k) - 1.5) / 4.0 * sz.x * 0.95
+		b.box(c + Vector3(fx, sz.y * 0.22, -sz.z * 0.42), Vector3(sz.x * 0.22, sz.y * 0.3, sz.z * 0.3), skin.lightened(0.03) if k % 2 == 0 else skin, 0.0, E)
+		b.box(c + Vector3(fx, -sz.y * 0.12, -sz.z * 0.5), Vector3(sz.x * 0.22, sz.y * 0.5, sz.z * 0.2), shade, 0.0, E)
+	b.box(c + Vector3(-side * sz.x * 0.55, -sz.y * 0.1, -sz.z * 0.15), Vector3(sz.x * 0.25, sz.y * 0.4, sz.z * 0.55), shade, 0.0, E)
+	b.box(c + Vector3(0, -sz.y * 0.08, sz.z * 0.62), Vector3(sz.x * 0.82, sz.y * 0.72, sz.z * 0.4), skin.darkened(0.05), 0.0, E)
+
+
+## Sleeve with a cuff and a fold, so the forearm isn't one flat brick.
+static func _sleeve(b: MeshBatch, c: Vector3, sz: Vector3, col: Color, E: Vector2) -> void:
+	b.box(c + Vector3(0, 0, sz.z * 0.08), Vector3(sz.x, sz.y, sz.z * 0.84), col, 0.0, E)
+	b.box(c + Vector3(0, 0, -sz.z * 0.42), Vector3(sz.x * 1.08, sz.y * 1.08, sz.z * 0.16), col.darkened(0.18), 0.0, E)
+	b.box(c + Vector3(0, sz.y * 0.48, sz.z * 0.05), Vector3(sz.x * 0.9, sz.y * 0.08, sz.z * 0.06), col.darkened(0.1), 0.0, E)
+	b.box(c + Vector3(0, sz.y * 0.48, sz.z * 0.3), Vector3(sz.x * 0.9, sz.y * 0.08, sz.z * 0.05), col.darkened(0.1), 0.0, E)
+
+
 static func muzzle(model: String) -> Vector3:
 	match model:
 		"pistol", "revolver", "taser", "pistol45":

@@ -2,51 +2,52 @@
 
 === intro_session
 -- start
-ELLIOT (V.O.): Hello, friend. Hello, friend? That's lame. Maybe I should give you a name. But that's a slippery slope. You're only in my head. We have to remember that.
-KRISTA: Elliot. You're here. You actually came this week.
-ELLIOT: I said I would.
-KRISTA: You say a lot of things. Some of them are even true. How do you feel today?
+ELLIOT (V.O.): Hello, friend. I'm going to talk to you, because I don't talk to anyone else. Not really. Not even her.
+> Krista's office. Rain on the window, the radiator ticking, a box of tissues angled toward your chair like an accusation.
+KRISTA: You came. Two weeks in a row. I'm going to pretend that's normal so you don't get spooked.
+ELLIOT: I said I'd come.
+KRISTA: You say a lot of things, Elliot. Last week you said the sleeping was better. Then you fell asleep in the waiting room. How is it, really?
 -- feel
-ELLIOT (V.O.): She wants a number. A weather report for the inside of my skull. Pick one for me. I don't trust my own reading.
-* Cold. Functional. Nothing gets in. -> feel_cold ! set tone=cold
-* Angry. At all of it. At all of them. -> feel_angry ! set tone=angry ; stab -5
-* Tired. The kind sleep doesn't fix. -> feel_numb ! set tone=numb
+ELLIOT (V.O.): She wants a reading. A number for the inside of my head. You pick. I don't trust my instruments.
+* "It's fine. Everything's quiet." -> feel_cold ! set tone=cold
+* "I'm angry. All the time. At people I've never met." -> feel_angry ! set tone=angry ; stab -5
+* "Tired. Not the kind sleep fixes." -> feel_numb ! set tone=numb
 -- feel_cold
-KRISTA: Cold. Okay. Cold is a wall. Walls keep things out. They also keep you in.
+KRISTA: Quiet. You say that the way people say the house is quiet right before they mention the noise in the attic.
 -> intake_prompt
 -- feel_angry
-KRISTA: Anger's honest, at least. Anger means you still think it could be different.
+KRISTA: At people you've never met. That's specific. Most people are angry at someone they know. You picked strangers. I'd like to know which ones, someday.
 -> intake_prompt
 -- feel_numb
-KRISTA: Tired. That one worries me most. Tired people stop dodging the cars.
+KRISTA: Okay. I'm writing that down, and I'm underlining it, and you're going to pretend you didn't see me do that.
 -> intake_prompt
 -- intake_prompt
-KRISTA: Before we go further — I want you to fill this out. Properly, this time. Not the version you think I want to see. What you're good at. What I should know.
-ELLIOT (V.O.): A form. She thinks a form can hold me. Fine. Let's give her something to file.
+KRISTA: New practice policy. Everyone fills this out every six months. Strengths, habits, what you're good at, what you'd change. Be honest. Or at least be interesting.
+ELLIOT (V.O.): A form. She thinks a form can hold me. Fine. I'll give her the parts of me that fit in boxes.
 -> END
 
 === intro_after
 -- start
-KRISTA: Thank you. That's... more than you usually give me.
+KRISTA: Thank you. That's more than you've given me in a month.
 ELLIOT: Don't get used to it.
-KRISTA: I never do. Elliot — whatever you're doing at night. Whatever it is that makes you look like you haven't slept since Tuesday. I can't help you if you don't let me see it.
-ELLIOT (V.O.): I could tell her. About the files. The people I watch. The debt I want to burn down. I could hand it all over, right here, and let someone else hold it for fifty minutes.
+KRISTA: I never do. One more thing, and then I'll let you go. You keep saying 'at night.' 'I do things at night.' 'I can't sleep because of what I do at night.' What do you do at night, Elliot?
+ELLIOT (V.O.): I read people. Their mail, their messages, the things they think they deleted. I know her boyfriend's real name. I know her mother's maiden name. I know what she searched for at two in the morning last Tuesday. I could tell her. I never will.
 * "Maybe next time." -> soft ! trust krista 1
-* "There's nothing to see." -> deflect
-* [SPEECH 30] "If I told you, you'd have to report me. So don't ask." -> honest | deflect
+* "I don't sleep. I read. That's all." -> deflect
+* [SPEECH 30] "If I told you, you'd have to do something about it. So let's not." -> honest | deflect
 -- soft
-KRISTA: Next time. You always say next time. One day I'm going to hold you to it.
+KRISTA: Next time. You've been saying that since March. One of these weeks I'm going to hold you to it.
 -> out
 -- deflect
-KRISTA: Nothing to see. Right. You're the most nothing-to-see man I've ever met, Elliot.
+KRISTA: You read. Okay. I'm a therapist, Elliot. 'I read' is what people say when they don't want me to ask what.
 -> out
 -- honest
-KRISTA: ...That's the most honest thing you've ever said in this room. And I'm not going to ask what it means. God help me.
+KRISTA: ...That's the most honest thing you've ever said in this room. And I'm not going to ask what it means. Which probably says something about me, too.
 ! trust krista 2 ; set krista_suspects
 -> out
 -- out
-KRISTA: Go home. Feed your fish. Try to sleep. That's your homework. I know you won't do it.
-ELLIOT (V.O.): She's right. I won't. There's a city out there that owes me an answer. Let's go get it.
+KRISTA: Go home. Eat something that didn't come out of a machine. Talk to a neighbor. Sleep. That's your homework.
+ELLIOT (V.O.): Homework. Fine. Home is two blocks east. My computer has been running all day, and I left it on a black screen this morning. I'm almost sure I did.
 ! quest mq_hello 10
 -> END
 
@@ -55,7 +56,7 @@ ELLIOT (V.O.): She's right. I won't. There's a city out there that owes me an an
 ELLIOT (V.O.): Qwerty. My fish. He doesn't judge me. Or he judges me constantly and can't do anything about it. Either way, he's the only one who's never lied to me.
 * Feed him. -> feed
 * Just watch. -> watch
-* "You ever think about escaping, Qwerty?" -> escape
+* "You ever think about getting out of there, Qwerty?" -> escape
 -- feed
 ELLIOT (V.O.): The flakes hit the water. He rises. Simple needs, simple joys. I envy the little bastard.
 ! trust krista 0

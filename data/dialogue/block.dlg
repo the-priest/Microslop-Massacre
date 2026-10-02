@@ -1,0 +1,111 @@
+### The block: Omar's bodega and Rico's corner crew (Act I neighborhood).
+
+=== omar
+-- start
+? q.sq_bodega.done -> after
+? q.sq_bodega>=20 -> thanks
+OMAR: Elliot. The usual? Coffee, the sad sandwich, and you staring at the lottery tickets like they owe you money.
+* "You've been closing early. You never close early." -> trouble
+* [if q.sq_bodega>=10] "I'm working on Rico." -> working
+* "Just the coffee." -> coffee
+-- coffee
+OMAR: On the house. Don't tell anyone. They'll think I've gone soft.
+! give coffee 1
+-> END
+-- working
+OMAR: Be careful. He's not smart, but he's got friends who aren't smart either, and that's worse.
+-> END
+-- trouble
+> Omar wipes the counter. Then he wipes it again.
+OMAR: Rico. From the corner. His boys come in at closing, every Friday. Two hundred dollars or they 'help' me close. Last month they helped Mrs. Liu next door. She was in the hospital eight days.
+OMAR: Nineteen years I run this store. My daughter says sell. To who? E Corp Convenience? So they can put a screen where my face used to be?
+* "I'll talk to Rico." -> take ! quest sq_bodega 10
+* "Did you call the police?" -> police
+-- police
+OMAR: Once. A car came. The officer in it plays dominoes with Rico's uncle. Now I pay two hundred and ten. The ten is for the phone call.
+* "I'll talk to Rico." -> take ! quest sq_bodega 10
+* "I'm sorry, Omar." -> END
+-- take
+OMAR: You? Elliot, you can't even look at the cashier at Duane Reade. ...But you have a face like you're already doing it. Okay. Please don't get hurt. You're my only customer who pays exact change.
+ELLIOT (V.O.): Rico's crew hangs on the corner a block west after dark. Rico talks. Rico also keeps his whole life on a phone he never locks. Either of those is a door.
+-> END
+-- thanks
+? flag.bodega_paid -> thanks_paid
+OMAR: Friday came. Nobody came with it. I stood here until midnight with a baseball bat under the counter like an idiot, waiting. Nobody.
+OMAR: I don't know what you did. I don't want to know. Take this. No, take it. My wife would have made me give you more.
+! quest sq_bodega done ; cash 80 ; give first_aid 2 ; fame locals 5 ; xp 60 ; set bodega_thanked
+-> END
+-- thanks_paid
+OMAR: Rico came in and said I'm 'paid up for the season.' Paid by who? ...Elliot. That's your money. You don't have money.
+OMAR: You're a good boy. A stupid good boy. Here. At least eat something.
+! quest sq_bodega done ; give sandwich 2 ; give first_aid 1 ; fame locals 3 ; xp 40 ; set bodega_thanked
+-> END
+-- after
+OMAR: My guardian angel. Coffee's free on Fridays now. Don't argue with me, I'm older than you.
+-> END
+
+=== rico
+-- start
+? q.sq_bodega>=20 -> done
+? q.sq_bodega>=10 -> omar
+RICO: You lost, college? This is a toll corner after dark. You, I let through free. You look like the toll already got you.
+* "Omar at the bodega. You're bleeding him." -> omar ! quest sq_bodega 10
+* "Just passing." -> END
+-- done
+RICO: Keep walking, college. We're square.
+-> END
+-- omar
+RICO: Omar pays rent. You pay E Corp, he pays me. Difference is, I say thank you.
+* [SPEECH 35] "Omar's with me now. You don't want to find out what that means." -> talk_win | talk_fail
+* [HACKING 30] "Your phone's on Omar's Wi-Fi every night, Rico. I've read it. All of it." -> hack_win | hack_fail
+* [if cash>=150] "Here's one-fifty. Omar's paid up for the season." -> pay
+* "Then we do this the other way." -> fight
+* "Forget it." -> END
+-- talk_win
+> Rico looks at you for a long time. You don't blink. You're not sure you remember how.
+RICO: ...You got crazy eyes, college. Real crazy eyes. Fine. Omar's not worth it. This corner's dead anyway; everybody's buying on their phones.
+RICO: Yo! We're out. Move.
+! set corner_gone ; set bodega_saved ; quest sq_bodega 20 ; xp 50 ; move rico
+-> END
+-- talk_fail
+RICO: With you. Ha. Get off my corner before I make you part of the sidewalk.
+-> END
+-- hack_win
+ELLIOT (V.O.): His phone backs up to the cloud over Omar's Wi-Fi. Messages to a parole officer he never sent. Messages to a supplier in Washington Heights that he did. And a girlfriend who thinks he works nights at a warehouse.
+ELLIOT: Your PO would like Tuesday's messages. Your supplier would like to know what you said about him on Thursday. And Maribel would like to know where the warehouse is.
+RICO: ...How the hell. Okay. Okay. What do you want?
+ELLIOT: Leave Omar alone. Leave the block.
+RICO: Done. We were never here. Delete that. Please.
+! set corner_gone ; set bodega_saved ; quest sq_bodega 20 ; xp 60 ; move rico
+-> END
+-- hack_fail
+ELLIOT (V.O.): His phone's locked down better than I expected. Somebody taught Rico about two-factor. I'll need to be better than this.
+-> END
+-- pay
+RICO: Look at you. Pleasure doing business. Tell Omar he's got a guardian angel. A broke one.
+! cash -150 ; set bodega_saved ; set bodega_paid ; quest sq_bodega 20 ; xp 20
+-> END
+-- fight
+RICO: Okay, college. Okay.
+! hostile_faction corner ; hostile rico
+-> END
+
+=== lazlo
+-- start
+? flag.met_lazlo -> again
+! set met_lazlo
+> The back room of the laundromat. A desk, a safe, a man with reading glasses on a chain, and a smell of gun oil under the fabric softener.
+LAZLO: Wash and fold is out front. Back here is hardware. You're the quiet kid from 4D. Omar says you pay exact change. That's the only reference I need.
+* "What have you got?" -> shop
+* "Who do you sell to?" -> who
+* "Just looking." -> END
+-- who
+LAZLO: People who need to not be victims. People who need to be something worse. I don't ask which. I'm a laundromat. I make things clean.
+-> again
+-- again
+LAZLO: The quiet kid. What do you need?
+* "Show me the hardware." -> shop
+* "Nothing today." -> END
+-- shop
+! barter arms
+-> END

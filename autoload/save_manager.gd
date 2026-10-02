@@ -10,7 +10,39 @@ var pending_load: Dictionary = {} # consumed by Game on start
 
 
 func _ready() -> void:
+	_migrate_old_name()
 	DirAccess.make_dir_recursive_absolute(DIR)
+
+
+## The game used to be called HELLO, FRIEND, and Godot keys the save folder on
+## the project name. Bring old saves and settings over once.
+func _migrate_old_name() -> void:
+	if FileAccess.file_exists("user://settings.cfg") or DirAccess.dir_exists_absolute(DIR):
+		return
+	var base := OS.get_data_dir()
+	for sub in ["godot/app_userdata/HELLO, FRIEND", "Godot/app_userdata/HELLO, FRIEND"]:
+		var old := base.path_join(sub)
+		if not DirAccess.dir_exists_absolute(old):
+			continue
+		_copy_dir(old, ProjectSettings.globalize_path("user://"))
+		return
+
+
+func _copy_dir(from: String, to: String) -> void:
+	DirAccess.make_dir_recursive_absolute(to)
+	var d := DirAccess.open(from)
+	if d == null:
+		return
+	d.list_dir_begin()
+	var fn := d.get_next()
+	while fn != "":
+		if fn != "." and fn != "..":
+			if d.current_is_dir():
+				_copy_dir(from.path_join(fn), to.path_join(fn))
+			elif not fn.ends_with(".log"):
+				DirAccess.copy_absolute(from.path_join(fn), to.path_join(fn))
+		fn = d.get_next()
+	d.list_dir_end()
 
 
 func path_for(slot: String) -> String:

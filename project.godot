@@ -1,13 +1,13 @@
 ; Engine configuration file.
-; HELLO, FRIEND — an open-world RPG. Mr. Robot's story, New Vegas' bones.
+; MICROSLOP MASSACRE — an open-world RPG. Mr. Robot's story, New Vegas' bones, and a grudge against every corporation that ever sold a gamer a loot box.
 ; Godot 4.7, GL Compatibility renderer (runs on integrated GPUs).
 
 config_version=5
 
 [application]
 
-config/name="HELLO, FRIEND"
-config/description="Open-world first-person RPG set in a procedural New York. Fan project: original script."
+config/name="MICROSLOP MASSACRE"
+config/description="Open-world first-person RPG: fsociety against E Corp and the game megacorps it owns. Fan project and parody: original script."
 config/version="2.0.0"
 run/main_scene="res://ui/MainMenu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
@@ -54,6 +54,10 @@ limits/opengl/max_lights_per_object=8
 
 [shader_globals]
 
+gfx_detail={
+"type": "float",
+"value": 1.0
+}
 night_amt={
 "type": "float",
 "value": 0.0

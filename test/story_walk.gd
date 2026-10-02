@@ -38,12 +38,33 @@ func _main_line() -> void:
 	await _exit_to("interior:elliot_apt:0")
 	await _wait_rules()
 	_expect("mq_hello", 20)
-	await _term("apt_pc", ["Gideon", "hello_friend", "Shayla", "headlines", "CourierNet"], [])
+	await _term("apt_pc", ["Gideon", "fsociety00", "auth.log", "Shayla", "headlines", "CourierNet"], [])
+	_expect("mq_hello", 25)
+	_ok("fsociety file read", GameState.has_flag("fsociety_msg"))
+	print("PHASE block")
+	await _enter_world_at(Vector3(-470, 0, 338))
+	await _talk("super", ["I'll take a look"])
+	_expect("sq_super", 10)
+	GameState.tracked_quest = "sq_super"
+	await _follow("sq_super")
+	await _term("apt_boiler", ["service_contract"], ["Kill the service lock"])
+	_expect("sq_super", 20)
+	await _follow("sq_super")
+	await _talk("super", [])
+	_ok("super done", GameState.quest_state("sq_super") == "done")
+	GameState.game_minutes = GameState.day() * 1440.0 + 14 * 60.0
+	await _enter_door("d_apt")
+	await _talk("shayla_n", ["Who's Vera", "Don't meet him"])
+	_expect("sq_shayla", 10)
+	await _wait_rules()
 	_expect("mq_hello", 30)
-	_ok("fsociety message read", GameState.has_flag("fsociety_msg"))
+	GameState.tracked_quest = "mq_hello"
 	await _follow("mq_hello") # -> Gideon at Allsafe
-	await _talk("gideon", ["Anomalies"])
+	await _talk("gideon", ["Show me"])
+	_expect("mq_hello", 35)
+	await _spot("allsafe_server_spot", ["Keep it"])
 	_ok("mq_hello done", GameState.quest_state("mq_hello") == "done")
+	_ok("dat kept", GameState.has_flag("dat_kept"))
 	_expect("mq_rootkit", 10)
 
 	print("PHASE ron")
@@ -65,7 +86,7 @@ func _main_line() -> void:
 	await _follow("mq_fsociety") # -> nearest station, then the platform
 	_ok("on a platform", GameState.cell.begins_with("subway"))
 	await _follow("mq_fsociety")
-	await _talk("robot_n", ["Why me", "You can't erase"])
+	await _talk("robot_n", ["What do you want", "Why should I"])
 	_expect("mq_fsociety", 20)
 	await _follow("mq_fsociety") # -> arcade
 	await _wait_rules()
@@ -94,6 +115,9 @@ func _main_line() -> void:
 	await _spot("steel_climate", ["Rig the Pi", "Plug it in"])
 	_ok("steel done", GameState.quest_state("mq_steel") == "done")
 
+	print("PHASE fbi")
+	await _wait_rules()
+	_expect("mq_fbi", 10)
 	print("PHASE darkarmy")
 	GameState.tracked_quest = "mq_darkarmy"
 	await _follow("mq_darkarmy") # -> Rose Garden
@@ -101,8 +125,12 @@ func _main_line() -> void:
 	await _wait_rules()
 	_expect("mq_darkarmy", 30)
 	await _follow("mq_darkarmy") # -> Whiterose
-	await _talk("whiterose_n", ["fsociety wants"])
+	await _talk("whiterose_n", ["fsociety wants", "Gideon goes down"])
+	_expect("mq_darkarmy", 35)
+	await _follow("mq_darkarmy") # -> Allsafe workstation
+	await _term("allsafe_terminal", [], ["Frame Gideon"])
 	_ok("darkarmy done", GameState.quest_state("mq_darkarmy") == "done")
+	_ok("da allied", GameState.has_flag("da_allied") and GameState.has_flag("ally_secured"))
 
 	print("PHASE ecorp")
 	GameState.tracked_quest = "mq_ecorp"
@@ -124,6 +152,36 @@ func _main_line() -> void:
 	await _wait_rules()
 	_expect("sq_colby", 20)
 
+
+	print("PHASE dipierro")
+	GameState.tracked_quest = "mq_fbi"
+	await _follow("mq_fbi")
+	await _talk("dipierro", ["It was him", "closer than fsociety"])
+	_expect("mq_fbi", 20)
+
+	print("PHASE robot")
+	await _wait_rules()
+	_expect("mq_robot", 10)
+	GameState.tracked_quest = "mq_robot"
+	await _follow("mq_robot") # -> Darlene's building
+	_ok("in darlene_apt", GameState.cell == "darlene_apt")
+	await _talk("darlene_n", [])
+	_expect("mq_robot", 20)
+	await _spot("darlene_photo", ["Darlene."])
+	_expect("mq_robot", 30)
+	_ok("sister", GameState.has_flag("knows_darlene_sister"))
+	await _follow("mq_robot") # -> arcade sign
+	await _spot("arcade_sign", [])
+	_expect("mq_robot", 40)
+	await _follow("mq_robot") # -> Mercy General records
+	await _term("hosp_records", ["ALDERSON, ELLIOT"], [])
+	_expect("mq_robot", 50)
+	GameState.game_minutes = GameState.day() * 1440.0 + 23 * 60.0
+	await _enter_world_at(Vector3(-30, 0, 850))
+	await _follow("mq_robot") # -> the pier
+	await _talk("robot_n", ["You're me", "You're part of me"])
+	_ok("robot done", GameState.quest_state("mq_robot") == "done")
+	_ok("accepted", GameState.has_flag("robot_accepted"))
 
 	print("PHASE candyman")
 	await _enter_world_at(Vector3(-62, 0, -1372))
@@ -196,7 +254,23 @@ func _finale() -> void:
 	await _follow("mq_finale") # -> Mr. Robot at the arcade
 	await _talk("robot_n", ["Show me where we stand", "Do it"])
 	_ok("five/nine", GameState.has_flag("five_nine_done"))
+	_expect("mq_finale", 30)
+	await _wait_rules()
+	_expect("mq_after", 10)
+	print("PHASE after")
+	GameState.tracked_quest = "mq_after"
+	await _follow("mq_after") # -> home, the TV
+	await _spot("apt_tv", [])
+	_expect("mq_after", 20)
+	await _follow("mq_after") # -> Darlene at the arcade
+	await _talk("darlene_n", ["break the rollout"])
+	_expect("mq_after", 30)
+	GameState.game_minutes = GameState.day() * 1440.0 + 13 * 60.0
+	await _follow("mq_after") # -> branch 0419
+	await _term("credit_mgr", [], ["Poison"])
+	_ok("after done", GameState.quest_state("mq_after") == "done")
 	_expect("mq_finale", 40)
+	GameState.tracked_quest = "mq_finale"
 	await _follow("mq_finale") # -> Salina (invite opens it)
 	_ok("in salina", GameState.cell == "salina_hotel")
 	await _talk("price_n", ["You want E Corp"])
@@ -219,22 +293,49 @@ func _finale() -> void:
 # ------------------------------------------------------------------- sides
 func _side_quests() -> void:
 	print("PHASE shayla")
-	GameState.game_minutes = GameState.day() * 1440.0 + 14 * 60.0
-	await _enter_door("d_apt")
-	await _talk("shayla_n", ["Vera"])
-	_expect("sq_shayla", 10)
 	GameState.game_minutes = GameState.day() * 1440.0 + 23 * 60.0
 	await _enter_world_at(Vector3(-470, 0, 300))
 	await _wait_rules()
 	_expect("sq_shayla", 20)
 	GameState.tracked_quest = "sq_shayla"
-	await _follow("sq_shayla") # -> docks
-	await _wait_rules()
+	await _follow("sq_shayla") # -> Dutch at the docks
+	await _talk("dutch", ["Two-fifty"])
 	_expect("sq_shayla", 30)
-	GameState.give("key_vera_stash")
-	await _follow("sq_shayla") # -> stash house
+	_ok("parley", GameState.has_flag("vera_parley"))
+	await _follow("sq_shayla") # -> the blue door
+	await _spot("ws_vera_door", ["Knock"])
+	_ok("door open", GameState.has_flag("vera_door_open"))
+	await _enter_door("d_vera")
+	_ok("in stash", GameState.cell == "vera_stash")
+	_ok("not trespassing", not game.cell_restricted("vera_stash", "vera"))
 	await _talk("vera", ["What do you want", "Deal."])
-	_ok("shayla out", GameState.has_flag("shayla_out"))
+	_expect("sq_shayla", 35)
+	await _enter_door("d_precinct")
+	await _spot("precinct_sticky", [])
+	await _term("precinct_term", [], ["People v. Vera"])
+	_ok("case wiped", GameState.has_flag("vera_case_wiped"))
+	await _wait_rules()
+	_expect("sq_shayla", 38)
+	await _follow("sq_shayla") # -> back to Vera
+	await _talk("vera", [])
+	_ok("shayla freed", GameState.has_flag("shayla_freed"))
+	_expect("sq_shayla", 45)
+	await _follow("sq_shayla") # -> home
+	await _wait_rules()
+	_ok("shayla home", GameState.quest_state("sq_shayla") == "done")
+
+	print("PHASE bodega")
+	GameState.game_minutes = GameState.day() * 1440.0 + 22 * 60.0
+	await _enter_door("d_bodega")
+	await _talk("omar", ["closing early", "I'll talk to Rico"])
+	_expect("sq_bodega", 10)
+	GameState.tracked_quest = "sq_bodega"
+	await _follow("sq_bodega")
+	await _talk("rico", ["one-fifty"])
+	_expect("sq_bodega", 20)
+	await _follow("sq_bodega")
+	await _talk("omar", [])
+	_ok("bodega done", GameState.quest_state("sq_bodega") == "done")
 
 	print("PHASE cat")
 	await _enter_world_at(Vector3(-100, 0, 8))
@@ -261,18 +362,6 @@ func _side_quests() -> void:
 	await _follow("sq_courier")
 	await _talk("courier", [])
 	_ok("courier done", GameState.quest_state("sq_courier") == "done")
-
-	print("PHASE super")
-	await _enter_world_at(Vector3(-470, 0, 338))
-	await _talk("super", ["I'll take a look"])
-	_expect("sq_super", 10)
-	GameState.tracked_quest = "sq_super"
-	await _follow("sq_super")
-	await _term("apt_boiler", ["service_contract"], ["Kill the service lock"])
-	_expect("sq_super", 20)
-	await _follow("sq_super")
-	await _talk("super", [])
-	_ok("super done", GameState.quest_state("sq_super") == "done")
 
 	print("PHASE krista")
 	await _enter_door("d_krista")

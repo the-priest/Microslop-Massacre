@@ -165,7 +165,7 @@ ELLIOT (V.O.): I read all of them. It's the least anyone's done for these people
 === steel_climate
 -- start
 ? flag.steel_rigged -> done
-ELLIOT (V.O.): The climate control unit. Mobley's Raspberry Pi in my pocket like a live coal. Plug it in, and every analog backup in this mountain slow-cooks into garbage. No backups, no way to restore what fsociety's about to erase.
+ELLIOT (V.O.): The climate control unit. Mobley's Raspberry Pi in my pocket like a live coal. Plug it in and every analog backup in this mountain slow-cooks into garbage over the next six hours. No backups, no way to restore what fsociety is about to erase.
 * [HACKING 45] Rig the Pi to the controller. -> rig | rig_hack
 * Plug it in the crude way and run. -> crude
 * Not yet. -> END

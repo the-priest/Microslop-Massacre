@@ -79,18 +79,36 @@ bottom of it all, with the Twin Towers still standing.
 
 ## The story
 
-The main quest, assembling the **Five/Nine** hack, needs four pieces, and you can chase
-them in almost any order:
+It starts small, on purpose. A narrated cold open introduces the city. Then you're in
+Krista's office, then on your own block on the Lower East Side, with a file on your
+desktop you don't remember putting there.
 
-- **The Rootkit.** Ron's Coffee runs a stalkerware business out of its back room.
-  Report it, expose it, take the customer list, or just plant fsociety's rootkit and walk.
-- **Steel Mountain.** E Corp keeps its analog backups in a mountain. Talk your way in,
-  sneak in wearing coveralls, or shoot your way to the climate controls.
-- **An ally.** Earn the Dark Army's help through Whiterose, or feed the FBI just enough
-  to make them look at the wrong screens.
-- **The inside man.** Turn Tyrell Wellick, or take an E Corp keycard the hard way.
+**Act I: Hello, Friend.** Before Allsafe calls you in, you live on your block and learn
+how the game works: get the building's heat back from E Corp's boiler subscription,
+deal with Rico's crew shaking down Omar's bodega (talk, dig up his phone, pay, or
+fight), and meet Shayla in the hallway. Then Allsafe, the honeypot, and the first real
+choice: keep the file, report it, or erase it. Ron's Coffee, a man in a field jacket
+on a subway platform, and the arcade on Coney Island where fsociety finally tells you
+what it's building.
 
-Then a table at the Salina Hotel, the people who own the world, and the last choice.
+**Act II: The Plan.** Five/Nine needs Steel Mountain's tapes cooked (coveralls, a forged
+badge, or a lonely facility manager at The Rabbit Hole), an army, and a door into E
+Corp. And you have to face every player in the city, not just the one you side with:
+
+- **Whiterose** wants a price for the Dark Army: Gideon Goddard framed as fsociety's
+  insider. Pay it, build a ghost insider instead, warn Gideon, or walk away.
+- **Agent DiPierro** of the FBI comes looking after Steel Mountain. Lie, inform, offer
+  her something bigger, or confess.
+- **Tyrell Wellick** wants to be standing next to the fire, and he knows more about the
+  honeypot than he should.
+- **Who Is Mr. Robot.** Darlene's apartment, a photograph, the old sign under the
+  arcade's paint, your records at Mercy General, and the end of the Coney Island pier
+  at night. Accept him, reject him, or make a truce. It changes the rest of the game.
+
+**Act III: Five/Nine and after.** The hack, the morning after, and Phillip Price on
+television selling the cure: E Coin. Break the rollout, take it to the press, hand
+Price to the FBI, or let it settle. Then the Salina Hotel, Room 6, the people who own
+the world, and what Whiterose really wants from Washington Township.
 
 **The endings:** Five/Nine · Stage Two · Clean Hands · The Board Seat · Reboot ·
 Press Freedom · Mr. Robot · The Monster · The Kingpin · The Quiet Life · The Confession ·
@@ -105,7 +123,8 @@ built the right bonds, kept the truth, and held your mind together.
 | **Bad Company** | Harlem / Astoria | A youth coach is grooming a boy at a shelter. Get proof; get him stopped. (Never graphic: the story is about protecting the kid.) |
 | **Wings** | Bowery Bay Airfield | An old Air Force mechanic is about to lose his airfield to E Corp's finance arm. Fly his ring course, land it in one piece, then save the field. |
 | **The Detective** | The 7th Precinct | Kill enough innocent people and Detective Lopez starts drawing your pattern on a board. |
-| **The Leverage** | Your building, the docks | Shayla, your neighbor, owes the wrong man. Get her out of his cage. |
+| **The Leverage** | Your building, the docks, Coney | Shayla owes Vera, who wants the wizard next door. Find Dutch at Pier 9 (talk, pay, rob him, or fight), case the stash house, then go in the front to deal, round the back through the alley door, empty the house with Dutch's phone, or go loud. Then get her home alive; she fights beside you. |
+| **Protection** | Omar's bodega | Rico's corner crew collects 'rent' at closing time. End it your way. |
 | **Small Disaster** | Krista's life | Krista's new boyfriend Lenny is lying to her. Decide which mercy is real. |
 | **Washington Township** | Allsafe | The memos that prove E Corp knew. Who gets to see them is up to you. |
 | **No Heat / Street Sermon / Lost / Dead Drops** | All over | A boiler held hostage by a subscription, a busker who needs a signal, a lost dog, packages nobody opens. |
@@ -144,7 +163,14 @@ Running people over is a crime, and the Monster path is watching.
 **Planes.** Bowery Bay Airfield sits on the Queens waterfront in the north-east corner of
 the map: one runway, a control tower, two hangars, three Skyhawk trainers and E Corp's
 corporate jet. Fly Gus's ring course and he'll let you take a trainer whenever you like.
-The jet you'll have to steal.
+The jet you can steal (E Corp will notice), or save Gus's airfield the clever way and he
+signs it over to you, legally, for a dollar a year. Your own jet: no cops, no wanted level.
+
+**Everything you park stays parked.** The cars and planes you drive stay exactly where
+you leave them, across saves. Your four most recent rides stay anywhere in the city;
+anything parked outside your building (cars) or at Bowery Bay (planes) stays there
+for good. Your rides are always unlocked for you, and taking your own car back is never
+a crime.
 
 - Full throttle down the runway; pull back once she's light.
 - Bank to turn. Don't get slow: below stall speed the wing quits and the nose drops.
@@ -244,11 +270,20 @@ integrated graphics) with 8 GB of RAM**, and the game runs well there.
   view is 40–70 draw calls.
 - Uses a fraction of an 8 GB RAM budget.
 
-Everything is tunable in **Settings**: 3D resolution scale, view distance, crowd and
-traffic density, shadows, MSAA, glow, CRT scanlines, frame cap, FOV, sensitivity,
-volumes, and whether to skip the intro.
+**Graphics presets: Low, Medium, High, Ultra** (Ultra is the default). Ultra turns on
+everything: soft four-split sun shadows cast by every building, car and person, MSAA 4x,
+full view distance, procedural surface detail (asphalt grain, cracks and patches, brick
+relief, weathering and rain streaks on facades, grime at the base of walls, puddles
+that collect in rain), sky reflections on wet streets, glass and car paint, bloom,
+colour grading and a full cloud sky. Every option can also be set individually (that
+switches the preset to Custom): resolution scale, view distance, crowd and traffic
+density, shadows, anti-aliasing (FXAA or MSAA), surface detail, reflections, glow,
+colour grading, CRT scanlines, frame cap, FOV, sensitivity, and the music, effects and
+narrator volumes.
 
-For a 4650U-class laptop: **Normal view distance, 0.85 resolution scale.**
+For a 4650U-class laptop: **High** holds a steady frame rate; **Medium** if you want
+headroom. Upgrading from an older version resets graphics settings once to the new
+defaults (controls and audio are kept).
 
 ## Playing it
 

@@ -116,7 +116,7 @@ func _check_fx(fx: Array, where: String, items: Dictionary) -> void:
 				if not DB.FACTIONS.has(a0):
 					_warn("%s: unknown faction '%s' in %s" % [cmd, a0, where])
 			"trust":
-				if not ["darlene", "angela", "robot", "krista", "shayla", "leon", "tyrell", "trenton"].has(a0):
+				if not ["darlene", "angela", "robot", "krista", "shayla", "leon", "tyrell", "trenton", "gideon", "whiterose", "dipierro"].has(a0):
 					_warn("trust: unknown '%s' in %s" % [a0, where])
 			"ending":
 				if not EndingData.NAMES.has(a0):

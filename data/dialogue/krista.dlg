@@ -3,6 +3,7 @@
 === krista
 -- start
 ? q.sq_krista>=30 & !q.sq_krista.done -> lenny_resolve
+? q.mq_robot.done & !flag.krista_pier_talk -> pier
 ? flag.krista_truth -> deep
 ? flag.krista_visited -> again
 KRISTA: Elliot. Twice in one week. Either you're getting better or getting worse, and with you those look identical from the outside. Sit. Talk to me. Try.
@@ -55,6 +56,25 @@ ELLIOT: There's a voice. My father's face on it. It tells me what to do, and lat
 KRISTA: ...Thank you. For the first honest sentence you've ever handed me. You're not just sick, Elliot. And you're not just brave. You're a person, carrying something enormous, mostly alone. Let me help you carry the part that's mine to hold.
 ! set krista_truth ; trust krista 3 ; stab 10
 -> deep
+-- pier
+! set krista_pier_talk
+> Krista looks up from her notes and doesn't say anything for a moment. There's a thick folder on her desk, MERCY GENERAL stamped on the tab.
+KRISTA: You went to Mercy General. The records office called me; I'm the last person who requested your file. Elliot. I've been waiting a year for you to open that folder.
+* "You knew. All this time, you knew about him." -> pier_knew
+* "I met him. My father. On the pier. He's me, Krista." -> pier_tell
+* "I don't want to talk about it." -> pier_no
+-- pier_knew
+KRISTA: I suspected. Suspecting isn't knowing, and knowing isn't something I could hand you. You had to walk into it yourself, or you'd have walked right back out. I'm sorry it took this long. I'm not sorry it was you who did it.
+-> pier_tell
+-- pier_tell
+KRISTA: Tell me about him. Not the diagnosis. Him. What does he sound like?
+ELLIOT (V.O.): I tell her. The jacket, the cigarettes he never lights, the way he calls me kid. I talk for the whole fifty minutes and then ten more, and she doesn't look at the clock once.
+! set krista_truth ; trust krista 3 ; stab 10
+-> deep
+-- pier_no
+KRISTA: Okay. Then we sit here and don't talk about it. That's allowed. I'll be here when you do.
+! trust krista 1
+-> END
 -- deep
 KRISTA: Whatever you do out there — come back and tell me about it. Not the operation. The you. That's the only file I care about. The one you keep trying to delete.
 -> hub
@@ -89,3 +109,4 @@ ELLIOT (V.O.): She looks at me for a long time. She doesn't ask. I think she's a
 KRISTA: Lenny told me everything. The wife. The others. All of it, in one miserable honest hour. He said someone made him. I have a guess who. It hurt. But I'd rather hurt with the truth than be comfortable in a lie. You gave me that. Thank you.
 ! quest sq_krista done ; trust krista 3 ; set krista_free ; set krista_truth
 -> END
+

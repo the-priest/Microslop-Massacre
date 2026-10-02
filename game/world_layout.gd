@@ -6,54 +6,61 @@ extends RefCounted
 ##
 ## Axes: +X east, +Z south. Avenues run N-S, streets run E-W.
 
-const SEED := 51909
+## Which map is loaded: "nyc", "highway", "chicago" (see Regions). Every
+## static var below holds the current region's value; New York's are the
+## defaults written here.
+static var region := "nyc"
+static var _nyc_defaults: Dictionary = {}
+const REGION_KEYS := ["SEED", "BJ0", "AX0", "AXS", "NA", "SZ0", "SZS", "NS", "NBI", "NBJ", "CONEY_ROW_Z0", "CONEY_ROW_Z1", "SURF_Z", "AMUSE_Z0", "AMUSE_Z1", "BOARD_Z0", "BOARD_Z1", "BEACH_Z1", "PIER_X0", "PIER_X1", "PIER_Z1", "WORLD_X", "WORLD_XE", "WORLD_ZN", "PARK", "STEEL", "TRYON", "AIRFIELD", "RUNWAY_X", "RUNWAY_HW", "RUNWAY_Z0", "RUNWAY_Z1", "DISTRICT_NAMES", "LANDMARKS", "DOORS", "SUBWAYS", "POIS", "START_POS", "START_YAW"]
+
+static var SEED := 51909
 ## The city grew: 10 rows north (Inwood, Harlem, the Bronx) and 7 avenues east
 ## (Astoria, Long Island City, Hunts Point). Legacy block rows are offset by
 ## BJ0 so every original landmark keeps its world position.
-const BJ0 := 10
-const AX0 := -780.0
-const AXS := 130.0
-const NA := 20 # avenues 0..19 (x=-780..1690)
-const SZ0 := -1600.0
-const SZS := 80.0
-const NS := 28 # streets 0..27 (z=-1600..560)
+static var BJ0 := 10
+static var AX0 := -780.0
+static var AXS := 130.0
+static var NA := 20 # avenues 0..19 (x=-780..1690)
+static var SZ0 := -1600.0
+static var SZS := 80.0
+static var NS := 28 # streets 0..27 (z=-1600..560)
 const AVE_HW := 10.0 # corridor half width (asphalt 6.5 + sidewalk 3.5)
 const AVE_ROAD := 6.5
 const ST_HW := 8.0
 const ST_ROAD := 4.5
-const NBI := 19 # blocks along x
-const NBJ := 27 # blocks along z
+static var NBI := 19 # blocks along x
+static var NBJ := 27 # blocks along z
 
 # Coney Island (south of the grid).
-const CONEY_ROW_Z0 := 568.0
-const CONEY_ROW_Z1 := 616.0
-const SURF_Z := 624.0 # Surf Avenue center
-const AMUSE_Z0 := 632.0
-const AMUSE_Z1 := 688.0
-const BOARD_Z0 := 688.0
-const BOARD_Z1 := 712.0
-const BEACH_Z1 := 790.0
-const PIER_X0 := -40.0
-const PIER_X1 := -20.0
-const PIER_Z1 := 880.0
+static var CONEY_ROW_Z0 := 568.0
+static var CONEY_ROW_Z1 := 616.0
+static var SURF_Z := 624.0 # Surf Avenue center
+static var AMUSE_Z0 := 632.0
+static var AMUSE_Z1 := 688.0
+static var BOARD_Z0 := 688.0
+static var BOARD_Z1 := 712.0
+static var BEACH_Z1 := 790.0
+static var PIER_X0 := -40.0
+static var PIER_X1 := -20.0
+static var PIER_Z1 := 880.0
 
-const WORLD_X := 866.0 # west edge (-X); the east edge is WORLD_XE
-const WORLD_XE := 1776.0
-const WORLD_ZN := -1666.0
+static var WORLD_X := 866.0 # west edge (-X); the east edge is WORLD_XE
+static var WORLD_XE := 1776.0
+static var WORLD_ZN := -1666.0
 
 # Parks and compounds remove internal roads.
-const PARK := {"bi0": 4, "bi1": 6, "bj0": 19, "bj1": 22}
-const STEEL := {"bi0": 9, "bi1": 10, "bj0": 11, "bj1": 12}
+static var PARK := {"bi0": 4, "bi1": 6, "bj0": 19, "bj1": 22}
+static var STEEL := {"bi0": 9, "bi1": 10, "bj0": 11, "bj1": 12}
 ## Fort Tryon: a wooded park on the hills of upper Manhattan.
-const TRYON := {"bi0": 0, "bi1": 1, "bj0": 1, "bj1": 3}
+static var TRYON := {"bi0": 0, "bi1": 1, "bj0": 1, "bj1": 3}
 ## Bowery Bay Airfield: a general-aviation field on the Queens waterfront.
-const AIRFIELD := {"bi0": 16, "bi1": 18, "bj0": 0, "bj1": 7}
-const RUNWAY_X := 1570.0 # runway centreline (it runs north-south)
-const RUNWAY_HW := 20.0
-const RUNWAY_Z0 := -1585.0
-const RUNWAY_Z1 := -975.0
+static var AIRFIELD := {"bi0": 16, "bi1": 18, "bj0": 0, "bj1": 7}
+static var RUNWAY_X := 1570.0 # runway centreline (it runs north-south)
+static var RUNWAY_HW := 20.0
+static var RUNWAY_Z0 := -1585.0
+static var RUNWAY_Z1 := -975.0
 
-const DISTRICT_NAMES := {
+static var DISTRICT_NAMES := {
 	"heights": "Washington Heights", "industrial": "Industrial North", "docks": "West Side Docks",
 	"midtown": "Midtown", "east_mid": "Turtle Bay", "hells": "Hell's Kitchen",
 	"park": "Central Park", "uptown": "Upper East Side", "les": "Lower East Side",
@@ -63,6 +70,114 @@ const DISTRICT_NAMES := {
 	"astoria": "Astoria", "lic": "Long Island City", "hunts": "Hunts Point",
 	"airfield": "Bowery Bay Airfield",
 }
+
+
+## Switch every layout value to region r (call before building the world).
+static func set_region(r: String) -> void:
+	if _nyc_defaults.is_empty():
+		_nyc_defaults["SEED"] = SEED
+		_nyc_defaults["BJ0"] = BJ0
+		_nyc_defaults["AX0"] = AX0
+		_nyc_defaults["AXS"] = AXS
+		_nyc_defaults["NA"] = NA
+		_nyc_defaults["SZ0"] = SZ0
+		_nyc_defaults["SZS"] = SZS
+		_nyc_defaults["NS"] = NS
+		_nyc_defaults["NBI"] = NBI
+		_nyc_defaults["NBJ"] = NBJ
+		_nyc_defaults["CONEY_ROW_Z0"] = CONEY_ROW_Z0
+		_nyc_defaults["CONEY_ROW_Z1"] = CONEY_ROW_Z1
+		_nyc_defaults["SURF_Z"] = SURF_Z
+		_nyc_defaults["AMUSE_Z0"] = AMUSE_Z0
+		_nyc_defaults["AMUSE_Z1"] = AMUSE_Z1
+		_nyc_defaults["BOARD_Z0"] = BOARD_Z0
+		_nyc_defaults["BOARD_Z1"] = BOARD_Z1
+		_nyc_defaults["BEACH_Z1"] = BEACH_Z1
+		_nyc_defaults["PIER_X0"] = PIER_X0
+		_nyc_defaults["PIER_X1"] = PIER_X1
+		_nyc_defaults["PIER_Z1"] = PIER_Z1
+		_nyc_defaults["WORLD_X"] = WORLD_X
+		_nyc_defaults["WORLD_XE"] = WORLD_XE
+		_nyc_defaults["WORLD_ZN"] = WORLD_ZN
+		_nyc_defaults["PARK"] = PARK
+		_nyc_defaults["STEEL"] = STEEL
+		_nyc_defaults["TRYON"] = TRYON
+		_nyc_defaults["AIRFIELD"] = AIRFIELD
+		_nyc_defaults["RUNWAY_X"] = RUNWAY_X
+		_nyc_defaults["RUNWAY_HW"] = RUNWAY_HW
+		_nyc_defaults["RUNWAY_Z0"] = RUNWAY_Z0
+		_nyc_defaults["RUNWAY_Z1"] = RUNWAY_Z1
+		_nyc_defaults["DISTRICT_NAMES"] = DISTRICT_NAMES
+		_nyc_defaults["LANDMARKS"] = LANDMARKS
+		_nyc_defaults["DOORS"] = DOORS
+		_nyc_defaults["SUBWAYS"] = SUBWAYS
+		_nyc_defaults["POIS"] = POIS
+		_nyc_defaults["START_POS"] = START_POS
+		_nyc_defaults["START_YAW"] = START_YAW
+	region = r if (r == "nyc" or Regions.DEFS.has(r)) else "nyc"
+	for k in _nyc_defaults.keys():
+		_set_key(str(k), _nyc_defaults[k])
+	_all_doors = {}
+	if region == "nyc":
+		return
+	var D: Dictionary = Regions.DEFS[region]
+	# Everything NYC-specific is switched off unless the region says otherwise.
+	for k in ["PARK", "STEEL", "TRYON", "AIRFIELD"]:
+		_set_key(k, Regions.OFF)
+	_set_key("LANDMARKS", RegionContent.landmarks(region))
+	_set_key("DOORS", RegionContent.doors(region))
+	_set_key("SUBWAYS", {})
+	_set_key("POIS", RegionContent.pois(region))
+	var bz := float(D.get("BEACH_Z1", 9000.0))
+	for k in ["CONEY_ROW_Z0", "CONEY_ROW_Z1", "SURF_Z", "AMUSE_Z0", "AMUSE_Z1", "BOARD_Z0", "BOARD_Z1"]:
+		_set_key(k, bz + 500.0)
+	_set_key("PIER_X0", 99999.0)
+	_set_key("PIER_X1", 99999.0)
+	for k in D.keys():
+		_set_key(str(k), D[k])
+
+
+static func _set_key(k: String, v: Variant) -> void:
+	match k:
+		"SEED": SEED = v
+		"BJ0": BJ0 = v
+		"AX0": AX0 = v
+		"AXS": AXS = v
+		"NA": NA = v
+		"SZ0": SZ0 = v
+		"SZS": SZS = v
+		"NS": NS = v
+		"NBI": NBI = v
+		"NBJ": NBJ = v
+		"CONEY_ROW_Z0": CONEY_ROW_Z0 = v
+		"CONEY_ROW_Z1": CONEY_ROW_Z1 = v
+		"SURF_Z": SURF_Z = v
+		"AMUSE_Z0": AMUSE_Z0 = v
+		"AMUSE_Z1": AMUSE_Z1 = v
+		"BOARD_Z0": BOARD_Z0 = v
+		"BOARD_Z1": BOARD_Z1 = v
+		"BEACH_Z1": BEACH_Z1 = v
+		"PIER_X0": PIER_X0 = v
+		"PIER_X1": PIER_X1 = v
+		"PIER_Z1": PIER_Z1 = v
+		"WORLD_X": WORLD_X = v
+		"WORLD_XE": WORLD_XE = v
+		"WORLD_ZN": WORLD_ZN = v
+		"PARK": PARK = v
+		"STEEL": STEEL = v
+		"TRYON": TRYON = v
+		"AIRFIELD": AIRFIELD = v
+		"RUNWAY_X": RUNWAY_X = v
+		"RUNWAY_HW": RUNWAY_HW = v
+		"RUNWAY_Z0": RUNWAY_Z0 = v
+		"RUNWAY_Z1": RUNWAY_Z1 = v
+		"DISTRICT_NAMES": DISTRICT_NAMES = v
+		"LANDMARKS": LANDMARKS = v
+		"DOORS": DOORS = v
+		"SUBWAYS": SUBWAYS = v
+		"POIS": POIS = v
+		"START_POS": START_POS = v
+		"START_YAW": START_YAW = v
 
 
 static func ax(i: int) -> float:
@@ -122,6 +237,10 @@ static func is_green(bi: int, bj: int) -> bool:
 
 
 static func district(bi: int, bj: int) -> String:
+	if region != "nyc":
+		if in_airfield(bi, bj):
+			return "airfield"
+		return Regions.district(region, bi, bj)
 	if in_park(bi, bj):
 		return "park"
 	if in_steel(bi, bj):
@@ -215,7 +334,7 @@ static func intersection_exists(i: int, j: int) -> bool:
 # ------------------------------------------------------------------ landmarks
 ## rect = [x0, z0, x1, z1]; door = [x, z, facing] facing in n/s/e/w (outward normal)
 ## style: facade style id (see facade.gdshader). sign: text on the facade.
-const LANDMARKS := {
+static var LANDMARKS := {
 	# Lower East Side ----------------------------------------------------------
 	"elliot_apt": {"rect": [-482, 328, -450, 358], "h": 19.0, "style": 1, "color": Color(0.36, 0.2, 0.16), "roof": "tank", "fire_escape": "n", "door": "d_apt"},
 	"bodega": {"rect": [-416, 328, -402, 346], "h": 13.0, "style": 1, "color": Color(0.3, 0.26, 0.2), "sign": "BODEGA 24H", "sign_col": Color(1.0, 0.75, 0.3), "door": "d_bodega", "awning": Color(0.1, 0.4, 0.2)},
@@ -226,7 +345,7 @@ const LANDMARKS := {
 	"pharmacy": {"rect": [-340, 408, -316, 428], "h": 14.0, "style": 1, "color": Color(0.35, 0.33, 0.3), "sign": "Rx PHARMACY", "sign_col": Color(1.0, 0.25, 0.3), "door": "d_pharmacy", "awning": Color(0.5, 0.05, 0.08)},
 	"precinct": {"rect": [-250, 248, -214, 276], "h": 16.0, "style": 8, "color": Color(0.4, 0.38, 0.34), "sign": "7TH PRECINCT", "sign_col": Color(0.6, 0.8, 1.0), "door": "d_precinct"},
 	"darlene_apt": {"rect": [-226, 408, -204, 432], "h": 17.0, "style": 1, "color": Color(0.28, 0.2, 0.22), "fire_escape": "n", "door": "d_darlene"},
-	"vera_stash": {"rect": [-164, 500, -140, 530], "h": 12.0, "style": 1, "color": Color(0.2, 0.17, 0.16), "door": "d_vera", "boarded": true},
+	"vera_stash": {"rect": [-164, 500, -140, 530], "h": 12.0, "style": 1, "color": Color(0.2, 0.17, 0.16), "door": "d_vera", "doors_extra": ["d_vera_back"], "boarded": true},
 	# Midtown -----------------------------------------------------------------
 	"allsafe": {"rect": [-362, -214, -298, -168], "h": 64.0, "style": 3, "color": Color(0.5, 0.52, 0.55), "sign": "ALLSAFE CYBERSECURITY", "sign_col": Color(0.35, 0.9, 1.0), "door": "d_allsafe", "roof": "mech"},
 	"ecorp_tower": {"rect": [-90, -306, -40, -262], "h": 236.0, "style": 7, "color": Color(0.14, 0.16, 0.2), "sign": "E CORP", "sign_col": Color(0.35, 0.55, 1.0), "door": "d_ecorp", "roof": "spire", "plaza": [-120, -312, -10, -248]},
@@ -268,7 +387,7 @@ const LANDMARKS := {
 }
 
 ## Doors: id -> {pos [x, z], face (outward: n s e w), interior, name, lock (skill dc or key id)}
-const DOORS := {
+static var DOORS := {
 	"d_apt": {"pos": [-466, 328], "face": "n", "interior": "apt_building", "name": "Your Building"},
 	"d_bodega": {"pos": [-409, 328], "face": "n", "interior": "bodega", "name": "Bodega"},
 	"d_krista": {"pos": [-339, 312], "face": "s", "interior": "krista_office", "name": "Krista Gordon, LCSW"},
@@ -277,8 +396,9 @@ const DOORS := {
 	"d_laundro": {"pos": [-588, 328], "face": "n", "interior": "laundromat", "name": "Suds City Laundromat"},
 	"d_pharmacy": {"pos": [-328, 408], "face": "n", "interior": "pharmacy", "name": "Pharmacy"},
 	"d_precinct": {"pos": [-232, 248], "face": "n", "interior": "precinct", "name": "7th Precinct"},
-	"d_darlene": {"pos": [-215, 408], "face": "n", "interior": "darlene_apt", "name": "Darlene's Building", "lock": 35},
-	"d_vera": {"pos": [-140, 515], "face": "e", "interior": "vera_stash", "name": "Stash House", "lock": 60, "key": "key_vera_stash"},
+	"d_darlene": {"pos": [-215, 408], "face": "n", "interior": "darlene_apt", "name": "Darlene's Building", "lock": 35, "unlock_when": "q.mq_robot>=10 | flag.knows_darlene_sister"},
+	"d_vera": {"pos": [-140, 515], "face": "e", "interior": "vera_stash", "name": "Stash House", "lock": 60, "key": "key_vera_stash", "unlock_when": "flag.vera_door_open | flag.vera_deal"},
+	"d_vera_back": {"pos": [-158, 530], "face": "s", "interior": "vera_stash", "name": "Stash House (Alley Door)", "lock": 40, "key": "key_vera_stash", "unlock_when": "flag.vera_backdoor"},
 	"d_allsafe": {"pos": [-330, -168], "face": "s", "interior": "allsafe", "name": "Allsafe Cybersecurity"},
 	"d_ecorp": {"pos": [-65, -262], "face": "s", "interior": "ecorp_lobby", "name": "E Corp Tower"},
 	"d_deus": {"pos": [355, -328], "face": "s", "interior": "salina_hotel", "name": "The Salina Hotel", "lock": 100, "key": "deus_invite"},
@@ -307,7 +427,7 @@ const DOORS := {
 }
 
 ## Subway stations: fast travel between discovered stations.
-const SUBWAYS := {
+static var SUBWAYS := {
 	"sub_les": {"rect": [-510, 328, -498, 338], "door": [-504, 328], "face": "n", "name": "Delancey St Station"},
 	"sub_midtown": {"rect": [-250, -178, -238, -168], "door": [-244, -168], "face": "s", "name": "5th Ave - 53rd St"},
 	"sub_heights": {"rect": [-380, -632, -368, -622], "door": [-374, -632], "face": "n", "name": "181st St Station"},
@@ -326,7 +446,7 @@ const SUBWAYS := {
 }
 
 ## Map points of interest (discovered when you walk near them).
-const POIS := {
+static var POIS := {
 	"poi_park": {"pos": [-65, 80], "name": "Central Park", "r": 60.0},
 	"poi_memorial": {"pos": [-150, 150], "name": "Washington Township Memorial", "r": 20.0},
 	"poi_chess": {"pos": [30, 10], "name": "Chess Tables", "r": 18.0},
@@ -358,8 +478,8 @@ const WTC_ROOF := Vector3(-96.0, 380.2, 369.8)
 const WTC_H := 380.0
 
 ## Where the player starts a new game (after the intake session).
-const START_POS := Vector3(-339, 0, 316)
-const START_YAW := PI
+static var START_POS := Vector3(-339, 0, 316)
+static var START_YAW := PI
 
 
 static func door_world(door_id: String) -> Dictionary:
@@ -404,6 +524,16 @@ static var _all_doors: Dictionary = {}
 
 
 ## Landmark doors plus subway stairs. Built once (callers must not modify it).
+## Every door id a landmark owns (main door first).
+static func landmark_doors(L: Dictionary) -> Array:
+	var out: Array = []
+	if str(L.get("door", "")) != "":
+		out.append(str(L["door"]))
+	for d in L.get("doors_extra", []):
+		out.append(str(d))
+	return out
+
+
 static func all_doors() -> Dictionary:
 	if not _all_doors.is_empty():
 		return _all_doors

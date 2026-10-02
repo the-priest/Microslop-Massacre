@@ -18,7 +18,7 @@ const SCENARIOS := {
 	"kingpin_finale": {"finale": true, "fx": "set kingpin ; set kingpin_dirty", "prefs": ["cash is king"], "want": "kingpin"},
 	"fsociety": {"finale": true, "prefs": ["fsociety keeps it"]},
 	"reboot": {"finale": true, "prefs": ["None of them"]},
-	"darkarmy": {"finale": true, "fx": "quest mq_darkarmy 10 ; quest mq_darkarmy 40", "prefs": ["Dark Army finishes"]},
+	"darkarmy": {"finale": true, "fx": "quest mq_darkarmy 10 ; quest mq_darkarmy 40 ; set da_allied", "prefs": ["Whiterose finish"]},
 	"fbi": {"finale": true, "fx": "set fbi_informant", "prefs": ["FBI everything"]},
 	"ecorp": {"finale": true, "fx": "set ecorp_door_tyrell", "prefs": ["E Corp's offer"]},
 	"press": {"finale": true, "fx": "set township_public", "prefs": ["to the press"]},

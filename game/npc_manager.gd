@@ -28,6 +28,8 @@ func _process(delta: float) -> void:
 func placement(id: String, d: Dictionary) -> Dictionary:
 	for s in d.get("spawns", []):
 		var sd: Dictionary = s
+		if str(sd.get("cell", "world")) == "world" and str(sd.get("region", "nyc")) != WorldLayout.region:
+			continue
 		if _cond(str(sd.get("when", ""))):
 			var p: Array = sd.get("pos", [0, 0])
 			return {"cell": str(sd.get("cell", "world")), "pos": Vector3(float(p[0]), float(sd.get("y", 0.0)), float(p[1])), "yaw": deg_to_rad(float(sd.get("yaw", 0.0))), "wander": float(sd.get("wander", d.get("wander", 0.0)))}
@@ -61,6 +63,8 @@ func refresh(force: bool) -> void:
 	for gid in NPCData.GROUPS.keys():
 		var g: Dictionary = NPCData.GROUPS[gid]
 		if str(g.get("cell", "world")) != cell or not _cond(str(g.get("when", ""))):
+			continue
+		if cell == "world" and str(g.get("region", "nyc")) != WorldLayout.region:
 			continue
 		var tmpl: Dictionary = NPCData.TEMPLATES.get(str(g.get("template", "thug")), {}).duplicate(true)
 		for k in (g.get("override", {}) as Dictionary).keys():

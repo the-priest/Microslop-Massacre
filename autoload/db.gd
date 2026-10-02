@@ -52,6 +52,17 @@ const ITEMS := {
 	"combat_shotgun": {"name": "Combat Shotgun", "type": "weapon", "value": 780, "skill": "guns", "dmg": 9.0, "pellets": 7, "rate": 2.2, "spread": 5.0, "range": 30.0, "mag": 8, "reload": 3.2, "ammo": "ammo_12ga", "ap": 30, "model": "shotgun", "desc": "Semi-automatic. The pump was holding you back."},
 	"assault_rifle": {"name": "Assault Rifle", "type": "weapon", "value": 1100, "skill": "guns", "dmg": 21.0, "rate": 8.0, "spread": 1.8, "range": 100.0, "mag": 30, "reload": 2.4, "ammo": "ammo_556", "ap": 28, "auto": true, "model": "ar", "desc": "Military pattern. Civilian paperwork, allegedly."},
 	"sniper_rifle": {"name": "Sniper Rifle", "type": "weapon", "value": 1400, "skill": "guns", "dmg": 80.0, "rate": 0.6, "spread": 0.1, "range": 220.0, "mag": 5, "reload": 3.2, "ammo": "ammo_308", "ap": 40, "zoom": 5.0, "model": "sniper", "desc": "One shot. One problem solved, at a distance."},
+	"compact_380": {"name": ".380 Pocket Pistol", "type": "weapon", "value": 120, "skill": "guns", "dmg": 14.0, "rate": 3.4, "spread": 1.5, "range": 45.0, "mag": 7, "reload": 1.2, "ammo": "ammo_9mm", "ap": 14, "model": "pistol", "desc": "Fits in a coat pocket. Fits in a sock, if you're that kind of person."},
+	"pistol_10mm": {"name": "10mm Service Pistol", "type": "weapon", "value": 420, "skill": "guns", "dmg": 27.0, "rate": 2.6, "spread": 1.1, "range": 65.0, "mag": 10, "reload": 1.5, "ammo": "ammo_45", "ap": 20, "model": "pistol45", "desc": "What the Bureau carried before the Bureau got nervous about it."},
+	"pdw": {"name": "Personal Defense Weapon", "type": "weapon", "value": 820, "skill": "guns", "dmg": 12.0, "rate": 11.0, "spread": 2.4, "range": 55.0, "mag": 40, "reload": 1.9, "ammo": "ammo_9mm", "ap": 26, "auto": true, "model": "smg", "desc": "Security contractors love it. Security contractors lose them."},
+	"lever_rifle": {"name": "Lever-Action .38", "type": "weapon", "value": 480, "skill": "guns", "dmg": 32.0, "rate": 1.5, "spread": 0.5, "range": 100.0, "mag": 8, "reload": 2.6, "ammo": "ammo_38", "ap": 24, "zoom": 2.0, "model": "rifle", "desc": "A cowboy gun in a city of cowards. Shares ammo with your revolver."},
+	"double_barrel": {"name": "Double-Barrel Shotgun", "type": "weapon", "value": 320, "skill": "guns", "dmg": 12.0, "pellets": 8, "rate": 1.5, "spread": 4.0, "range": 26.0, "mag": 2, "reload": 2.0, "ammo": "ammo_12ga", "ap": 24, "model": "sawed", "desc": "Grandpa's. Grandpa was not a nice man."},
+	"marksman_rifle": {"name": "Marksman Rifle", "type": "weapon", "value": 1250, "skill": "guns", "dmg": 54.0, "rate": 1.4, "spread": 0.15, "range": 180.0, "mag": 10, "reload": 2.6, "ammo": "ammo_308", "ap": 32, "zoom": 3.5, "model": "sniper", "desc": "Semi-automatic, scoped, and very good at ending arguments across a street."},
+	"battle_rifle": {"name": "Battle Rifle", "type": "weapon", "value": 1800, "skill": "guns", "dmg": 36.0, "rate": 4.5, "spread": 1.0, "range": 130.0, "mag": 20, "reload": 2.5, "ammo": "ammo_308", "ap": 32, "auto": true, "model": "ar", "desc": "Full-size, full-power, full-auto. It kicks like it means it."},
+	"lmg": {"name": "Light Machine Gun", "type": "weapon", "value": 2200, "skill": "guns", "dmg": 20.0, "rate": 11.0, "spread": 2.8, "range": 100.0, "mag": 100, "reload": 5.0, "ammo": "ammo_556", "ap": 40, "auto": true, "model": "ar", "desc": "A hundred-round belt. Not subtle. Not meant to be."},
+	"u_five_nine": {"name": "Five/Nine", "type": "weapon", "value": 2600, "unique": true, "skill": "guns", "dmg": 27.0, "rate": 9.0, "spread": 1.1, "range": 115.0, "mag": 40, "reload": 2.0, "ammo": "ammo_556", "ap": 24, "auto": true, "model": "ar", "desc": "UNIQUE. A rifle with a cartoon mask stenciled on the stock and 5/9 scratched under the serial number someone filed off."},
+	"u_stage_two": {"name": "Stage Two", "type": "weapon", "value": 1900, "unique": true, "skill": "guns", "dmg": 12.0, "pellets": 9, "rate": 2.6, "spread": 4.6, "range": 32.0, "mag": 10, "reload": 2.8, "ammo": "ammo_12ga", "ap": 26, "model": "shotgun", "desc": "UNIQUE. A drum-fed shotgun with a white rose painted on the receiver. Whoever lost it is still looking."},
+	"u_qwerty": {"name": "Qwerty", "type": "weapon", "value": 1000, "unique": true, "skill": "guns", "dmg": 22.0, "rate": 4.0, "spread": 0.6, "range": 70.0, "mag": 15, "reload": 1.1, "ammo": "ammo_22", "ap": 12, "silent": true, "model": "pistol_sil", "desc": "UNIQUE. A suppressed .22 with a little goldfish sticker on the grip. Never judges. Never misses much."},
 	# ------------------------------------------------------ unique weapons
 	"u_whitehat": {"name": "White Hat", "type": "weapon", "value": 900, "unique": true, "skill": "guns", "dmg": 19.0, "rate": 3.8, "spread": 0.7, "range": 75.0, "mag": 20, "reload": 1.3, "ammo": "ammo_22", "ap": 13, "silent": true, "model": "pistol_sil", "desc": "UNIQUE. A match-grade suppressed .22 with 'RESPONSIBLE DISCLOSURE' etched down the slide."},
 	"u_zero_day": {"name": "Zero Day", "type": "weapon", "value": 1500, "unique": true, "skill": "guns", "dmg": 14.0, "rate": 12.0, "spread": 2.2, "range": 50.0, "mag": 40, "reload": 1.8, "ammo": "ammo_9mm", "ap": 22, "auto": true, "model": "smg", "desc": "UNIQUE. Nobody knew it existed until it was already too late."},
@@ -163,6 +174,11 @@ const ITEMS := {
 	"key_apartment": {"name": "Apartment Key", "type": "key", "value": 0, "quest": true, "desc": "Your apartment. 4D."},
 	"key_arcade": {"name": "Arcade Back Room Key", "type": "key", "value": 0, "quest": true, "desc": "fsociety HQ, behind the pinball machines."},
 	"key_ron_backroom": {"name": "Ron's Back Room Key", "type": "key", "value": 0, "quest": true, "desc": "Behind the espresso machine."},
+	"ecoin_plan": {"name": "E Coin Rollout Deck", "type": "misc", "value": 0, "quest": true, "desc": "Phillip Price's internal plan for E Coin. Slide 9: 'The crisis is the onboarding.'"},
+	"rs_badge": {"name": "Rockstarved QA Badge", "type": "key", "value": 0, "quest": true, "desc": "CRUNCH TEAM C. Laminated, never deactivated. Opens the Floor 88 service elevator."},
+	"whale_docs": {"name": "Project Whale Deck", "type": "misc", "value": 0, "quest": true, "desc": "Rockstarved's internal deck on 'whales'. The player is a funnel."},
+	"jet_keys": {"name": "Citation Keys", "type": "key", "value": 0, "quest": true, "desc": "Keys, logbook and a one-dollar lease from Bowery Bay Flight School. The jet in hangar two is legally yours. Gus stamped it himself."},
+	"dutch_phone": {"name": "Dutch's Phone", "type": "misc", "value": 0, "quest": true, "desc": "Unlocked. Vera's whole crew is in the group chat, and they all trust a message from Dutch."},
 	"key_vera_stash": {"name": "Stash House Key", "type": "key", "value": 0, "quest": true, "desc": "Vera's crew uses this to get into their stash house."},
 	"key_roof": {"name": "Rooftop Key", "type": "key", "value": 0, "quest": true, "desc": "Opens the roof hatch of the Heights relay building."},
 	"key_steel_ops": {"name": "Ops Floor Key", "type": "key", "value": 0, "quest": true, "desc": "Steel Mountain climate control level."},
@@ -223,6 +239,13 @@ const FACTIONS := {
 	"vera": {"name": "Vera's Crew", "desc": "A dealer's operation running out of the docks. Vera thinks everyone belongs to him."},
 	"coney": {"name": "Coney Island", "desc": "Boardwalk folks, carnies, and night people."},
 	"candyman": {"name": "Candyman's Crew", "desc": "A Bronx drug operation selling cut 'candy' on the Carver Houses corners. Kids are dying of it."},
+	"gamers": {"name": "Respawn", "desc": "Gamers who are done being farmed: streamers, modders, laid-off QA testers, kids with refunds they'll never get. Led by Pixel."},
+	"rockstarved": {"name": "Rockstarved Games", "desc": "One great game a decade and a paid-currency store in between. A parody studio. Owned by E Corp."},
+	"earse": {"name": "Electronic Arse", "desc": "The same sports game every year, 'surprise mechanics,' and servers that switch off the games you paid for. A parody publisher. Owned by E Corp."},
+	"phony": {"name": "Phony Interactive", "desc": "Your account, your library, your purchases: theirs to revoke. A parody platform. Owned by E Corp."},
+	"blizzhard": {"name": "Activi$ion Blizzhard", "desc": "Record profits, then record layoffs, and a battle pass for everything. A parody publisher. Owned by Microslop."},
+	"ubisloth": {"name": "Ubisloth", "desc": "The same open world with the towers moved around, always online, side quests written by a machine. A parody publisher. Owned by E Corp."},
+	"microslop": {"name": "Microslop", "desc": "Buys the studios you love and shuts them down. Wants an account for your toaster and a subscription for your subscription. A parody megacorp. E Corp's favorite child."},
 	"harlem": {"name": "Harlem", "desc": "The block associations, the shelter, the churches: the people holding Harlem together with tape and stubbornness."},
 }
 
@@ -230,6 +253,9 @@ const XP_CAP_LEVEL := 30
 
 ## quests: id -> {title, kind, xp, desc, stages: {n: [{text, marker}]}}
 var QUESTS: Dictionary = {}
+## Quest lines: id -> {title, quests: [qid in story order]}. Every quest belongs
+## to exactly one line; finishing one tracks the next one in the same line.
+var LINES: Dictionary = {}
 var _loaded: bool = false
 
 
@@ -321,16 +347,26 @@ func _load_quests(path: String) -> void:
 		var line := raw.strip_edges()
 		if line == "" or line.begins_with("#"):
 			continue
+		if line.begins_with("+++ "):
+			var lp := line.substr(4).split("|")
+			var lid := lp[0].strip_edges()
+			LINES[lid] = {"title": lp[1].strip_edges() if lp.size() > 1 else lid, "quests": []}
+			continue
 		if line.begins_with("=== "):
 			var parts := line.substr(4).split("|")
 			cur = parts[0].strip_edges()
+			var ln := parts[4].strip_edges() if parts.size() > 4 else cur
 			QUESTS[cur] = {
 				"title": parts[1].strip_edges() if parts.size() > 1 else cur,
 				"kind": parts[2].strip_edges() if parts.size() > 2 else "side",
 				"xp": int(parts[3].strip_edges()) if parts.size() > 3 else 100,
+				"line": ln,
 				"desc": "",
 				"stages": {},
 			}
+			if not LINES.has(ln):
+				LINES[ln] = {"title": QUESTS[cur]["title"], "quests": []}
+			(LINES[ln]["quests"] as Array).append(cur)
 			continue
 		if cur == "":
 			continue
@@ -354,6 +390,20 @@ func _load_quests(path: String) -> void:
 		else:
 			var q: Dictionary = QUESTS[cur]
 			q["desc"] = (str(q["desc"]) + " " + line).strip_edges()
+
+
+func quest_line(qid: String) -> String:
+	return str(QUESTS.get(qid, {}).get("line", qid))
+
+
+func line_title(lid: String) -> String:
+	return str(LINES.get(lid, {}).get("title", lid))
+
+
+## [index (1-based), total] of a quest inside its line.
+func line_pos(qid: String) -> Array:
+	var qs: Array = LINES.get(quest_line(qid), {}).get("quests", [])
+	return [qs.find(qid) + 1, qs.size()]
 
 
 func quest_objectives(qid: String, stage: int) -> Array:

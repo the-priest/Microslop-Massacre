@@ -24,9 +24,15 @@ func label(pos: Vector3, text: String, font_size: int, color: Color, rot_y: floa
 
 
 func commit(parent: Node3D, far: float, props_range: float = 260.0, collision: bool = true) -> void:
-	facade.commit(parent, Mats.facade, far, "Facade")
+	# Buildings and street furniture cast sun shadows (only drawn when the
+	# player has shadows on); the ground only receives them.
+	var fm := facade.commit(parent, Mats.facade, far, "Facade")
+	if fm != null:
+		fm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	ground.commit(parent, Mats.lit, minf(far, 520.0), "Ground")
-	props.commit(parent, props_mat if props_mat != null else Mats.lit, props_range, "Props")
+	var pm := props.commit(parent, props_mat if props_mat != null else Mats.lit, props_range, "Props")
+	if pm != null:
+		pm.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	glow.commit(parent, glow_mat if glow_mat != null else Mats.glow, far, "Glow")
 	pool.commit(parent, Mats.pool, 170.0, "Pools")
 	if collision and not solids.is_empty():

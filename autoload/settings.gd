@@ -8,15 +8,15 @@ signal applied
 const PATH := "user://settings.cfg"
 ## Bump when the graphics defaults change: older settings files get the new
 ## graphics defaults once (audio / controls are kept).
-const GFX_REV := 2
-const GFX_KEYS := ["gfx_preset", "render_scale", "view_distance", "crowd_density", "traffic_density", "shadow_q", "aa", "glow", "grade"]
+const GFX_REV := 4
+const GFX_KEYS := ["gfx_preset", "render_scale", "view_distance", "crowd_density", "traffic_density", "shadow_q", "aa", "glow", "grade", "detail", "reflections", "crt"]
 
 ## Graphics presets (index = gfx_preset; PRESETS.size() = Custom).
 const PRESETS := [
-	{"render_scale": 0.75, "view_distance": 0, "crowd_density": 0, "traffic_density": 0, "shadow_q": 0, "aa": 1, "glow": true, "grade": true},
-	{"render_scale": 0.85, "view_distance": 1, "crowd_density": 1, "traffic_density": 1, "shadow_q": 0, "aa": 1, "glow": true, "grade": true},
-	{"render_scale": 1.0, "view_distance": 1, "crowd_density": 1, "traffic_density": 1, "shadow_q": 1, "aa": 2, "glow": true, "grade": true},
-	{"render_scale": 1.0, "view_distance": 2, "crowd_density": 2, "traffic_density": 2, "shadow_q": 2, "aa": 3, "glow": true, "grade": true},
+	{"render_scale": 0.75, "view_distance": 0, "crowd_density": 0, "traffic_density": 0, "shadow_q": 0, "aa": 1, "glow": true, "grade": true, "detail": 0, "reflections": false},
+	{"render_scale": 0.85, "view_distance": 1, "crowd_density": 1, "traffic_density": 1, "shadow_q": 0, "aa": 1, "glow": true, "grade": true, "detail": 1, "reflections": false},
+	{"render_scale": 1.0, "view_distance": 1, "crowd_density": 1, "traffic_density": 1, "shadow_q": 1, "aa": 2, "glow": true, "grade": true, "detail": 2, "reflections": true},
+	{"render_scale": 1.0, "view_distance": 2, "crowd_density": 2, "traffic_density": 2, "shadow_q": 2, "aa": 3, "glow": true, "grade": true, "detail": 3, "reflections": true},
 ]
 
 var values := {
@@ -31,8 +31,10 @@ var values := {
 	"aa": 3, # 0 off, 1 FXAA, 2 MSAA 2x, 3 MSAA 4x
 	"glow": true,
 	"grade": true, # filmic colour grade
+	"detail": 3, # surface detail: 0 off, 1 low, 2 high, 3 ultra (relief + puddles)
+	"reflections": true, # sky reflections on wet streets, glass and paint
 	"gfx_rev": GFX_REV,
-	"crt": true,
+	"crt": false,
 	"fov": 75.0,
 	"mouse_sens": 1.0,
 	"invert_y": false,
@@ -130,6 +132,7 @@ func apply() -> void:
 	var sq := int(values["shadow_q"])
 	RenderingServer.directional_shadow_atlas_set_size(4096 if sq >= 2 else 2048, true)
 	RenderingServer.directional_soft_shadow_filter_set_quality(RenderingServer.SHADOW_QUALITY_SOFT_LOW if sq >= 2 else RenderingServer.SHADOW_QUALITY_HARD)
+	RenderingServer.global_shader_parameter_set("gfx_detail", [0.0, 0.4, 0.7, 1.0][clampi(int(values["detail"]), 0, 3)])
 	_apply_audio()
 	emit_signal("applied")
 

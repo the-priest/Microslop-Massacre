@@ -4,7 +4,7 @@ extends ScrollContainer
 ## updates the individual graphics controls; touching one of those switches
 ## the preset to Custom.
 
-const GFX := ["render_scale", "view_distance", "crowd_density", "traffic_density", "shadow_q", "aa", "glow", "grade"]
+const GFX := ["render_scale", "view_distance", "crowd_density", "traffic_density", "shadow_q", "aa", "glow", "grade", "detail", "reflections"]
 
 var _box: VBoxContainer
 ## key -> control, so a preset can refresh the rows without rebuilding them
@@ -28,6 +28,8 @@ func _ready() -> void:
 	_choice("Traffic density", "traffic_density", ["Low", "Normal", "High"])
 	_choice("Sun shadows", "shadow_q", ["Off", "Low", "High (soft)"])
 	_choice("Anti-aliasing", "aa", ["Off", "FXAA", "MSAA 2x", "MSAA 4x"])
+	_choice("Surface detail (textures)", "detail", ["Off (flat)", "Low", "High", "Ultra (relief, puddles)"])
+	_toggle("Reflections (wet streets, glass, paint)", "reflections")
 	_toggle("Glow / bloom", "glow")
 	_toggle("Colour grading", "grade")
 	_toggle("CRT scanlines", "crt")

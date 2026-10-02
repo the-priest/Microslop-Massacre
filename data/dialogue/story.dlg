@@ -1,0 +1,197 @@
+### Act II midpoint (Who Is Mr. Robot) and Act III (the morning after, Stage Two).
+
+=== darlene_home
+### Darlene at her own apartment, mq_robot 10.
+-- start
+? q.mq_robot>=20 -> after
+> Darlene's place: a mattress on the floor, three monitors, a poster of a band that broke up in 2009, and a cork board above the desk with one photograph pinned exactly in the middle of it.
+DARLENE: You came. You actually came. Okay. Don't talk yet. I've rehearsed this, like, forty times, and every version goes badly, so I'm going to do the bad version fast.
+DARLENE: Look at the picture. Just look at it. Then you can yell, or leave, or do the thing where you stare at the floor for nine minutes. I'll be over here. Not crying.
+! quest mq_robot 20
+-> END
+-- after
+DARLENE: Take your time. I've waited this long.
+-> END
+
+=== darlene_photo
+-- start
+? q.mq_robot>=30 -> again
+> A summer photograph, the colors gone soft. A small storefront on a boardwalk: MR. ROBOT COMPUTER REPAIR in hand-painted letters. In front of it, a man in an army field jacket with his hand on a boy's shoulder. The boy is maybe seven, squinting. On the man's other side, a little girl with a gap in her teeth is making a face at whoever's holding the camera.
+ELLIOT (V.O.): The jacket. The patch. MR. ROBOT. He named the shop. The shop named him.
+ELLIOT (V.O.): The boy is me. I know it the way you know your own handwriting. And the girl is—
+DARLENE: Hi. I'm your sister. I've been your sister the whole time. You looked right through me at Dad's funeral, at Mom's, and at the arcade the night you walked in. Every time, I thought: this is the time he remembers.
+* "...Darlene." -> name
+* "No. I'd remember you. I'd remember a sister." -> deny
+* Say nothing. Just look at the photo. -> silent
+-- name
+DARLENE: Yeah. Yeah, that's me. Don't make it weird. ...Okay, make it a little weird. Come here.
+! set knows_darlene_sister ; trust darlene 3 ; quest mq_robot 30 ; stab 4
+-> rest
+-- deny
+DARLENE: You'd remember. Sure. You also don't remember 1994, or most of high school, or writing half the code we're about to run. You don't remember a lot of things, Elliot. That's kind of the whole problem.
+! set knows_darlene_sister ; trust darlene 1 ; quest mq_robot 30 ; stab -4
+-> rest
+-- silent
+> You look at it for a long time. Darlene doesn't say anything either. It's the most comfortable silence you've had in years.
+DARLENE: Yeah. That's what I do too. Every night.
+! set knows_darlene_sister ; trust darlene 2 ; quest mq_robot 30
+-> rest
+-- rest
+DARLENE: That shop is the arcade, Elliot. Dad's shop. They painted over the sign when the boardwalk went to hell, but it's still there under the Fun Society letters. You picked that building. You. Eight months ago. You said it was the only place in the city that ever felt like ours.
+DARLENE: And the man you keep talking to in the back room? Look at the jacket. Then go look at your own records. Mercy General. I can't say it for you. I tried once, and you didn't speak to me for a year.
+DARLENE: Here. I got into their records portal two years ago, when I was trying to find out what happened to you. Same login still works. Hospitals never change anything.
+! set mercy_pw
+-> END
+-- again
+ELLIOT (V.O.): The jacket. The shop. The girl with the gap in her teeth, who is standing behind me right now pretending to check her email.
+-> END
+
+=== arcade_sign
+-- start
+? q.mq_robot>=40 -> again
+? !q.mq_robot>=30 -> idle
+> Above the door, under four coats of cheap red paint, the shapes of older letters push through where the paint has cracked: MR. ROB  T  COMP  TER  REP  IR.
+ELLIOT (V.O.): I walked under this every day for a month. I walked under it when I was seven, holding a hand that smelled like solder and cigarettes. I picked this building. Darlene says I picked this building.
+ELLIOT (V.O.): Who picked it. That's the question. Who's been picking.
+! quest mq_robot 40 ; stab -2
+-> END
+-- idle
+ELLIOT (V.O.): Red paint over an older sign. The boardwalk's full of them. Every business here is the ghost of a business that used to be here.
+-> END
+-- again
+ELLIOT (V.O.): MR. ROB  T. My father's shop. My crew's headquarters. My name, in a way I'm not ready to say out loud.
+-> END
+
+=== robot_pier
+### The pier at night, mq_robot 50. Reached from Mr. Robot's convo.
+-- start
+> The end of the Coney Island pier. Black water, the Wonder Wheel dark behind you, the city a long smear of light to the north. He's sitting on the railing with his back to the sea, smoking, the way he always does. You've never once seen him light a cigarette.
+MR. ROBOT: Took you long enough. You always were slow on the stuff that matters and fast on everything else.
+ELLIOT: Who are you.
+MR. ROBOT: You know who I am. You've known since you saw the jacket in that photograph. Say it.
+* "You're my father." -> father
+* "You're not real." -> notreal
+* "You're me." -> me
+-- father
+MR. ROBOT: Close. I'm what's left of him in you. The parts you couldn't let die in 1994, so you didn't. You were eight. You held his hand at Mercy General while the Township ate him from the inside, and when they took him away you just... kept him. Very clever kid. Very sad kid.
+-> truth
+-- notreal
+MR. ROBOT: Not real. I wrote the file on your desktop, kid. I walked you to Ron's at 3 a.m. I recruited Darlene. I picked the arcade. I built fsociety while you were asleep. Real enough to do all that. Real enough to be the reason you're standing on this pier.
+-> truth
+-- me
+MR. ROBOT: ...Yeah. That's the one nobody ever says. Smart kid. I'm you. The version of you that wasn't too scared to be angry. You put me in this jacket because it was the only shape you had for a man who wasn't afraid of anything.
+-> truth
+-- truth
+MR. ROBOT: Here it is, all of it. The rootkit on your desktop: you wrote it. The honeypot at 3:40: you went. Fsociety: you started it, eight months ago, on this pier, talking to the water. Every one of those nights you think you lost, you didn't lose them. I had them. We had them.
+ELLIOT (V.O.): The missing minutes. The months. The way Darlene looks at me like she's waiting for a train. The way everyone in the arcade calls it 'your plan.' It was. It was always my plan.
+MR. ROBOT: So. Now you know. What do we do about it?
+* "You're part of me. I'm not going to fight you anymore." -> accept
+* "Get out of my head. I'm taking my life back." -> reject
+* [SPEECH 50] "We share it. You don't drive without asking. I don't pretend you're not in the car." -> truce | reject
+-- accept
+> He looks at you for a long time. Then he laughs, short and surprised, like a man who's been told a joke he didn't know he'd been waiting for.
+MR. ROBOT: Well. Look at that. Hello, friend.
+! set robot_accepted ; trust robot 3 ; stab 12 ; quest mq_robot done ; xp 300
+ELLIOT (V.O.): The wind comes off the water. When I look back at the railing, there's nobody there. There never was. He's right here. He always has been.
+-> END
+-- reject
+MR. ROBOT: Taking it back. From who, kid? From me? I'm the one who got you this far. Fine. Try it. Try driving with your eyes closed and your hands shaking. You'll call for me. You always call for me.
+! set robot_rejected ; trust robot -4 ; stab -6 ; glitch 1.0 ; quest mq_robot done ; xp 300
+ELLIOT (V.O.): I walk off the pier and he doesn't follow. That's worse. I can feel him not following, the whole way to the train.
+-> END
+-- truce
+MR. ROBOT: Ask permission. Ha. Your mother never got that out of me in eleven years. ...Okay. Okay, kid. You drive. I'll ride. But when it's time to press the key, I want my hand on it too.
+! set robot_truce ; trust robot 2 ; stab 8 ; quest mq_robot done ; xp 300
+ELLIOT (V.O.): We walk back down the pier together. One set of footprints in the wet boards. That's fine. That's honest, for once.
+-> END
+
+=== apt_news
+### Your TV after Five/Nine (mq_after 10).
+-- start
+? q.mq_after>=20 -> later
+? !flag.five_nine_done -> normal
+> The TV is already on. You don't remember turning it on.
+NEWS: ...the fourth day of what analysts are calling the largest financial disruption in modern history. E Corp confirms that its consumer credit records, including mortgages, student loans and card balances, have been encrypted by the hacking group fsociety. The company says the data is 'safe.' It also says it cannot read it.
+NEWS: ATMs across the five boroughs remain offline. Lines outside food banks stretched around the block in Queens this morning. In Washington Heights, residents threw a block party. In the Bronx, a man was arrested for setting fire to his own mortgage statement on the steps of a bank.
+? flag.gideon_framed -> news_gideon
+? flag.stage_fbi_tip -> news_fbi
+-> news_end
+-- news_gideon
+NEWS: The FBI has named Allsafe Cybersecurity founder Gideon Goddard as a person of interest. His attorney calls the charges 'a fabrication.' Allsafe has closed its offices.
+-> news_end
+-- news_fbi
+NEWS: The FBI says it is 'following several promising leads.' A spokesperson would not comment on reports that the Bureau had advance warning.
+-> news_end
+-- news_end
+NEWS: E Corp CEO Phillip Price, in a rare statement: 'We will rebuild the ledger from paper if we have to. Every record, by hand. Nothing will be forgotten.'
+NEWS: In the same statement, Price announced that E Corp's digital currency, E Coin, will be 'made available to every American household' this week, 'to restore stability.'
+ELLIOT (V.O.): We burned the ledger, and the man who owned it is already selling everybody a new one. My phone is buzzing. It's Darlene. It's been Darlene for an hour.
+! quest mq_after 20
+-> END
+-- later
+NEWS: ...E Coin wallets went live this morning at E Corp branches across the city, with lines around the block...
+-> END
+-- normal
+> Cable news. A senator, an ad for E Coin, a weatherman who seems personally disappointed in the weather.
+-> END
+
+=== morning_after
+### Darlene at the arcade, mq_after 20.
+-- start
+? q.mq_after>=30 -> remind
+> The arcade's back room. Nobody's celebrating. Trenton has her laptop open and doesn't look up. Mobley is pacing. Darlene is holding a printout like it's hot.
+DARLENE: We did it. We actually did it. And Price just turned it into a sales pitch. No ledger, no cash in the ATMs, so here's E Coin: E Corp's money, on E Corp's servers, in every pocket in America by Friday.
+TRENTON: We didn't free anyone. We made them need E Corp more. The week after, remember? I said we had to plan for the week after.
+MOBLEY: The rollout runs through the Consumer Credit branch in Midtown. Branch 0419. That's where the wallet keys get issued for the whole city. If it goes live clean, Price owns the next ledger too.
+DARLENE: So. What do we do, Elliot? And don't say 'nothing.' Say something.
+* "We break the rollout. Quietly. From the inside of branch 0419." -> sabotage
+* [if flag.township_public | flag.township_resolved | item.colby_archive>=1] "We give the press everything: Colby's memos, Price's plan, all of it. Let people see who's selling them the cure." -> press
+* [if q.mq_fbi>=20 & !flag.fbi_refused_after] "DiPierro. The Bureau's been waiting for someone bigger than us. Price is bigger than us." -> fbi
+* "We stop. We already did the thing. Let it settle." -> settle
+-- sabotage
+DARLENE: Yes. Okay. Yes. Branch manager's machine issues the master wallet keys. Get to it, poison the key batch so every wallet it signs fails validation. It'll look like a bug. It'll look like E Corp can't even run its own money.
+! set after_path=sabotage ; quest mq_after 30
+-> END
+-- press
+DARLENE: The press. God. Trenton's going to cry. Okay, we package it: the Township memos, Price's internal pitch for E Coin, the dates. There's a reporter at the Ledger-Times who's been chasing Colby for six years. You go see her. Branch 0419's records have the rollout plan; pull them first.
+! set after_path=press ; quest mq_after 30
+-> END
+-- fbi
+DARLENE: The FBI. You want to hand Price to the FBI. ...After everything. That's either the smartest or the dumbest thing you've ever said, and I genuinely can't tell which.
+TRENTON: It's the only option where nobody else has to break a law to fix it. I'm for it.
+! set after_path=fbi ; quest mq_after 30
+-> END
+-- settle
+TRENTON: Okay. I can live with that. I don't know if I can live with what Price does next. But okay.
+DARLENE: You'd better be right, little brother.
+! set after_path=settle ; set after_done ; quest mq_after 30 ; quest mq_after 40 ; quest mq_after done ; quest mq_finale 40 ; give deus_invite 1
+-> invite
+-- remind
+DARLENE: Branch 0419, Elliot. Or the reporter, or DiPierro, whatever you picked. The clock's running. It's always running.
+-> END
+-- invite
+> Mobley holds up his phone. A message from an unknown number. No text, just an image: a hotel room door, number 6, and an old-fashioned brass key on the carpet in front of it.
+MOBLEY: That's... the Salina. Midtown. That's not a hotel people like us get invited to.
+DARLENE: It's them. Whoever's actually running this. They want to meet you.
+-> END
+
+=== reporter
+-- start
+? flag.after_done -> after
+> A woman in a rain-dark coat in the back booth, three phones face-down on the table and a notebook face-up. She looks at you like a question she's been asking for six years.
+NORA: You're Darlene's friend. She said you'd look like you haven't slept since the Bush administration. She undersold it.
+NORA: I've been chasing Terry Colby since 2009. Every time I get close, a lawyer appears and a source disappears. Tell me you brought me something that doesn't disappear.
+* [if item.ecoin_plan>=1] Slide Price's E Coin deck across the table. And everything you have on Washington Township. -> give
+* [if !item.ecoin_plan>=1] "Not yet. I need one more thing from E Corp." -> notyet
+-- notyet
+NORA: Then go get it. I'll be here. I'm always here. It's the only bar in the city where E Corp's lawyers don't drink.
+-> END
+-- give
+> She reads in silence for four minutes. Then she turns one of her phones over and dials without looking.
+NORA: Hold the front page. All of it. No, I don't care what legal says, legal can read it in the paper with everyone else.
+NORA: 'The crisis is the onboarding.' He wrote that down. People always write it down. Thank you. Now get out of here before anyone sees us together, and don't read the comments.
+! take ecoin_plan 1 ; set ecoin_exposed ; set township_public ; set after_done ; fame locals 6 ; fame fsociety 4 ; infamy ecorp 8 ; quest mq_after 40 ; quest mq_after done ; quest mq_finale 40 ; give deus_invite 1 ; xp 200
+-> END
+-- after
+NORA: Front page, four days running. E Coin's 'paused pending review.' Price hasn't been seen in public since. Buy you a drink? No? Fine. I'll drink yours.
+-> END

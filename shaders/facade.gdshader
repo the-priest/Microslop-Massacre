@@ -4,12 +4,13 @@ render_mode diffuse_lambert, specular_schlick_ggx;
 // UV = facade meters (u along wall, v = height), UV2 = (style, seed).
 // COLOR = wall color (sRGB). Style 0 = plain surface (roofs, trims).
 
+#include "res://shaders/detail.gdshaderinc"
 global uniform float night_amt;
 global uniform float wet_amt;
 global uniform vec4 sky_col;
 
 varying vec2 fuv;
-varying vec2 finfo;
+varying flat vec2 finfo;
 varying vec3 wpos;
 
 const float FLOOR_H[11] = float[](3.2, 3.1, 3.4, 3.8, 3.8, 5.0, 3.0, 4.0, 3.6, 3.5, 4.0);
@@ -47,6 +48,7 @@ void fragment() {
 	vec3 emit = vec3(0.0);
 	float rough = 0.92;
 	float spec = 0.25;
+	float hgt = 0.0;
 	if (st > 0 && st < 11) {
 		float fh = FLOOR_H[st];
 		float sp = SPACING[st];
@@ -63,6 +65,13 @@ void fragment() {
 			float row = floor(fuv.y / 0.28);
 			float mortar = step(0.86, fract(fuv.y / 0.28)) + step(0.94, fract(fuv.x / 0.56 + row * 0.5));
 			albedo = mix(albedo, albedo * 0.72, clamp(mortar, 0.0, 1.0) * brick * detail * 0.6);
+			// Individual bricks vary a little in tone.
+			float bh = dt_hash(vec3(floor(fuv.x / 0.56 + row * 0.5), row, seed));
+			albedo *= mix(1.0, 0.9 + 0.2 * bh, brick * detail * gfx_detail);
+			// Soft mortar profile for relief (hard steps alias into white lines).
+			float my = smoothstep(0.78, 0.9, fract(fuv.y / 0.28)) * (1.0 - smoothstep(0.96, 1.0, fract(fuv.y / 0.28)));
+			float mx = smoothstep(0.9, 0.95, fract(fuv.x / 0.56 + row * 0.5)) * (1.0 - smoothstep(0.98, 1.0, fract(fuv.x / 0.56 + row * 0.5)));
+			hgt -= clamp(my + mx, 0.0, 1.0) * brick * 0.006 * detail;
 		}
 		// Window grid above the ground band.
 		float vy = fuv.y - g;
@@ -99,6 +108,7 @@ void fragment() {
 			wcol = mix(wcol, vec3(0.12, 0.09, 0.07) * (0.6 + h2), curtain * 0.8);
 			float wmask = clamp(win - mull, 0.0, 1.0) * detail;
 			albedo = mix(albedo, wcol, wmask);
+			hgt -= wmask * 0.03;
 			emit += lamp * on * wmask * (0.5 + h2 * 0.45) * (1.0 - curtain * 0.5);
 			rough = mix(rough, 0.15, wmask);
 			spec = mix(spec, 0.6, wmask);
@@ -134,6 +144,15 @@ void fragment() {
 		}
 		// Grime at the base.
 		albedo *= mix(0.78, 1.0, clamp(fuv.y / 2.5, 0.0, 1.0));
+		if (gfx_detail > 0.01) {
+			// Weathering: rain streaks running down from sills, soot, patchy repairs.
+			float macro = dt_fbm(vec3(fuv.x * 0.18, fuv.y * 0.12, seed * 3.0));
+			float streak = dt_noise(vec3(fuv.x * 2.2, fuv.y * 0.09, seed * 7.0));
+			float s2 = smoothstep(0.55, 0.85, streak) * detail;
+			albedo *= mix(1.0, 0.82 + 0.36 * macro, 0.6 * gfx_detail);
+			albedo *= 1.0 - s2 * 0.18 * gfx_detail;
+			rough = mix(rough, rough - 0.1, s2 * wet_amt);
+		}
 	} else if (st == 0) {
 		// Plain: roofs and trims get a little noise.
 		float n = hash(floor(wpos.xz * 0.5));
@@ -142,6 +161,17 @@ void fragment() {
 	// Rain: darker, glossier near the ground.
 	albedo *= 1.0 - wet * 0.35;
 	rough = mix(rough, 0.25, wet);
+	// Night: sodium streetlight spill on the lower floors and city glow higher
+	// up, so walls read as walls instead of black voids between the windows.
+	float spill = (1.0 - smoothstep(0.0, 14.0, wpos.y)) * 0.55 + 0.14;
+	emit += (albedo + vec3(0.006)) * vec3(1.0, 0.8, 0.6) * spill * night_amt;
+	if (gfx_detail > 0.6 && st > 0) {
+		// Relief only up close; far away it would only shimmer.
+		float near = 1.0 - smoothstep(12.0, 30.0, length(VERTEX));
+		if (near > 0.0) {
+			NORMAL = normalize(mix(NORMAL, dt_bump(NORMAL, VERTEX, hgt, 1.0), near));
+		}
+	}
 	ALBEDO = albedo;
 	ROUGHNESS = rough;
 	SPECULAR = spec;

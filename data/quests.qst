@@ -1,129 +1,209 @@
-# HELLO, FRIEND — quest definitions.
-# === id | Title | main/side | xp
+# MICROSLOP MASSACRE — quest definitions.
+# === id | Title | main/side | xp | line
 # stage-number  objective text @marker    (stage 100 or "done" = complete)
 # Every objective says WHERE to go and HOW. Stage changes are driven by
 # dialogue effects and by the story director (WorldObjects.TRIGGERS).
+# Quest lines (+++ id | title): quests in a line are numbered in file order and
+# hand the tracker to each other, so the next mission is always on screen.
++++ fsociety | fsociety
++++ darkarmy | The Dark Army
++++ fbi | The FBI
++++ ecorp | Tyrell Wellick
++++ les | The Lower East Side
++++ township | Washington Township
++++ bronx | The Bronx and Harlem
++++ odd | Odd Jobs
++++ lopez | The Detective
++++ wings | Bowery Bay
++++ respawn | Respawn
++++ rockstarved | Rockstarved Games
++++ chicago | The Windy City
 
-=== mq_hello | Hello, Friend | main | 100
-Elliot Alderson: cybersecurity engineer by day, something else by night. Krista says go home and sleep. Your computer has been blinking since this morning.
-10 Go home: your building is two blocks from Krista's, on the Lower East Side. Follow the marker @d_apt
-20 Something's been blinking on your computer all day. Check your workstation in Apartment 4D @cell:elliot_apt:5.4,1.6
-30 Gideon wants you at Allsafe Cybersecurity (Midtown) for the E Corp breach. Talk to him @npc:gideon
+=== mq_hello | Hello, Friend | main | 150 | fsociety
+Elliot Alderson. Cybersecurity engineer by day. By night, he reads people. Something was on his computer this morning that he doesn't remember putting there.
+10 Go home: your building is two blocks east of Krista's, on the Lower East Side. Follow the marker @d_apt
+20 Your computer has been running all day. Log in to your workstation in Apartment 4D @cell:elliot_apt:5.4,1.6
+25 Gideon wants you at Allsafe in the morning. Tonight, do what Krista said: talk to the neighbors. Help at least two of them: the Super out front (no heat), Shayla in your hallway, Omar at the bodega (the corner crew) @npc:super
+30 Morning. Allsafe Cybersecurity, Midtown. Gideon is waiting for you with the honeypot logs @npc:gideon
+35 Pull the CS30 honeypot logs in Allsafe's server room and trace who knocked @cell:allsafe:17.4,4.2
 40 done
 
-=== mq_rootkit | The Rootkit | main | 250
-Someone knocked on E Corp's honeypot last night from a coffee shop server. Gideon wants to know who. fsociety wants a rootkit on it. So do you, for your own reasons.
-10 Go to Ron's Coffee, a few blocks west of your place. The server that pinged E Corp is in there somewhere @d_ron
-20 Find Ron's server in the back room and get in: hack it (HACKING) or talk Ron into slipping up (SPEECH) @cell:ron_coffee:12,3
+=== mq_rootkit | The Coffee Shop | main | 250 | fsociety
+The honeypot was hit from a coffee shop server on your own block. The same code as the file on your desktop. Gideon wants a name. You want to know who has been using your hands.
+10 Go to Ron's Coffee, a few blocks west of your place. The server that touched E Corp is somewhere inside @d_ron
+20 Find Ron's server in the back room and get in: hack it (HACKING) or get Ron to slip (SPEECH) @cell:ron_coffee:12,3
 30 You know what Ron really sells. Confront him and decide what happens to him and his server @npc:ron
-40 Plant fsociety's rootkit on Ron's server (talk to Ron, or use the server) @cell:ron_coffee:12,3
-50 A message: 'Delancey Street station. Alone.' Go down to the subway platform @npc:robot_n
+40 Plant the code from your desktop on Ron's server and see who answers (talk to Ron, or use the server) @cell:ron_coffee:12,3
+50 An answer: 'Delancey Street station. Alone.' Go down to any subway platform @npc:robot_n
 60 done
 
-=== mq_fsociety | Who Is Mr. Robot | main | 200
-A man in an old jacket says he's been waiting for you your whole life. He calls his crew fsociety. He calls the plan the only thing that matters.
+=== mq_fsociety | fsociety | main | 250 | fsociety
+A man in an old field jacket knows your name, your habits, and the file on your desktop. He says you've met. You haven't. You'd remember. Wouldn't you?
 10 Someone is waiting on the subway platform. Take any station's stairs down and find him @npc:robot_n
-20 Find fsociety's headquarters: the Fun Society Arcade on Coney Island, at the far south end of the city. The subway is fastest @d_arcade
-30 Talk to Mr. Robot in the arcade and decide whether you're in @npc:robot_n
+20 He said: Coney Island, the Fun Society Arcade, at the far south end of the city. The subway is fastest @d_arcade
+30 Talk to the man in the jacket in the arcade's back room and hear what fsociety is building @npc:robot_n
 40 done
 
-=== mq_steel | Steel Mountain | main | 300
-E Corp keeps analog backups in a mountain. To erase the debt, the tapes have to cook. Mobley built a device. Someone has to carry it in.
-10 You need a way in and a device. Buy Maintenance Coveralls at Ricky's Sporting Goods (or get Mobley to forge a badge), and take Mobley's Raspberry Pi from the arcade stash @d_guns
-20 You have what you need. Travel to Steel Mountain at the far north-east edge of the city. Wear the coveralls or carry the badge @d_steel
+=== mq_steel | Steel Mountain | main | 350 | fsociety
+E Corp keeps its tape backups in a vault built into a hill upstate, with climate control, biometric doors and a manager who drinks alone. Encrypt the records without cooking the tapes, and E Corp restores everything by Christmas.
+10 You need a way in and Mobley's device. Take the Raspberry Pi from the arcade stash. For a way in: buy Maintenance Coveralls at Ricky's, have Mobley forge a visitor badge, or get yourself a tour from Steel Mountain's manager, Bill Harper, who drinks at The Rabbit Hole @npc:bill_harper
+20 You have what you need. Travel to Steel Mountain at the far north-east edge of the city. Wear the coveralls, carry the badge, or say Harper's name at the desk @d_steel
 30 Get past security to the climate-control room at the back of the facility @cell:steel_mountain:20,6
 40 Rig the climate control unit with the Raspberry Pi @cell:steel_mountain:20,6
 50 done
 
-=== mq_darkarmy | The Rose Garden | main | 300
-fsociety can't finish this alone. There's an army that answers to one person — Whiterose — who keeps every clock in the world and never explains why.
+=== mq_darkarmy | The Rose Garden | main | 350 | darkarmy
+fsociety can't do this alone. In Chinatown there is an army that answers to one person, who keeps every clock in the world and never explains why. Armies have prices.
 10 Make contact with the Dark Army: the Rose Garden Tea House in Chinatown. Ask for Cisco @d_rose
 20 Cisco says Whiterose won't see you until Steel Mountain is done. Cook the mountain first @d_steel
 30 Steel Mountain is ash. Whiterose will see you now, in the clock room at the back of the Rose Garden @npc:whiterose_n
+35 Whiterose's price: when the FBI goes looking for fsociety's inside man, they must find Gideon Goddard. Do it at an Allsafe workstation, or build them a ghost instead, or warn Gideon and live with the consequences @cell:allsafe:11.5,4
 40 done
 
-=== mq_ecorp | The Inside Man | main | 300
-The hack needs a door inside E Corp itself. Tyrell Wellick wants to be CTO badly enough to open one. Or you take it by force.
-10 Get inside E Corp's headquarters in Midtown. Tyrell Wellick, the would-be CTO, has been asking about you in the lobby @npc:tyrell_n
+=== mq_ecorp | The Inside Man | main | 350 | ecorp
+The hack needs a door inside E Corp itself. Somebody opened Allsafe's honeypot from the inside, using Gideon's credentials. Somebody at E Corp wants to be standing next to the fire.
+10 Get inside E Corp's headquarters in Midtown. Tyrell Wellick, SVP of Technology, has been asking about you in the lobby @npc:tyrell_n
 20 Tyrell wants to talk properly. Meet him at his penthouse, the Wellick Residence @d_tyrell
 30 Get to E Corp's network floor without Tyrell: take the keycard from the lobby security desk (or a guard), or wear an E Corp uniform, and ride the executive elevator @d_ecorp
 40 You're on the network. Plug fsociety's femtocell (from the arcade stash) into the E Corp terminal on the 23rd floor @cell:ecorp_floor:13,3
 50 done
 
-=== mq_fbi | Person of Interest | side | 250
-Agent Dominique DiPierro is building a case on fsociety. She doesn't know your face yet. That's a door too — one that only opens one way.
-10 Talk to Agent DiPierro at the Federal Building, by the Twin Towers @npc:dipierro
-20 DiPierro wants an answer. Feed her the plan, refuse, or offer her something bigger @npc:dipierro
+=== mq_fbi | Person of Interest | main | 300 | fbi
+Steel Mountain made the news. Now Special Agent Dominique DiPierro of the FBI's Cyber Division is in the city, and she has already said your name out loud.
+10 Agent DiPierro wants a word. Federal Building, Lower Manhattan. Go before she comes to you @npc:dipierro
+20 DiPierro wants an answer. Feed her the plan, refuse, offer her something bigger, or tell her everything @npc:dipierro
 30 done
 
-=== mq_finale | Five/Nine | main | 500
-The biggest hack in history. Once it runs, nothing goes back the way it was. Now you choose what kind of ending the world gets, and who you become in it.
-10 Five/Nine needs three things: Steel Mountain's backups cooked, an ally (the Dark Army or the FBI), and a door into E Corp. The plan board at the arcade lays it out @d_arcade
+=== mq_respawn | Press Start | main | 250 | respawn
+Darlene found a forum. Ten thousand people who paid for games E Corp switched off, accounts E Corp locked, studios E Corp bought and buried. They call themselves Respawn. They just need somebody to hand them a win.
+10 Darlene's lead runs an invite-only board out of a shut-down game store. Meet Pixel at the arcade's back terminal @cell:arcade:17.6,4.5
+20 Respawn wants proof the little guy can win. Pick E Corp's smallest, cruelest target first: Rockstarved Games, up in the E Corp tower, Floor 88 @d_wtc
+30 done
+
+=== mq_rs1 | Shark Bait | main | 300 | rockstarved
+Rockstarved makes one great game a decade and sells pretend money for real money in between. 'Shark Cards.' A kid in Respawn spent his dead mother's savings on them. Get inside.
+10 Rockstarved's floor is in the E Corp tower, up the lobby elevator. You need a way up: lift a crunch-team badge off Kenny, the ex-QA tester who drinks at The Rabbit Hole, or talk him into giving you his @npc:kenny
+20 Ride the WTC lobby elevator to Floor 88 and get onto the Rockstarved floor @d_wtc
+30 Find Project Whale: the server that sorts every player by how much money can be squeezed out of them @cell:rockstarved_hq:1.6,10.7
+40 done
+
+=== mq_rs2 | Game Over, Man | main | 350 | rockstarved
+You've seen how the sausage is made. Now break the machine and show the world the recipe: dump 'Project Whale' to every games site, crash the Shark Card store, or turn their own microtransactions against them.
+10 You have Project Whale. Decide how Rockstarved falls: dump it to the press, crash the Shark Card servers from the floor terminal, or refund every whale at once @cell:rockstarved_hq:1.6,10.7
+20 Respawn is louder than ever, and three more E Corp studios just got nervous. Tell Pixel it's working @cell:arcade:17.6,4.5
+30 done
+
+=== mq_chi1 | The Windy City | main | 300 | chicago
+Electronic Arse and Phony both run their live-service empires out of Chicago, 790 miles west. Respawn has a cell there, in a dead warehouse on the South Side. Time to leave New York.
+10 Get to Chicago: drive the interstate west out of the city, or fly there if you've got wings. It's a long way @gate:nyc_west
+20 Find the fsociety cell: a boarded warehouse on the Chicago South Side. Darlene set it up @d_chi_safe
+30 done
+
+=== mq_chi2 | Surprise Mechanics | main | 350 | chicago
+Electronic Arse calls its loot boxes 'surprise mechanics' and sells them to kids. Their regional data center is in E Corp Midwest, downtown. Rig the next 'surprise' to surprise them.
+10 Get into E Corp Midwest downtown (the blue tower in the Loop). Walk in by day, wear an E Corp uniform, or find another way @d_chi_node
+20 Reach the data floor at the back and rig Electronic Arse's loot-box server so the odds are finally printed on the box @cell:chi_node:31,12
+30 done
+
+=== mq_chi3 | Account Suspended | main | 400 | chicago
+Phony Interactive can revoke your library, your purchases, your account, any time, for any reason. So can you. Give every player their games back and lock Phony out of its own store.
+10 Phony runs its account authority through the same Chicago data floor. Get back in and flip it: unlock every revoked library, and lock Phony's admins out of their own kingdom @cell:chi_node:31,12
+20 Chicago's done. The cell says Microslop and the rest are rattled. Head back to New York and tell the crew @gate:chi_south
+30 done
+
+=== mq_robot | Who Is Mr. Robot | main | 400 | fsociety
+Darlene looks at you like she's waiting for you to remember something. The man in the jacket finishes your sentences. The arcade's sign was painted over another sign. You are going to have to look.
+10 Darlene wants you at her place, a few blocks from yours. She says it's important. She says it's been important for a long time @d_darlene
+20 Look at the photograph Darlene keeps pinned above her desk @cell:darlene_apt:3,0.9
+30 The old shop sign is still under the paint at the arcade. Look at it @cell:arcade:9,7.3
+40 Mercy General Hospital keeps records going back to 1993. Find yours @cell:mercy_general:1.6,-2
+50 He's waiting for you at the end of the Coney Island pier. It has to be night. It was always night @npc:robot_n
+60 done
+
+=== mq_finale | Five/Nine | main | 600 | fsociety
+The biggest hack in history. To pull it off you need the mountain, an army, a door, and to have looked every player in this city in the eye: Whiterose, DiPierro, Tyrell. And yourself.
+10 Five/Nine needs: Steel Mountain cooked, Whiterose and Agent DiPierro faced, a door into E Corp, and the truth about the man in the jacket. The plan board at the arcade lays it out @d_arcade
 20 Everything is in place. Go back to the arcade and tell Mr. Robot to start the hack @npc:robot_n
-30 The hack is running. Make your choice @npc:robot_n
-40 An invitation: The Salina Hotel, Room 6. The people who really run things want a word. The invite opens the door @d_deus
+30 It's done. The world woke up owing nothing. Now find out what that actually means @npc:darlene_n
+40 An invitation: The Salina Hotel, Room 6. The people who really run things want a word @d_deus
 50 done
 
-=== sq_ron | The Product | side | 120
+=== mq_after | The Morning After | main | 400 | fsociety
+The debt is gone. The ATMs are dark. And Phillip Price is already on television selling the cure: E Coin, E Corp's own money, in every pocket by Friday. You didn't burn the ledger. You handed him the next one.
+10 Go home. Turn on the news. See what you did @cell:elliot_apt:3.4,3
+20 Darlene called. She's called eleven times. Meet the crew at the arcade @npc:darlene_n
+30 Stop Price from owning what comes next: poison the E Coin key batch at Consumer Credit branch 0419, take the story to the press, or hand Price to DiPierro @d_credit
+40 done
+
+=== sq_ron | The Product | side | 120 | les
 Ron doesn't sell coffee. He sells the ability to follow people who don't want to be followed. His customer list is a list of victims.
 10 Find proof of what Ron really sells: his back-room server @cell:ron_coffee:12,3
 20 Copy the customer database from the server @cell:ron_coffee:12,3
 30 Confront Ron: report him, expose him, take the list, or walk away @npc:ron
 50 done
 
-=== sq_shayla | The Leverage | side | 200
-Shayla — your neighbor, maybe more — got tangled up with Vera, a dealer who runs the docks. Vera wants something only you can give.
-10 Shayla owes money to a dealer called Vera. Keep an eye on her; she hangs around your building's hallway. It gets bad at night @npc:shayla_n
-20 Shayla texted: Vera's crew grabbed her. Find them at Pier 9 on the west-side docks @cell:world:-700,-322
-30 They moved her to Vera's stash house near Coney Island. Get inside (Vera's enforcers carry the key, or pick the lock) @d_vera
-40 Get Shayla out of the cage: deal with Vera, or go through him @cell:vera_stash:11.5,3.5
+=== sq_shayla | The Leverage | side | 300 | les
+Shayla, your neighbor, owes money to Vera, who runs pills off the west side docks. Vera doesn't want the money. Vera wants the wizard next door.
+10 Shayla owes Vera, and Vera's been asking about you. Keep an eye on her; she's usually in your building's hallway @npc:shayla_n
+20 Shayla texted: Vera's crew grabbed her. Pier 9, west side docks. Find Dutch, Vera's man there: talk, pay, rob him, or take it off his body @npc:dutch
+30 Vera's stash house, Coney Island, boardwalk side: the blue door. Case it first. Front door (if they'll let you talk), alley door round the back, or empty the house with Dutch's phone @pos:-137,520
+35 Vera's price: erase 'People v. Vera' from the 7th Precinct's CaseTrack terminal, then go back to him @cell:precinct:14.5,-1.2
+38 Vera's file is gone. Go back to the stash house; Vera has to keep his word @npc:vera
+40 Get Shayla out of the cage in the back room. Pick the padlock or take the key off Dutch or the man with the shotgun @cell:vera_stash:11.5,-3.8
+45 Shayla's out, and armed. Get her home to your building alive @d_apt
 50 done
 
-=== sq_krista | Small Disaster | side | 150
+=== sq_krista | Small Disaster | side | 150 | les
 Krista is seeing a man named Lenny. Lenny is lying to her about almost everything. You could tell her. You could ruin him. You could do both.
 10 Krista's new boyfriend Lenny drinks at The Rabbit Hole. Look into him @npc:lenny
 20 Get proof: sniff Lenny's phone off The Rabbit Hole's Wi-Fi router while he drinks, or crack it at his apartment (Lenny's Building, east side) @cell:rabbit_hole:11.6,0.8
 30 You have proof. Confront Lenny at The Rabbit Hole, or go straight to Krista and decide what she gets to know @npc:krista
 50 done
 
-=== sq_colby | Washington Township | side | 200
+=== sq_colby | Washington Township | side | 200 | township
 In 1993, a chemical leak in Washington Township killed people. Angela's mother. Elliot's father. E Corp buried it, and Terry Colby signed the shovel.
 10 Somewhere in E Corp's records room is proof they knew. Find the Colby archive inside the E Corp tower @d_ecorp
 20 You have the Colby emails. Bring them to Angela and decide what to do with the truth @npc:angela_n
 50 done
 
-=== sq_cat | Lost | side | 60
+=== sq_cat | Lost | side | 60 | odd
 A woman by the park lost her dog. In this city, that's either nothing or everything.
 10 Find Flipper the dog. Her owner says she loved the pier at Coney Island @cell:world:-30,840
 20 Bring Flipper back to her owner @npc:catlady
 50 done
 
-=== sq_courier | Dead Drops | side | 100
+=== sq_courier | Dead Drops | side | 100 | odd
 The courier depot pays cash for no-questions deliveries. Some of the packages are fsociety's. Some are just packages.
 10 Deliver the sealed package to the Gardener outside the Rose Garden Tea House in Chinatown @npc:gardener
 20 Delivered. Go back to Dispatch for your money @npc:courier
 50 done
 
-=== sq_busker | Street Sermon | side | 80
+=== sq_busker | Street Sermon | side | 80 | odd
 A busker in the plaza has a mixtape she swears will change the world. She's not entirely wrong.
 10 Get the busker's mixtape onto the pirate relay: the Relay Building roof, up in the Heights @d_relay
 20 The signal's out. Go tell the busker @npc:busker
 50 done
 
-=== sq_super | No Heat | side | 80
+=== sq_bodega | Protection | side | 120 | les
+Omar has run the bodega under your building for nineteen years. Lately Rico's corner crew has started collecting 'rent' at closing time. Omar has started closing early.
+10 Rico's crew hangs on the corner a block west of your building after dark. Find Rico and end the shakedown: talk him off it, dig up leverage on his phone, buy Omar some peace, or put the crew down @npc:rico
+20 Rico's crew is off Omar's corner. Tell Omar at the bodega @npc:omar
+50 done
+
+=== sq_super | No Heat | side | 80 | les
 The building has no heat and the super has no plumber. You have a laptop and a grudge against E Corp's monopoly on boilers.
 10 Fix the boiler controller at the back of your building's hallway @cell:apt_building:0.8,-12.5
 20 Tell the Super the heat's back on @npc:super
 50 done
 
-=== sq_lopez | The Detective | side | 150
+=== sq_lopez | The Detective | side | 150 | lopez
 The bodies you left behind have a pattern, and a homicide detective named Maria Lopez has started drawing it on a board.
 10 A card under your door: 'Det. Maria Lopez, Homicide. Let's talk.' She works out of the 7th Precinct @npc:lopez
 20 Lopez is building a case. Make it go away: wipe or rewrite her file on the precinct computer (the password is somewhere in the squad room), talk her down, pay her off, or deal with her @cell:precinct:14.5,-1.2
 30 Lopez has enough to arrest you. She's waiting on the stairs of your building @npc:lopez
 50 done
 
-=== sq_candyman | Sugar | side | 300
+=== sq_candyman | Sugar | side | 300 | bronx
 Somebody is selling 'candy' on the Carver Houses corners in the Bronx: bright little bags cut with something that stops kids' hearts. The whole block knows who. Nobody will say it out loud.
 10 Mrs. Reyes buried her son last week. Find out who's selling the 'candy' on the Carver Houses corners. Start with the kid working the courtyard, Lil' Tee @npc:lil_tee
 20 Candyman runs it from apartment 7C, Carver Houses Building C. Get inside (Tee can say your name to the door, or find your own way) and find out what he's cutting it with @npc:candyman
@@ -131,7 +211,7 @@ Somebody is selling 'candy' on the Carver Houses corners in the Bronx: bright li
 40 It's over, one way or another. Go tell Mrs. Reyes at the candles in the Carver Houses courtyard @npc:mrs_reyes
 50 done
 
-=== sq_badco | Bad Company | side | 300
+=== sq_badco | Bad Company | side | 300 | bronx
 A boy at a Harlem youth shelter has a new online friend who buys him things and tells him to keep secrets. The counselor who noticed can't get anyone to listen. You're very good at listening.
 10 Ms. Okafor at the St. Nicholas Youth Shelter in Harlem is worried about Jaylen's online 'mentor'. Look at the phone he was given; it's on her office desk @cell:st_nicholas:20.6,1.1
 20 The 'mentor' is Richard Keller, a youth soccer coach at 31-14 Ditmars Blvd, Astoria. Get in (men like him keep spare keys in the dumbest places) and get proof from his computer @d_keller
@@ -139,7 +219,7 @@ A boy at a Harlem youth shelter has a new online friend who buys him things and 
 40 It's done. Tell Ms. Okafor @npc:okafor
 50 done
 
-=== sq_wings | Wings | side | 250
+=== sq_wings | Wings | side | 250 | wings
 Bowery Bay Airfield, Queens: one runway, three tired Skyhawks, and a man named Gus Petrakis who has thirty days before E Corp turns it all into a warehouse with a press release.
 10 Find Gus Petrakis in the flight office at Bowery Bay Airfield, north of the Hunts Point subway @npc:gus
 20 Take a Skyhawk from the apron and fly through Gus's five practice rings over the city @ring

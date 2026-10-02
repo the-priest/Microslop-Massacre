@@ -271,8 +271,8 @@ func _fly(delta: float, bank_in: float, pitch_in: float, rud_in: float) -> void:
 		warn = "STALL"
 	elif altitude < 70.0 and descent > 12.0:
 		warn = "PULL UP"
-	elif not SKY.has_point(Vector2(global_position.x, global_position.z)):
-		warn = "TURN BACK"
+	elif not Regions.sky(WorldLayout.region).has_point(Vector2(global_position.x, global_position.z)):
+		warn = "LEAVING AIRSPACE"
 	else:
 		warn = ""
 
@@ -347,11 +347,14 @@ func _check_airspace(delta: float) -> void:
 	if not airborne:
 		return
 	var p := Vector2(global_position.x, global_position.z)
-	if SKY.has_point(p):
+	var sky := Regions.sky(WorldLayout.region)
+	if sky.has_point(p):
 		_turn_back_t = 0.0
 		return
 	_turn_back_t += delta
-	var to_c := SKY.get_center() - p
+	if driving and game != null and game.has_method("airspace_exit"):
+		game.airspace_exit(self)
+	var to_c := sky.get_center() - p
 	var want := atan2(-to_c.x, -to_c.y)
 	heading = lerp_angle(heading, want, minf(1.0, delta * 0.6 * minf(_turn_back_t, 3.0)))
 	bank = move_toward(bank, 0.6 * signf(wrapf(heading - want, -PI, PI)), delta)

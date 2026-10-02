@@ -418,38 +418,76 @@ func _select_item(iid: String) -> void:
 
 # --------------------------------------------------------------------- data
 func _quests() -> void:
-	var active: Array = []
-	var done: Array = []
+	# Group by quest line: the line you're following first, then main lines,
+	# then side lines; inside a line, the current mission, then what's done.
+	var lines: Dictionary = {} # line -> {active: [], done: []}
 	for qid in GameState.quests.keys():
+		var ln := DB.quest_line(str(qid))
+		if not lines.has(ln):
+			lines[ln] = {"active": [], "done": []}
 		if str(GameState.quests[qid]["state"]) == "active":
-			active.append(str(qid))
+			(lines[ln]["active"] as Array).append(str(qid))
 		else:
-			done.append(str(qid))
-	active.sort_custom(func(a: String, b: String) -> bool: return str(DB.QUESTS.get(a, {}).get("kind", "")) < str(DB.QUESTS.get(b, {}).get("kind", "")))
-	if active.is_empty() and done.is_empty():
+			(lines[ln]["done"] as Array).append(str(qid))
+	if lines.is_empty():
 		_detail.text = "No quests. Go outside. Talk to people. It's awful, but it works."
-	for qid in active:
-		var q: Dictionary = DB.QUESTS.get(qid, {})
-		var tracked: bool = GameState.tracked_quest == qid
-		var qq := str(qid)
-		_row("%s %s%s" % ["▸" if tracked else " ", str(q.get("title", qid)), "  (MAIN)" if str(q.get("kind", "")) == "main" else ""], func() -> void:
-			GameState.tracked_quest = qq
-			AudioManager.play_select()
-			_refresh()
-			_show_quest(qq), func() -> void: _show_quest(qq), UI.WHITE if tracked else UI.GREEN)
-	for qid in done:
-		var q2: Dictionary = DB.QUESTS.get(qid, {})
-		var st := str(GameState.quests[qid]["state"])
-		var qq2 := str(qid)
-		_row("  %s  [%s]" % [str(q2.get("title", qid)), "DONE" if st == "done" else "FAILED"], func() -> void: _show_quest(qq2), func() -> void: _show_quest(qq2), UI.GREEN_DIM)
+		return
+	var tl := DB.quest_line(GameState.tracked_quest) if GameState.tracked_quest != "" else ""
+	var order: Array = lines.keys()
+	order.sort_custom(func(a: String, b: String) -> bool:
+		var ka := _line_rank(a, tl, lines)
+		var kb := _line_rank(b, tl, lines)
+		return ka < kb if ka != kb else DB.line_title(a) < DB.line_title(b))
+	for ln in order:
+		var L: Dictionary = lines[ln]
+		var act: Array = L["active"]
+		var dn: Array = L["done"]
+		var total := int((DB.LINES.get(ln, {}).get("quests", []) as Array).size())
+		var main := false
+		for q in act + dn:
+			if str(DB.QUESTS.get(q, {}).get("kind", "")) == "main":
+				main = true
+		var head := "%s%s" % [DB.line_title(ln).to_upper(), ("   %d/%d" % [dn.size(), total]) if total > 1 else ""]
+		var first := str(act[0]) if not act.is_empty() else str(dn[dn.size() - 1])
+		_row(("■ " if main else "□ ") + head, func() -> void: _show_quest(first), func() -> void: _show_quest(first), UI.GREEN if not act.is_empty() else UI.GREEN_DIM)
+		for qid in act:
+			var q: Dictionary = DB.QUESTS.get(qid, {})
+			var tracked: bool = GameState.tracked_quest == qid
+			var qq := str(qid)
+			_row("   %s %s" % ["▸" if tracked else "·", str(q.get("title", qid))], func() -> void:
+				GameState.tracked_quest = qq
+				AudioManager.play_select()
+				_refresh()
+				_show_quest(qq), func() -> void: _show_quest(qq), UI.WHITE if tracked else UI.GREEN)
+		for qid in dn:
+			var q2: Dictionary = DB.QUESTS.get(qid, {})
+			var st := str(GameState.quests[qid]["state"])
+			var qq2 := str(qid)
+			_row("     ✔ %s%s" % [str(q2.get("title", qid)), "" if st == "done" else "  [FAILED]"], func() -> void: _show_quest(qq2), func() -> void: _show_quest(qq2), UI.GREEN_DIM)
 	if GameState.tracked_quest != "":
 		_show_quest(GameState.tracked_quest)
+
+
+func _line_rank(ln: String, tracked_line: String, lines: Dictionary) -> int:
+	if ln == tracked_line:
+		return 0
+	var act: Array = lines[ln]["active"]
+	if act.is_empty():
+		return 9
+	for q in act:
+		if str(DB.QUESTS.get(q, {}).get("kind", "")) == "main":
+			return 1
+	return 2
 
 
 func _show_quest(qid: String) -> void:
 	var q: Dictionary = DB.QUESTS.get(qid, {})
 	var st: Dictionary = GameState.quests.get(qid, {})
-	var t := "[b]%s[/b]\n[color=#7a9]%s[/color]\n\n" % [str(q.get("title", qid)), str(q.get("desc", ""))]
+	var lp := DB.line_pos(qid)
+	var lhead := ""
+	if int(lp[1]) > 1:
+		lhead = "[color=#7a9]%s  ·  mission %d of %d[/color]\n" % [DB.line_title(DB.quest_line(qid)).to_upper(), int(lp[0]), int(lp[1])]
+	var t := "%s[b]%s[/b]\n[color=#7a9]%s[/color]\n\n" % [lhead, str(q.get("title", qid)), str(q.get("desc", ""))]
 	if str(st.get("state", "")) == "active":
 		t += "[color=#ffbf4d]CURRENT[/color]\n"
 		for o in DB.quest_objectives(qid, int(st.get("stage", 0))):

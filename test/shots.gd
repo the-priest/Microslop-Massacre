@@ -4,6 +4,8 @@ extends Node
 var game
 
 func _ready() -> void:
+	if OS.get_environment("REGION") != "":
+		GameState.region = OS.get_environment("REGION")
 	var scene: PackedScene = load("res://game/Game.tscn")
 	game = scene.instantiate(); game.test_mode = true; game.test_picker = func(chs): return 0
 	add_child(game)

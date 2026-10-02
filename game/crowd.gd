@@ -36,15 +36,17 @@ func _ready() -> void:
 	for bj in WorldLayout.NBJ:
 		for bi in WorldLayout.NBI:
 			var d := WorldLayout.district(bi, bj)
-			if d == "park" or d == "steel":
+			if d in ["park", "steel", "farm", "airfield", "reststop"]:
 				continue
 			_blocks.append({"rect": WorldLayout.block_rect(bi, bj).grow(1.2), "d": d})
-	# Coney row.
-	for i in WorldLayout.NA - 1:
+	# Coney row (New York only).
+	for i in (WorldLayout.NA - 1 if WorldLayout.region == "nyc" else 0):
 		var x0 := WorldLayout.ax(i) + WorldLayout.AVE_HW
 		var x1 := WorldLayout.ax(i + 1) - WorldLayout.AVE_HW
 		_blocks.append({"rect": Rect2(x0, WorldLayout.CONEY_ROW_Z0, x1 - x0, WorldLayout.CONEY_ROW_Z1 - WorldLayout.CONEY_ROW_Z0).grow(1.2), "d": "coney"})
-	target_count = Settings.crowd_count()
+	target_count = Settings.crowd_count() if not _blocks.is_empty() else 0
+	if WorldLayout.region == "highway":
+		target_count = mini(target_count, 6)
 	Settings.applied.connect(func() -> void: target_count = Settings.crowd_count())
 
 

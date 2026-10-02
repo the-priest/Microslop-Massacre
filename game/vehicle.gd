@@ -48,7 +48,7 @@ func setup(k: String, ci: int, pos: Vector3, yaw: float, g: Node) -> Vehicle:
 	_mesh = MeshInstance3D.new()
 	_mesh.mesh = meshes[0]
 	_mesh.material_override = Mats.lit
-	_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	_mesh.visibility_range_end = 300.0
 	add_child(_mesh)
 	_glow = MeshInstance3D.new()

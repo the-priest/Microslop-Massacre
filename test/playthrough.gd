@@ -50,6 +50,8 @@ func _ready() -> void:
 	_ok("ecorp door", GameState.has_flag("ecorp_door_tyrell"))
 	# Personal (for overlap).
 	await _run("trust darlene 8 ; set darlene_bond ; set knows_darlene_sister ; set krista_truth ; stab 40 ; set shayla_out ; quest sq_shayla done")
+	# Every faction faced, and the truth about the jacket.
+	await _run("quest mq_darkarmy done ; set da_allied ; quest mq_fbi 10 ; quest mq_fbi 20 ; quest mq_robot 10 ; quest mq_robot 50 ; set robot_truce ; quest mq_robot done")
 	# FINALE via dialogue.
 	game.dialog.auto_advance = true
 	_ok("finale gate ready", DialogueManager.check("flag.rootkit_planted") and GameState.quest_state("mq_steel") == "done")
@@ -59,6 +61,8 @@ func _ready() -> void:
 	await game.dialog.run("finale_check", null)
 	print("DBG after finale: five_nine=%s mq_finale=%d ending_flags=%s" % [str(GameState.has_flag("five_nine_done")), GameState.quest_stage("mq_finale"), str(GameState.has_item("deus_invite"))])
 	_ok("five_nine done", GameState.has_flag("five_nine_done"))
+	_ok("morning after started", GameState.quest_stage("mq_after") >= 10)
+	await _run("quest mq_after 20 ; set after_path=settle ; set after_done ; quest mq_after 30 ; quest mq_after done ; quest mq_finale 40 ; give deus_invite 1")
 	_ok("has deus invite", GameState.has_item("deus_invite"))
 	# Enter Salina with the invite.
 	await _visit_door("d_deus", "salina_hotel")

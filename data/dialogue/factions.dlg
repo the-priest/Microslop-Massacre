@@ -2,26 +2,58 @@
 
 === whiterose
 -- start
+? flag.da_betrayed -> betrayed
 ? q.mq_darkarmy.done -> allied
+? q.mq_darkarmy>=35 -> waiting
 > A figure in a red coat stands among a hundred ticking clocks, none of which agree. She does not turn around when you enter. She already knew.
 WHITEROSE: You have exactly three minutes. I know, because I keep all of them. Time is the only thing I refuse to waste, and the only thing everyone else throws away. Speak.
 * "fsociety wants the Dark Army's help to take down E Corp." -> pitch
 * "Why do you keep all these clocks?" -> clocks
 * [SPEECH 55] "You're not helping E Corp fall. You're steering where it lands." -> steer | pitch
 -- pitch
-WHITEROSE: Your little revolution. Yes. It is convenient for me, at this precise moment, that E Corp bleeds. Not for your reasons. For mine, which you could not fit inside your lifetime. But convenience is a kind of alliance. Prove you can move on schedule, and my army moves behind you.
--> task
+WHITEROSE: Your little revolution. Yes. It is convenient for me, at this precise moment, that E Corp bleeds. Not for your reasons. For mine, which would not fit inside your lifetime.
+-> price
 -- clocks
 WHITEROSE: Because a project of sufficient scale requires that nothing arrive late. Not a shipment. Not a war. Not a death. Every clock is a promise I have made to the future. You would not understand. You are still living inside a single one of them.
-! trust robot 0
--> task
+-> price
 -- steer
-WHITEROSE: ...You are cleverer than they said. Yes. A collapse is only chaos to those who did not plan it. I am not stopping your fire. I am choosing the direction of the wind. Help me, and I let you believe it was your idea. It is a generous offer. Take it.
-! trust robot 1 ; set knows_whiterose_game
--> task
--- task
-WHITEROSE: Cisco handles the details. Do your part — Steel Mountain, the tower — on time, and the Dark Army is yours for one night. Be late, and you will never see any of us again. That is not a threat. It is a timetable.
-! quest mq_darkarmy 40 ; set ally_secured ; fame darkarmy 5
+WHITEROSE: ...You are cleverer than they said. Yes. A collapse is only chaos to those who did not plan it. I am not stopping your fire. I am choosing the direction of the wind.
+! set knows_whiterose_game ; trust whiterose 1
+-> price
+-- price
+WHITEROSE: Now. My army does not move for gratitude. When this is done, the FBI will look for fsociety's man inside Allsafe. Someone opened that honeypot with Gideon Goddard's credentials. They must find Gideon Goddard.
+ELLIOT (V.O.): Gideon. Who brought me in when nobody else would hire a man who can't hold eye contact. Who told me to sleep. Who asked me to bring it to him first.
+WHITEROSE: His accounts, his logins, a little money in a place a nervous man would hide it. You know how. Do it at Allsafe, from his own machine. Then my people are yours for one night.
+* "Fine. Gideon goes down." -> accept
+* [HACKING 60] "Better: I give them an insider who doesn't exist. A ghost with Gideon's credentials and nobody's face." -> ghost | ghost_fail
+* "No. Find another price." -> refuse
+-- accept
+WHITEROSE: Good. Sentiment is a tax. You have just stopped paying it.
+! quest mq_darkarmy 35 ; set da_price_gideon ; stab -3
+ELLIOT (V.O.): I say it like it's nothing. It isn't nothing. It's the first thing I've done in this whole war that I can't tell myself is for the people at the bottom.
+-> END
+-- ghost
+> For the first time, Whiterose turns around. She studies you the way you study a lock.
+WHITEROSE: A man who never existed, taking the blame for a thing everybody saw happen. ...That is elegant. Elegance is the only argument I have never once refused. Build your ghost. If the FBI so much as looks at it twice, Gideon goes in its place.
+! quest mq_darkarmy 35 ; set da_price_ghost ; trust whiterose 2
+-> END
+-- ghost_fail
+WHITEROSE: A ghost. Built by a man whose hands shake. No. Gideon, or nothing.
+-> price_again
+-- price_again
+* "Fine. Gideon goes down." -> accept
+* "No. Find another price." -> refuse
+-- refuse
+WHITEROSE: There is no other price. There is only the price, and the people who decline to pay it. Go, then. Make your revolution with five children and a soldering iron. I will be curious how it ends.
+! set da_refused ; quest mq_darkarmy 40 ; quest mq_darkarmy done ; stab 3
+ELLIOT (V.O.): I walk out past a hundred clocks and none of them agree on what time it is. I feel lighter. I feel like I just made the whole thing harder for everyone I love.
+-> END
+-- waiting
+WHITEROSE: You are standing in my clock room instead of at Allsafe. Every second you stand here is one of mine. Go.
+-> END
+-- betrayed
+> The clocks tick. Nobody speaks. Two men you didn't see when you came in are now standing very close to the door.
+WHITEROSE: You warned him. A man who does not keep time cannot keep his word. Leave, Mr. Alderson. The next time we meet, it will not be in a room with clocks.
 -> END
 -- allied
 WHITEROSE: You are on schedule. Good. When the night comes, my people will be where they need to be. See that you are where you need to be. Punctuality, Mr. Alderson, is the only virtue that survives contact with reality.
@@ -49,8 +81,21 @@ CISCO: Everybody needs the Dark Army. That's the whole point of the Dark Army. C
 
 === dipierro
 -- start
+? flag.after_path=fbi & !flag.after_done -> price_case
 ? item.keller_drive & !flag.keller_resolved -> keller_offer
 -> main
+-- price_case
+? !item.ecoin_plan>=1 -> price_wait
+DIPIERRO: You came to me. Of your own free will. With a look on your face like you're about to ruin my weekend.
+> You put the deck on her desk. E Coin. The rollout. Slide 9. Slide 31, the handshake with the woman in the red coat. She turns the pages slowly, then faster.
+DIPIERRO: This is market manipulation, conspiracy, and about four other things I'll need a much bigger whiteboard for. And the woman. You know who she is?
+ELLIOT: Her name's Whiterose. She keeps a lot of clocks.
+DIPIERRO: ...Okay. Okay. I'm not going to ask why you know that, or why you're helping. I'm just going to take it. And Alderson? This doesn't wipe your slate. But it's the first thing you've done that I'd put my name next to.
+! take ecoin_plan 1 ; set price_fbi ; set after_done ; fame fbi 8 ; infamy ecorp 6 ; quest mq_after 40 ; quest mq_after done ; quest mq_finale 40 ; give deus_invite 1 ; xp 200
+-> END
+-- price_wait
+DIPIERRO: Darlene's friend. I hear you have something for me on Phillip Price. I hear a lot of things. Come back when you're holding it.
+-> END
 -- keller_offer
 DIPIERRO: You're carrying something like it weighs a hundred pounds. Put it down, Alderson.
 * "This isn't about fsociety. A youth coach in Astoria, and kids. It's all on this drive." -> keller_give
@@ -64,15 +109,42 @@ DIPIERRO: I'm not going to ask how you got this. And for the record, this doesn'
 -- main
 ? q.mq_fbi.done -> after
 ? q.mq_fbi>=20 -> deal
+? flag.gideon_framed & !flag.gideon_cleared & !flag.dip_gideon_asked -> gideon
+-> open
+-- gideon
+! set dip_gideon_asked
+DIPIERRO: Gideon Goddard is sitting in a room downstairs. His login widened the honeypot. His name is on the relay. There's forty thousand dollars of his in Cyprus. It's a beautiful case, Mr. Alderson. It's so beautiful I don't believe a word of it.
+DIPIERRO: You worked for him. Did he do it?
+* "...Yes. It was him." -> gideon_yes
+* "No. He was framed. I can show you how, if you leave my name out of it." -> gideon_no
+-- gideon_yes
+DIPIERRO: Okay. Then I'll stop losing sleep over the way he cried when they printed him. Thank you for your help.
+ELLIOT (V.O.): She doesn't believe me either. She just doesn't have anything better yet. I'm counting on 'yet.'
+! stab -4
+-> open
+-- gideon_no
+> You walk her through it. The CS30 change, the timestamps, the money that moved three hops in four minutes. You don't say who. She doesn't ask. She just writes very fast.
+DIPIERRO: He'll be home tonight. Whoever built this is going to be very unhappy with you. You know that, right?
+ELLIOT (V.O.): I know. Whiterose keeps every clock.
+! set gideon_cleared ; set da_betrayed ; unset da_allied ; unset ally_secured ; hostile_faction darkarmy ; fame fbi 4 ; trust gideon 2 ; stab 8
+-> open
+-- open
+? flag.dat_reported -> open_dat
 DIPIERRO: You know what the worst part of this job is? It's not the crime. It's how boring the criminals turn out to be. Scared boys who found a keyboard. You're smarter than that, though. I can tell. Which makes you more interesting and more dangerous.
-ELLIOT (V.O.): She's fishing. She doesn't have my name yet — just a shape where a suspect should be. If I say the wrong thing, I hand her the outline.
+ELLIOT (V.O.): She's fishing. She doesn't have my name yet, just a shape where a suspect should be. If I say the wrong thing, I hand her the outline.
+-> choices
+-- open_dat
+DIPIERRO: Your boss forwarded us a rootkit last month. Found on an engineer's own home machine. The engineer's name was yours. Then the copy E Corp had of it vanished out of their own system, which is the most interesting thing a file has done in my career.
+ELLIOT (V.O.): Tyrell's misfiling. She's following the hole where the evidence used to be. She's good.
+-> choices
+-- choices
 * "I don't know what you're talking about." -> deny
 * [SPEECH 40] "If I did know something, what would it be worth?" -> offer | deny
 * "You're closer than fsociety thinks. I'll say that much." -> tip
 * [if q.mq_fsociety>=20 & !flag.five_nine_done] "Stop fishing, agent. It's me. I'm the one you're looking for." -> confess
 -- deny
-DIPIERRO: Sure. Nobody ever knows anything. That's what makes the ones who do so valuable. Door's open, if you get tired of not knowing things.
-! set fbi_contact
+DIPIERRO: Sure. Nobody ever knows anything. That's what makes the ones who do so valuable. Door's open, if you get tired of not knowing things. And Alderson? I'm going to keep asking until I get a real answer.
+! set fbi_contact ; quest mq_fbi 20
 -> END
 -- offer
 DIPIERRO: Worth? Immunity, if it's real. A future, if you want one. The people you're running with — they don't get out clean. They can't. But a person who helps me? That person can walk into daylight and stay there.
@@ -154,11 +226,29 @@ TYRELL: Come to my home. My wife will pretend not to listen and hear everything.
 -- penthouse
 ? flag.ecorp_door_tyrell -> allied
 ? flag.tyrell_scorned -> scorned
-TYRELL: You came. Good. Then let us be honest, the way ambitious men are honest — briefly, and only about what we want. Give fsociety the keys to E Corp, and I stand at the center of the new world. Refuse me, and I become... unpredictable.
+> Floor-to-ceiling glass, a piano nobody plays, and a view of the E Corp tower lit up blue like a shrine. A woman in silk watches from the hallway and doesn't pretend not to listen. Tyrell pours two drinks and hands you neither.
+? flag.dat_reported & !flag.tyrell_dat_said -> dat
+-> offer
+-- dat
+TYRELL: Before we begin. Your employer sent a file to our security team. A rootkit, found on your own workstation, Elliot. Your name was attached. I had it misfiled. Permanently. I tell you this not to frighten you. I tell you so that you understand I already have a hand on your back.
+! set tyrell_dat_said ; trust tyrell 1
+-> offer
+-- offer
+TYRELL: Then let us be honest, the way ambitious men are honest: briefly, and only about what we want. Give fsociety the keys to E Corp, and I stand at the center of the new world. Refuse me, and I become... unpredictable.
+-> pick
+-- pick
+* [if !flag.tyrell_confessed] "Somebody widened Allsafe's honeypot with Gideon's login. That was you." -> honeypot
 * "Fine. You get the tower open. We use it. You get your storm." -> yes
 * "I'll take the keys myself. You get nothing." -> no
 * [require trust.tyrell>=3] "There's a table above E Corp. I can get you a seat. Help me, and it's yours." -> deus
 * [if flag.joined_fsociety & !flag.five_nine_done] "Forget the door. I'll give you fsociety itself. Names, the arcade, the plan. You walk it into the boardroom." -> sellout
+-- honeypot
+> Tyrell smiles the way a man smiles when the dog finally does the trick.
+TYRELL: Forty thousand dollars, to a contractor at Allsafe with a gambling problem and a key to Gideon's office. One firewall rule. I wanted to see who would walk through an open door into the most valuable network on Earth. I wanted to meet them.
+TYRELL: Someone did. At 3:40 in the morning, from a coffee shop four blocks from your apartment, with code that I am told reads like a signature. Yours, Elliot. So you see, we were introduced long before the lobby. You simply weren't there for it.
+ELLIOT (V.O.): Twenty-two missing minutes. He's known about them longer than I have.
+! set tyrell_confessed ; trust tyrell 1 ; stab -2
+-> pick
 -- yes
 TYRELL: Then we are partners. It is the closest thing to love I am capable of. The network is yours. Do not waste what I am handing you.
 ! set ecorp_door_tyrell ; quest mq_ecorp 30 ; quest mq_ecorp done ; trust tyrell 2 ; fame ecorp 3
@@ -215,6 +305,23 @@ PRICE: Consider this the only warning you will get that sounds like an invitatio
 > A round table. A handful of people who own more than most countries. Whiterose. Price. Faces you half-recognize from the backs of magazines. They have been waiting for you, and they are not impatient, because they own time itself.
 PRICE: The wunderkind. Sit. You have accomplished something rare — you made us look up from the table. Now. The world you were about to break belongs to us. The question is whether you break it for us, or in spite of us.
 ELLIOT (V.O.): This is the real ending. Not fsociety's basement. This room. Where the outcome was decided before I bought my first bobby pin. Unless it wasn't. Unless I'm the variable they didn't price in.
+? flag.ecoin_exposed -> grudge_press
+? flag.ecoin_broken -> grudge_broken
+? flag.price_fbi -> grudge_fbi
+-> project
+-- grudge_press
+PRICE: I spent Tuesday morning reading my own internal slides in a newspaper. Slide nine was a poor choice of words. I said so at the time. Nobody listens to the CEO.
+-> project
+-- grudge_broken
+PRICE: Forty thousand wallets, failing on live television. My engineers are still looking for the bug. I told them to stop. I knew who the bug was.
+-> project
+-- grudge_fbi
+PRICE: You'll notice I'm not wearing the handcuffs. Agent DiPierro had them on me for almost a day. It was, I'll admit, the most interesting day I've had in years.
+-> project
+-- project
+WHITEROSE: You have been thinking this was about money. Debt, ledgers, E Coin. It was never about money. Money is weather. I am interested in climate.
+WHITEROSE: In 1993 an E Corp plant in Washington Township poisoned a town, and your father with it. The plant closed. The land did not. What is under it is the only thing I have wanted for thirty years, and your revolution has just made that land very, very cheap.
+ELLIOT (V.O.): The Township. Dad. Angela's mother. The memorial with names on it. Every road in this city keeps bending back to the same patch of New Jersey dirt.
 * Hear their offer. -> offer
 -- offer
 WHITEROSE: We will let your Five/Nine happen. It suits a timetable you cannot see. In exchange, you step aside afterward and let us shape the rubble. You will be rich. You will be safe. You will be irrelevant, which is the only true safety there is.

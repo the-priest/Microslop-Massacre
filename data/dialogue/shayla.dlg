@@ -1,41 +1,68 @@
-### Shayla, Vera, the rescue.
+### Shayla, Vera, Dutch, the rescue.
 
 === shayla
 -- start
 ? companion.shayla_n -> comp_shayla_n
 ? flag.shayla_out -> saved
+? flag.shayla_freed -> escort
 ? q.sq_shayla>=30 -> caged
-SHAYLA: Hey, neighbor. You look worse than me and I've been having a week. You want the good stuff or the bad stuff? I got both. Occupational hazard.
-* "You okay, Shayla?" -> okay
-* "What do you know about a guy named Vera?" -> vera
-* "Just checking on you." -> check ! trust shayla 1
+? q.sq_shayla>=10 -> again
+SHAYLA: Hey, neighbor. You look worse than me, and I've had a week. Come here. Closer. I'm not going to bite, I'm going to whisper.
+SHAYLA: A guy came by asking for you. Big, polite, wore a nice coat over a bad shirt. Works for Vera. Vera is the reason I can afford my lifestyle and also the reason I can't sleep.
+* "Who's Vera?" -> vera
+* "Why would he ask about me?" -> why
+* "Are you okay?" -> okay
 -- okay
 SHAYLA: Define okay. I'm alive, I'm funny, and I owe money to people who aren't. Two out of three. That's a good week for me.
--> hook
+-> vera
+-- why
+SHAYLA: Because I'm an idiot with a big mouth, and one night I told Vera my neighbor can get into any computer on Earth. I was bragging. About you. It was supposed to be a compliment.
+-> vera
 -- vera
-SHAYLA: Vera. Yeah. Don't. Just — don't. He's my supplier and he thinks that makes me his. He's been asking about you, actually. Says you've got skills he could use. That's never good, coming from Vera. I'm supposed to see his guys tonight about what I owe. It's fine. It's totally fine. Stop looking at me like that.
+SHAYLA: Vera runs pills off the west side docks. He's my supplier, so in his head that makes me his. I owe him four grand. He said forget the four grand, just introduce him to the wizard next door. I said no. He said think about it. Nobody says 'think about it' like Vera.
+ELLIOT (V.O.): A dealer who wants a hacker. That's never a small favor. It's a court date, or a rival, or a body.
+* "Don't meet him. If anyone from his crew shows up, you call me." -> protect ! trust shayla 1
+* "Four grand. I could just pay it." -> pay
+* "Let me think about it." -> think
+-- protect
+SHAYLA: Call you. You don't even answer your buzzer. ...Okay. Okay, I'll call you. Look at me, being protected. It's weird. Do it again sometime.
 ! set knows_vera ; quest sq_shayla 10
 -> hook
--- check
-SHAYLA: Checking on me. Nobody does that. It's weird. Do it again sometime. Bring worse coffee than Ron's, if that's even possible.
+-- pay
+SHAYLA: With what, your good looks? Elliot, you buy the store-brand fish food. It's not about the money anymore anyway. He wants you. That's the whole problem.
+! set knows_vera ; quest sq_shayla 10
+-> hook
+-- think
+SHAYLA: Sure. Think. I'll be here, being fine.
+! set knows_vera ; quest sq_shayla 10
 -> hook
 -- hook
 ELLIOT (V.O.): Shayla's the closest thing I have to a normal that isn't a lie. Which means the city is already circling her. It always circles the soft ones first.
 -> END
+-- again
+SHAYLA: Still alive. Still in debt. Still funny. You doing your rounds, neighbor? Krista would be so proud.
+-> END
 -- caged
-> Shayla is behind a wall of iron bars in Vera's stash house. She's trying very hard to look unafraid, and almost managing it.
-SHAYLA: Oh, thank god. Or thank you. Whatever's true. Vera wants something from you. That's why I'm alive and in a cage instead of just... not. Get me out. Please. Quietly if you can.
-* "I'll get you out. Whatever it takes." -> promise ! trust shayla 2
+> Shayla is behind a wall of iron bars in the back of Vera's stash house, sitting on a stained mattress with her knees up. She's trying very hard to look unafraid, and almost managing it.
+SHAYLA: Oh, thank god. Or thank you. Whatever's true. Vera wants something from you. That's the only reason I'm in a cage instead of in the river.
+* "I'll get you out. Stay low." -> promise ! trust shayla 2
+* "How many of them are there?" -> count
 * "What does Vera want?" -> want
 -- promise
-SHAYLA: Whatever it takes. You always say the intense thing. Just don't get killed being intense. I need a ride home after this.
+SHAYLA: Stay low. Great. I'll add it to my list of hobbies. Just don't get killed being intense. I need a ride home.
+-> END
+-- count
+SHAYLA: Two out front, playing cards and being loud about it. One back here with a shotgun who pretends he's not asleep. Vera in the office. Somebody's always on the phone with Dutch at the pier.
 -> END
 -- want
-SHAYLA: Out. He's got a trial coming that puts him away for life — legally impossible to beat, but he heard you make impossible things happen with a keyboard. That's the deal. You make his case disappear on paper, he lets me go for real. Or you do it the other way. There's always another way with you, isn't there.
+SHAYLA: He's got a court date. Trafficking, the big one. He wants it gone, 'in the machine.' He thinks you can make the state of New York forget he exists. Can you? ...Don't answer that.
+-> END
+-- escort
+SHAYLA: Walk. Walk walk walk. I'm right behind you. If anyone shoots at us, I'm shooting back, I've decided.
 -> END
 -- saved
 ? flag.shayla_thanked -> neighbor
-SHAYLA: I'm out. I'm home. I'm never doing business with a man named after a truth serum again. Thank you, Elliot. I mean it. You're a weird, wonderful disaster and I'm glad you live next door.
+SHAYLA: I'm home. I'm on my own floor, in my own hallway, with my own terrible neighbor. Thank you, Elliot. I mean it. You're a weird, wonderful disaster and I'm glad you live next door.
 ! trust shayla 2 ; set shayla_thanked
 -> neighbor
 -- neighbor
@@ -43,69 +70,166 @@ SHAYLA: So. Neighbor. What's up?
 * [if !flag.left_shayla_n] "Come with me for a while. I'd feel better if you weren't alone." -> comp_shayla_n.recruit
 * "Just checking on you." -> END
 
+=== dutch
+-- start
+? flag.dutch_paid | flag.vera_parley | q.sq_shayla>=30 -> after
+> A big man in a good coat over a bad shirt, leaning on a crate like he's waiting for a bus. Two of Vera's boys behind him, pretending to be interested in the water.
+DUTCH: The wizard. In person. Shayla wasn't lying, you really do look like you live in a closet. Vera's going to like you.
+* "Where's Shayla?" -> where
+* [SPEECH 35] "Vera sent for me. Take me to him." -> bluff | bluff_fail
+* [if cash>=250] "She owes four grand. Here's two-fifty for you, for an address and a quiet door." -> bribe
+* [GUNS 30] Put your gun on him. Quietly. "Phone. Keys. Now." -> stickup | stickup_fail
+* "Wrong answer, Dutch." (attack) -> fight
+-- where
+DUTCH: Safe. Comfortable. Bars on the window for her protection. Vera wants a sit-down, and Vera doesn't do sit-downs where people can leave in the middle.
+-> start_choices
+-- start_choices
+* [SPEECH 35] "Then take me to him." -> bluff | bluff_fail
+* [if cash>=250] "Two-fifty for you, for an address and a quiet door." -> bribe
+* [GUNS 30] Put your gun on him. "Phone. Keys. Now." -> stickup | stickup_fail
+* "Wrong answer, Dutch." (attack) -> fight
+-- bluff
+DUTCH: Look at you, all business. Fine. Stash house on the boardwalk side of Coney, the boarded one with the blue door. Knock, say my name, they'll let you in to talk. Leave the gun attitude outside, it upsets Vera.
+! set vera_parley ; quest sq_shayla 30 ; xp 40
+-> END
+-- bluff_fail
+DUTCH: Vera sent for you. Sure he did. Vera sends for people with a van. Go home, wizard, before I send for you.
+-> start_choices
+-- bribe
+> Dutch counts it twice, the way you count money you plan to deny receiving.
+DUTCH: Coney, boardwalk side, blue door. There's an alley door round the back with a keypad. Code's 0419, same as Vera's birthday, because Vera is a romantic. One guy back there with a shotgun, and he naps. You didn't get any of this from me.
+! cash -250 ; set dutch_paid ; set vera_backdoor ; set vera_parley ; quest sq_shayla 30 ; xp 30
+-> END
+-- stickup
+> Dutch looks at the barrel, then at your eyes, and decides the eyes are worse.
+DUTCH: Easy. Easy. Here. Phone, keys. Front door's the blue one, Coney, boardwalk side. The back's a keypad, 0419. You're going to get yourself killed, wizard, and I'm going to tell Vera you took these off my cold body.
+! give dutch_phone 1 ; give key_vera_stash 1 ; set vera_backdoor ; set dutch_robbed ; quest sq_shayla 30 ; infamy vera 4 ; xp 50
+-> END
+-- stickup_fail
+DUTCH: Your hand's shaking, wizard. That's the problem with people who learned guns from movies.
+! hostile_faction vera ; hostile dutch
+-> END
+-- fight
+DUTCH: Ah, hell. Okay.
+! hostile_faction vera ; hostile dutch
+-> END
+-- after
+DUTCH: Coney. Blue door. Go do your thing, wizard. I'm a spectator.
+-> END
+
+=== vera_door
+### Outside the stash house: casing it before going in.
+-- start
+? flag.shayla_freed -> gone
+ELLIOT (V.O.): A boarded-up two-story with a blue door that's been painted recently. Light leaking around the plywood. Voices, a TV, somebody losing at cards. Count the ways in.
+* [if item.dutch_phone & !flag.vera_decoy] Text the crew from Dutch's phone: "Cops at Pier 9. Everybody down here NOW." -> decoy
+* [if flag.vera_parley & !flag.vera_hostile] Knock. Say Dutch's name. -> knock
+* Circle around to the back alley. -> back
+* Step away. -> END
+-- decoy
+ELLIOT (V.O.): Thirty seconds after I hit send, the blue door bangs open. Two of them come out pulling on jackets, swearing at Dutch, and run for the boardwalk. Inside: Vera, the shotgun in the back, and Shayla.
+! set vera_decoy ; move vera_house ; xp 40
+-> END
+-- knock
+ELLIOT (V.O.): A slot opens. Eyes. I say Dutch's name. The slot closes, a bolt slides, and a voice says 'Vera's in the office. Hands where we can see them, wizard.'
+! set vera_door_open
+-> END
+-- back
+? flag.vera_backdoor -> back_known
+ELLIOT (V.O.): A narrow alley that smells like the ocean and old fry oil. A steel door with a cheap keypad and a cheaper deadbolt. If I don't have the code, it's a pick. If I make noise, it's a fight.
+-> END
+-- back_known
+ELLIOT (V.O.): The alley door. Keypad. 0419. Vera's birthday. Somewhere a man with a shotgun is napping on the other side of it.
+-> END
+-- gone
+ELLIOT (V.O.): We're out. Don't look back. Looking back is how people get turned into salt, or shot.
+-> END
+
 === vera
 -- start
-? flag.vera_deal -> dealt
+? flag.shayla_freed -> after_free
+? flag.vera_case_wiped -> pay_up
+? flag.vera_deal -> waiting
 VERA: So you're the wizard. Shayla's little genius neighbor. Look at you. All that power in your fingers and you use it to feel bad in the dark. Waste.
-ELLIOT (V.O.): He's calm. Calm like a man who's already decided he's holding all the cards. I hate how often those men are right.
-* "Let Shayla go. Now." -> demand
+ELLIOT (V.O.): He's calm. Calm like a man who has already counted the room and decided he's holding the cards. I hate how often those men are right.
+* "Let Shayla go." -> demand
 * "What do you want, Vera?" -> want
 * [SPEECH 45] "You need me more than I need you. Say it." -> flip | want
 -- demand
-VERA: Now. Sure. Everybody wants everything now. That's the disease of this whole city. Here's my offer, wizard: you get me out of my legal problems — I got a case pending, you make it disappear — and Shayla walks. Refuse, and we find out how brave you really are.
+VERA: Everybody wants everything now. That's the disease of this city. Here's my offer, wizard. I have a court date in six weeks. People v. Vera. You make it disappear, in the machine where you live. Then Shayla walks out that door on her own two legs.
 -> choice
 -- want
-VERA: You. I want you. Your gift. I got a court date I'd rather not keep. Make it go away, in the machine, where you live. Do that, and your girl goes home tonight. It's almost poetry.
+VERA: You. Your gift. I have a case pending, trafficking, the kind that ends with me old. Make it go away. The 7th Precinct has the file. You know where the 7th Precinct is? Of course you do.
 -> choice
 -- flip
 VERA: ...Ha. Maybe. Maybe I do. That's why you're still breathing and my guys aren't asking you questions with their hands. Respect. So here's the respectful version of the offer.
-! trust shayla 0 ; set vera_respects
+! set vera_respects
 -> choice
 -- choice
-ELLIOT (V.O.): Erase his record and he owes me — a monster on a leash, but a leash. Or I take Shayla out the hard way and leave Vera to rot. Or I put him down and take his whole operation.
-* [require q.sq_shayla>=30] "Deal. I'll wipe your case. Let her go." -> deal
-* [require q.sq_shayla>=30] "No deal. I'm taking her and walking." -> defy
-* [require q.sq_shayla>=30 & item.pistol_9mm>=1] "Here's my counteroffer." (draw) -> fight
+ELLIOT (V.O.): Erase his case and a trafficker walks free, but Shayla walks too, tonight, alive. Or I take her the hard way, through his people. Or I let him think I said yes and do it the hard way later.
+* "Deal. I'll wipe your case." -> deal
+* [if flag.vera_respects] [SPEECH 55] "Let her walk now, as a show of faith. I'll do the case either way." -> faith | deal
+* "No deal." -> defy
+* "Here's my counteroffer." (draw) -> fight
 -- deal
-VERA: Now we're talking. You feel it? That's power recognizing power. Wipe my case, wizard, and Shayla's yours. And hey — a man like me remembers a favor. Could be useful. Could be a nightmare. You'll find out.
-! set vera_deal ; set shayla_out ; quest sq_shayla done ; fame coney 3 ; infamy nypd 2 ; stab -2
-VERA: She's at the door. Go be a hero. It won't last, but enjoy it.
+VERA: Now we're talking. That's power recognizing power. 7th Precinct, their CaseTrack system. When my file's gone, come back here and Shayla goes home. Until then she stays my guest.
+! set vera_deal ; quest sq_shayla 35
+-> END
+-- faith
+VERA: ...You talk like a man who has never once been told no and believed it. Fine. She goes now. And if my case is still there in a week, I come to your building, and I don't knock.
+! set vera_deal ; quest sq_shayla 35 ; xp 80
+-> shayla_rescue.release
+-- waiting
+VERA: My case is still in the machine, wizard. I can feel it. Like a stone in my shoe. 7th Precinct.
+-> END
+-- pay_up
+VERA: Gone. My lawyer called me, confused. The DA's office can't find their own file. You're a dangerous man. I like dangerous men who keep their word. Take her. She's yours.
+ELLIOT (V.O.): He'll walk. He'll sell more pills on the docks. Kids will buy them. I made that trade with my eyes open. Shayla's alive. I keep saying that to myself, like a password.
+! stab -3 ; infamy nypd 2 ; xp 80
+-> shayla_rescue.release
+-- after_free
+VERA: The wizard. Go home. And if you ever need something to disappear the other direction, you know where I am.
 -> END
 -- defy
-VERA: The hard way. I respect it and I'm gonna make you regret it. My guys are between you and her. Good luck, wizard.
+VERA: The hard way. I respect it, and I'm going to make you regret it. Boys.
 ! set vera_hostile ; hostile_faction vera ; hostile vera ; quest sq_shayla 40
 -> END
 -- fight
-VERA: Oh, you brought a gun to a philosophy conversation. That's the most honest thing anyone's done all night.
-! hostile vera ; hostile_faction vera ; quest sq_shayla 40
--> END
--- dealt
-VERA: The wizard. My favorite ghost. Don't worry — I keep my deals. Bad for business otherwise. Shayla's free. And I'm free. Funny how that worked out for everyone except the court.
+VERA: You brought a gun to a philosophy conversation. That's the most honest thing anyone's done all night.
+! set vera_hostile ; hostile vera ; hostile_faction vera ; quest sq_shayla 40
 -> END
 
 === shayla_rescue
 -- start
-? flag.shayla_out -> done
-ELLIOT (V.O.): She's behind the bars. The lock is old, mechanical, honest — the kind that answers to a pin instead of a password. Or I find the key on whoever's got it.
-* [require item.key_vera_stash>=1] Try the enforcer's ring of keys. -> keyed
-* [require item.bobby_pin>=1] Pick the cell lock. -> pick
-* [if !item.key_vera_stash>=1] Look for the key. -> key
+? flag.shayla_freed -> done
+ELLIOT (V.O.): The cage. Old iron, older padlock, the honest kind that answers to a pin instead of a password. Or to the right key.
+* [require item.key_vera_stash>=1] Try the ring of keys. -> keyed
+* [require item.bobby_pin>=1] Pick the padlock. -> pick
+* [if !item.key_vera_stash>=1] Who has the key? -> key
 * Step back. -> END
 -- pick
-! minigame lockpick 45
+! minigame lockpick 35
 ? won -> freed
-ELLIOT (V.O.): The pin snaps. The lock holds. Try again, or find another way.
+ELLIOT (V.O.): The pin snaps. The lock holds. Try again, or find the key.
 -> END
 -- keyed
 ELLIOT (V.O.): Third key on the ring. It turns like it's been waiting for someone to ask it nicely.
 -> freed
 -- key
-ELLIOT (V.O.): Vera's enforcer has the key. Which means the quiet way just became the loud way, unless you can lift it clean.
+ELLIOT (V.O.): Dutch carries one. So does the enforcer back here. Or a bobby pin and steady hands.
 -> END
 -- freed
-SHAYLA: You actual magician. Okay. Okay okay okay. Which way is out. Behind you? Behind you. Go go go.
-! set shayla_out ; quest sq_shayla done ; trust shayla 3 ; achieve shayla_saved ; xp 60
+SHAYLA: You actual magician. Okay. Okay okay okay. I'm out. Somebody left a revolver on that crate, and now somebody is me. Which way? Home. We go home.
+! trust shayla 3 ; xp 80
+-> release
+-- release
+? party>=2 -> release_solo
+! set shayla_freed ; recruit shayla_n ; move shayla_n 11.5 -2.4 ; quest sq_shayla 45
+-> END
+-- release_solo
+SHAYLA: You've already got a crowd. Go. I know the back way out of every building on this boardwalk. I'll see you at home. Don't die, it'd be so embarrassing for both of us.
+! set shayla_freed ; set shayla_out ; quest sq_shayla 45 ; quest sq_shayla done ; achieve shayla_saved
 -> END
 -- done
-SHAYLA: I'm out. Let's never come back here. Ever. Agreed? Agreed.
+SHAYLA: Let's never come back here. Ever. Agreed? Agreed.
 -> END

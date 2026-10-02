@@ -1,0 +1,5 @@
+# build outputs too big for GitHub (zips stay)
+build/windows/HelloFriend.exe
+build/linux/HelloFriend.x86_64
+# godot editor cache
+.godot/

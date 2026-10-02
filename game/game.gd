@@ -78,6 +78,7 @@ func _ready() -> void:
 	if SaveManager.pending_load.get("state") is Dictionary:
 		GameState.from_dict(SaveManager.pending_load["state"])
 		SaveManager.pending_load.erase("state")
+	WorldLayout.set_region(GameState.region)
 	Mats.init()
 	Mats.set_hidden_cars([]) # stolen parked cars come back on a fresh load
 	_make_loading()
@@ -91,8 +92,11 @@ func _ready() -> void:
 	GameState.leveled_up.connect(func(l: int) -> void: robot_popup.level_up(l))
 	_loading.queue_free()
 	if not SaveManager.pending_load.is_empty():
+		var carry: Dictionary = SaveManager.pending_load.get("travel", {})
+		var by_air := bool(SaveManager.pending_load.get("by_air", false))
 		SaveManager.pending_load = {}
 		await _restore_from_state()
+		await _arrive_with(carry, by_air)
 	else:
 		await _start_new_game()
 
@@ -183,8 +187,9 @@ func _build_world() -> void:
 	city_extras.add_child(lf)
 	cb.landmark_far.commit(lf, 6000.0, 6000.0, false)
 	# Ferris wheel (rotating rim).
-	ferris = _make_ferris(cb.ferris_center)
-	city_extras.add_child(ferris)
+	if WorldLayout.region == "nyc":
+		ferris = _make_ferris(cb.ferris_center)
+		city_extras.add_child(ferris)
 	# Infinite ground.
 	var ground := StaticBody3D.new()
 	ground.name = "Ground"
@@ -486,6 +491,8 @@ func _make_world_interactables() -> void:
 			data["key"] = str(d["key"])
 		if d.has("when"):
 			data["when"] = d["when"]
+		if d.has("unlock_when"):
+			data["unlock_when"] = d["unlock_when"]
 		var it := Interactable.new().setup("door", str(did), str(d["name"]), "Enter", p + out * 0.3 + Vector3(0, 1.2, 0), Vector3(1.6, 2.4, 0.8) if absf(out.z) > 0.5 else Vector3(0.8, 2.4, 1.6), data)
 		world_inter.add_child(it)
 	var cmesh := MeshBatch.new()
@@ -494,6 +501,8 @@ func _make_world_interactables() -> void:
 	world_inter.add_child(cbody)
 	for c in WorldObjects.CONTAINERS:
 		var cd: Dictionary = c
+		if str(cd.get("region", "nyc")) != WorldLayout.region:
+			continue
 		var pa: Array = cd["pos"]
 		var sz: Array = cd.get("size", [1.4, 1.2, 1.2])
 		var it2 := Interactable.new().setup("container", str(cd["id"]), str(cd.get("title", "Container")), "Search", Vector3(float(pa[0]), float(cd.get("y", 0.7)), float(pa[1])), Vector3(float(sz[0]) + 0.1, float(sz[1]) + 0.1, float(sz[2]) + 0.1), cd)
@@ -509,9 +518,13 @@ func _make_world_interactables() -> void:
 		cbody.add_child(cs)
 	cmesh.commit(world_inter, Mats.lit, 200.0, "WorldContainers")
 	for pk in WorldObjects.PICKUPS:
+		if str((pk as Dictionary).get("region", "nyc")) != WorldLayout.region:
+			continue
 		_spawn_pickup(world_inter, pk, Vector3.ZERO)
 	for sp in WorldObjects.SPOTS:
 		var sd: Dictionary = sp
+		if str(sd.get("region", "nyc")) != WorldLayout.region:
+			continue
 		var pa3: Array = sd["pos"]
 		var sz3: Array = sd.get("size", [1.2, 1.8, 1.2])
 		var it3 := Interactable.new().setup(str(sd.get("kind", "convo")), str(sd["id"]), str(sd.get("title", "")), str(sd.get("verb", "Examine")), Vector3(float(pa3[0]), float(pa3[1]), float(pa3[2])), Vector3(float(sz3[0]), float(sz3[1]), float(sz3[2])), sd)
@@ -537,9 +550,15 @@ func _spawn_pickup(parent: Node3D, pk: Dictionary, origin: Vector3) -> void:
 		"weapon":
 			var long := idef.has("mag") and float(idef.get("range", 0.0)) > 40.0 and str(idef.get("model", "")) in ["rifle", "sniper", "ar", "carbine", "shotgun", "smg", "smg_sil"]
 			var L := 0.9 if long else (0.32 if idef.has("mag") else 0.7)
-			mb.box(Vector3(0, y0 + 0.05, 0), Vector3(L, 0.08, 0.1), Color(0.55, 0.45, 0.2) if unique else col, 0.3, E)
+			var gcol := Color(0.62, 0.5, 0.22) if unique else col
+			mb.box(Vector3(0, y0 + 0.05, 0), Vector3(L, 0.08, 0.1), gcol, 0.3, E)
 			if idef.has("mag"):
+				# Grip, magazine, and on long guns a stock and a barrel shroud.
 				mb.box(Vector3(-L * 0.3, y0 + 0.05, 0.1), Vector3(0.08, 0.07, 0.14), col.lightened(0.1), 0.3, E)
+				mb.box(Vector3(-L * 0.05, y0 + 0.05, 0.09), Vector3(0.06, 0.06, 0.16), col.darkened(0.2), 0.3, E)
+				if long:
+					mb.box(Vector3(-L * 0.55, y0 + 0.06, 0.0), Vector3(0.24, 0.1, 0.12), Color(0.32, 0.2, 0.12) if str(idef.get("model", "")) in ["rifle", "sniper"] else col.lightened(0.05), 0.3, E)
+					mb.box(Vector3(L * 0.55, y0 + 0.05, 0.0), Vector3(0.22, 0.04, 0.04), col.darkened(0.3), 0.3, E)
 		"ammo":
 			for k in 3:
 				mb.box(Vector3(float(k) * 0.14 - 0.14, y0 + 0.06, 0), Vector3(0.12, 0.12, 0.09), col, 0.2, E)
@@ -555,8 +574,18 @@ func _spawn_pickup(parent: Node3D, pk: Dictionary, origin: Vector3) -> void:
 	var gc := Color(1.0, 0.8, 0.3) if unique else Color(0.4, 1.0, 0.6)
 	gb.box(Vector3(0, y0 + 0.45, 0), Vector3(0.03, 0.22, 0.03), gc)
 	gb.box(Vector3(0, y0 + 0.45, 0), Vector3(0.14, 0.03, 0.03), gc)
+	var far := 45.0 if not unique else 90.0
+	if itype == "weapon":
+		# Weapons get a faint light column and a ground ring so they can be
+		# spotted from down the block.
+		var wc := Color(1.0, 0.75, 0.25) if unique else Color(1.0, 0.45, 0.25)
+		gb.box(Vector3(0, y0 + 1.4, 0), Vector3(0.02, 2.6, 0.02), wc.darkened(0.3))
+		for k in 8:
+			var a := float(k) / 8.0 * TAU
+			gb.box(Vector3(cos(a) * 0.45, y0 + 0.01, sin(a) * 0.45), Vector3(0.22, 0.01, 0.03), wc, -a + PI * 0.5)
+		far = 120.0
 	mb.commit(it, Mats.lit, 70.0, "PickupMesh")
-	gb.commit(it, Mats.glow, 45.0 if not unique else 90.0, "PickupGlow")
+	gb.commit(it, Mats.glow, far, "PickupGlow")
 	parent.add_child(it)
 
 
@@ -1301,6 +1330,13 @@ func dlg_world_effect(cmd: String, args: Array) -> void:
 				GameState.mark_dead(a0)
 		"move":
 			# move npc_id: re-evaluate spawns (conditions changed).
+			# move npc_id x z: also put that NPC at cell-local (x, z) right now.
+			if args.size() >= 3:
+				var mn := npcs.get_npc(a0)
+				if mn != null and not mn.dead:
+					mn.global_position = cell_to_global(GameState.cell, Vector3(float(args[1]), 0.1, float(args[2])))
+					mn.home_pos = mn.global_position
+					mn.velocity = Vector3.ZERO
 			_pending.append(func() -> void: npcs.refresh(false))
 		"sleep":
 			_pending.append(func() -> void: await wait_ui.open(true))
@@ -1589,6 +1625,41 @@ func marker_pos(m: String) -> Variant:
 	return dw["pos"]
 
 
+## Where a gate sits in world space (or its exit interior if we're inside).
+func _gate_marker(gid: String) -> Dictionary:
+	var g: Dictionary = Regions.gates(WorldLayout.region).get(gid, {})
+	if g.is_empty():
+		return {}
+	var gp: Array = g["pos"]
+	if GameState.cell != "world":
+		return _marker_target("")  # inside: handled by marker_pos exit routing
+	return {"cell": "world", "pos": Vector3(float(gp[0]), 0, float(gp[1]))}
+
+
+## Which region a marker's destination is on ("" if it's region-agnostic).
+func _marker_region(m: String) -> String:
+	var cell := ""
+	if m.begins_with("cell:"):
+		cell = str(m.split(":")[1])
+	elif InteriorData.INTERIORS.has(m) or RegionContent.region_of_interior(m) != "nyc":
+		cell = m
+	elif WorldLayout.all_doors().has(m) or m.begins_with("d_"):
+		var reg := _door_region(m)
+		return reg
+	else:
+		return ""
+	if cell == "" or cell == "world":
+		return ""
+	return RegionContent.region_of_interior(cell)
+
+
+func _door_region(did: String) -> String:
+	for reg in RegionContent.DOORS.keys():
+		if RegionContent.DOORS[reg].has(did):
+			return str(reg)
+	return "nyc"
+
+
 func _door_for_interior(cell: String) -> String:
 	if cell.begins_with("subway:"):
 		return cell.substr(7)
@@ -1617,6 +1688,16 @@ func _door_for_interior(cell: String) -> String:
 
 
 func _marker_target(m: String) -> Dictionary:
+	# A travel gate (highway on-ramp / city exit), by its id.
+	if m.begins_with("gate:"):
+		return _gate_marker(m.substr(5))
+	# If the marker points into another region, steer the player to the gate
+	# that heads there instead of a door that isn't on this map.
+	var mr := _marker_region(m)
+	if mr != "" and mr != WorldLayout.region:
+		var g := RegionContent.gate_toward(WorldLayout.region, mr)
+		if g != "":
+			return _gate_marker(g)
 	if m.begins_with("npc:"):
 		var id := m.substr(4)
 		var n := npcs.get_npc(id)
@@ -1719,6 +1800,8 @@ func _check_triggers() -> void:
 		var tc := str(td.get("cell", "world"))
 		if tc != "*" and tc != cell and not (tc == "subway" and cell.begins_with("subway")):
 			continue
+		if tc == "world" and str(td.get("region", "nyc")) != WorldLayout.region:
+			continue
 		# Story-director rules have no position: they fire anywhere in the cell.
 		if td.has("pos"):
 			var pa: Array = td["pos"]
@@ -1752,6 +1835,8 @@ func _slow_update() -> void:
 	var pp := player.global_position
 	_update_parked()
 	_update_airfield()
+	_update_rides()
+	_update_gates()
 	_companion_tick()
 	# The Kingpin path: the corners pay every morning.
 	if GameState.has_flag("kingpin"):
@@ -2043,15 +2128,22 @@ func _update_airfield() -> void:
 		var d2 := spot.distance_to(pp)
 		if d2 > 900.0 or (_af_filled.has(sid) and d2 < 250.0):
 			continue # don't pop a plane in while you're watching the spot
-		if sid == "ecorp_jet" and GameState.flags.has("ecorp_jet_gone"):
+		if sid == "ecorp_jet" and GameState.flags.has("ecorp_jet_gone") and not GameState.flags.has("jet_owned"):
 			continue
+		if _ride_in_slot(sid):
+			continue # that plane is parked somewhere else now, wherever you left it
 		_spawn_plane(sid, str(sl["model"]), spot, float(sl["yaw"]))
 
 
 func _spawn_plane(sid: String, m: String, pos: Vector3, yaw: float) -> Aircraft:
 	var a := Aircraft.new().setup_plane(m, pos, yaw, self)
 	a.slot = sid
-	if m == "citation":
+	if m == "citation" and GameState.flags.has("jet_owned"):
+		a.owner_tag = "player"
+		a.lock_dc = 0
+		a.locked = false
+		a.set_meta("owned", true)
+	elif m == "citation":
 		a.owner_tag = "ecorp"
 		a.lock_dc = 60
 		a.locked = true
@@ -2279,7 +2371,7 @@ func enter_vehicle(v: Vehicle) -> void:
 	player.collision_mask = 0
 	player.velocity = Vector3.ZERO
 	parked_cars.erase(v)
-	if player_car != null and player_car != v and is_instance_valid(player_car) and not (player_car is Aircraft):
+	if player_car != null and player_car != v and is_instance_valid(player_car) and not (player_car is Aircraft) and not player_car.has_meta("ride_uid"):
 		parked_cars.append(player_car) # the last ride gets cleaned up like any parked car
 	player_car = v
 	v.begin_drive()
@@ -2352,6 +2444,7 @@ func exit_vehicle(forced: bool = false) -> void:
 	player.set_look(v.rotation.y, 0.0)
 	player.cam.make_current()
 	AudioManager.sfx("door")
+	_remember_ride(v)
 
 
 ## Pull a driver out of a stopped car in traffic.
@@ -2383,6 +2476,275 @@ func _carjack(car: Traffic.Car) -> void:
 	enter_vehicle(v)
 
 
+# ----------------------------------------------------------------- regions
+## Driving through a travel gate (the highway sign at a city's edge) takes the
+## whole car down the road to the next map; planes fly out of the airspace.
+var _gate_hold := 0.0
+var region_requested := ""
+var _air_asked := false
+
+
+func _update_gates() -> void:
+	if GameState.cell != "world" or busy_transition or ui_depth > 0:
+		return
+	var pp := player.global_position
+	var near := ""
+	for gid in Regions.gates(WorldLayout.region).keys():
+		var g: Dictionary = Regions.gates(WorldLayout.region)[gid]
+		var gp: Array = g["pos"]
+		if Vector2(pp.x, pp.z).distance_to(Vector2(float(gp[0]), float(gp[1]))) < float(g["r"]):
+			near = str(gid)
+	if near == "":
+		_gate_hold = 0.0
+		return
+	var g2: Dictionary = Regions.gates(WorldLayout.region)[near]
+	var dest: Array = g2["to"]
+	if player.driving == null:
+		hud.notify("%s. It's a long way on foot. Bring a car, or fly." % str(g2["sign"]), "warn")
+		return
+	if player.driving is Aircraft:
+		return
+	_gate_hold += 1.0
+	if _gate_hold < 2.0:
+		hud.center("%s\nKeep driving to leave %s" % [str(g2["sign"]), Regions.region_name(WorldLayout.region)], 1.6)
+		return
+	_gate_hold = 0.0
+	go_region(str(dest[0]), str(dest[1]), false)
+
+
+## Called by a plane that has flown out of this map's airspace.
+func airspace_exit(a: Aircraft) -> void:
+	if _air_asked or ui_depth > 0 or player.driving != a:
+		return
+	_air_asked = true
+	var t := "=== _fly_away\n-- start\n"
+	t += "> You're over the edge of %s. The radio hisses. Somewhere out there, other cities.\n" % Regions.region_name(WorldLayout.region)
+	for r in Regions.FLY_IN.keys():
+		if str(r) == WorldLayout.region or str(r) == "highway":
+			continue
+		t += "* Set course for %s. -> go_%s\n" % [Regions.region_name(str(r)), str(r)]
+	t += "* Turn back. -> END\n"
+	for r2 in Regions.FLY_IN.keys():
+		t += "-- go_%s\n! set travel_pick=%s\n-> END\n" % [str(r2), str(r2)]
+	DialogueManager.convos.erase("_fly_away")
+	DialogueManager.parse_text(t, "runtime:fly")
+	GameState.flags.erase("travel_pick")
+	await dialog.run("_fly_away", null)
+	var pick := str(GameState.flags.get("travel_pick", ""))
+	GameState.flags.erase("travel_pick")
+	if pick != "" and player.driving == a:
+		go_region(pick, "", true)
+	else:
+		# Give the pilot a few seconds to turn around before asking again.
+		await get_tree().create_timer(6.0).timeout
+		_air_asked = false
+
+
+## Leave this map for another. By road: arrive at the matching gate with the
+## same car. By air: arrive on approach to the destination's airfield.
+func go_region(region: String, gate: String, by_air: bool) -> void:
+	if busy_transition:
+		return
+	busy_transition = true
+	var v: Vehicle = player.driving
+	var carry := {}
+	if v != null and is_instance_valid(v):
+		carry = {"kind": "plane" if v is Aircraft else "car", "model": (v as Aircraft).model if v is Aircraft else v.kind, "ci": v.color_idx, "hp": v.hp, "owned": v.has_meta("owned") or bool(GameState.flags.get("jet_owned", false)) and v is Aircraft and (v as Aircraft).model == "citation", "speed": v.speed}
+		# It comes with you, so it's no longer parked here.
+		var uid := int(v.get_meta("ride_uid", -1))
+		if uid >= 0:
+			GameState.rides.erase(_ride_rec(uid))
+	var from := WorldLayout.region
+	GameState.region = region
+	GameState.cell = "world"
+	GameState.pos_local = false
+	if by_air and Regions.FLY_IN.has(region):
+		var f: Array = Regions.FLY_IN[region]
+		GameState.player_pos = Vector3(float(f[0]), float(f[1]), float(f[2]))
+		GameState.player_yaw = float(f[3])
+	else:
+		var a: Dictionary = Regions.ARRIVE.get(gate, {"pos": [0, 0], "yaw": 0.0})
+		var ap: Array = a["pos"]
+		GameState.player_pos = Vector3(float(ap[0]), 0.2, float(ap[1]))
+		GameState.player_yaw = float(a["yaw"])
+	GameState.flags["region_from"] = from
+	if not GameState.flags.has("visited_" + region):
+		GameState.flags["visited_" + region] = true
+		GameState.add_xp(100)
+	SaveManager.pending_load = {"state": GameState.to_dict(), "travel": carry, "by_air": by_air}
+	if test_mode:
+		region_requested = region # the test harness swaps the scene itself
+		return
+	SceneRouter.goto_game()
+
+
+## After a region load: put the car or plane you came in under you again.
+func _arrive_with(carry: Dictionary, by_air: bool) -> void:
+	if carry.is_empty():
+		return
+	var pos := player.global_position
+	var yaw := GameState.player_yaw
+	var nv: Vehicle
+	if str(carry.get("kind", "car")) == "plane":
+		var a := Aircraft.new().setup_plane(str(carry.get("model", "skyhawk")), pos, yaw, self)
+		a.owner_tag = "player"
+		nv = a
+	else:
+		nv = Vehicle.new().setup(str(carry.get("model", "sedan")), int(carry.get("ci", 0)), pos, yaw, self)
+	nv.locked = false
+	nv.lock_dc = 0
+	nv.stolen = false
+	nv.hp = maxf(20.0, float(carry.get("hp", 100.0)))
+	if bool(carry.get("owned", false)):
+		nv.set_meta("owned", true)
+	vehicles_root.add_child(nv)
+	await get_tree().process_frame
+	enter_vehicle(nv)
+	if nv is Aircraft and by_air:
+		var ac := nv as Aircraft
+		ac.airborne = true
+		ac.heading = yaw
+		ac.speed = float(ac.spec.get("vmax", 66.0)) * 0.7
+		ac.throttle = 0.7
+	hud.center(Regions.region_name(WorldLayout.region).to_upper(), 3.0)
+
+
+# ------------------------------------------------------------------- rides
+## Every car or plane you drive stays where you leave it. The four most recent
+## stay put anywhere in the city; anything parked at home (outside your
+## building, or at Bowery Bay for planes) or that you own stays forever.
+const RIDES_LOOSE := 4
+const HOMES := [
+	{"name": "outside your building", "pos": Vector2(-466, 320), "r": 26.0, "plane": false},
+	{"name": "at the Bowery Bay hangars", "pos": Vector2(1420, -1250), "r": 150.0, "plane": true},
+]
+var ride_nodes: Dictionary = {} # uid -> Vehicle
+
+
+func _ride_in_slot(sid: String) -> bool:
+	for r in GameState.rides:
+		if str((r as Dictionary).get("slot", "")) == sid:
+			return true
+	return false
+
+
+func _ride_rec(uid: int) -> Dictionary:
+	for r in GameState.rides:
+		if int((r as Dictionary).get("uid", -1)) == uid:
+			return r
+	return {}
+
+
+func _remember_ride(v: Vehicle) -> void:
+	if v == null or not is_instance_valid(v) or v.dead or GameState.cell != "world":
+		return
+	var uid := int(v.get_meta("ride_uid", -1))
+	if uid < 0:
+		uid = int(GameState.flags.get("ride_uid_next", 1))
+		GameState.flags["ride_uid_next"] = uid + 1
+		v.set_meta("ride_uid", uid)
+	var plane := v is Aircraft
+	var rec := _ride_rec(uid)
+	var fresh := rec.is_empty()
+	if fresh:
+		rec = {"uid": uid}
+		GameState.rides.append(rec)
+	var p := v.global_position
+	rec["region"] = WorldLayout.region
+	rec["kind"] = "plane" if plane else "car"
+	rec["model"] = (v as Aircraft).model if plane else v.kind
+	rec["ci"] = v.color_idx
+	rec["pos"] = [p.x, p.y, p.z]
+	rec["yaw"] = v.rotation.y
+	rec["hp"] = v.hp
+	rec["owned"] = bool(rec.get("owned", false)) or v.has_meta("owned")
+	if plane:
+		var a := v as Aircraft
+		if a.slot != "":
+			rec["slot"] = a.slot
+			planes.erase(a.slot)
+			a.slot = ""
+	var was_home := bool(rec.get("home", false))
+	rec["home"] = false
+	for h in HOMES:
+		if bool(h["plane"]) == plane and Vector2(p.x, p.z).distance_to(h["pos"]) < float(h["r"]):
+			rec["home"] = true
+			if not was_home:
+				hud.notify("Parked %s. It'll be right here whenever you want it." % str(h["name"]), "")
+	ride_nodes[uid] = v
+	v.locked = false
+	parked_cars.erase(v)
+	# Only the most recent loose rides are kept; older ones get towed.
+	GameState.rides.erase(rec)
+	GameState.rides.append(rec)
+	var loose := 0
+	for i in range(GameState.rides.size() - 1, -1, -1):
+		var r: Dictionary = GameState.rides[i]
+		if bool(r.get("home", false)) or bool(r.get("owned", false)):
+			continue
+		loose += 1
+		if loose > RIDES_LOOSE:
+			var old_uid := int(r.get("uid", -1))
+			GameState.rides.remove_at(i)
+			var on: Vehicle = ride_nodes.get(old_uid)
+			ride_nodes.erase(old_uid)
+			if on != null and is_instance_valid(on) and on != player.driving:
+				on.remove_meta("ride_uid")
+				if not (on is Aircraft):
+					parked_cars.append(on) # back to being just a car on the street
+
+
+## Spawn parked rides near you, park them away when you're far, forget wrecks.
+func _update_rides() -> void:
+	if GameState.cell != "world" or vehicles_root == null:
+		return
+	var pp := player.global_position
+	for r in GameState.rides.duplicate():
+		var rec: Dictionary = r
+		if str(rec.get("region", "nyc")) != WorldLayout.region:
+			continue
+		var uid := int(rec.get("uid", -1))
+		var v: Vehicle = ride_nodes.get(uid)
+		if v != null and not is_instance_valid(v):
+			ride_nodes.erase(uid)
+			v = null
+		if v != null:
+			if v.dead:
+				GameState.rides.erase(rec)
+				ride_nodes.erase(uid)
+				continue
+			if v == player.driving:
+				continue
+			if v.global_position.distance_to(pp) > 1300.0:
+				var vp := v.global_position
+				rec["pos"] = [vp.x, vp.y, vp.z]
+				rec["yaw"] = v.rotation.y
+				rec["hp"] = v.hp
+				v.queue_free()
+				ride_nodes.erase(uid)
+			continue
+		var pa: Array = rec.get("pos", [0, 0, 0])
+		var pos := Vector3(float(pa[0]), float(pa[1]), float(pa[2]))
+		if pos.distance_to(pp) > 950.0:
+			continue
+		var nv: Vehicle
+		if str(rec.get("kind", "car")) == "plane":
+			var a := Aircraft.new().setup_plane(str(rec.get("model", "skyhawk")), pos, float(rec.get("yaw", 0.0)), self)
+			a.owner_tag = "player"
+			nv = a
+		else:
+			nv = Vehicle.new().setup(str(rec.get("model", "sedan")), int(rec.get("ci", 0)), pos + Vector3(0, 0.15, 0), float(rec.get("yaw", 0.0)), self)
+		nv.locked = false
+		nv.lock_dc = 0
+		nv.stolen = false
+		nv.hp = maxf(20.0, float(rec.get("hp", 100.0)))
+		nv.set_meta("ride_uid", uid)
+		if bool(rec.get("owned", false)):
+			nv.set_meta("owned", true)
+		vehicles_root.add_child(nv)
+		ride_nodes[uid] = nv
+
+
 const PARKED_MAX := 5 # plus every parked car the city itself draws (_steal_parked)
 const PARK_KINDS := ["sedan", "sedan", "sedan", "hatch", "hatch", "suv", "van", "taxi"]
 
@@ -2398,11 +2760,15 @@ func _update_parked() -> void:
 		if not is_instance_valid(v):
 			parked_cars.erase(c)
 			continue
+		if v.has_meta("ride_uid"):
+			parked_cars.erase(v) # yours now: the ride keeper looks after it
+			continue
 		if v != player_car and v.global_position.distance_to(pp) > 260.0:
 			parked_cars.erase(v)
 			v.queue_free()
 	if player_car != null and is_instance_valid(player_car) and player.driving == null and player_car.global_position.distance_to(pp) > 600.0:
-		player_car.queue_free()
+		if not player_car.has_meta("ride_uid"):
+			player_car.queue_free()
 		player_car = null
 	var tries := 6
 	while parked_cars.size() < PARKED_MAX and tries > 0:

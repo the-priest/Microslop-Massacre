@@ -64,6 +64,12 @@ var dead: Dictionary = {}
 var hostile: Dictionary = {} # npc id -> true (individually angered)
 var containers: Dictionary = {} # container id -> {"items": {}, "cash": int}
 var picked: Dictionary = {} # world pickup id -> true
+## Vehicles you left somewhere (or own). Each: {uid, kind: car|plane, model, ci,
+## pos: [x,y,z], yaw, hp, home: bool, owned: bool, slot}. They stay where you
+## parked them, across saves.
+var rides: Array = []
+## Which map you're on: "nyc", "highway", "chicago" (see Regions).
+var region: String = "nyc"
 var unlocked: Dictionary = {} # lock id -> true
 var discovered: Dictionary = {} # location id -> true
 var game_minutes: float = START_MINUTES
@@ -138,6 +144,8 @@ func new_game() -> void:
 	hostile = {}
 	containers = {}
 	picked = {}
+	rides = []
+	region = "nyc"
 	unlocked = {}
 	discovered = {}
 	game_minutes = START_MINUTES
@@ -633,7 +641,10 @@ func set_quest_stage(qid: String, stage: int) -> void:
 	if not quests.has(qid):
 		quests[qid] = {"stage": 0, "state": "active", "log": []}
 		emit_signal("quest_updated", qid, stage, "started")
-		if tracked_quest == "" or str(q["kind"]) == "main":
+		# The next mission in the line you're following takes over the tracker;
+		# a new line never steals it from a mission you're in the middle of.
+		var tq := tracked_quest
+		if tq == "" or quest_state(tq) != "active" or DB.quest_line(tq) == DB.quest_line(qid):
 			tracked_quest = qid
 	var cur: Dictionary = quests[qid]
 	if str(cur["state"]) != "active":
@@ -664,7 +675,7 @@ func complete_quest(qid: String) -> void:
 	emit_signal("quest_updated", qid, 100, "done")
 	add_xp(int(q.get("xp", 100)))
 	if tracked_quest == qid:
-		tracked_quest = _next_tracked()
+		tracked_quest = _next_tracked(qid)
 	emit_signal("changed")
 
 
@@ -677,16 +688,28 @@ func fail_quest(qid: String) -> void:
 	cur["state"] = "failed"
 	emit_signal("quest_updated", qid, int(cur["stage"]), "failed")
 	if tracked_quest == qid:
-		tracked_quest = _next_tracked()
+		tracked_quest = _next_tracked(qid)
 	emit_signal("changed")
 
 
-func _next_tracked() -> String:
+## After a quest ends: the next active mission in the same line, else the
+## main story, else anything still open.
+func _next_tracked(after: String = "") -> String:
+	var line := DB.quest_line(after) if after != "" else ""
 	var best := ""
+	var best_score := -1
 	for qid in quests.keys():
 		if str(quests[qid]["state"]) != "active":
 			continue
-		if best == "" or str(DB.QUESTS.get(qid, {}).get("kind", "")) == "main":
+		var score := 0
+		if line != "" and DB.quest_line(str(qid)) == line:
+			score = 3
+		elif str(DB.QUESTS.get(qid, {}).get("kind", "")) == "main":
+			score = 2
+		else:
+			score = 1
+		if score > best_score:
+			best_score = score
 			best = str(qid)
 	return best
 
@@ -815,7 +838,7 @@ func to_dict() -> Dictionary:
 		"wanted_until": wanted_until, "zero_day_day": zero_day_day, "cell": cell,
 		"player_pos": [player_pos.x, player_pos.y, player_pos.z], "player_yaw": player_yaw,
 		"shop_stock": shop_stock, "npc_pos_override": npc_pos_override, "playtime": playtime,
-		"jobs_state": jobs_state, "dead_npc_pos": dead_npc_pos, "pos_local": pos_local,
+		"jobs_state": jobs_state, "dead_npc_pos": dead_npc_pos, "pos_local": pos_local, "rides": rides, "region": region,
 	}
 
 
@@ -878,6 +901,11 @@ func from_dict(d: Dictionary) -> void:
 	pos_local = bool(d.get("pos_local", false))
 	containers = _dict(d, "containers")
 	picked = _dict(d, "picked")
+	region = str(d.get("region", "nyc"))
+	rides = []
+	for r in _arr(d, "rides"):
+		if r is Dictionary and (r as Dictionary).has("pos"):
+			rides.append(r)
 	unlocked = _dict(d, "unlocked")
 	discovered = _dict(d, "discovered")
 	game_minutes = float(d.get("game_minutes", START_MINUTES))

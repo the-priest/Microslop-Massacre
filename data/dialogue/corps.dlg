@@ -1,0 +1,126 @@
+### The corp ladder: Respawn (gamers), Rockstarved, and the Chicago cell.
+### Parody brands. Every grievance is one real gamers already have; every
+### crime is invented and pinned only on the fictional company.
+
+=== pixel
+-- start
+? q.mq_chi1.started -> chi
+? flag.joined_respawn -> member
+? q.mq_respawn.started -> met
+> The arcade's back terminal lights up with a video call. A mask on the other end, a cartoon pixel-heart with an arrow through it, voice run through the same cheap filter Mr. Robot uses.
+PIXEL: fsociety. Finally. I've been screaming into E Corp's feedback form for three years. You know what a feedback form is? It's a trash can with a progress bar.
+PIXEL: I run Respawn. Ten thousand of us. People who bought games E Corp switched off. Accounts E Corp locked for a refund request. Studios E Corp bought and turned into a logo on a launcher. We're not asking for the world back. We're asking for the games we paid for.
+* "Why come to us?" -> why
+* "Games. There are bigger fights." -> bigger
+* "I'm listening. Who's first?" -> first
+-- why
+PIXEL: Because you did Five Nine— no. Sorry. Because you're the only crew that ever actually pressed the button instead of writing a thread about pressing the button. We write threads. We're very good at threads. We need someone who does things.
+-> first
+-- bigger
+PIXEL: Bigger. Sure. The debt, the banks, the whole machine. And who do you think OWNS the machine's favorite toys? E Corp bought every studio worth loving and bled it. Gaming's not a side quest, friend. It's the beta test for owning everything. They tried the loot box on kids first because kids don't have lawyers.
+! trust robot 0
+-> first
+-- first
+PIXEL: Start small. Start cruel. Rockstarved Games. One masterpiece a decade, and in between they sell pretend money for real money and call it a 'live service.' A kid in my Discord spent his late mom's savings on their Shark Cards. Fourteen. They sent him a thank-you email with a confetti gif.
+PIXEL: Their studio's on Floor 88 of the E Corp tower. Burn them down — not the building, the business model — and nine thousand people watch the little guy win for once. Then the next nine corps get scared.
+* "I'm in. Respawn's got a hacker now." -> join
+* "I'll think about it." -> think
+-- join
+PIXEL: PRESS START, baby. Okay. Okay okay okay. I'm putting the word out. Rockstarved. Floor 88. Make it hurt where they keep their quarterly earnings.
+! set joined_respawn ; quest mq_respawn 20 ; quest mq_rs1 10 ; trust robot 1 ; fame gamers 5 ; xp 60
+-> END
+-- think
+PIXEL: Think. We've been thinking for three console generations. Door's open. The forum's always open. That's the whole problem with the forum.
+! quest mq_respawn 20
+-> END
+-- met
+PIXEL: Rockstarved. Floor 88, E Corp tower. You'll need a way up past the lobby — try the ex-QA guys who drink their feelings at The Rabbit Hole. They kept their badges. Nobody at Rockstarved ever turns anything off. That's sort of the point.
+* "On it." -> go
+* "Tell me about Respawn." -> about
+-- about
+PIXEL: Streamers who got demonetized for telling the truth. Modders E Corp sued for fixing their games for free. QA testers crunched for ninety hours and laid off by an automated email the day after launch. Kids with refund tickets that'll never be read. That's Respawn. We're the people the industry calls 'entitled' for wanting to own what we bought.
+-> go
+-- go
+PIXEL: Go make them regret the confetti gif.
+! quest mq_respawn 20 ; quest mq_rs1 10
+-> END
+-- member
+? flag.rs_done -> rs_after
+PIXEL: How's Rockstarved coming? Floor 88. Project Whale. The thing's a spreadsheet that decides which of us is worth lying to.
+-> END
+-- rs_after
+? q.mq_chi1.started -> chi
+PIXEL: You actually did it. Rockstarved's stock did the fun kind of line. The angry kind. Three more studios 'paused' their live-service updates 'to listen to the community.' They never listen. They're scared. You made them scared.
+PIXEL: There's more. Electronic Arse. Phony. They run their whole racket out of Chicago. Darlene's got a cell out there in a dead warehouse. Seven hundred and ninety miles. Hope you like that plane.
+! quest mq_rs2 20 ; quest mq_rs2 done ; quest mq_respawn done ; quest mq_chi1 10 ; fame gamers 4 ; xp 40
+-> END
+-- chi
+PIXEL: Chicago. The South Side warehouse. Electronic Arse and Phony are both out there. Go west, friend. Drive it or fly it, but go.
+-> END
+
+=== kenny
+-- start
+? flag.kenny_badge -> after
+? !q.mq_rs1.started -> early
+> A thin guy at the end of the bar with a lanyard he never took off: ROCKSTARVED GAMES — QA — CRUNCH TEAM C. He's talking to his drink about frame pacing.
+KENNY: You don't look like QA. QA has a specific kind of dead in the eyes. Took me three years to earn mine.
+* "You worked at Rockstarved." -> worked
+* "Rough shift?" -> shift
+* [SNEAK 30] (Let him keep talking while you reach for the lanyard.) -> lift | lift_fail
+-- early
+KENNY: Whatever you're selling, I spent my severance on rent. Which was one week's severance, for three years. Math.
+-> END
+-- worked
+KENNY: Worked. Past tense. Ninety-hour weeks for the launch. Day after it shipped and reviewed a ninety-four? Automated email. 'Your position has been eliminated.' No name on it. A bot fired me from the game I bled for.
+KENNY: And you know what they kept running the whole time? Shark Cards. The pretend-money store. That never crunches. That never gets laid off. That's the only part of the building that's actually alive.
+-> hook
+-- shift
+KENNY: My last shift was eight months ago and I can still feel it. You ever test the same microtransaction flow four thousand times to make sure the BUY button never, ever fails? I have. The quit-to-desktop button fails all the time. The BUY button is flawless. That's not an accident. That's a priority.
+-> hook
+-- hook
+ELLIOT (V.O.): He still has the badge. CRUNCH TEAM C. Nobody at Rockstarved ever deactivates anything; that would mean someone owning a task to completion.
+* "I want to burn down the part of that building that's still alive. I need your badge." -> ask
+* [SPEECH 35] "You could be the guy who ended Shark Cards. Give me the badge." -> ask_win | ask
+* "Never mind." -> END
+-- ask
+KENNY: My badge. You're going up there to break Project Whale, aren't you. ...Take it. Take it, and when it's on the news, don't use my name, use my handle. kennyQA, all one word. I want the people who fired me to know a tester did it.
+! give rs_badge 1 ; set kenny_badge ; quest mq_rs1 20 ; fame gamers 3 ; xp 50
+-> END
+-- ask_win
+KENNY: The guy who ended Shark Cards. ...God. Yeah. Yes. Here. The badge still opens the service elevator; they never rotated the keys, rotating keys is a ticket and nobody closes tickets. Go. Make the confetti stop.
+! give rs_badge 1 ; set kenny_badge ; set rs_floor_open ; quest mq_rs1 20 ; fame gamers 4 ; xp 60
+-> END
+-- lift
+> He leans for his wallet and the lanyard swings loose. One motion. CRUNCH TEAM C, laminated, still warm from three years around his neck.
+! give rs_badge 1 ; set kenny_badge ; quest mq_rs1 20 ; stab -1 ; xp 40
+ELLIOT (V.O.): He'll notice it's gone tomorrow and assume he lost it, because losing things is what the job trained him to expect of himself.
+-> END
+-- lift_fail
+KENNY: Hey — hey, that's mine. That's the only thing I kept. Don't. Please don't.
+ELLIOT (V.O.): Too slow. I palm nothing and leave him his one souvenir. There's another way up.
+-> END
+-- after
+KENNY: Did it work? ...It worked. My phone hasn't stopped. kennyQA is trending. People are sending me money. Strangers. For a badge. I'm going to cry into a better drink.
+-> END
+
+=== chi_cell
+-- start
+? flag.chi_cell_met -> again
+> The warehouse is dark except for six monitors and a space heater. A young woman with a soldering iron waves without looking up. On the wall, a map of Chicago with two buildings circled in red.
+TRENTON (TEXT): that's Ansel. Darlene vouches. he's good. - D
+ANSEL: fsociety. The actual fsociety. Okay, playing it cool. Totally cool. Welcome to the Chicago cell, it's a warehouse, there's one chair, it's mine.
+ANSEL: Two targets. Electronic Arse: the 'surprise mechanics' people. They call loot boxes surprise mechanics because 'gambling aimed at children' tested poorly with regulators. And Phony Interactive: they can revoke your whole library any time they want, and last year they did, to make a point about 'account security.'
+ANSEL: Both of them run out of E Corp Midwest downtown. Same data floor. You hit one, you're already standing where you hit the other.
+! set chi_cell_met ; quest mq_chi1 done ; quest mq_chi2 10 ; fame gamers 3 ; xp 80
+* "Start with the loot boxes." -> boxes
+* "Why do you fight for this?" -> why
+-- boxes
+ANSEL: The loot boxes. Yeah. Get onto the Midwest data floor and rig Electronic Arse's drop server. I don't want to delete it. I want to make it HONEST. Print the real odds on the box. Watch the whole thing fall apart when people can see the one-in-nine-thousand.
+-> END
+-- why
+ANSEL: My little brother. He's eleven. He asked me if he was 'bad at the game' or if the game was 'built to make him feel bad so he'd buy the thing.' Eleven years old, and he figured out the business model from the inside of the sadness. I'd burn the world down for that kid. Starting with this building.
+! trust robot 1
+-> boxes
+-- again
+ANSEL: Data floor's at the back of E Corp Midwest. Loot-box server, then the account authority. One trip if you're fast and nobody sounds the alarm.
+-> END

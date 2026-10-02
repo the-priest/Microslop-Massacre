@@ -1,0 +1,82 @@
+### Steel Mountain: Bill Harper (social engineering) and the front desk.
+
+=== bill_harper
+-- start
+? flag.harper_done -> after
+? !q.mq_steel.started -> early
+> A heavyset man in a good suit, alone in the corner booth of The Rabbit Hole, three empties in front of him and a fourth on the way. He's talking to the bartender about his son's hockey team. Nobody's listening.
+ELLIOT (V.O.): Bill Harper. Senior facilities manager, Steel Mountain. Twenty-six years. He gives the VIP tours. He also, according to his unlocked LinkedIn and his very locked drinking schedule, hates every minute of it.
+* Sit down. Buy him a drink. -> sit
+* [SNEAK 30] Lift his access badge while he's drunk. -> lift | lift_fail
+* Leave him alone. -> END
+-- early
+ELLIOT (V.O.): Some sad executive crying into a bourbon. Not my problem tonight.
+-> END
+-- sit
+> You sit. He looks at the fresh drink, then at you, with the wary gratitude of a man who's used to buying his own.
+HARPER: You're not from the regional office. I can always tell. The regional office doesn't make eye contact.
+* "I'm a writer. Doing a piece on data infrastructure. You're a legend in the field, Bill." -> flatter
+* "I'm thinking about a career in secure storage. Can I pick your brain?" -> career
+* "Rough night?" -> rough
+-- flatter
+HARPER: A legend. Ha. In the data storage community, which has, what, nine people and a newsletter. ...But yeah. Yeah, I built that climate system. Me. Everybody thinks the mountain keeps itself cold. The mountain keeps itself cold because I never go home.
+! set harper_warm
+-> tour_hook
+-- career
+HARPER: Secure storage. Kid, run. Run from it. Twenty-six years and the thanks I get is a nephew with an MBA telling me my job's going to the cloud. The cloud. You know what the cloud is? It's somebody else's mountain.
+! set harper_warm
+-> tour_hook
+-- rough
+HARPER: Rough twenty-six years. My wife left, my kid won't call, and corporate's 'restructuring,' which is the word they use right before they restructure you out a window. But hey. The tapes are cold. The tapes are always cold.
+! set harper_warm
+-> tour_hook
+-- tour_hook
+HARPER: You want to see it? The facility? People think it's just a warehouse. It's a cathedral. I give a tour, you know. For VIPs. For people who get it.
+* [SPEECH 35] "I'd give anything to see it. A man like you showing me the real thing? That's the piece." -> tour_win | tour_soft
+* "Could I come by? Tomorrow, say?" -> tour_soft
+-- tour_win
+HARPER: Tomorrow. Come tomorrow. Ask for me at the desk, say you're my guest, they'll wave you right through the detectors and the biometrics and all of it. Finally, somebody who gets it. Don't be late, the morning light on the server crown, it's really something.
+! set harper_tour ; set harper_done ; quest mq_steel 20 ; trust robot 0 ; xp 60
+HARPER: ...You're not going to make me look bad in your article, right? Everybody always makes me look bad.
+ELLIOT (V.O.): No, Bill. The thing I'm going to do to your mountain, nobody's going to be able to blame on you. That's almost a kindness. I tell myself it's a kindness.
+-> END
+-- tour_soft
+HARPER: Maybe. Maybe. Buy me one more and we'll see if I remember saying it.
+-> END
+-- lift
+ELLIOT (V.O.): He leans for his wallet and the lanyard swings free of his jacket. One motion. His whole working life, laminated, in my pocket. He'll report it lost on Monday. By Monday it won't matter.
+! give steel_badge 1 ; set steel_badge_used ; set harper_done ; quest mq_steel 20 ; stab -1 ; xp 50
+-> END
+-- lift_fail
+HARPER: Hey! Hey, hands! What are you— get away from me. Barkeep, this kid's a pickpocket!
+ELLIOT (V.O.): Too slow. Too shaky. I palm nothing and walk, fast, before the bartender decides to care.
+! infamy coney 2
+-> END
+-- after
+? flag.steel_rigged -> after_done
+HARPER: Hey! My guy. The writer. You never came for the tour. Offer still stands, you know. Offer always stands. Nobody ever comes.
+-> END
+-- after_done
+> Bill Harper is not in his booth. The bartender says he hasn't been in since 'the thing at the mountain.' Says a lot of people got walked out that week.
+ELLIOT (V.O.): I did that. To free a city of strangers, I unemployed the one man who showed me his cathedral. The arithmetic of this keeps not adding up, and I keep doing it anyway.
+-> END
+
+=== steel_desk
+-- start
+? flag.steel_checked_in -> done
+> A bored guard behind bulletproof glass. A biometric pad, a metal detector, and a laminated sign about 'DEFENSE IN DEPTH.'
+GUARD: Help you?
+* "I'm Bill Harper's guest. He's expecting me for the tour." -> harper
+* "Just looking around." -> looking
+-- harper
+> The guard checks a clipboard, finds Harper's shaky handwriting, and waves you through the detector without turning it on.
+GUARD: Mr. Harper's VIP. Go on through. He talks the whole time, fair warning. Climate wing's at the very back, past the tape library.
+! set steel_checked_in ; quest mq_steel 30 ; xp 40
+ELLIOT (V.O.): Defense in depth, undone by one lonely man and a clipboard. The strongest wall in the world has a door, and every door has a Bill Harper.
+-> END
+-- looking
+GUARD: This is a secured federal-grade facility, not a mall. You're on camera. Smile.
+-> END
+-- done
+GUARD: You're already signed in, VIP. Enjoy the tapes.
+-> END

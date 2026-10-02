@@ -2,46 +2,79 @@
 
 === mr_robot
 -- start
+? q.mq_robot>=50 & !q.mq_robot.done & in.world -> robot_pier
+? q.mq_robot>=50 & !q.mq_robot.done -> pier_wait
 ? flag.joined_fsociety -> member
-? q.mq_fsociety>=20 -> arcade_intro
-> A man in a worn field jacket leans against the subway tile like he owns the whole line. He's been watching you since before you saw him.
-MR. ROBOT: There he is. Elliot Alderson. I've been waiting for you a long time. Longer than you'd believe.
+? q.mq_fsociety>=30 -> arcade_intro
+? q.mq_fsociety>=20 -> on_way
+> A man in a worn field jacket sits on the last bench of the platform like he owns the whole line. A patch on the jacket, half picked off: MR. ROBOT. He has been watching you since before you saw him.
+MR. ROBOT: There he is. You put it on Ron's box. Of course you did. You always finish what you start, kid, even when you can't remember starting it.
 ! quest mq_rootkit done
 ELLIOT: I don't know you.
-MR. ROBOT: You know me better than anyone alive. That's the whole problem, kid. Sit. Let me tell you what we're going to do to the biggest company on Earth.
--> pitch
--- pitch
-MR. ROBOT: E Corp. They own seventy percent of the consumer debt on this planet. Student loans. Mortgages. The little numbers that decide whether people eat. We're going to encrypt all of it. One night. One key. Then we throw the key in the ocean.
-ELLIOT (V.O.): It's insane. It's the only sane thing anyone's said to me in years. Both. Always both.
-* "You can't erase debt. The records are backed up." -> backups
-* "Why me?" -> whyme
-* [SPEECH 35] "This gets people killed. Chaos isn't freedom." -> chaos | backups
--- backups
-MR. ROBOT: Analog backups. Steel Mountain. A literal mountain full of magnetic tape. That's the beautiful part. That's the part you solve, because you're the only one who can.
--> whyme
--- whyme
-MR. ROBOT: Because you already do this. Every night. You watch people, you judge them, you decide who's guilty. I'm just giving your habit a target that deserves it. I'm giving you a war instead of a hobby.
--> join
--- chaos
-MR. ROBOT: Chaos is what they sell you to keep you scared of the door. But a debt nobody can collect isn't chaos, kid. It's a jubilee. It's the oldest idea there is. We're not inventing it. We're just the first ones with the root password.
+MR. ROBOT: Sure you do. You just don't know that you do. Sit down. Trains are late. They're always late. It's the only honest thing about this city.
+* "You put that file on my computer." -> file
+* "What do you want?" -> want
+* [SPEECH 35] "You know where I live, what I run, how I name my variables. Start talking, or I start digging." -> dig | want
+-- file
+MR. ROBOT: I put it where you'd find it. Who wrote it, that's a better question, and you're not ready for the answer. Doesn't matter tonight. What matters is you read it, you understood it, and you used it. You liked it. Don't lie to me. I'd know.
+-> want
+-- dig
+MR. ROBOT: Dig. Ha. You'd find a dead end with your own fingerprints on it. Fine. Short version: there are some people who think the same thing you think at three in the morning. That the world is a rigged game and the house never loses. They've stopped thinking it and started doing something about it.
 ! trust robot 1
--> join
--- join
-MR. ROBOT: The arcade. Coney Island. Fun Society. That's home. Come see what we've built, and then you tell me you can walk away from it. You won't be able to. I know you.
+-> want
+-- want
+MR. ROBOT: I want you to come and meet some friends. Coney Island. There's an arcade on the boardwalk, half the machines don't work, the other half are rigged. Fun Society. Come tonight, tomorrow, whenever. They'll be there. So will I.
+ELLIOT (V.O.): A train comes in. Doors open, close. When I look back at the bench, he's standing at the stairs, already leaving, like he timed it.
+* "Who are you?" -> who
+* "Why should I?" -> why
+-- who
+MR. ROBOT: The guy who's been waiting for you a long time. Longer than you'd believe. Come to Coney, kid. You'll want to see this. You've wanted it your whole life.
 ! quest mq_fsociety 20
 -> END
+-- why
+MR. ROBOT: Because you already do this. Every night. You read people, you judge them, you decide who's guilty, and then you tip off a cop and go to bed and nothing changes. I'm offering you the thing that changes.
+! quest mq_fsociety 20
+-> END
+-- pier_wait
+MR. ROBOT: Not here, kid. Not with them listening. Tonight. The end of the pier. You know the one.
+-> END
+-- on_way
+MR. ROBOT: Coney. Fun Society. Don't make me come get you.
+-> END
 -- arcade_intro
-MR. ROBOT: You found it. Of course you did. This is fsociety. Darlene runs the code, Mobley builds the toys, Trenton keeps us honest. And you — you're the one who makes it real. So. Are you in?
-* "I'm in. Let's burn it down." -> yes ! set joined_fsociety ; quest mq_fsociety 40 ; trust robot 2 ; fame fsociety 6
-* "I need to think." -> think
-* [require trust.robot<0] "No. You're not real. I don't trust you." -> refuse
+? flag.heard_plan -> ask_again
+> The back room of the arcade. Monitors, cables, a whiteboard rubbed almost clean. Four people stop talking when you walk in.
+MR. ROBOT: Everybody, Elliot. Elliot, everybody. Darlene writes the code that makes grown engineers cry. Mobley builds things out of other things. Trenton keeps us honest, which is the hardest job here. And you know me. More or less.
+DARLENE: Hey. Long time. ...Don't look at me like that. Later.
+MR. ROBOT: Now. Here's what we're going to do to the biggest company on Earth.
+! set heard_plan
+> E Corp holds seventy percent of the world's consumer debt: student loans, mortgages, credit cards, medical bills. Every one of those numbers lives in their data centers.
+MR. ROBOT: We don't delete it. Deleting gets restored by lunch. We encrypt it. All of it, in one night, with a key nobody keeps. The records still exist; they just become noise. No one owes anything to anyone, because nobody can read the ledger. The biggest redistribution of wealth in history, and it happens in about four minutes.
+TRENTON: Or it crashes the economy and people who already have nothing lose the little they have. We argue about that every night. You should hear both sides before you pick one.
+MOBLEY: There's a catch. Several. E Corp keeps tape backups in a vault upstate called Steel Mountain. We need someone inside their network. And we need more muscle than five people with a soldering iron. Every piece of this has someone else's hands on it.
+MR. ROBOT: Which means you're going to meet some people. Some of them are worse than E Corp. You'll have to decide which ones you can stomach. So. Are you in?
+-> decide
+-- ask_again
+MR. ROBOT: You heard the plan. The door's still open. Are you in?
+-> decide
+-- decide
+* "I'm in." -> yes ! set joined_fsociety ; quest mq_fsociety 40 ; trust robot 2 ; fame fsociety 6
+* [if !flag.thought_once] "I need to think." -> think
+* "Trenton's right to worry. Tell me how you keep it from hurting the people at the bottom." -> trenton_q
+* [require trust.robot<0] "No. I don't trust you. I don't think you're even real." -> refuse
+-- trenton_q
+TRENTON: Thank you. Someone asked. ...Food banks, pharmacies, the small stuff, it runs on cash and credit unions; we leave those alone. The hard part is the week after, when nobody knows what anything is worth. We plan for that week. Or we don't do this.
+MR. ROBOT: See? Conscience. Every good crew needs one. Now. Yes or no?
+! set asked_week_after ; trust darlene 1
+-> decide
 -- yes
-MR. ROBOT: That's my kid. Welcome home. Three threads, and you pull all of them. Steel Mountain: Mobley's device cooks E Corp's backup tapes. An army: the Dark Army, or the FBI looking the wrong way. And a door inside E Corp itself. It's all on the board.
+MR. ROBOT: That's my kid. Welcome home. Three threads. The mountain: Mobley's device cooks the tapes. The army: someone with real reach, the Dark Army in Chinatown, or the Feds looking the wrong way, and you will meet both whether you like it or not. And the door: a way inside E Corp itself. It's all on the board.
 ! quest mq_steel 10 ; quest mq_darkarmy 10 ; quest mq_ecorp 10 ; quest mq_finale 10
-MR. ROBOT: Any order you like. When all three are done, you come back here and we press the key together.
+MR. ROBOT: Any order you like. Every choice you make out there changes what this night looks like. When it's all in place, you come back here and we press the key. Together.
 -> END
 -- think
 MR. ROBOT: Think. Sure. You'll think, and you'll come back, because thinking is just the noise you make on your way to the thing you were always going to do. Door's open.
+! set thought_once
 -> END
 -- refuse
 MR. ROBOT: Not real. That's cute. Ask yourself who's been finishing your sentences your whole life, kid. Then come find me when you're done pretending.
@@ -70,10 +103,16 @@ MR. ROBOT: You're fraying. I can see it. Take the meds if you have to — I'll g
 
 === darlene
 -- start
+? q.mq_robot>=10 & q.mq_robot<30 & in.darlene_apt -> darlene_home
+? flag.five_nine_done & q.mq_after>=20 & !q.mq_after.done -> morning_after
+? flag.five_nine_done & !q.mq_after>=20 & in.arcade -> morning_after_early
 ? companion.darlene_n -> comp_darlene_n
 ? flag.joined_fsociety -> crew
 ? q.mq_fsociety>=10 -> street
 DARLENE: You don't remember me, do you. That's fine. That's on-brand. Just — walk with me. Don't make it weird.
+-> END
+-- morning_after_early
+DARLENE: Go home first. Sleep. Watch the news. Then come back and tell me if it still feels like winning.
 -> END
 -- street
 DARLENE: Okay. So. You met him. The jacket guy. He talks like a prophet and smells like a subway, and he's usually right, which is the annoying part.

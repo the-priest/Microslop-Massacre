@@ -66,15 +66,17 @@ const INTERIORS := {
 		{"id": "apt_fishfood", "item": "fish_food", "count": 1, "pos": [6.5, 0.9, 4.6]},
 	],
 	"spots": [
-		{"id": "apt_pc", "kind": "terminal", "title": "Your Workstation", "verb": "Log in", "pos": [5.4, 1.2, 1.4], "size": [1.4, 1.4, 1.0], "user": "elliot", "welcome": "root@elliot:~# whoami\nelliot. probably.\n\n3 unread messages. 1 has no sender.", "entries": [
-			{"title": "mail: Gideon Goddard  [URGENT]", "text": "Elliot, E Corp got hit tonight. Their edge servers lit up like Christmas and now their CTO's office is lighting ME up. Somebody knocked on the CS30 honeypot, the one we left open on purpose. I need you at Allsafe. Now. I know it's late. I'm sorry. I'm not sorry. Midtown, the glass building, you know the one. -G", "fx": "set read_gideon ; quest mq_hello 30"},
-			{"title": "mail: (no sender)  hello_friend.txt", "text": "Hello, Elliot.\n\nWe've been watching the same people you have. You hack them to understand them. We hack them to end them.\n\nYou know the name Washington Township. Your father's name is on that memorial. E Corp paid a fine smaller than their coffee budget and called it justice. Every loan they hold is a leash, and every leash is backed up somewhere. We know where.\n\nThe honeypot tonight wasn't an accident. Someone left the door open. A coffee shop on the Lower East Side, Ron's, runs a server that talks to it. When you get there, you'll find a rootkit on your own desktop that you don't remember writing. Put it on that server. Then come find us.\n\nWe are fsociety. We are finally awake.", "fx": "set fsociety_msg"},
+		{"id": "apt_pc", "kind": "terminal", "title": "Your Workstation", "verb": "Log in", "pos": [5.4, 1.2, 1.4], "size": [1.4, 1.4, 1.0], "user": "elliot", "welcome": "root@elliot:~# whoami\nelliot. probably.\n\n3 unread messages. 1 new file on the desktop you don't recognize.", "entries": [
+			{"title": "mail: Gideon Goddard  [URGENT]", "text": "Elliot. E Corp had an incident overnight: somebody knocked on CS30, the honeypot we keep open on purpose, and their CTO's office has been calling me every forty minutes since. I need your eyes on it. Tomorrow, nine sharp, Allsafe. NOT tonight. Go to bed. I mean it this time. -G", "fx": "set read_gideon ; quest mq_hello 25"},
+				{"title": "file: fsociety00.dat", "text": "4.1 megabytes. Created 3:12 AM this morning, on your machine, under your account. You don't download things. Things don't download themselves onto what you run.\n\nOne line of text:\n\n    hello friend.\n\nAnd under it, code. A rootkit. A good one. It hides the way you'd hide. It names its variables after old arcade games, the way you do. You'd swear you wrote it. You don't remember writing it.", "fx": "set fsociety_msg ; set dat_opened"},
+				{"title": "cat /var/log/auth.log | tail", "text": "03:09  login  elliot  (local, keyboard)\n03:31  logout elliot\n\nTyped, not pasted. You can see the pauses where a hand hesitated over the keys. Twenty-two minutes you don't have.\n\nYou took your pills last night. You're almost sure you took your pills.", "fx": "set dat_logs ; stab -2", "when": "flag.dat_opened"},
 			{"title": "sms: Shayla", "text": "u home?? i have the good stuff and the bad stuff. also some guy named vera was asking about u. dont answer if he calls lol. unless u want to. dont. come say hi im in the hallway"},
 			{"title": "news: tonight's headlines", "text": "E CORP DENIES NETWORK BREACH: 'Our systems are secure,' says SVP Tyrell Wellick.\nPRICE: E COIN 'THE FUTURE OF MONEY.' Critics: 'a future E Corp owns.'\nTOWNSHIP FAMILIES MARK 22 YEARS WITHOUT A TRIAL.\nMASKED PROTESTERS AT THE TWIN TOWERS PLAZA. A cartoon face, a top hat, a message: 'WE ARE FSOCIETY.'\nBRONX: SIX TEENAGE OVERDOSES IN A MONTH NEAR THE CARVER HOUSES. 'Candy,' residents call it. Police: 'no leads.'\nHARLEM SHELTER COUNSELOR: 'I CALLED THE POLICE TWICE. NOBODY WILL LISTEN.'\nNYPD: MUGGINGS UP IN THE BRONX AS SHELTERS CLOSE."},
 			{"title": "app: CourierNet (jobs)", "text": "Cash work, no questions. Deliveries, repo, 'data recovery', bounties. Press J on your phone for DATA > JOBS any time. Up to three contracts at once. The money's real. So is the risk."},
 			{"title": "cat drafts/krista.txt", "text": "Dear Krista, today I felt almost — [delete]. She gets the truth in installments I can't afford."},
 		], "actions": [{"title": "Feed Qwerty (remotely, you monster)", "result": "The auto-feeder clicks. The fish forgives you. Fish always forgive.", "fx": "trust krista 0"}]},
 		{"id": "apt_bed_spot", "kind": "bed", "title": "Your Bed", "verb": "Sleep", "pos": [1.6, 0.6, 4.4], "size": [1.6, 1, 2.2]},
+		{"id": "apt_tv", "kind": "convo", "title": "TV", "verb": "Watch", "pos": [3.4, 1.0, 3.0], "size": [1.4, 1.0, 0.6], "convo": "apt_news", "when": "flag.five_nine_done"},
 		{"id": "apt_qwerty", "kind": "convo", "title": "Qwerty (the fish)", "verb": "Watch", "pos": [6.4, 1.2, 4.6], "size": [0.9, 1, 0.9], "convo": "apt_qwerty"},
 	],
 },
@@ -125,7 +127,9 @@ const INTERIORS := {
 		{"id": "allsafe_supplies", "title": "Supply Cabinet", "pos": [13.6, 8.4], "y": 0.6, "size": [0.6, 1.2, 0.6], "loot": "office_desk", "items": {"bobby_pin": 4, "usb_drive": 2}},
 	],
 	"spots": [
-		{"id": "allsafe_terminal", "kind": "terminal", "title": "Allsafe Workstation", "verb": "Log in", "pos": [11.5, 1.2, 4.0], "size": [0.7, 1.4, 1], "hack": 25, "header": "cs30.allsafe.lan", "welcome": "Allsafe internal. Gideon's watching the watchers now.", "entries": [{"title": "Read: E Corp contract", "text": "Allsafe holds the E Corp security contract. One client. If E Corp walks, Gideon's company dies. Everyone here is one bad day from unemployed.", "fx": "set knows_allsafe_ecorp"}, {"title": "Read: honeypot alert", "text": "Someone left a honeypot server (CS30) exposed. Deliberately. Someone inside wants a door left open."}], "actions": [{"title": "Scrub the intrusion logs", "result": "The logs forget you were ever here. Gideon will never know. You will.", "fx": "set scrubbed_logs ; infamy allsafe 1", "when": "q.mq_rootkit>=20"}]},
+		{"id": "allsafe_terminal", "kind": "terminal", "title": "Allsafe Workstation", "verb": "Log in", "pos": [11.5, 1.2, 4.0], "size": [0.7, 1.4, 1], "hack": 25, "header": "cs30.allsafe.lan", "welcome": "Allsafe internal. Gideon's watching the watchers now.", "entries": [{"title": "Read: E Corp contract", "text": "Allsafe holds the E Corp security contract. One client. If E Corp walks, Gideon's company dies. Everyone here is one bad day from unemployed.", "fx": "set knows_allsafe_ecorp"}, {"title": "Read: honeypot alert", "text": "Someone left a honeypot server (CS30) exposed. Deliberately. Someone inside wants a door left open."}], "actions": [{"title": "Scrub the intrusion logs", "result": "The logs forget you were ever here. Gideon will never know. You will.", "fx": "set scrubbed_logs ; infamy allsafe 1", "when": "q.mq_rootkit>=20"},
+				{"title": "Frame Gideon: his credentials on the CS30 change, his name on fsociety's relay, $40,000 in a Cyprus account", "result": "It takes eleven minutes. That's the part you'll remember: that it only took eleven minutes to make twenty years of an honest man's life look like a lie. Through the glass, Gideon is on the phone, laughing at something. He waves at you.", "fx": "set gideon_framed ; set da_allied ; set ally_secured ; quest mq_darkarmy 40 ; quest mq_darkarmy done ; fame darkarmy 6 ; stab -8 ; xp 120", "when": "flag.da_price_gideon & !flag.gideon_framed & !flag.da_betrayed"},
+				{"title": "Build the ghost: an insider who never existed, wearing Gideon's credentials like a borrowed coat", "result": "A contractor named 'R. Kovac'. A badge photo built from nine strangers' faces. Two years of commute data, a gym membership, a girlfriend in Philadelphia who doesn't exist either. The CS30 change is his now. He'll vanish the day the FBI comes looking, the way contractors do. Gideon keeps his name.", "fx": "set ghost_insider ; set da_allied ; set ally_secured ; quest mq_darkarmy 40 ; quest mq_darkarmy done ; fame darkarmy 8 ; stab 2 ; xp 160", "when": "flag.da_price_ghost & !flag.ghost_insider & !flag.da_betrayed"}]},
 		{"id": "allsafe_server_spot", "kind": "convo", "title": "Server Room", "verb": "Inspect", "pos": [18.5, 1.2, 4.2], "size": [1, 1.4, 3], "convo": "allsafe_servers"},
 	],
 },
@@ -173,6 +177,8 @@ const INTERIORS := {
 		{"id": "arcade_invaders", "kind": "minigame", "title": "SPACE INVADERS", "verb": "Play", "pos": [1.4, 1.2, 2], "size": [0.9, 1.4, 0.9], "game": "invaders", "fx_win": "achieve arcade_champ ; set arcade_won"},
 		{"id": "arcade_pinball", "kind": "minigame", "title": "Pinball", "verb": "Play", "pos": [5, 1.2, 6.5], "size": [0.9, 1.2, 1.4], "game": "signal"},
 		{"id": "arcade_workstation", "kind": "terminal", "title": "fsociety Mainframe", "verb": "Access", "pos": [17.6, 1.2, 4.5], "size": [1, 1.4, 2], "when": "flag.joined_fsociety", "welcome": "fsociety mainframe. The plan lives here.", "entries": [{"title": "Read: the plan", "text": "Encrypt every E Corp record with a key nobody keeps. The debt doesn't get erased — it becomes unreadable. Same thing, if you're brave enough."}, {"title": "Read: Darlene's note", "text": "'If you're reading this without me, you already made the choice I was afraid of. Come home. — D'"}]},
+		{"id": "arcade_pixel", "kind": "convo", "title": "Respawn (video call)", "verb": "Answer", "pos": [17.6, 1.2, 4.5], "size": [1.2, 1.4, 1.5], "convo": "pixel", "when": "flag.joined_fsociety & q.mq_robot.done"},
+		{"id": "arcade_sign", "kind": "convo", "title": "Painted-Over Sign", "verb": "Look", "pos": [9.0, 2.2, 7.7], "size": [3.0, 0.8, 0.4], "convo": "arcade_sign", "when": "q.mq_robot>=30"},
 		{"id": "arcade_plan", "kind": "convo", "title": "The Plan Board", "verb": "Study", "pos": [15, 1.2, 2.2], "size": [2, 1.4, 0.5], "convo": "arcade_planboard", "when": "flag.joined_fsociety"},
 	],
 },
@@ -229,6 +235,7 @@ const INTERIORS := {
 	"rooms": [{"r": [0, 0, 7, 6], "h": 2.9, "wall": Color(0.34, 0.3, 0.34), "floor": F_WOOD, "light": Color(0.9, 0.6, 0.7), "energy": 0.9, "lights": [[3.5, 2.6, 3]]}],
 	"exits": [{"pos": [3.5, 6], "face": "s", "to": "world:d_darlene", "label": "Street"}],
 	"furn": [["mattress", 1.6, 4.5, 0], ["desk_pc", 5.5, 1, 180, {"screen": Color(0.9, 0.3, 0.5)}], ["monitor_wall", 6.6, 3.5, -90], ["sofa", 4.8, 3.4, -90, {"col": Color(0.3, 0.2, 0.3)}], ["boxes", 0.6, 1, 0], ["trash_pile", 6, 5.5, 0], ["poster", 3, 0.2, 0, {"col": Color(0.6, 0.1, 0.3)}]],
+	"spots": [{"id": "darlene_photo", "kind": "convo", "title": "The Photograph", "verb": "Look", "pos": [3.0, 1.6, 0.3], "size": [1.2, 1.2, 0.6], "convo": "darlene_photo", "when": "q.mq_robot>=20"}],
 	"containers": [{"id": "darlene_stash", "title": "Darlene's Gear", "pos": [0.6, 1], "y": 0.5, "size": [1.2, 0.9, 0.6], "loot": "crate", "owner": "darlene", "owner_ok": "trust.darlene>=2", "items": {"fsociety_mask": 1, "burner_phone": 2}}],
 },
 # ================================================================ RABBIT HOLE
@@ -243,18 +250,28 @@ const INTERIORS := {
 },
 # =============================================================== VERA'S STASH
 "vera_stash": {
-	"name": "Stash House", "amb": "interior", "ambient": Color(0.22, 0.2, 0.2), "restricted": "vera", "allowed_when": "false",
+	"name": "Stash House", "amb": "interior", "ambient": Color(0.22, 0.2, 0.2), "restricted": "vera", "allowed_when": "flag.vera_door_open | flag.vera_deal",
 	"rooms": [
-		{"r": [0, 0, 9, 7], "h": 2.9, "wall": Color(0.24, 0.2, 0.18), "floor": F_CONCRETE, "light": Color(0.7, 0.5, 0.4), "energy": 0.7, "lights": [[4.5, 2.6, 3.5]]},
-		{"r": [9, 2, 14, 6], "h": 2.9, "wall": W_DARK, "floor": F_CONCRETE, "light": Color(0.9, 0.3, 0.3), "energy": 0.6},
+		{"r": [0, 0, 9, 7], "h": 2.9, "wall": Color(0.24, 0.2, 0.18), "floor": F_CONCRETE, "light": Color(0.75, 0.55, 0.4), "energy": 0.75, "lights": [[4.5, 2.6, 3.5]]},
+		{"r": [9, 0, 15, 7], "h": 2.9, "wall": Color(0.3, 0.24, 0.2), "floor": F_WOOD, "light": Color(0.95, 0.7, 0.45), "energy": 0.8, "lights": [[12, 2.6, 3.5]]},
+		{"r": [0, -7, 15, 0], "h": 2.9, "wall": W_DARK, "floor": F_CONCRETE, "light": Color(0.9, 0.3, 0.3), "energy": 0.55, "lights": [[4, 2.6, -3.5], [11.5, 2.6, -3.5]]},
 	],
-	"doors": [[9, 4, 1.1]],
-	"exits": [{"pos": [4.5, 7], "face": "s", "to": "world:d_vera", "label": "Out"}],
-	"furn": [["mattress", 1.6, 5, 0], ["table", 4.5, 3, 0], ["chair", 3.5, 3, 90], ["chair", 5.5, 3, -90], ["boxes", 0.6, 1, 0], ["shelf_industrial", 8, 6, 0], ["cell_bars", 11.5, 2.2, 0, {"w": 4}], ["mattress", 11.5, 5, 0], ["trash_pile", 6, 6, 0]],
+	"doors": [[9, 4.5, 1.1], [3, 0, 1.1], [13.2, 0, 1.0]],
+	"exits": [
+		{"pos": [4.5, 7], "face": "s", "to": "world:d_vera", "label": "Front Door"},
+		{"pos": [1.5, -7], "face": "n", "to": "world:d_vera_back", "label": "Alley Door"},
+	],
+	"furn": [
+		["table", 4.5, 3.2, 0], ["chair", 3.5, 3.2, 90], ["chair", 5.5, 3.2, -90], ["tv", 4.5, 6.4, 180], ["sofa", 1.0, 4.5, 90, {"col": Color(0.3, 0.25, 0.2)}], ["boxes", 7.8, 1.0, 0], ["trash_pile", 7.6, 6.0, 0],
+		["desk", 13.4, 5.6, -90], ["chair", 12.6, 5.6, 90], ["safe", 14.3, 1.0, -90], ["shelf_industrial", 10.0, 6.5, 180], ["lamp", 14.4, 6.5, 0],
+		["cell_bars", 11.5, -4.2, 0, {"w": 4.6}], ["cell_bars", 9.2, -5.6, 90, {"w": 2.8}], ["cell_bars", 13.8, -5.6, 90, {"w": 2.8}], ["mattress", 11.5, -6.2, 0],
+		["crate", 6.8, -3.6, 0], ["crate", 7.6, -4.6, 0], ["boxes", 1.0, -1.2, 0], ["shelf_industrial", 4.5, -6.5, 0], ["drums", 14.2, -1.0, 0],
+	],
 	"containers": [
-		{"id": "vera_ledger_box", "title": "Vera's Safe", "pos": [8, 6], "y": 1.0, "size": [1.4, 1, 0.9], "lock": 60, "items": {"vera_ledger": 1, "cash": 0}, "cash": 400, "owner": "vera", "owner_ok": "dead.vera", "fx_open": "quest sq_shayla 40"},
+		{"id": "vera_ledger_box", "title": "Vera's Safe", "pos": [14.3, 1.0], "y": 1.0, "size": [1.0, 1, 0.9], "lock": 60, "items": {"vera_ledger": 1, "cash": 0}, "cash": 400, "owner": "vera", "owner_ok": "flag.shayla_out"},
+		{"id": "vera_crate", "title": "Crew Stash", "pos": [7.2, -4.1], "y": 0.6, "size": [1.8, 1.2, 1.6], "loot": "crate", "items": {"ammo_9mm": 18, "first_aid": 1, "stimpak_street": 1}, "owner": "vera", "owner_ok": "flag.shayla_freed"},
 	],
-	"spots": [{"id": "shayla_cell", "kind": "convo", "title": "The Cell", "verb": "Approach", "pos": [11.5, 1.2, 3.5], "size": [4, 2, 1.5], "convo": "shayla_rescue", "when": "q.sq_shayla>=30"}],
+	"spots": [{"id": "shayla_cell", "kind": "convo", "title": "The Cage", "verb": "Approach", "pos": [11.5, 1.2, -3.8], "size": [4.6, 2, 1.0], "convo": "shayla_rescue", "when": "q.sq_shayla>=30"}],
 },
 # ============================================================= FBI FIELD OFFICE
 "fbi_office": {
@@ -367,6 +384,7 @@ const INTERIORS := {
 				{"title": "Memo: E Corp liaison", "text": "'All cyber incidents involving E Corp assets are to be referred to E Corp Security and the FBI. Do not open local files.' Signed by a deputy commissioner who owns a lot of E Corp stock."},
 			],
 			"actions": [
+				{"title": "Erase 'People v. Vera' (Narcotics, pending trial)", "result": "Arrest report, lab results, two witness statements, the chain of custody. Gone, backups and all. In six weeks a judge will ask for a file that never existed. A man who sells pills to kids walks out of a courthouse a free man, and the only fingerprints on it are yours.", "fx": "set vera_case_wiped ; stab -3 ; xp 40", "when": "flag.vera_deal & !flag.vera_case_wiped"},
 				{"title": "Delete Lopez's case file (and the backups)", "result": "Gone. The file, the photos, the backup on the shared drive. Lopez will know someone did it. She will never be able to prove who.", "fx": "set lopez_case_gone ; quest sq_lopez done ; stab -2 ; xp 40", "when": "q.sq_lopez>=10 & !q.sq_lopez.done"},
 				{"title": "Rewrite the file so it points at someone else", "result": "You pick a two-time felon who lives on the right blocks and rewrite the timeline around him. Every detail fits now. Somebody else is going to pay for what you did, and the case will be closed with a ribbon on it.", "fx": "set lopez_case_gone ; set lopez_framed ; quest sq_lopez done ; stab -8 ; xp 40", "when": "q.sq_lopez>=10 & !q.sq_lopez.done"},
 			]},
@@ -409,7 +427,13 @@ const INTERIORS := {
 		["hospital_bed", 2.0, -7.5, 0], ["hospital_bed", 5.5, -7.5, 0], ["hospital_bed", 9.0, -7.5, 0], ["hospital_bed", 12.5, -7.5, 0], ["curtain", 3.75, -7.5, 90, {"w": 2.4}], ["curtain", 7.25, -7.5, 90, {"w": 2.4}], ["curtain", 10.75, -7.5, 90, {"w": 2.4}],
 		["counter", 13.5, -2.0, 0, {"w": 4.0, "col": Color(0.85, 0.87, 0.9)}], ["shelf", 13.5, -0.4, 180],
 	],
-	"spots": [{"id": "hosp_shop", "kind": "shop", "title": "Hospital Pharmacy", "verb": "Buy", "pos": [13.5, 1.0, -2.0], "size": [4.0, 1.6, 1.2], "shop": "pharmacy"}],
+	"spots": [{"id": "hosp_records", "kind": "terminal", "title": "Records Terminal", "verb": "Access", "pos": [1.0, 1.2, -2.0], "size": [1.0, 1.4, 1.0], "hack": 40, "password_flag": "mercy_pw", "header": "MERCY GENERAL  //  PATIENT RECORDS  //  ARCHIVE 1985-2010", "welcome": "Medical records, scanned from paper in 2009 by somebody who clearly hated scanning. Search: ALDERSON.", "when": "q.mq_robot>=40",
+			"entries": [
+				{"title": "ALDERSON, EDWARD  (adm. 1993)", "text": "Acute myeloid leukemia. Home address: Washington Township, NJ. Occupation: owner, 'Mr. Robot Computer Repair,' Coney Island. Nurse's note, in pen, scanned crooked: 'Pt wears an old army jacket over his gown, won't let us take it. Son (8) refuses to leave the room. Daughter (4) asleep in the chair.' Deceased, January 1994."},
+				{"title": "ALDERSON, ELLIOT  (pediatric psych, 1994-2002)", "text": "Referred after the death of his father. Patient presents as withdrawn, highly intelligent, with long gaps in memory. From 1996: patient describes a companion 'who sounds like Dad' and 'does the things I can't.' Note, 2002: 'Elliot reports the companion has gone. I do not believe it has gone. I believe it has learned to be quiet.'", "fx": "quest mq_robot 50 ; stab -3"},
+				{"title": "Discharge note (2002), handwritten", "text": "'He asked me today if a person can be haunted by someone who is still inside them. I said I didn't know. I should have said yes.' The next document in the file is a records request from Krista Gordon, LCSW. Dated last year."},
+			]},
+		{"id": "hosp_shop", "kind": "shop", "title": "Hospital Pharmacy", "verb": "Buy", "pos": [13.5, 1.0, -2.0], "size": [4.0, 1.6, 1.2], "shop": "pharmacy"}],
 },
 "ecorp_credit": {
 	"name": "E Corp Consumer Credit — Branch 0419", "amb": "office", "ambient": Color(0.4, 0.42, 0.48),
@@ -429,7 +453,10 @@ const INTERIORS := {
 		{"id": "credit_term", "kind": "text", "title": "Debt Kiosk", "verb": "Read", "pos": [7.0, 1.2, 5.0], "size": [1.0, 2.0, 1.0], "text": "'CHECK YOUR ECOIN CREDIT SCORE.' A number, cheerfully red, that decides whether strangers get to eat. You could delete it. Soon, maybe, you will."},
 		{"id": "credit_mgr", "kind": "terminal", "title": "Branch Manager's PC", "verb": "Use", "pos": [17.0, 1.1, 1.0], "size": [1.4, 1.2, 0.9], "hack": 35, "header": "E CORP CONSUMER CREDIT  //  BRANCH 0419", "welcome": "Collections dashboard. A leaderboard of employees ranked by 'recoveries'. Someone named Gary is winning.",
 			"entries": [{"title": "Collections: top 10 delinquent accounts", "text": "Ten families, ten numbers. A widow in Astoria three months behind on a loan for her husband's funeral. A Greek diner in Astoria being 'restructured' into bankruptcy. A shelter in Harlem whose line of credit was frozen the week after its counselor complained to the press. The notes field on every one says the same thing: 'Escalate.'"}],
-			"actions": [{"title": "Mark all ten accounts 'settled in full'", "result": "Ten records change color from red to green. The system will catch it in a month, maybe two. For a month, maybe two, ten families will open letters that say THANK YOU instead of FINAL NOTICE.", "fx": "set credit_forgiven ; fame locals 4 ; fame harlem 3 ; infamy ecorp 3 ; stab 4 ; xp 40", "when": "!flag.credit_forgiven"}]},
+			"actions": [
+				{"title": "Poison tonight's E Coin key batch", "result": "The batch signs forty thousand wallets for the city's first day. Every one of them now carries a signature that will fail validation in about six hours, in front of the cameras. It will look like a bug. It will look like E Corp can't run its own money.", "fx": "set ecoin_broken ; set after_done ; fame fsociety 6 ; infamy ecorp 6 ; quest mq_after 40 ; quest mq_after done ; quest mq_finale 40 ; give deus_invite 1 ; xp 200", "when": "flag.after_path=sabotage & !flag.after_done"},
+				{"title": "Copy the E Coin rollout plan (Price's internal deck)", "result": "Forty slides. Slide 9: 'The crisis is the onboarding.' Slide 14: projected household dependency by quarter. Slide 31 is a photo of Price shaking hands with a woman in a red coat. You copy all of it.", "fx": "give ecoin_plan 1 ; xp 60", "when": "flag.after_path=press & !item.ecoin_plan | flag.after_path=fbi & !item.ecoin_plan"},
+				{"title": "Mark all ten accounts 'settled in full'", "result": "Ten records change color from red to green. The system will catch it in a month, maybe two. For a month, maybe two, ten families will open letters that say THANK YOU instead of FINAL NOTICE.", "fx": "set credit_forgiven ; fame locals 4 ; fame harlem 3 ; infamy ecorp 3 ; stab 4 ; xp 40", "when": "!flag.credit_forgiven"}]},
 	],
 },
 "pier9_warehouse": {
@@ -466,7 +493,7 @@ const INTERIORS := {
 	],
 },
 "steel_mountain": {
-	"name": "Steel Mountain", "amb": "interior", "ambient": Color(0.4, 0.42, 0.46), "restricted": "ecorp", "allowed_when": "disguise.steel | flag.steel_badge_used",
+	"name": "Steel Mountain", "amb": "interior", "ambient": Color(0.4, 0.42, 0.46), "restricted": "ecorp", "allowed_when": "disguise.steel | flag.steel_badge_used | flag.harper_tour",
 	"rooms": [
 		{"r": [0, 0, 12, 8], "h": 3.4, "wall": W_CONCRETE, "floor": F_TILE, "floor_kind": "tile", "light": Color(0.8, 0.85, 0.9), "energy": 1.0, "lights": [[3, 3.1, 4], [9, 3.1, 4]]},
 		{"r": [12, 2, 18, 7], "h": 3.4, "wall": Color(0.5, 0.5, 0.52), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.75, 0.8, 0.85), "energy": 0.9},
@@ -478,7 +505,10 @@ const INTERIORS := {
 		["reception", 6, 1.5, 0, {"col": Color(0.4, 0.42, 0.45), "glow": Color(0.6, 0.8, 1)}], ["security_desk", 3, 5, 0], ["metal_detector", 9, 5, 0], ["locker_row", 15, 6.5, 0, {"n": 5}], ["bench", 15, 3, 0, {"w": 3}], ["tape_library", 22, 1.5, 0], ["tape_library", 25.6, 4, -90], ["climate_unit", 20, 7, 180], ["server_rack", 24, 7, 180, {"led": Color(0.5, 0.9, 0.6)}],
 	],
 	"containers": [{"id": "steel_lockers", "title": "Employee Lockers", "pos": [15, 6.5], "y": 0.95, "size": [2.5, 1.9, 0.5], "loot": "guard_locker", "owner": "ecorp", "owner_ok": "disguise.steel"}],
-	"spots": [{"id": "steel_climate", "kind": "convo", "title": "Climate Control Unit", "verb": "Rig", "pos": [20, 1.2, 7], "size": [1.8, 2, 1], "convo": "steel_climate", "when": "item.raspberry_pi>=1"}],
+	"spots": [
+		{"id": "steel_desk", "kind": "convo", "title": "Security Desk", "verb": "Check in", "pos": [3, 1.2, 5], "size": [2, 2, 1.5], "convo": "steel_desk", "when": "flag.harper_tour & !flag.steel_checked_in"},
+		{"id": "steel_climate", "kind": "convo", "title": "Climate Control Unit", "verb": "Rig", "pos": [20, 1.2, 7], "size": [1.8, 2, 1], "convo": "steel_climate", "when": "item.raspberry_pi>=1"},
+	],
 },
 # ============================================ CARVER HOUSES, BUILDING C (Bronx)
 "carver_c": {
@@ -580,12 +610,119 @@ const INTERIORS := {
 	],
 },
 # ======================================================== WORLD TRADE CENTER
+# ======================================================= THE INTERSTATE (I-80)
+"hw_diner": {
+	"name": "Big Rig Diner", "amb": "jazz", "ambient": Color(0.42, 0.36, 0.3),
+	"rooms": [{"r": [0, 0, 14, 8], "h": 3.2, "wall": Color(0.75, 0.72, 0.62), "floor": Color(0.7, 0.68, 0.64), "floor_kind": "tile", "light": Color(1.0, 0.92, 0.75), "energy": 1.2, "lights": [[4, 2.9, 4], [10, 2.9, 4]]}],
+	"exits": [{"pos": [7, 8], "face": "s", "to": "world:d_hw_diner", "label": "Parking Lot"}],
+	"furn": [["bar_counter", 7, 1.4, 0, {"w": 8.0, "neon": Color(1.0, 0.3, 0.3)}], ["stool", 4.5, 2.6, 0], ["stool", 6, 2.6, 0], ["stool", 7.5, 2.6, 0], ["stool", 9, 2.6, 0], ["booth", 2, 6.2, 0, {"col": Color(0.7, 0.1, 0.1)}], ["booth", 6, 6.2, 0, {"col": Color(0.7, 0.1, 0.1)}], ["booth", 10, 6.2, 0, {"col": Color(0.7, 0.1, 0.1)}], ["jukebox", 13.4, 4, -90], ["coffee_machine", 10.5, 0.6, 0], ["window", 7, 7.85, 180, {"w": 8.0}]],
+	"spots": [{"id": "hw_diner_shop", "kind": "shop", "title": "Counter", "verb": "Order", "pos": [7, 1, 2.4], "size": [8, 2, 1.2], "shop": "gen_diner"}],
+},
+"hw_gas": {
+	"name": "Gas · Food · Live Bait", "amb": "office", "ambient": Color(0.42, 0.42, 0.4),
+	"rooms": [{"r": [0, 0, 10, 8], "h": 3.0, "wall": Color(0.82, 0.82, 0.78), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.9, 0.95, 1.0), "energy": 1.25, "lights": [[5, 2.7, 4]]}],
+	"exits": [{"pos": [5, 8], "face": "s", "to": "world:d_hw_gas", "label": "Pumps"}],
+	"furn": [["counter", 7.5, 1.4, 0, {"w": 3.5}], ["register", 8, 1.2, 0], ["shelf", 1, 2.5, 90], ["shelf", 1, 5, 90], ["shelf", 4.5, 6.6, 0], ["fridge_glass", 9.2, 5, -90], ["coffee_machine", 5.5, 0.6, 0]],
+	"spots": [{"id": "hw_gas_shop", "kind": "shop", "title": "Counter", "verb": "Shop", "pos": [7.5, 1, 2.4], "size": [3.5, 2, 1.2], "shop": "gen_grocery"}],
+},
+"hw_motel": {
+	"name": "Lennox Motor Inn — Room 9", "amb": "interior", "ambient": Color(0.34, 0.3, 0.27),
+	"rooms": [{"r": [0, 0, 7, 6], "h": 2.7, "wall": Color(0.55, 0.48, 0.36), "floor": F_CARPET, "light": Color(1.0, 0.82, 0.6), "energy": 0.9, "lights": [[3.5, 2.4, 3]]}],
+	"exits": [{"pos": [3.5, 6], "face": "s", "to": "world:d_hw_motel", "label": "Parking Lot"}],
+	"furn": [["bed_double", 2.0, 2.0, 0, {"col": Color(0.55, 0.35, 0.3)}], ["tv", 5.6, 2.0, -90], ["dresser", 6.3, 4.5, -90], ["lamp", 0.6, 0.6, 0], ["window", 3.5, 5.85, 180, {"w": 1.6}]],
+	"spots": [{"id": "hw_motel_bed", "kind": "bed", "title": "Motel Bed", "verb": "Sleep", "pos": [2.0, 0.6, 2.0], "size": [1.8, 1, 2.2]}],
+},
+# ============================================================= CHICAGO
+"chi_diner": {
+	"name": "Lou's Red Hots", "amb": "jazz", "ambient": Color(0.42, 0.34, 0.28),
+	"rooms": [{"r": [0, 0, 12, 8], "h": 3.2, "wall": Color(0.6, 0.18, 0.14), "floor": Color(0.85, 0.85, 0.8), "floor_kind": "tile", "light": Color(1.0, 0.85, 0.65), "energy": 1.15, "lights": [[3, 2.9, 4], [9, 2.9, 4]]}],
+	"exits": [{"pos": [6, 8], "face": "s", "to": "world:d_chi_diner", "label": "Street"}],
+	"furn": [["bar_counter", 6, 1.3, 0, {"w": 7.0, "neon": Color(1.0, 0.85, 0.2)}], ["stool", 3.5, 2.5, 0], ["stool", 5, 2.5, 0], ["stool", 6.5, 2.5, 0], ["stool", 8, 2.5, 0], ["cafe_table", 2, 6, 0], ["cafe_table", 6, 6, 0], ["cafe_table", 10, 6, 0], ["poster", 0.15, 4, 90, {"col": Color(0.9, 0.7, 0.1)}]],
+	"spots": [{"id": "chi_diner_shop", "kind": "shop", "title": "Counter", "verb": "Order", "pos": [6, 1, 2.3], "size": [7, 2, 1.2], "shop": "gen_diner"}],
+},
+"chi_safe": {
+	"name": "fsociety Chicago — the Warehouse", "amb": "interior", "ambient": Color(0.26, 0.26, 0.28),
+	"rooms": [{"r": [0, 0, 16, 10], "h": 5.0, "wall": W_CONCRETE, "floor": F_CONCRETE, "light": Color(0.5, 0.9, 0.6), "energy": 0.8, "lights": [[4, 4.5, 5], [12, 4.5, 5]]}],
+	"exits": [{"pos": [8, 10], "face": "s", "to": "world:d_chi_safe", "label": "Street"}],
+	"furn": [["table", 8, 4, 0, {"w": 3.5, "d": 1.8}], ["monitor_wall", 15.6, 5, -90], ["server_rack", 15.4, 1.2, -90, {"led": Color(0.3, 1.0, 0.4)}], ["mattress", 2, 8.4, 0], ["mattress", 4.6, 8.4, 0], ["crate", 1.2, 1.2, 0], ["boxes", 13, 9, 0], ["whiteboard", 8, 0.2, 0], ["chair", 7, 3, 0], ["chair", 9, 3, 0]],
+	"containers": [{"id": "chi_safe_stash", "title": "fsociety Stash", "pos": [1.2, 1.2], "y": 0.5, "size": [1.0, 1.0, 1.0], "items": {"first_aid": 2, "ammo_9mm": 30, "usb_drive": 2}, "owner_ok": "true"}],
+	"spots": [{"id": "chi_safe_bed", "kind": "bed", "title": "Mattress", "verb": "Sleep", "pos": [2, 0.4, 8.4], "size": [1.8, 0.8, 2.2]}],
+},
+"chi_motel": {
+	"name": "Skyway Motel — Room 14", "amb": "interior", "ambient": Color(0.32, 0.3, 0.3),
+	"rooms": [{"r": [0, 0, 7, 6], "h": 2.7, "wall": Color(0.45, 0.5, 0.5), "floor": F_CARPET, "light": Color(0.9, 0.85, 0.75), "energy": 0.85, "lights": [[3.5, 2.4, 3]]}],
+	"exits": [{"pos": [3.5, 0], "face": "n", "to": "world:d_chi_motel", "label": "Parking Lot"}],
+	"furn": [["bed_double", 2.2, 3.6, 0, {"col": Color(0.3, 0.4, 0.5)}], ["tv", 5.8, 3.6, -90], ["dresser", 6.3, 1.4, -90], ["lamp", 0.6, 5.4, 0]],
+	"spots": [{"id": "chi_motel_bed", "kind": "bed", "title": "Motel Bed", "verb": "Sleep", "pos": [2.2, 0.6, 3.6], "size": [1.8, 1, 2.2]}],
+},
+"chi_fbi": {
+	"name": "Federal Plaza — Chicago Field Office", "amb": "office", "ambient": Color(0.42, 0.44, 0.5),
+	"rooms": [{"r": [0, 0, 16, 10], "h": 3.4, "wall": Color(0.5, 0.52, 0.56), "floor": F_CARPET, "floor_kind": "tile", "light": Color(0.85, 0.9, 1.0), "energy": 1.05, "lights": [[4, 3.1, 5], [12, 3.1, 5]]}],
+	"exits": [{"pos": [8, 10], "face": "s", "to": "world:d_chi_fbi", "label": "Plaza"}],
+	"furn": [["reception", 8, 2, 0, {"col": Color(0.3, 0.32, 0.38), "glow": Color(0.6, 0.75, 1.0)}], ["bench", 2.5, 8.5, 0, {"w": 3.0}], ["bench", 13.5, 8.5, 0, {"w": 3.0}], ["plant", 0.8, 0.8, 0], ["plant", 15.2, 0.8, 0], ["logo_wall", 8, 0.15, 0, {"w": 5.0, "glow": Color(0.6, 0.75, 1.0)}]],
+},
+"chi_hangar": {
+	"name": "Meigs Field — Hangar Office", "amb": "office", "ambient": Color(0.44, 0.44, 0.42),
+	"rooms": [{"r": [0, 0, 12, 8], "h": 3.2, "wall": Color(0.6, 0.6, 0.56), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.95, 0.92, 0.82), "energy": 1.05, "lights": [[6, 2.9, 4]]}],
+	"exits": [{"pos": [6, 8], "face": "s", "to": "world:d_chi_hangar", "label": "Apron"}],
+	"furn": [["counter", 6, 1.4, 0, {"w": 4.0}], ["desk_pc", 2, 2, 90], ["bench", 10, 6.5, -90, {"w": 2.4}], ["poster", 11.85, 3, -90, {"col": Color(0.2, 0.45, 0.8)}], ["coffee_machine", 11.4, 0.6, 0]],
+},
+"chi_node": {
+	"name": "E Corp Midwest — Lobby and Data Floor", "amb": "office", "ambient": Color(0.4, 0.42, 0.48), "restricted": "ecorp", "allowed_when": "disguise.ecorp | day & !flag.chi_alarm",
+	"rooms": [
+		{"r": [0, 0, 18, 10], "h": 5.0, "wall": Color(0.28, 0.32, 0.4), "floor": Color(0.15, 0.16, 0.2), "floor_kind": "tile", "light": Color(0.5, 0.6, 1.0), "energy": 1.1, "lights": [[5, 4.6, 5], [13, 4.6, 5]]},
+		{"r": [18, 0, 34, 14], "h": 4.0, "wall": W_DARK, "floor": F_CONCRETE, "light": Color(0.5, 0.7, 1.0), "energy": 0.8, "lights": [[22, 3.6, 4], [30, 3.6, 4], [22, 3.6, 10], [30, 3.6, 10]]},
+	],
+	"doors": [[18, 5, 1.4]],
+	"exits": [{"pos": [9, 0], "face": "n", "to": "world:d_chi_node", "label": "Plaza"}],
+	"furn": [["reception", 9, 3, 180, {"col": Color(0.15, 0.18, 0.25), "glow": Color(0.4, 0.6, 1.0)}], ["logo_wall", 9, 9.85, 180, {"w": 7.0, "glow": Color(0.4, 0.6, 1.0)}], ["metal_detector", 5, 6, 0], ["metal_detector", 13, 6, 0], ["security_desk", 15, 3, 0], ["plant", 1, 9, 0], ["plant", 17, 9, 0],
+		["server_rack", 21, 2, 0, {"led": Color(0.4, 0.6, 1.0)}], ["server_rack", 23, 2, 0, {"led": Color(0.4, 0.6, 1.0)}], ["server_rack", 25, 2, 0, {"led": Color(0.4, 0.6, 1.0)}], ["server_rack", 27, 2, 0, {"led": Color(0.4, 0.6, 1.0)}], ["server_rack", 29, 2, 0, {"led": Color(0.4, 0.6, 1.0)}], ["server_rack", 31, 2, 0, {"led": Color(0.4, 0.6, 1.0)}],
+		["server_rack", 21, 8, 180, {"led": Color(0.4, 0.6, 1.0)}], ["server_rack", 23, 8, 180, {"led": Color(0.4, 0.6, 1.0)}], ["server_rack", 25, 8, 180, {"led": Color(0.4, 0.6, 1.0)}], ["server_rack", 27, 8, 180, {"led": Color(0.4, 0.6, 1.0)}], ["climate_unit", 33, 12, -90], ["desk_pc", 31, 12, 180]],
+	"spots": [{"id": "chi_dataterm", "kind": "terminal", "title": "Midwest Data Floor", "verb": "Access", "pos": [31, 1.2, 12], "size": [1.2, 1.4, 1.0], "hack": 55, "header": "ecorp-midwest.lan  //  LIVE SERVICES", "welcome": "Electronic Arse and Phony Interactive, same floor, same contempt for the customer.",
+		"entries": [
+			{"title": "Read: Electronic Arse 'surprise mechanics'", "text": "An internal memo: 'Do NOT call them loot boxes in any jurisdiction with a gambling regulator. Approved terms: surprise mechanics, player investment, engagement rewards.' Attached: a drop-rate table the public has never seen. The good item is 1 in 9,214."},
+			{"title": "Read: Phony account authority", "text": "'Any account may be suspended at the company's sole discretion. Purchased licenses are revocable. The customer owns a revocable license, not a game.' Someone has added, in the margin: 'legally airtight, morally radioactive, ship it.'"},
+		],
+		"actions": [
+			{"title": "Rig the loot-box server to print the real odds on the box", "result": "Every 'surprise mechanic' in Electronic Arse's catalogue now shows its true drop rate, in 40-point font, before you can spend a cent. 1 in 9,214. The purchase numbers fall off a cliff in the first hour. Honesty, it turns out, is terrible for engagement.", "fx": "set earse_exposed ; quest mq_chi2 20 ; quest mq_chi2 done ; quest mq_chi3 10 ; fame gamers 6 ; infamy ecorp 5 ; xp 150", "when": "q.mq_chi2>=10 & !flag.earse_exposed"},
+			{"title": "Flip Phony's account authority: unlock every revoked library, lock out their admins", "result": "Every game Phony ever revoked unlocks at once, for everyone, worldwide. Then their own admin credentials stop working, replaced by a single read-only line on every screen in the building: YOU OWN WHAT YOU PAID FOR. They can't even log in to argue.", "fx": "set phony_freed ; quest mq_chi3 20 ; quest mq_chi3 done ; fame gamers 8 ; infamy ecorp 6 ; xp 200", "when": "q.mq_chi3>=10 & !flag.phony_freed"},
+		]}],
+},
+"rockstarved_hq": {
+	"name": "Rockstarved Games — Floor 88", "amb": "office", "ambient": Color(0.34, 0.3, 0.3), "restricted": "ecorp", "allowed_when": "item.rs_badge>=1 & !flag.rs_alarm",
+	"rooms": [
+		{"r": [0, 0, 10, 8], "h": 3.4, "wall": Color(0.16, 0.14, 0.14), "floor": Color(0.22, 0.2, 0.2), "floor_kind": "tile", "light": Color(1.0, 0.7, 0.35), "energy": 1.0, "lights": [[5, 3.1, 4]]},
+		{"r": [10, 0, 28, 12], "h": 3.4, "wall": Color(0.5, 0.5, 0.52), "floor": F_CARPET, "floor_kind": "tile", "light": Color(0.85, 0.9, 1.0), "energy": 0.9, "lights": [[14, 3.1, 3], [22, 3.1, 3], [14, 3.1, 9], [22, 3.1, 9]]},
+		{"r": [0, 8, 10, 16], "h": 3.4, "wall": W_DARK, "floor": F_CONCRETE, "light": Color(1.0, 0.45, 0.2), "energy": 0.75, "lights": [[5, 3.1, 12]]},
+	],
+	"doors": [[10, 4, 1.4], [5, 8, 1.2]],
+	"exits": [{"pos": [5, 0], "face": "n", "to": "interior:wtc_lobby:2", "label": "Elevator — Lobby"}],
+	"furn": [
+		["reception", 5, 2.0, 0, {"col": Color(0.12, 0.1, 0.1), "glow": Color(1.0, 0.6, 0.15)}], ["logo_wall", 5, 0.15, 0, {"w": 6.0, "glow": Color(1.0, 0.55, 0.1)}], ["plant", 0.8, 7.2, 0], ["bench", 8.8, 6.5, -90, {"w": 2.4}], ["poster", 0.15, 4, 90, {"col": Color(0.9, 0.5, 0.1)}],
+		["desk_pc", 13, 2.5, 90], ["desk_pc", 13, 5.5, 90], ["desk_pc", 17, 2.5, -90], ["desk_pc", 17, 5.5, -90], ["desk_pc", 21, 2.5, 90], ["desk_pc", 21, 5.5, 90], ["desk_pc", 25, 2.5, -90], ["desk_pc", 25, 5.5, -90], ["whiteboard", 22, 11.85, 180], ["water_cooler", 27.4, 8.5, -90], ["coffee_machine", 27.4, 9.6, -90],
+		["mattress", 13, 10.5, 0], ["mattress", 17, 10.5, 0], ["boxes", 20.5, 11.2, 0], ["trash_pile", 26.8, 11.2, 0],
+		["server_rack", 1.2, 9.5, 90, {"led": Color(1.0, 0.5, 0.1)}], ["server_rack", 1.2, 10.7, 90, {"led": Color(1.0, 0.5, 0.1)}], ["server_rack", 1.2, 11.9, 90, {"led": Color(1.0, 0.5, 0.1)}], ["monitor_wall", 9.6, 12, -90], ["conference", 5.5, 13.8, 0],
+	],
+	"containers": [
+		{"id": "rs_desk", "title": "Crunch Desk", "pos": [13, 5.5], "y": 0.6, "size": [0.8, 0.7, 1.4], "loot": "office_desk", "items": {"energy_drink": 3}},
+	],
+	"spots": [{"id": "rs_whale", "kind": "terminal", "title": "Project Whale Server", "verb": "Access", "pos": [1.6, 1.2, 10.7], "size": [1.2, 1.8, 3.6], "hack": 50, "header": "WHALE.ROCKSTARVED.CORP  //  RECURRENT CONSUMER SPENDING", "welcome": "Player Value Optimization Engine. 31 million profiles, sorted by how much can be squeezed from each one.",
+		"entries": [
+			{"title": "Read: 'Who is the player?'", "text": "Internal onboarding deck. Slide 2: 'The player is not a customer. The player is a funnel. The top 0.6% of players ('whales') produce 51% of recurrent revenue. Everyone else is content for the whales to feel superior to.'", "fx": "give whale_docs 1 ; quest mq_rs1 30"},
+			{"title": "Read: the kid flagged 'HIGH VALUE'", "text": "Account age 11 months. Age on file: 14. 207 Shark Card purchases in 31 days, accelerating, on one saved card. A junior analyst flagged it: 'possible minor, possible compromised card, recommend review.' A manager closed the ticket: 'do not interrupt a converting session.'"},
+		],
+		"actions": [
+			{"title": "Dump Project Whale to every games site on Earth", "result": "The whole engine, the slides, the 'funnel,' the closed ticket about the fourteen-year-old. Every outlet runs it by morning. 'THE PLAYER IS A FUNNEL' is a headline, then a chant. Rockstarved's PR account posts a notes-app apology and turns off replies. Too late. The replies are everywhere now.", "fx": "set rs_press ; set rs_down ; set rs_done ; quest mq_rs1 40 ; quest mq_rs2 10 ; fame gamers 8 ; infamy ecorp 6 ; xp 200", "when": "item.whale_docs>=1 & !flag.rs_done"},
+			{"title": "Crash the Shark Card store and refund every purchase from the last year", "result": "The pretend-money store goes dark and stays dark. Then every real dollar spent on it in the last year reverses, all at once, to every card it came from. A fourteen-year-old in Pixel's Discord gets his late mother's savings back, to the cent. Rockstarved's finance team watches a year of 'recurrent revenue' evaporate in ninety seconds.", "fx": "set rs_refund ; set rs_down ; set rs_done ; quest mq_rs1 40 ; quest mq_rs2 10 ; fame gamers 9 ; infamy ecorp 7 ; stab 4 ; xp 220", "when": "item.whale_docs>=1 & !flag.rs_done"},
+		]}],
+},
 "wtc_lobby": {
 	"name": "World Trade Center — North Tower", "amb": "office", "ambient": Color(0.42, 0.42, 0.44),
 	"rooms": [{"r": [0, 0, 24, 14], "h": 7.0, "wall": Color(0.7, 0.7, 0.72), "floor": Color(0.62, 0.6, 0.56), "floor_kind": "tile", "light": Color(0.95, 0.96, 1.0), "energy": 1.4, "lights": [[6, 6.5, 4], [18, 6.5, 4], [6, 6.5, 10], [18, 6.5, 10]]}],
 	"exits": [
 		{"pos": [12, 14], "face": "s", "to": "world:d_wtc", "label": "Plaza"},
 		{"pos": [12, 0], "face": "n", "to": "roof:wtc", "label": "Express Elevator — Roof"},
+		{"pos": [3, 0], "face": "n", "to": "interior:rockstarved_hq:0", "label": "Elevator — Floor 88: Rockstarved Games", "when": "q.mq_rs1>=10", "lock": 60, "key": "rs_badge", "unlock_when": "item.rs_badge>=1"},
 	],
 	"furn": [["logo_wall", 5.0, 0.12, 0, {"w": 6.0, "glow": Color(0.85, 0.9, 1.0)}], ["elevator", 17.0, 0.12, 0], ["elevator", 20.0, 0.12, 0], ["elevator", 3.0, 0.12, 0],
 		["turnstile", 12.0, 5.5, 0], ["security_desk", 18.0, 8.0, 180], ["reception", 6.0, 8.0, 180, {"glow": Color(0.85, 0.9, 1.0)}],

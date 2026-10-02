@@ -106,7 +106,7 @@ func _ready() -> void:
 		ld["club"] = true
 	_mesh.mesh = PersonMesh.mesh(ld)
 	_mesh.material_override = Mats.npc
-	_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	_mesh.visibility_range_end = 160.0
 	add_child(_mesh)
 	_gun_flash = MeshInstance3D.new()

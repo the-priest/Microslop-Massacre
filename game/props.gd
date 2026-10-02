@@ -261,16 +261,31 @@ static func _car(name: String, b: MeshBatch, g: MeshBatch) -> void:
 		g.box(Vector3(1.0, 0.7, 3.62), Vector3(0.25, 0.2, 0.04), Color(1, 0.1, 0.05), 0.0, Vector2(K_NIGHT, 0))
 		return
 	var by := 0.35 + body_h * 0.5
-	b.box(Vector3(0, by, 0), Vector3(W, body_h, L), col)
+	var gp := Vector2(2, 0) # glossy paint / glass in vc_lit
+	var trim := Color(0.05, 0.05, 0.055)
+	b.box(Vector3(0, by, 0), Vector3(W, body_h, L), col, 0.0, gp)
+	# Bumpers, sills, grille, mirrors: the bits that make a box read as a car.
+	b.box(Vector3(0, 0.42, -L * 0.5 - 0.06), Vector3(W - 0.05, 0.2, 0.12), trim)
+	b.box(Vector3(0, 0.42, L * 0.5 + 0.06), Vector3(W - 0.05, 0.2, 0.12), trim)
+	b.box(Vector3(W * 0.5 + 0.01, 0.4, 0), Vector3(0.04, 0.1, L * 0.62), trim)
+	b.box(Vector3(-W * 0.5 - 0.01, 0.4, 0), Vector3(0.04, 0.1, L * 0.62), trim)
+	b.box(Vector3(0, 0.35 + body_h * 0.45, -L * 0.5 - 0.015), Vector3(W * 0.42, body_h * 0.32, 0.03), Color(0.12, 0.12, 0.13), 0.0, gp)
+	b.box(Vector3(0, 0.35 + body_h + 0.004, -L * 0.25), Vector3(W * 0.9, 0.01, L * 0.3), col.lightened(0.04), 0.0, gp)
 	if cab_len > 0.0:
-		b.box(Vector3(0, 0.35 + body_h + cab_h * 0.5, cab_off), Vector3(W - 0.15, cab_h, cab_len), col.darkened(0.05))
+		b.box(Vector3(0, 0.35 + body_h + cab_h * 0.5, cab_off), Vector3(W - 0.15, cab_h, cab_len), col.darkened(0.05), 0.0, gp)
 		# Windows as slightly inset dark panels.
-		b.box(Vector3(0, 0.35 + body_h + cab_h * 0.5, cab_off - cab_len * 0.5 - 0.01), Vector3(W - 0.3, cab_h * 0.8, 0.04), glass)
-		b.box(Vector3(0, 0.35 + body_h + cab_h * 0.5, cab_off + cab_len * 0.5 + 0.01), Vector3(W - 0.3, cab_h * 0.8, 0.04), glass)
-		b.box(Vector3(W * 0.5 - 0.07, 0.35 + body_h + cab_h * 0.5, cab_off), Vector3(0.04, cab_h * 0.75, cab_len - 0.3), glass)
-		b.box(Vector3(-W * 0.5 + 0.07, 0.35 + body_h + cab_h * 0.5, cab_off), Vector3(0.04, cab_h * 0.75, cab_len - 0.3), glass)
+		b.box(Vector3(0, 0.35 + body_h + cab_h * 0.5, cab_off - cab_len * 0.5 - 0.01), Vector3(W - 0.3, cab_h * 0.8, 0.04), glass, 0.0, gp)
+		b.box(Vector3(0, 0.35 + body_h + cab_h * 0.5, cab_off + cab_len * 0.5 + 0.01), Vector3(W - 0.3, cab_h * 0.8, 0.04), glass, 0.0, gp)
+		b.box(Vector3(W * 0.5 - 0.07, 0.35 + body_h + cab_h * 0.5, cab_off), Vector3(0.04, cab_h * 0.75, cab_len - 0.3), glass, 0.0, gp)
+		b.box(Vector3(-W * 0.5 + 0.07, 0.35 + body_h + cab_h * 0.5, cab_off), Vector3(0.04, cab_h * 0.75, cab_len - 0.3), glass, 0.0, gp)
+		for sx in [-1.0, 1.0]:
+			b.box(Vector3(sx * (W * 0.5 + 0.08), 0.35 + body_h + 0.08, cab_off - cab_len * 0.5 + 0.1), Vector3(0.14, 0.1, 0.08), trim)
 	else:
-		b.box(Vector3(0, 0.35 + body_h * 0.72, -L * 0.5 - 0.01), Vector3(W - 0.3, body_h * 0.3, 0.04), glass)
+		b.box(Vector3(0, 0.35 + body_h * 0.72, -L * 0.5 - 0.01), Vector3(W - 0.3, body_h * 0.3, 0.04), glass, 0.0, gp)
+	# Hubcaps.
+	for z2 in [-L * 0.32, L * 0.32]:
+		for x2 in [-1.0, 1.0]:
+			b.box(Vector3(x2 * (W * 0.5 + 0.0), 0.33, z2), Vector3(0.03, 0.34, 0.34), Color(0.55, 0.56, 0.58), 0.0, gp)
 	for z in [-L * 0.32, L * 0.32]:
 		for x in [-1.0, 1.0]:
 			b.box(Vector3(x * (W * 0.5 - 0.05), 0.33, z), Vector3(0.26, 0.66, 0.66), tire)

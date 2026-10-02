@@ -33,10 +33,10 @@ func _ready() -> void:
 	_bg_text.scroll_active = false
 	_bg_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_bg_text)
-	var title := UI.label("hello, friend.", 64, UI.GREEN)
+	var title := UI.label("MICROSLOP MASSACRE", 64, UI.GREEN)
 	title.position = Vector2(80, 70)
 	add_child(title)
-	var sub := UI.label("an open-world RPG in the world of Mr. Robot", 18, UI.GREEN_DIM)
+	var sub := UI.label("hello, friend.  ·  fsociety vs. E Corp and every corporation it owns", 18, UI.GREEN_DIM)
 	sub.position = Vector2(86, 160)
 	add_child(sub)
 	_box = VBoxContainer.new()
@@ -44,7 +44,7 @@ func _ready() -> void:
 	_box.custom_minimum_size = Vector2(760, 0)
 	_box.add_theme_constant_override("separation", 6)
 	add_child(_box)
-	var ver := UI.label("v2.0 · fan project · original script · all art and audio procedural", 12, UI.GREEN_DIM)
+	var ver := UI.label("v3.0 · fan project and parody · original script · all art and audio procedural · no microtransactions, ever", 12, UI.GREEN_DIM)
 	ver.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	ver.position = Vector2(86, -40)
 	add_child(ver)

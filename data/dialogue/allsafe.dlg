@@ -2,46 +2,74 @@
 
 === gideon
 -- start
-? flag.knows_allsafe_ecorp & !flag.gideon_leverage_done -> know
+? flag.da_price_gideon & !flag.gideon_framed & !flag.da_betrayed & !flag.gideon_warned_frame -> price_warn
+? q.mq_hello>=35 & !q.mq_hello.done -> go_servers
+? flag.knows_allsafe_ecorp & !flag.gideon_leverage_done & q.mq_hello.done -> know
 ? q.mq_rootkit.started -> later
-GIDEON: Elliot. E Corp flagged anomalies on their network overnight. I need your eyes. Not your attitude — your eyes. Can you do that?
-* "Anomalies are the only thing I trust. Show me." -> trace
-* [SPEECH 25] "Tell me the truth first — how bad is it for Allsafe if E Corp walks?" -> pressure | trace
-* "Not tonight, Gideon." -> refuse
+? !q.mq_hello>=30 -> early
+GIDEON: Elliot. Thank you for coming in. I mean that. E Corp's CTO has called me eleven times since midnight, and I have run out of new ways to say 'we're looking into it.'
+* "Show me what you've got." -> trace
+* [SPEECH 25] "Tell me the truth first. How bad is it for Allsafe if E Corp walks?" -> pressure | trace
+* "What's CS30 doing open in the first place?" -> why_open
+-- early
+GIDEON: Elliot? What are you doing here? I said nine. In the morning. Go home. Talk to a human being. Sleep. The anomaly will still be anomalous tomorrow, I promise you.
+-> END
+-- why_open
+GIDEON: It's a honeypot. You leave a door unlocked so you can watch who tries the handle. Except this one was opened wider than I approved. Someone changed the firewall rule last week. With my credentials. I didn't do it.
+ELLIOT (V.O.): Gideon doesn't lie. He's bad at it. His ears go red. They're not red.
+! set knows_cs30_widened
+-> trace
+-- pressure
+GIDEON: Bad. E Corp is sixty percent of our revenue. If they walk, Allsafe is gone in a quarter. Everyone here. Angela. The new kids. Me. So when I ask for your eyes, I need them clean.
+! set knows_allsafe_ecorp
+-> trace
+-- trace
+GIDEON: The CS30 box is in the server room, at the back. Pull the logs, trace whoever knocked, write me something I can read to a man who owns a jet. And Elliot, whatever you find, you bring it to me first. Before E Corp. Before anyone.
+! quest mq_hello 35 ; fame allsafe 2
+-> END
+-- price_warn
+GIDEON: Elliot. You look like you're about to tell me someone died. Did someone die?
+ELLIOT (V.O.): Not yet. I could still make it so nobody does. I could also just log in at his desk and go home.
+* "Gideon. Someone is going to try to make it look like you're fsociety's insider. Lock everything. Get a lawyer. Today." -> warn_frame
+* "No. Nothing. Forget it." -> END
+-- warn_frame
+> Gideon goes very still. Then he closes his office door, very quietly, and sits down.
+GIDEON: ...Thank you. I'm not going to ask how you know. I'm going to call my lawyer, and my husband, and then I'm going to be very, very boring for a while.
+ELLIOT (V.O.): Whiterose will know by morning. She keeps every clock. I just made an enemy of a woman who doesn't have to hurry.
+! set gideon_warned_frame ; set da_betrayed ; hostile_faction darkarmy ; quest mq_darkarmy 40 ; quest mq_darkarmy done ; trust gideon 3 ; stab 6 ; xp 80
+-> END
+-- go_servers
+GIDEON: Server room. Back of the office. CS30. Go on, I'll be here, practicing my apologetic face.
+-> END
 -- know
 ! set gideon_leverage_done
-GIDEON: You've been in the files. I can tell. You know what E Corp is to this company. To all of us.
+GIDEON: You've been in the contract files. I can tell. You know what E Corp is to this company. To all of us.
 ELLIOT (V.O.): One client. Fifty jobs. Gideon's whole life, balanced on the goodwill of the thing I want to destroy. If I burn E Corp, I burn him too.
-* "Your company's clean, Gideon. Whatever happens, that's on them." -> clean ! trust krista 0
+* "Your company's clean, Gideon. Whatever happens, that's on them." -> clean
 * [SPEECH 40] "You should get out. Sell Allsafe while it's worth something." -> warn | clean
 -- clean
 GIDEON: I hope you're right. I've spent ten years being right about machines and wrong about people. Don't be the thing that proves the pattern.
--> after_know
+-> END
 -- warn
-GIDEON: ...You know something. I've known you long enough to hear it. I won't ask. But Elliot — if this ship goes down, get yourself off it first. Promise me that much.
+GIDEON: ...You know something. I've known you long enough to hear it. I won't ask. But Elliot, if this ship goes down, get yourself off it first. Promise me that much.
 ! set gideon_warned ; fame allsafe 3
--> after_know
--- after_know
-? !q.mq_rootkit.started -> trace
 -> END
 -- later
+? flag.gideon_framed -> later_framed
 ? q.mq_rootkit>=40 -> later_done
-GIDEON: Anything on the honeypot? Ron's Coffee, a few blocks from your place. It's always the small ones. Go look before E Corp's people do.
+? flag.dat_reported -> later_reported
+GIDEON: Anything on the coffee shop? Ron's, a few blocks from your place. It's always the small ones. Go look before E Corp's people do.
+-> END
+-- later_reported
+GIDEON: I sent the file you found to E Corp's security team and the FBI liaison, like you said. Someone from the Bureau already called me back. A woman. She asked about you, actually. By name. I said you were the best I had. I hope that was the right answer.
 -> END
 -- later_done
 GIDEON: The coffee shop server went quiet. Whatever was knocking on E Corp's door stopped. I'd call that a win if my stomach agreed. You look like someone who knows more than he's saying. You always do.
 -> END
--- pressure
-GIDEON: Bad. If E Corp walks, Allsafe is gone in a quarter. Everyone here — Angela, the new kids — out. So when I say I need your eyes, I mean I need them clean. No ghosts.
-! set knows_allsafe_ecorp
--> trace
--- trace
-GIDEON: Here's the inbound trace. E Corp's edge servers. Find out who was knocking. And Elliot — sleep sometime this week. That's an order I know you'll ignore.
-! quest mq_rootkit 10 ; quest mq_hello done ; fame allsafe 2
-GIDEON: There's a coffee shop, Ron's, a few blocks from your place on the Lower East Side. Their server pinged E Corp's honeypot last night. Start there. It's always the small ones.
--> END
--- refuse
-GIDEON: Fine. Go home. But the anomaly doesn't sleep just because you do. Neither do I.
+-- later_framed
+> Gideon's office is half-packed. There's a box on his chair with a plant in it. His hands are shaking.
+GIDEON: They think it was me. The FBI. They found my credentials on the fsociety servers, my name in the logs, a bank account in Cyprus I have never heard of. I've worked for twenty years to build something honest, Elliot. Twenty years.
+ELLIOT (V.O.): I did this. Or I let it be done. In the Rose Garden it felt like arithmetic. Here it's a man packing a plant into a box.
 -> END
 
 === angela
@@ -107,10 +135,32 @@ ANGELA: I did it. I took the job at E Corp. Don't look at me like that. I'm exac
 
 === allsafe_servers
 -- start
-ELLIOT (V.O.): The server room hums. Somewhere in this rack is CS30 — a honeypot, exposed on purpose. Somebody inside Allsafe left a door open for whoever comes knocking. It wasn't me. This time.
-* Trace the honeypot. -> trace
-* Leave it. -> END
--- trace
-ELLIOT (V.O.): The logs point outward. Toward E Corp. Toward a name I don't have yet. Somebody's playing a longer game than I am. I hate that. I also respect it.
-! set knows_honeypot
+? q.mq_hello.done -> after
+? !q.mq_hello>=35 -> idle
+ELLIOT (V.O.): CS30. A box built to be broken into. Somebody took the invitation last night, at 3:40 in the morning.
+> You pull the logs. The intrusion came in through a relay, bounced twice, and landed from a small server on the Lower East Side. A coffee shop. Ron's. Four blocks from your apartment.
+ELLIOT (V.O.): That's not the part that makes my hands go cold. The payload. I know this payload. I read it last night, on my own desktop, at the end of a file called fsociety00.dat. It's byte for byte the same code.
+ELLIOT (V.O.): Twenty-two missing minutes at 3:09. The honeypot hit at 3:40. Ron's is a ten minute walk from my apartment.
+ELLIOT (V.O.): No. I was asleep. I'm almost sure I was asleep.
+* Keep it. Tell Gideon the trace dead-ends at a coffee shop and nothing more. -> keep
+* Report everything to Gideon: the payload, the file on your machine, all of it. -> report
+* Wipe the payload from the logs and delete the file on your machine. Make it never have happened. -> wipe
+-- keep
+ELLIOT (V.O.): I write Gideon a clean report. Coffee shop, compromised server, recommend we have a look. Not a word about the file. If someone is using my hands, I want to find them before anyone else does.
+! set dat_kept ; quest mq_hello done ; quest mq_rootkit 10 ; xp 50
+-> END
+-- report
+ELLIOT (V.O.): I tell him everything. He listens without blinking, then he says the thing I knew he'd say: 'This goes to E Corp and the Bureau. Today.' He's right. That's the worst part of Gideon. He's usually right.
+ELLIOT (V.O.): Whoever put that file on my machine is going to know I talked. Good. Let them come.
+! set dat_reported ; quest mq_hello done ; quest mq_rootkit 10 ; fame allsafe 4 ; trust gideon 2 ; xp 50
+-> END
+-- wipe
+ELLIOT (V.O.): Three commands. The payload is gone from the logs; my report says 'unknown origin, coffee shop relay.' At home, the file will be gone by the time I get there. I'll scrub the drive twice. I'll still be able to see it when I close my eyes.
+! set dat_deleted ; quest mq_hello done ; quest mq_rootkit 10 ; stab -2 ; xp 50
+-> END
+-- idle
+ELLIOT (V.O.): The server room hums. Honeypots, backups, a rack of machines that never sleep. Somebody else's problem until Gideon makes it mine.
+-> END
+-- after
+ELLIOT (V.O.): CS30 still blinks in the dark. Somebody left a door open with Gideon's credentials. Somebody who knew which door I'd walk through.
 -> END

@@ -72,7 +72,7 @@ func play(ending_id: String) -> void:
 		await _wait_advance()
 		tw.kill()
 		_text.visible_ratio = 1.0
-	_title.text = "HELLO, FRIEND"
+	_title.text = "MICROSLOP MASSACRE"
 	_text.text = "[center]\n\nThanks for playing.\n\nAn original fan story in the world of Mr. Robot.\nEvery street, sound and line in this city was made for this game.\n\nKills: %d    Days: %d    Level: %d\nEnding: %s[/center]" % [int(GameState.stats.get("kills", 0)), GameState.day() + 1, GameState.level, EndingData.NAMES.get(ending_id, ending_id)]
 	await _wait_advance()
 	# Remember endings across saves for the main menu.

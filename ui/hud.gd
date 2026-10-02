@@ -291,7 +291,12 @@ func _process(delta: float) -> void:
 	var tq := GameState.tracked_quest
 	if tq != "" and GameState.quest_state(tq) == "active":
 		var objs := DB.quest_objectives(tq, GameState.quest_stage(tq))
-		var t := "◆ " + str(DB.QUESTS.get(tq, {}).get("title", tq)).to_upper() + "\n"
+		var lp := DB.line_pos(tq)
+		var lt := DB.line_title(DB.quest_line(tq)).to_upper()
+		var head := "◆ " + str(DB.QUESTS.get(tq, {}).get("title", tq)).to_upper()
+		if int(lp[1]) > 1:
+			head = "◆ %s  ·  %d/%d  ·  %s" % [lt, int(lp[0]), int(lp[1]), str(DB.QUESTS.get(tq, {}).get("title", tq)).to_upper()]
+		var t := head + "\n"
 		for o in objs:
 			t += "▸ " + str(o["text"]) + "\n"
 		_quest_lbl.text = t.strip_edges()
@@ -430,7 +435,11 @@ func _on_quest(qid: String, stage: int, kind: String) -> void:
 	var title := str(q.get("title", qid))
 	match kind:
 		"started":
-			notify("QUEST STARTED: %s" % title, "quest")
+			var lp := DB.line_pos(qid)
+			if int(lp[1]) > 1 and int(lp[0]) > 1:
+				notify("NEXT IN %s (%d/%d): %s" % [DB.line_title(DB.quest_line(qid)).to_upper(), int(lp[0]), int(lp[1]), title], "quest")
+			else:
+				notify("QUEST STARTED: %s" % title, "quest")
 			AudioManager.play_quest()
 		"stage":
 			var objs := DB.quest_objectives(qid, stage)

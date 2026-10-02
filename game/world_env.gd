@@ -101,6 +101,9 @@ func _apply_quality() -> void:
 	sun.shadow_blur = 1.4 if sq >= 2 else 1.0
 	# Colour grade: a touch more contrast and colour, like the show's
 	# cold-shadow / warm-light look.
+	var refl := bool(Settings.get_v("reflections"))
+	env.reflected_light_source = Environment.REFLECTION_SOURCE_SKY if refl and not interior else Environment.REFLECTION_SOURCE_DISABLED
+	env.sky.radiance_size = Sky.RADIANCE_SIZE_64 if refl else Sky.RADIANCE_SIZE_32
 	var g := bool(Settings.get_v("grade"))
 	env.adjustment_enabled = g
 	env.adjustment_brightness = 1.0
@@ -131,6 +134,7 @@ func set_interior(on: bool, ambient: Color = Color(0.3, 0.28, 0.25)) -> void:
 		env.fog_enabled = true
 		sun.visible = true
 		env.tonemap_exposure = 1.0
+	_apply_quality()
 
 
 func _process(delta: float) -> void:
@@ -175,10 +179,10 @@ func _process(delta: float) -> void:
 	sun.light_energy = lerpf(0.18, 1.35, dayf) * (1.0 - gloom * 0.6)
 	sun.look_at_from_position(Vector3.ZERO, -sun_dir, Vector3.UP if absf(sun_dir.y) < 0.99 else Vector3.FORWARD)
 	# Ambient + fog.
-	var amb_n := Color(0.2, 0.22, 0.33)
+	var amb_n := Color(0.3, 0.34, 0.5)
 	var amb_d := Color(0.58, 0.62, 0.7)
 	env.ambient_light_color = amb_n.lerp(amb_d, dayf).lerp(Color(0.4, 0.42, 0.45), gloom * 0.5)
-	env.ambient_light_energy = lerpf(0.95, 1.0, dayf)
+	env.ambient_light_energy = lerpf(1.45, 1.0, dayf)
 	var fog_n := Color(0.05, 0.05, 0.075)
 	var fog_d := Color(0.6, 0.65, 0.72)
 	env.fog_light_color = fog_n.lerp(fog_d, dayf).lerp(Color(0.35, 0.37, 0.4) * lerpf(0.3, 1.0, dayf), gloom)

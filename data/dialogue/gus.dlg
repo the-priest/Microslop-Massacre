@@ -99,15 +99,18 @@ GUS: ...What did you just do?
 -- done_hack
 > Gus sits down. Very slowly. He takes his glasses off and looks at them as if they belong to someone else.
 GUS: Thirty-one years. You know what, I don't want to know. I want to go fly.
-GUS: That jet in hangar two? It's parked on paperwork that doesn't exist anymore. If it happened to leave without a flight plan, I'd sleep like a baby.
-! set lien_killed ; set gus_jet_hint ; quest sq_wings done ; cash 500 ; fame fsociety 2 ; infamy ecorp 2
+GUS: Hang on. That jet in hangar two. E Corp parked it here against the same lien, same finance office, same folder you just set on fire. Which means on paper it now belongs to nobody.
+> He pulls a form out of a drawer, fills it in with a pen that skips, and stamps it with something that hasn't been an official stamp since 1987.
+GUS: As of right now, the Citation belongs to Bowery Bay Flight School, unclaimed property, abandoned on our apron. And Bowery Bay Flight School is leasing it to you. One dollar a year. Tail number, keys, logbook. She's yours, kid. Nobody chases a man for flying his own plane.
+! set lien_killed ; set gus_jet_hint ; set jet_owned ; set pilot_license ; give jet_keys 1 ; quest sq_wings done ; cash 500 ; fame fsociety 2 ; infamy ecorp 2
 ELLIOT (V.O.): One debt. Out of millions. It doesn't change anything. It changed everything for him. Both of those are true, and I'm getting tired of how often that's the case.
 -> END
 -- speech_ok
 GUS: The attorney general. You think they'd...
 GUS: You know, my niece works for a state senator. She's been telling me for a year to make noise. I thought noise was for people who could afford it.
 GUS: Fine. Noise. I'll call her tonight.
-! set lien_fought ; quest sq_wings done ; cash 200
+GUS: And the Skyhawk with the dented cowling, the yellow one. She's yours whenever you want her. Bring her back with fuel in her, that's all I ask.
+! set lien_fought ; set pilot_license ; quest sq_wings done ; cash 200
 ELLIOT (V.O.): Paper against paper. It probably won't work. But he'll fight, and fighting is a kind of flying too.
 -> END
 -- speech_fail
@@ -117,7 +120,7 @@ GUS: Lawyers cost money, kid. That's the whole trick of it. The law is a store, 
 GUS: Nobody can. That's the trick of it. Go fly, while there's a runway.
 -> END
 -- after
-? flag.ecorp_jet_gone & !flag.gus_jet_seen -> jet_gone
+? flag.ecorp_jet_gone & !flag.gus_jet_seen & !flag.jet_owned -> jet_gone
 ? flag.lien_fought & !flag.gus_fight_news -> fight_news
 GUS: Pilot. Take any Skyhawk on the line, and bring it back with the wings still attached.
 -> END

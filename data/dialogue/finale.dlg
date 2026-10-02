@@ -6,24 +6,45 @@
 ? !flag.joined_fsociety -> notready
 ? !flag.rootkit_planted -> need_rootkit
 ? !q.mq_steel.done -> need_steel
-? !flag.ally_secured -> need_ally
+? !q.mq_darkarmy.done -> need_whiterose
+? !q.mq_fbi>=20 -> need_fbi
 ? !flag.ecorp_door_tyrell & !flag.ecorp_foothold -> need_door
+? !q.mq_robot.done -> need_truth
+? !flag.ally_secured -> need_ally
 -> ready
 -- notready
 MR. ROBOT: You're not even one of us yet, kid. Join fsociety first. Then we talk about ending the world's debt.
 -> END
 -- need_rootkit
-MR. ROBOT: We've got no foothold. Ron's server, the rootkit — that's the first thread. Pull it before you dream about the tapestry.
+MR. ROBOT: We've got no foothold. Ron's server, the rootkit: that's the first thread. Pull it before you dream about the tapestry.
 -> END
 -- need_steel
-MR. ROBOT: The backups. Steel Mountain. Until those tapes are ash, deleting E Corp's records is like erasing a chalkboard someone photographed. Go cook the mountain.
+MR. ROBOT: The backups. Steel Mountain. Until those tapes are ash, encrypting E Corp's records is like erasing a chalkboard someone photographed. Go cook the mountain.
 -> END
--- need_ally
-MR. ROBOT: We can't do this with five people and a soldering iron. Get an army behind us — the Dark Army, or turn the FBI into our blind spot. Pick a door.
+-- need_whiterose
+MR. ROBOT: You haven't sat in the clock room yet. Whether we take her army or not, you look Whiterose in the eye before we do this. I won't press a key on a night she's planned without us knowing what she wants.
+-> END
+-- need_fbi
+MR. ROBOT: There's a Fed in the city who has said your name out loud. DiPierro. Go see her. Lie to her, use her, or tell her the truth, but don't let her be a surprise on the night.
 -> END
 -- need_door
 MR. ROBOT: We need inside the tower. Tyrell hands us the keys, or you take a keycard off a guard and let yourself in. No inside man, no Five/Nine.
 -> END
+-- need_truth
+? q.mq_robot.started -> need_truth_started
+MR. ROBOT: ...Darlene wants to talk to you first. Go. I'll be here. I'm always here.
+-> END
+-- need_truth_started
+MR. ROBOT: Finish it, kid. The photo, the sign, the hospital, the pier. You don't press the biggest key in history without knowing whose hand is on it.
+-> END
+-- need_ally
+MR. ROBOT: We've got no army. No Dark Army, no blind Bureau. We can still go. It'll be five people and a soldering iron against the biggest company on Earth, and if anything breaks we fix it live with nobody covering us.
+* "Then we go alone. Like it started." -> alone
+* "Not yet. Let me find us an army." -> END
+-- alone
+MR. ROBOT: That's my kid. Five people and a soldering iron. Some nights that's all a revolution ever was.
+! set ally_secured ; set ally_alone
+-> ready
 -- ready
 MR. ROBOT: Look at me. Everything's in place. The rootkit, the mountain, the army, the door. This is it. This is the night we've been walking toward your whole life. Are you ready to press the key?
 * "Do it. Encrypt everything. Free them." -> hack
@@ -44,9 +65,9 @@ MR. ROBOT: The cascade broke. Steady your hands and run it again — we don't ge
 -> ready
 -- hacked
 > Progress bars crawl toward 100%. Somewhere, a mortgage becomes a rumor. A student loan becomes a story. The number that ruled millions of lives becomes noise.
-MR. ROBOT: It's done. It's actually done. Five/Nine. Now — the last thing. The people who really run this world want to meet the man who just rewrote it. There's an invitation waiting. The Salina Hotel. Room 6.
-! set five_nine_done ; quest mq_finale 30 ; quest mq_finale 40 ; xp 200 ; fame fsociety 10 ; glitch 1.0 ; give deus_invite 1
-MR. ROBOT: Go. Sit at their table. And decide, once and for all, whose ending this is.
+MR. ROBOT: It's done. It's actually done. Five/Nine.
+! set five_nine_done ; quest mq_finale 30 ; quest mq_after 10 ; xp 300 ; fame fsociety 10 ; glitch 1.0
+MR. ROBOT: Go home, kid. Sleep, if you can. Turn on the news in the morning. Then we find out what we actually did.
 -> END
 
 === finale_choose
@@ -59,17 +80,17 @@ MR. ROBOT: Go. Sit at their table. And decide, once and for all, whose ending th
 -- pick
 ELLIOT (V.O.): The hack is done. The city is already changing outside. Now I decide who I hand the smoke to.
 * "fsociety keeps it. The debt stays dead. We disappear." -> e_fsociety
-* [require q.mq_darkarmy.done] "The Dark Army finishes it. Stage two. Burn the building too." -> e_darkarmy
-* [require flag.fbi_informant | flag.fbi_bigger] "I give the FBI everything. Clean hands. Let the law sort the rubble." -> e_fbi
+* [require flag.da_allied] "Let Whiterose finish it her way. Her timetable, her ending." -> e_darkarmy
+* [require flag.fbi_informant | flag.fbi_bigger | flag.price_fbi] "I give the FBI everything. Clean hands. Let the law sort the rubble." -> e_fbi
 * [require flag.ecorp_door_tyrell] "I take E Corp's offer. A seat at the table. Power, not a basement." -> e_ecorp
 * "None of them. I destroy the key and the records both. No masters. Just gone." -> e_reboot
-* [require flag.township_public] "All of it goes to the press. The hack, the Township memos, this table, every name. Let the world decide." -> e_press
-* [require stab<25] "...I'm tired. You do it. Let him have it." -> e_robot
+* [require flag.township_public | flag.ecoin_exposed] "All of it goes to the press. The hack, the Township memos, E Coin, this table, every name. Let the world decide." -> e_press
+* [require stab<25 | flag.robot_rejected & stab<45] "...I'm tired. You do it. Let him have it." -> e_robot
 * [require flag.kingpin] "When the banks go dark, cash is king. And I own the cash." -> e_kingpin
 * [require innocents>=12] "Let it burn. The records, the city, all of them. It's what I'm for now." -> e_monster
 -- overlap_path
 ELLIOT (V.O.): There's a version of tonight where nobody has to lose. Where Darlene's still my sister, and Krista's truth is out, and the whole broken family of this city stands in one room and refuses to be sorted. I saw the seam. I can pull it.
-* [require flag.darlene_bond & flag.knows_darlene_sister & flag.krista_truth & stab>=60] "We do it together. All of us. The Overlap." -> e_overlap
+* [require flag.darlene_bond & flag.knows_darlene_sister & flag.krista_truth & stab>=60 & !flag.robot_rejected] "We do it together. All of us. The Overlap." -> e_overlap
 * "...No. That's a dream. Pick a real ending." -> pick
 -- deus_path
 ELLIOT (V.O.): I already sat at their table and nodded. The ending they wanted is the ending they get. I tell myself I'm the exception. Everyone at that table told themselves that once.
@@ -78,7 +99,7 @@ ELLIOT (V.O.): I already sat at their table and nodded. The ending they wanted i
 ELLIOT (V.O.): I looked the men who own the world in the eye and told them no. Now I have to make the no mean something.
 * "fsociety keeps it. The debt stays dead." -> e_fsociety
 * "Destroy it all. No masters." -> e_reboot
-* [require flag.township_public] "Give everything to the press." -> e_press
+* [require flag.township_public | flag.ecoin_exposed] "Give everything to the press." -> e_press
 -- e_fsociety
 ! ending fsociety
 -> END
