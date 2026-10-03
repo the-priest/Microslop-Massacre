@@ -18,7 +18,7 @@ func _ready() -> void:
 	await _frames(30)
 	game._update_airfield()
 	await _frames(5)
-	_ok("airfield planes spawned (%d)" % game.planes.size(), game.planes.size() == 4)
+	_ok("airfield planes spawned (%d)" % game.planes.size(), game.planes.size() == 5)
 	_ok("district is the airfield", WorldLayout.district_at(1450, -1250) == "airfield")
 	_ok("no avenue through the field", not WorldLayout.avenue_segment_exists(17, 3))
 	var a: Aircraft = game.planes.get("gus_1")

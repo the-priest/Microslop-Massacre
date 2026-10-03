@@ -60,6 +60,13 @@ const CONTROLS := """[b]MOVEMENT[/b]
   Landing: line up early, throttle back, wings level, nose a hair up. Stop, then E.
   Too slow and the wing quits (STALL). Too steep near the ground and it's over.
 
+[b]HELICOPTERS[/b]  (Bowery Bay's pad, Microslop Field in Redmont)
+  W / S             climb / descend (hands off holds your height)
+  A/D, mouse l/r    turn on the spot
+  Mouse fwd / ↑     nose down: fly forward   Mouse back / ↓   nose up: slow, back off
+  Space             brake
+  Ease down onto a pad, a lot or a roof. Fast or moving, it's a crash.
+
 [b]GAMEPAD[/b]  (Xbox / PlayStation / Steam Deck)
   Left stick        move / steer        Right stick   look
   A                 interact / select   B             phone / back
@@ -72,4 +79,5 @@ const CONTROLS := """[b]MOVEMENT[/b]
   In a car: X handbrake, A get out. In EXPLOIT: A queue shot, X execute, Y undo, LB/RB target.
   In a plane: RT/LT throttle, left stick banks and pitches (pull back to climb),
   LB/RB rudder, X brakes, right stick looks around, A gets out once stopped.
+  In a helicopter: RT/LT climb and descend, left stick turns and noses forward or back.
   Phone: LB/RB tabs, LT/RT sections. Map: stick picks a place, A fast-travels."""

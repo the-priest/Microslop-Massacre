@@ -362,6 +362,15 @@ and his planes are yours too. The jet you can
 steal (E Corp will notice), or save Gus's airfield the clever way and he signs it over
 to you, legally, for a dollar a year. Your own jet: no cops, no wanted level.
 
+**Helicopters.** Bowery Bay keeps a blue chopper on the apron next to Gus's trainers (his
+yes covers it too), and Microslop Field has the executive helicopter on its own pad (Ines's
+"proficiency" covers that). No runway: **W** is the collective (climb), **S** lets you down,
+hands off holds your height; **A/D** turn on the spot; push the nose down (mouse or arrows)
+to fly forward and pull it up to stop. Near the ground the air cushions you, so you can
+ease down onto a pad, a container, a parking lot or a rooftop and get out on top of the
+city. Come down fast or moving and it's a crash. Helicopters cross map borders like planes
+do, and they count for every air race and every airfield.
+
 **Flying between cities is a real flight.** Head north out of New York, follow the
 interstate across the fields, and Chicago's towers come up over the horizon; cross the
 edge of the map and you're over the next one without a menu, and the local field calls
@@ -477,6 +486,8 @@ ESC               pause, save, load, settings
 In a car          W/S gas and brake, A/D steer, Space handbrake, G horn, mouse looks around
 In a plane        W/S throttle, A/D bank, mouse back (or ↓) climbs, mouse forward (or ↑) dives,
                   mouse left/right rudder, Space wheel brakes, E get out once stopped
+In a helicopter   W climbs, S descends, hands off holds height, A/D (or mouse left/right) turn,
+                  mouse forward (or ↑) noses down to fly forward, back (or ↓) to slow, Space brakes
 ```
 
 Every key is listed in-game under **Controls** in the main and pause menus.
@@ -543,7 +554,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.9.0-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.10.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
@@ -597,6 +608,7 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `pad_test`, `menu_pad_test` | The whole game driven by a simulated controller: menus, phone, map, pause, minigames, level-up, dialogue, terminals, cars |
 | `companion_test` | Recruiting, following, riding along, heart-to-hearts, reactions, leaving |
 | `activities_test` | A taxi fare found, picked up, delivered and paid (and the shift ending when you get out), a paramedic call delivered to Mercy General, a vigilante takedown and a suspect who got away, a respray that loses two stars and a repair, Rent Is Due and The Cloud played through, then on every map a street race won, a hidden mask found, and the town's ER visited (patched up, out the right door) |
+| `heli_test` | Bowery Bay's chopper taken with Gus's yes, lifted straight off, held in a hover, flown forward and turned, set down on the control tower roof and back on the pad, and a hard arrival that's a crash |
 | `air_race_test` | The Harbor Lap started from Marisol's board, flown and landed for gold; The Reservoir from Port Ramsey into Redmont; The Lakefront from Gary across the border into Chicago with its clock and rings carried over; The Ore Run abandoned by climbing out |
 | `heat_test` | Stars rising with crimes, officers and cruisers responding, a cruiser routing along the streets to your car, a roadblock at four stars, the FBI at five, losing them outdoors and indoors, selling a stolen car to Rafi, and winning and losing a street race |
 | `dd_*`, `deepdebug`, `smoke`, `intro_test` | Interiors, exploits, death, the open world's doors, loot and pickups, the intro |

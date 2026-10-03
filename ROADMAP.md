@@ -98,6 +98,11 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       ambulance, radio, epilogue slides, companion lines. Gate routing now finds the
       shortest road across any number of maps. `redmont_walk`
 
+- [x] **Pass 12 (helicopters):** a hover flight model (collective, yaw, cyclic, ground
+      effect) for a chopper at Bowery Bay and Microslop's executive helicopter, both on
+      lit helipads; set down on pads, parking lots and rooftops, cross map borders, fly
+      the air races. `heli_test`
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

@@ -1299,6 +1299,19 @@ func _campus_block(bi: int, bj: int, r: Rect2) -> void:
 	Props.light_pool(c, Vector3(r.get_center().x, 0, r.get_center().y), 10.0, Color(0.85, 0.92, 1.0))
 
 
+## A helipad: a painted circle and an H, with lights round the edge.
+func _helipad(c: BuildCtx, p: Vector3) -> void:
+	c.props.flat(Vector3(p.x, 0.026, p.z), 14.0, 14.0, Color(0.22, 0.22, 0.23))
+	for k in 16:
+		var a := TAU * float(k) / 16.0
+		c.props.flat(Vector3(p.x + cos(a) * 6.2, 0.03, p.z + sin(a) * 6.2), 1.4, 0.35, Color(0.95, 0.8, 0.2), -a - PI * 0.5)
+		if k % 2 == 0:
+			c.glow.box(Vector3(p.x + cos(a) * 7.0, 0.15, p.z + sin(a) * 7.0), Vector3(0.2, 0.15, 0.2), Color(0.3, 1.0, 0.4), 0.0, Vector2(Props.K_NIGHT, 0))
+	c.props.flat(Vector3(p.x - 1.4, 0.032, p.z), 0.5, 4.0, Color(0.95, 0.95, 0.92))
+	c.props.flat(Vector3(p.x + 1.4, 0.032, p.z), 0.5, 4.0, Color(0.95, 0.95, 0.92))
+	c.props.flat(Vector3(p.x, 0.032, p.z), 2.4, 0.5, Color(0.95, 0.95, 0.92))
+
+
 ## Microslop's crown: the four squares, lit, and a beacon on the mast.
 func _hq_crown(c: BuildCtx, top: Vector3) -> void:
 	var cols := [Color(0.95, 0.3, 0.15), Color(0.45, 0.8, 0.2), Color(0.1, 0.65, 0.95), Color(1.0, 0.75, 0.1)]
@@ -1316,6 +1329,10 @@ func _hq_crown(c: BuildCtx, top: Vector3) -> void:
 func _redmont_extras() -> void:
 	var lf := landmark_far
 	_hq_crown(lf, Vector3(RM_HQ.x, 96.0, RM_HQ.y + 37.2))
+	# The executive helicopter, on its own pad beside the field.
+	var hp := Vector3(646.0, 0, 300.0)
+	_helipad(ctx_at(hp.x, hp.z), hp)
+	airfield_planes.append({"slot": "redmont_heli", "model": "heli", "pos": hp, "yaw": PI * 0.5})
 	# The logo, fourteen metres high, the four squares running a little at
 	# the bottom like they've been left out in the rain.
 	var lg := Vector3(RM_LOGO.x, 0, RM_LOGO.y)
@@ -2819,7 +2836,8 @@ func _airfield() -> void:
 			var cxa := ap.position.x + w2 * (float(ax2) + 0.5)
 			var cza := ap.position.y + d2 * (float(az2) + 0.5)
 			ctx_at(cxa, cza).ground.flat(Vector3(cxa, 0.017, cza), w2, d2, asphalt.lightened(0.02), 0.0, G)
-	var slots := [["gus_1", "skyhawk", Vector3(1445, 0, -1282), -PI * 0.5], ["gus_2", "skyhawk", Vector3(1445, 0, -1252), -PI * 0.5], ["gus_3", "skyhawk", Vector3(1445, 0, -1222), -PI * 0.5], ["ecorp_jet", "citation", Vector3(1395, 0, -1150), -PI * 0.5]]
+	var slots := [["gus_1", "skyhawk", Vector3(1445, 0, -1282), -PI * 0.5], ["gus_2", "skyhawk", Vector3(1445, 0, -1252), -PI * 0.5], ["gus_3", "skyhawk", Vector3(1445, 0, -1222), -PI * 0.5], ["ecorp_jet", "citation", Vector3(1395, 0, -1150), -PI * 0.5], ["gus_heli", "heli", Vector3(1380, 0, -1268), -PI * 0.5]]
+	_helipad(ctx_at(1380.0, -1268.0), Vector3(1380, 0, -1268))
 	for sl in slots:
 		var sp: Vector3 = sl[2]
 		var ca := ctx_at(sp.x, sp.z)

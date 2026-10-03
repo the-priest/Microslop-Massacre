@@ -12,6 +12,10 @@ extends Vehicle
 const MODELS := {
 	"skyhawk": {"name": "Skyhawk", "vmax": 66.0, "stall": 22.0, "rot": 25.0, "thrust": 5.2,
 		"roll_rate": 1.7, "pitch_rate": 0.95, "hp": 140.0, "body": Vector3(1.4, 1.5, 7.6), "body_y": 1.25, "cam": 11.0},
+	# Helicopters hover: W/S is the collective (climb, hold, descend), A/D
+	# turn on the spot, the nose (mouse or arrows) tilts you forward or back.
+	"heli": {"name": "Helicopter", "vmax": 52.0, "stall": 0.0, "rot": 0.0, "thrust": 9.0, "heli": true,
+		"roll_rate": 1.6, "pitch_rate": 1.0, "hp": 160.0, "body": Vector3(1.9, 2.0, 5.2), "body_y": 1.3, "cam": 12.0},
 	"citation": {"name": "E Corp Citation", "vmax": 128.0, "stall": 40.0, "rot": 45.0, "thrust": 8.5,
 		"roll_rate": 2.1, "pitch_rate": 0.8, "hp": 220.0, "body": Vector3(2.0, 2.2, 14.0), "body_y": 1.8, "cam": 17.0},
 }
@@ -64,7 +68,18 @@ func setup_plane(m: String, pos: Vector3, yaw: float, g: Node) -> Aircraft:
 	_glow.material_override = Mats.glow
 	_glow.visibility_range_end = 2400.0
 	add_child(_glow)
-	if m == "skyhawk":
+	if m == "heli":
+		# The main rotor (spins about the mast) and, on the tail, a little one.
+		var rb := MeshBatch.new()
+		rb.box(Vector3.ZERO, Vector3(10.4, 0.06, 0.32), Color(0.1, 0.1, 0.11))
+		rb.box(Vector3.ZERO, Vector3(0.32, 0.06, 10.4), Color(0.1, 0.1, 0.11))
+		rb.cyl(Vector3(0, 0.05, 0), 0.25, 0.25, 0.3, Color(0.3, 0.3, 0.32), 8)
+		_prop = MeshInstance3D.new()
+		_prop.mesh = rb.to_mesh()
+		_prop.material_override = Mats.lit
+		_prop.position = Vector3(0, 2.75, -0.2)
+		add_child(_prop)
+	elif m == "skyhawk":
 		var pb := MeshBatch.new()
 		pb.box(Vector3.ZERO, Vector3(2.0, 0.16, 0.05), Color(0.12, 0.12, 0.12))
 		pb.sphere(Vector3(0, 0, -0.12), 0.18, Color(0.85, 0.15, 0.12), 6, 3)
@@ -73,7 +88,7 @@ func setup_plane(m: String, pos: Vector3, yaw: float, g: Node) -> Aircraft:
 		_prop.material_override = Mats.lit
 		_prop.position = Vector3(0, 1.15, -3.2)
 		add_child(_prop)
-	else:
+	if m == "citation":
 		var lb := Label3D.new()
 		lb.text = "E CORP"
 		lb.font_size = 72
@@ -185,6 +200,19 @@ func _physics_process(delta: float) -> void:
 	# The mouse "stick" drifts back to centre.
 	_m_pitch = move_toward(_m_pitch, 0.0, delta * 1.6)
 	_m_yaw = move_toward(_m_yaw, 0.0, delta * 2.5)
+	if bool(spec.get("heli", false)):
+		_heli(delta, thr_in if driving else -0.4, bank_in + rud_in, pitch_in, brake)
+		rotation = Vector3(pitch, heading, -bank)
+		_heli_move(delta)
+		if driving:
+			_check_airspace(delta)
+		if _engine != null and _engine.playing:
+			_engine.pitch_scale = 0.5 + throttle * 0.7 + absf(speed) / float(spec["vmax"]) * 0.3
+		if _prop != null:
+			_prop_a += delta * (4.0 + throttle * 26.0 if driving or airborne else 0.0)
+			_prop.rotation.y = _prop_a
+		_smoke.visible = hp < 50.0
+		return
 	if not driving:
 		thr_in = -1.0
 	throttle = clampf(throttle + thr_in * 0.55 * delta, 0.0, 1.0)
@@ -275,6 +303,95 @@ func _fly(delta: float, bank_in: float, pitch_in: float, rud_in: float) -> void:
 		warn = "LEAVING AIRSPACE"
 	else:
 		warn = ""
+
+
+# ------------------------------------------------------------------ rotors
+## Collective, yaw and cyclic. Near the ground the air cushions you (ground
+## effect), so easing down onto a pad or a roof is a landing, not a crash.
+func _heli(delta: float, coll: float, yaw_in: float, pitch_in: float, brake: bool) -> void:
+	altitude = global_position.y - _ground_y
+	var want_vy := coll * (8.0 if coll > 0.0 else 7.0)
+	if airborne and altitude < 10.0 and want_vy < -2.5:
+		want_vy = -2.5
+	sink = move_toward(sink, want_vy, delta * 9.0)
+	throttle = clampf(0.55 + sink / 16.0, 0.0, 1.0)
+	if not airborne:
+		speed = move_toward(speed, 0.0, delta * 8.0)
+		pitch = move_toward(pitch, 0.0, delta * 2.0)
+		bank = move_toward(bank, 0.0, delta * 2.0)
+		if coll > 0.05:
+			heading -= yaw_in * 1.2 * delta
+		if sink > 0.6:
+			airborne = true
+			AudioManager.play_3d("door", global_position, -8.0, 0.5)
+		warn = ""
+		return
+	heading -= yaw_in * 1.5 * delta
+	pitch = move_toward(pitch, -clampf(pitch_in, -1.0, 1.0) * 0.35, delta * 1.6)
+	bank = move_toward(bank, clampf(yaw_in, -1.0, 1.0) * 0.22 * clampf(absf(speed) / 20.0, 0.0, 1.0), delta * 1.5)
+	var vmax := float(spec["vmax"]) * (0.6 if hp < 40.0 else 1.0)
+	speed = clampf(speed + (-pitch * 42.0 - speed * 0.26) * delta, -14.0, vmax)
+	if brake:
+		speed = move_toward(speed, 0.0, delta * 14.0)
+	if global_position.y > CEILING:
+		sink = minf(sink, 0.0)
+	var descent := -sink
+	if altitude < 40.0 and descent > 6.0:
+		warn = "PULL UP"
+	elif not Regions.sky(WorldLayout.region).has_point(Vector2(global_position.x, global_position.z)):
+		warn = "LEAVING AIRSPACE"
+	else:
+		warn = ""
+
+
+func _heli_move(delta: float) -> void:
+	var fwd := Vector3(-sin(heading), 0.0, -cos(heading))
+	var vel := fwd * speed + Vector3(0, sink if airborne else 0.0, 0)
+	var col := move_and_collide(vel * delta)
+	if col != null:
+		var shp := col.get_collider_shape() as Node
+		if shp != null and str(shp.get_meta("tag", "")) == "bounds":
+			global_position += col.get_remainder()
+			col = null
+	if col != null:
+		var n := col.get_normal()
+		var impact := absf(vel.dot(n))
+		var other := col.get_collider()
+		if other is Vehicle and other != self:
+			(other as Vehicle).damage(impact * 2.0)
+		if n.y > 0.7 and not airborne:
+			pass # resting on the pad
+		elif n.y > 0.7 and impact < 6.0 and absf(speed) < 14.0:
+			# Settled onto something flat: a roof, a container, a truck.
+			_heli_land(impact)
+		elif impact > 9.0 and _crash_cool <= 0.0:
+			_crash(vel.length())
+			return
+		else:
+			speed *= 0.4
+			damage(impact * 1.2)
+			global_position += n * 0.08
+	if not airborne:
+		global_position.y = _ground_y
+		if _over_water():
+			_crash(12.0)
+	elif global_position.y <= _ground_y + 0.05 and sink <= 0.0:
+		if -sink < 6.0 and absf(speed) < 14.0 and not _over_water():
+			_heli_land(-sink)
+		else:
+			_crash(vel.length())
+
+
+func _heli_land(descent: float) -> void:
+	airborne = false
+	global_position.y = _ground_y
+	sink = 0.0
+	speed *= 0.3
+	AudioManager.play_3d("thud", global_position, 0.0, 0.6)
+	if driving:
+		Pad.rumble(0.3, 0.4, 0.2)
+	if descent > 4.0:
+		damage(descent * 2.5)
 
 
 func _move(delta: float) -> void:
@@ -484,7 +601,31 @@ static func build_meshes(m: String) -> Array:
 	var g := MeshBatch.new()
 	var dark := Color(0.12, 0.12, 0.13)
 	var glass := Color(0.08, 0.12, 0.16)
-	if m == "skyhawk":
+	if m == "heli":
+		var body := Color(0.12, 0.3, 0.55)
+		var white := Color(0.9, 0.9, 0.88)
+		b.box(Vector3(0, 1.35, -0.3), Vector3(1.8, 1.6, 3.2), body, 0.0, Vector2.ZERO, 63)
+		b.box(Vector3(0, 1.45, -2.1), Vector3(1.6, 1.3, 0.9), glass)
+		b.box(Vector3(0, 1.1, -2.2), Vector3(1.5, 0.5, 0.8), body)
+		b.box(Vector3(0, 1.75, -1.0), Vector3(1.84, 0.7, 1.4), glass)
+		b.box(Vector3(0, 1.0, -0.3), Vector3(1.84, 0.16, 3.2), white)
+		b.box(Vector3(0, 2.3, 0.2), Vector3(1.0, 0.6, 1.8), body)
+		b.box(Vector3(0, 2.6, -0.2), Vector3(0.3, 0.3, 0.3), dark)
+		b.box(Vector3(0, 1.6, 3.4), Vector3(0.4, 0.45, 4.2), body)
+		b.box(Vector3(0, 2.3, 5.3), Vector3(0.12, 1.4, 0.8), body)
+		b.box(Vector3(0, 1.6, 5.0), Vector3(1.6, 0.08, 0.5), body)
+		b.box(Vector3(0.2, 2.3, 5.4), Vector3(0.05, 1.4, 0.18), dark)
+		b.box(Vector3(0.2, 2.3, 5.4), Vector3(0.05, 0.18, 1.4), dark)
+		for s in [-1.0, 1.0]:
+			b.box(Vector3(0.85 * s, 0.12, -0.3), Vector3(0.12, 0.12, 3.6), dark)
+			b.tube(Vector3(0.85 * s, 0.12, -1.2), Vector3(0.7 * s, 0.6, -1.2), 0.05, dark)
+			b.tube(Vector3(0.85 * s, 0.12, 0.6), Vector3(0.7 * s, 0.6, 0.6), 0.05, dark)
+		g.box(Vector3(0, 0.6, -0.3), Vector3(0.14, 0.1, 0.14), Color(1.0, 0.15, 0.1), 0.0, Vector2(Props.K_BLINK, 0))
+		g.box(Vector3(0, 3.05, 5.7), Vector3(0.12, 0.12, 0.12), Color(1, 1, 1), 0.0, Vector2(Props.K_BLINK, 0.5))
+		g.box(Vector3(0.95, 1.2, -0.6), Vector3(0.04, 0.1, 0.2), Color(0.1, 1.0, 0.2), 0.0, Vector2(Props.K_ALWAYS, 0))
+		g.box(Vector3(-0.95, 1.2, -0.6), Vector3(0.04, 0.1, 0.2), Color(1.0, 0.1, 0.1), 0.0, Vector2(Props.K_ALWAYS, 0))
+		g.box(Vector3(0, 0.9, -2.55), Vector3(0.3, 0.12, 0.05), Color(1.0, 0.95, 0.8), 0.0, Vector2(Props.K_NIGHT, 0))
+	elif m == "skyhawk":
 		var white := Color(0.88, 0.88, 0.85)
 		var stripe := Color(0.75, 0.16, 0.12)
 		b.box(Vector3(0, 1.3, -0.7), Vector3(1.2, 1.4, 3.2), white, 0.0, Vector2.ZERO, 63)
