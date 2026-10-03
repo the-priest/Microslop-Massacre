@@ -51,7 +51,7 @@ func _ready() -> void:
 		print("SHOT ", nm)
 		cam.queue_free()
 	if OS.get_environment("MAPSHOT") != "":
-		await game.enter_cell("world", Vector3(20, 0.2, 700), 0.0, false, true)
+		await game.enter_cell("world", WorldLayout.START_POS + Vector3(0, 0.2, 0), 0.0, false, true)
 		game.hud.visible = true
 		game.phone.open("map")
 		for i in 30:

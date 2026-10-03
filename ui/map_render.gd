@@ -45,32 +45,45 @@ static func render(buildings: Array) -> Image:
 	use_region(WorldLayout.region)
 	var img := Image.create(SIZE, SIZE, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0.0, 0.05, 0.03))
-	# Water.
-	var ex := WorldLayout.WORLD_XE
-	var zn := WorldLayout.WORLD_ZN
-	_rect(img, X0, Z0, -866, Z0 + SPAN, Color(0.0, 0.1, 0.12))
-	_rect(img, ex, Z0, X0 + SPAN, Z0 + SPAN, Color(0.0, 0.1, 0.12))
-	_rect(img, X0, WorldLayout.BEACH_Z1, X0 + SPAN, Z0 + SPAN, Color(0.0, 0.1, 0.12))
-	# Land base.
-	_rect(img, -866, zn, ex, WorldLayout.BEACH_Z1, Color(0.02, 0.09, 0.05))
-	# Park + beach.
-	var px0 := WorldLayout.ax(WorldLayout.PARK["bi0"]) + WorldLayout.AVE_HW
-	var px1 := WorldLayout.ax(WorldLayout.PARK["bi1"] + 1) - WorldLayout.AVE_HW
-	var pz0 := WorldLayout.sz(WorldLayout.PARK["bj0"]) + WorldLayout.ST_HW
-	var pz1 := WorldLayout.sz(WorldLayout.PARK["bj1"] + 1) - WorldLayout.ST_HW
-	_rect(img, px0, pz0, px1, pz1, Color(0.05, 0.22, 0.08))
-	var T := WorldLayout.TRYON
-	_rect(img, WorldLayout.ax(int(T["bi0"])) + WorldLayout.AVE_HW, WorldLayout.sz(int(T["bj0"])) + WorldLayout.ST_HW, WorldLayout.ax(int(T["bi1"]) + 1) - WorldLayout.AVE_HW, WorldLayout.sz(int(T["bj1"]) + 1) - WorldLayout.ST_HW, Color(0.04, 0.18, 0.06))
-	_rect(img, -170, 40, -60, 120, Color(0.0, 0.14, 0.16))
-	# Bowery Bay Airfield: grass, apron and the runway.
-	var af := WorldLayout.airfield_rect()
-	_rect(img, af.position.x, af.position.y, af.end.x, af.end.y, Color(0.04, 0.15, 0.07))
-	_rect(img, 1330, -1300, 1470, -1120, Color(0.1, 0.26, 0.15))
-	_rect(img, WorldLayout.RUNWAY_X - WorldLayout.RUNWAY_HW, WorldLayout.RUNWAY_Z0, WorldLayout.RUNWAY_X + WorldLayout.RUNWAY_HW, WorldLayout.RUNWAY_Z1, Color(0.16, 0.4, 0.22))
-	_rect(img, WorldLayout.RUNWAY_X - 1.5, WorldLayout.RUNWAY_Z0 + 20, WorldLayout.RUNWAY_X + 1.5, WorldLayout.RUNWAY_Z1 - 20, Color(0.4, 0.8, 0.5))
-	_rect(img, -866, WorldLayout.BOARD_Z1, ex, WorldLayout.BEACH_Z1, Color(0.2, 0.2, 0.1))
-	_rect(img, -866, WorldLayout.BOARD_Z0, ex, WorldLayout.BOARD_Z1, Color(0.18, 0.14, 0.06))
-	_rect(img, WorldLayout.PIER_X0, WorldLayout.BOARD_Z1, WorldLayout.PIER_X1, WorldLayout.PIER_Z1, Color(0.18, 0.14, 0.06))
+	var water := Color(0.0, 0.1, 0.12)
+	if WorldLayout.region == "nyc":
+		# Water.
+		var ex := WorldLayout.WORLD_XE
+		var zn := WorldLayout.WORLD_ZN
+		_rect(img, X0, Z0, -866, Z0 + SPAN, Color(0.0, 0.1, 0.12))
+		_rect(img, ex, Z0, X0 + SPAN, Z0 + SPAN, Color(0.0, 0.1, 0.12))
+		_rect(img, X0, WorldLayout.BEACH_Z1, X0 + SPAN, Z0 + SPAN, Color(0.0, 0.1, 0.12))
+		# Land base.
+		_rect(img, -866, zn, ex, WorldLayout.BEACH_Z1, Color(0.02, 0.09, 0.05))
+		# Park + beach.
+		var px0 := WorldLayout.ax(WorldLayout.PARK["bi0"]) + WorldLayout.AVE_HW
+		var px1 := WorldLayout.ax(WorldLayout.PARK["bi1"] + 1) - WorldLayout.AVE_HW
+		var pz0 := WorldLayout.sz(WorldLayout.PARK["bj0"]) + WorldLayout.ST_HW
+		var pz1 := WorldLayout.sz(WorldLayout.PARK["bj1"] + 1) - WorldLayout.ST_HW
+		_rect(img, px0, pz0, px1, pz1, Color(0.05, 0.22, 0.08))
+		var T := WorldLayout.TRYON
+		_rect(img, WorldLayout.ax(int(T["bi0"])) + WorldLayout.AVE_HW, WorldLayout.sz(int(T["bj0"])) + WorldLayout.ST_HW, WorldLayout.ax(int(T["bi1"]) + 1) - WorldLayout.AVE_HW, WorldLayout.sz(int(T["bj1"]) + 1) - WorldLayout.ST_HW, Color(0.04, 0.18, 0.06))
+		_rect(img, -170, 40, -60, 120, Color(0.0, 0.14, 0.16))
+		# Bowery Bay Airfield: grass, apron and the runway.
+		var af := WorldLayout.airfield_rect()
+		_rect(img, af.position.x, af.position.y, af.end.x, af.end.y, Color(0.04, 0.15, 0.07))
+		_rect(img, 1330, -1300, 1470, -1120, Color(0.1, 0.26, 0.15))
+		_rect(img, WorldLayout.RUNWAY_X - WorldLayout.RUNWAY_HW, WorldLayout.RUNWAY_Z0, WorldLayout.RUNWAY_X + WorldLayout.RUNWAY_HW, WorldLayout.RUNWAY_Z1, Color(0.16, 0.4, 0.22))
+		_rect(img, WorldLayout.RUNWAY_X - 1.5, WorldLayout.RUNWAY_Z0 + 20, WorldLayout.RUNWAY_X + 1.5, WorldLayout.RUNWAY_Z1 - 20, Color(0.4, 0.8, 0.5))
+		_rect(img, -866, WorldLayout.BOARD_Z1, ex, WorldLayout.BEACH_Z1, Color(0.2, 0.2, 0.1))
+		_rect(img, -866, WorldLayout.BOARD_Z0, ex, WorldLayout.BOARD_Z1, Color(0.18, 0.14, 0.06))
+		_rect(img, WorldLayout.PIER_X0, WorldLayout.BOARD_Z1, WorldLayout.PIER_X1, WorldLayout.PIER_Z1, Color(0.18, 0.14, 0.06))
+	else:
+		# Out of town: land, its lake or ocean, its airfield.
+		_rect(img, X0, Z0, X0 + SPAN, Z0 + SPAN, Color(0.02, 0.09, 0.05))
+		var sea: Rect2 = Regions.SEA.get(WorldLayout.region, Rect2())
+		if sea.size.x > 0.0:
+			_rect(img, sea.position.x, sea.position.y, sea.end.x, sea.end.y, water)
+		if WorldLayout.AIRFIELD["bi0"] <= WorldLayout.AIRFIELD["bi1"]:
+			var raf := WorldLayout.airfield_rect()
+			_rect(img, raf.position.x, raf.position.y, raf.end.x, raf.end.y, Color(0.04, 0.15, 0.07))
+			_rect(img, WorldLayout.RUNWAY_X - WorldLayout.RUNWAY_HW, WorldLayout.RUNWAY_Z0, WorldLayout.RUNWAY_X + WorldLayout.RUNWAY_HW, WorldLayout.RUNWAY_Z1, Color(0.16, 0.4, 0.22))
+			_rect(img, WorldLayout.RUNWAY_X - 1.5, WorldLayout.RUNWAY_Z0 + 20, WorldLayout.RUNWAY_X + 1.5, WorldLayout.RUNWAY_Z1 - 20, Color(0.4, 0.8, 0.5))
 	# Roads.
 	var road := Color(0.1, 0.32, 0.16)
 	for i in WorldLayout.NA:
@@ -78,13 +91,28 @@ static func render(buildings: Array) -> Image:
 			if WorldLayout.avenue_segment_exists(i, j):
 				var x := WorldLayout.ax(i)
 				_rect(img, x - WorldLayout.AVE_HW, WorldLayout.sz(j), x + WorldLayout.AVE_HW, WorldLayout.sz(j + 1), road)
-		_rect(img, WorldLayout.ax(i) - WorldLayout.AVE_HW, WorldLayout.sz(WorldLayout.NS - 1), WorldLayout.ax(i) + WorldLayout.AVE_HW, WorldLayout.SURF_Z, road)
+		if WorldLayout.region == "nyc":
+			_rect(img, WorldLayout.ax(i) - WorldLayout.AVE_HW, WorldLayout.sz(WorldLayout.NS - 1), WorldLayout.ax(i) + WorldLayout.AVE_HW, WorldLayout.SURF_Z, road)
 	for j in WorldLayout.NS:
 		for i in WorldLayout.NA - 1:
 			if WorldLayout.street_segment_exists(j, i):
 				var z := WorldLayout.sz(j)
 				_rect(img, WorldLayout.ax(i), z - WorldLayout.ST_HW, WorldLayout.ax(i + 1), z + WorldLayout.ST_HW, road)
-	_rect(img, WorldLayout.ax(0), WorldLayout.SURF_Z - WorldLayout.ST_HW, WorldLayout.ax(WorldLayout.NA - 1), WorldLayout.SURF_Z + WorldLayout.ST_HW, road)
+	if WorldLayout.region == "nyc":
+		_rect(img, WorldLayout.ax(0), WorldLayout.SURF_Z - WorldLayout.ST_HW, WorldLayout.ax(WorldLayout.NA - 1), WorldLayout.SURF_Z + WorldLayout.ST_HW, road)
+	# The road out through every travel gate.
+	for gid in Regions.gates(WorldLayout.region).keys():
+		var g: Dictionary = Regions.gates(WorldLayout.region)[gid]
+		var gp: Array = g["pos"]
+		var yaw := float(g.get("yaw", 0.0))
+		var inward := Vector2(sin(yaw), cos(yaw))
+		var a := Vector2(float(gp[0]), float(gp[1])) - inward * 40.0
+		var b := a
+		for k in 400:
+			if WorldLayout.in_bounds(b.x, b.y):
+				break
+			b += inward * 2.0
+		_rect(img, minf(a.x, b.x) - 6.0, minf(a.y, b.y) - 6.0, maxf(a.x, b.x) + 6.0, maxf(a.y, b.y) + 6.0, road)
 	# Buildings, brighter = taller.
 	for b in buildings:
 		var ba: Array = b

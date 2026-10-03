@@ -435,6 +435,11 @@ func _check_story() -> void:
 			for a in sd2.get("actions", []):
 				_cond_str(str((a as Dictionary).get("when", "")), ws + " action")
 				_fx_str(str((a as Dictionary).get("fx", "")), ws + " action")
+	for hi in RadioData.HEADLINES.size():
+		var hd: Dictionary = RadioData.HEADLINES[hi]
+		_cond_str(str(hd.get("when", "")), "radio headline %d" % hi)
+		if hd.has("region") and not (str(hd["region"]) == "nyc" or Regions.DEFS.has(str(hd["region"]))):
+			_err("radio headline %d: unknown region %s" % [hi, str(hd["region"])])
 	for sp3 in WorldObjects.SPOTS:
 		var sd3: Dictionary = sp3
 		_cond_str(str(sd3.get("when", "")), "world spot " + str(sd3.get("id", "?")))

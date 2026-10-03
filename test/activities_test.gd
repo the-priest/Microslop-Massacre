@@ -13,6 +13,7 @@ func _ready() -> void:
 	await _respray()
 	await _masks()
 	await _rent_is_due()
+	await _radio()
 	for id in ["lakeshore", "interstate", "mainstreet", "quay", "broadway"]:
 		await _race(id)
 		await _masks()
@@ -123,6 +124,18 @@ func _rent_is_due() -> void:
 	await _follow("sq_rent") # -> Ms. Alvarez
 	await _talk("alvarez", [])
 	_ok("rent is due done", GameState.quest_state("sq_rent") == "done")
+
+
+func _radio() -> void:
+	print("PHASE radio")
+	AudioManager.radio_play("news")
+	await _settle()
+	game._radio_t = 1.0
+	game._radio_tick()
+	_ok("the news reports Rent Is Due", GameState.flags.keys().any(func(k: Variant) -> bool: return str(k).begins_with("news:")))
+	game._radio_t = 1.0
+	game._radio_tick()
+	AudioManager.radio_stop()
 
 
 func _race(id: String) -> void:

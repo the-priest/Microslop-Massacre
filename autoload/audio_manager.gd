@@ -32,6 +32,7 @@ const STATIONS := {
 	"synth": {"name": "WAVE 101.9", "desc": "Neon, analog, and nostalgia for a future that got foreclosed."},
 	"beats": {"name": "LOFI 92.1", "desc": "Beats to hack to."},
 	"pirate": {"name": "fsociety PIRATE SIGNAL", "desc": "Broadcast from a rooftop in the Heights. Static and conviction."},
+	"news": {"name": "E NEWS 24 · NEWS, TALK & TRAFFIC", "desc": "E Corp's own station. It reports what you did anyway, in between the ads."},
 }
 
 

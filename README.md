@@ -375,6 +375,10 @@ a crime.
 - **Body shops** on every map (Rafi's and LES Collision in New York, one in each other
   city and town): roll into the blue bay with the stars on you, stop, and they'll respray
   the car and swap the plates so the cops lose you. Banged up and not wanted? They fix it.
+- **E NEWS 24**, the talk station on the phone's radio: E Corp's own news, traffic and
+  weather for whichever map you're on, and ads you'll learn to hate, and in between, the
+  news reports what you did: the paper rain over the township, the fishermen back on the
+  water, the trucks that stopped on I-80, the radiators banging in the Bronx.
 - **Fifty hidden fsociety masks** zip-tied to street corners across all six maps, glowing
   red and green if you know where to look. Every one you find counts toward something.
 - **Taxi fares:** get behind the wheel of any taxi, on any map, and dispatch finds you
@@ -490,7 +494,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.6.0-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.6.1-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.

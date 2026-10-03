@@ -1930,6 +1930,7 @@ func _slow_update() -> void:
 	_update_gates()
 	_update_quest_rides()
 	_spray_tick()
+	_radio_tick()
 	_companion_tick()
 	# The Kingpin path: the corners pay every morning.
 	if GameState.has_flag("kingpin"):
@@ -3164,6 +3165,49 @@ func _spawn_hidden_masks() -> void:
 	for m in hidden_mask_spots(WorldLayout.region):
 		var md: Dictionary = m
 		spawn_dynamic_pickup(str(md["id"]), "hidden_mask", 1, md["pos"])
+
+
+# ------------------------------------------------------------- talk radio
+## E NEWS 24: with the phone's radio on the news station, an item every
+## half minute or so: something you did if there's anything new, otherwise
+## local traffic and weather, otherwise an ad (see RadioData).
+var _radio_t := 6.0
+
+
+func _radio_tick() -> void:
+	if not AudioManager.radio_on() or AudioManager.radio_station != "news" or ui_open():
+		_radio_t = minf(_radio_t, 6.0)
+		return
+	_radio_t -= 1.0
+	if _radio_t > 0.0:
+		return
+	_radio_t = 32.0
+	var fresh: Array = []
+	var local: Array = []
+	var filler: Array = []
+	for i in RadioData.HEADLINES.size():
+		var h: Dictionary = RadioData.HEADLINES[i]
+		if h.has("region") and str(h["region"]) != WorldLayout.region:
+			continue
+		if h.has("when"):
+			if not DialogueManager.check(str(h["when"])):
+				continue
+			if not GameState.flags.has("news:%d" % i):
+				fresh.append(i)
+		elif h.has("region"):
+			local.append(i)
+		else:
+			filler.append(i)
+	var pick := -1
+	if not fresh.is_empty():
+		pick = int(fresh[0])
+		GameState.flags["news:%d" % pick] = true
+	else:
+		var pool: Array = local + local + filler
+		if pool.is_empty():
+			return
+		pick = int(pool[randi() % pool.size()])
+	hud.subtitle("E NEWS 24", str((RadioData.HEADLINES[pick] as Dictionary)["text"]), 7.0)
 
 
 # -------------------------------------------------------------- body shops
