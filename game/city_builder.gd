@@ -19,18 +19,21 @@ const REGION_AVENUES := {
 	"chicago": ["ASHLAND AVE", "RACINE AVE", "HALSTED ST", "DESPLAINES ST", "CANAL ST", "WACKER DR", "WELLS ST", "LASALLE ST", "CLARK ST", "DEARBORN ST", "STATE ST", "MICHIGAN AVE", "LAKE SHORE DR"],
 	"township": ["KEARNEY RD", "PLANT RD", "1ST AVE", "2ND AVE", "3RD AVE", "4TH AVE", "MAPLE AVE", "RIDGE AVE", "COUNTY RTE 9"],
 	"port": ["AIRPORT RD", "CAPE RD", "WHALER AVE", "MARKET ST", "ANCHOR AVE", "SCHOONER AVE", "DOCK ST", "TERMINAL AVE", "QUAY ST", "PIER RD"],
+	"gary": ["CLARK RD", "CHASE ST", "MADISON ST", "TAFT ST", "BROADWAY", "MASSACHUSETTS ST", "VIRGINIA ST", "GRANT ST", "MLK DR", "AIRPORT RD", "CLINE AVE"],
 }
 const REGION_STREETS := {
 	"highway": ["FARM RD 1", "FARM RD 2", "FARM RD 3", "COUNTY RTE 41", "FARM RD 5", "LENNOX RD", "MAIN ST"],
 	"chicago": ["DIVISION ST", "CHICAGO AVE", "SUPERIOR ST", "GRAND AVE", "OHIO ST", "KINZIE ST", "LAKE ST", "RANDOLPH ST", "WASHINGTON ST", "MADISON ST", "MONROE ST", "ADAMS ST", "JACKSON BLVD", "VAN BUREN ST", "CONGRESS PKWY", "ROOSEVELT RD"],
 	"township": ["QUARRY RD", "MILL ST", "CHURCH ST", "ELM ST", "MAIN ST", "WALNUT ST", "SCHOOL ST", "FARM RD", "CREEK RD"],
 	"port": ["LIGHTHOUSE RD", "NORTH ST", "CANNERY ST", "SALT ST", "WATER ST", "FRONT ST", "HARBOR ST", "MARSH RD", "SOUTH ST"],
+	"gary": ["DUNES HWY", "5TH AVE", "7TH AVE", "9TH AVE", "11TH AVE", "15TH AVE", "19TH AVE", "21ST AVE", "25TH AVE", "35TH AVE", "RIDGE RD"],
 }
 ## Washington Township's plant stacks and Port Ramsey's cranes and lighthouse
 ## (local), drawn up close by their own map and from far away by the others.
 const TW_STACKS := [Vector2(-262.0, -330.0), Vector2(-218.0, -330.0)]
 const PT_CRANES := [Vector2(682.0, -290.0), Vector2(682.0, -170.0), Vector2(682.0, -50.0)]
 const PT_LIGHTHOUSE := Vector2(752.0, -566.0)
+const GY_FURNACES := [Vector2(-600.0, -540.0), Vector2(-470.0, -540.0), Vector2(-340.0, -540.0)]
 
 var chunks: Dictionary = {} # Vector2i -> BuildCtx
 var rng := RandomNumberGenerator.new()
@@ -68,6 +71,7 @@ const STORE_KINDS := {
 	"hunts": ["grocery", "liquor", "hardware", "diner"],
 	"tw_main": ["diner", "hardware", "grocery", "bar", "pawnshop", "liquor", "clothing", "diner"],
 	"pt_town": ["bar", "bar", "diner", "grocery", "hardware", "liquor", "pawnshop", "restaurant"],
+	"gy_town": ["liquor", "pawnshop", "diner", "bar", "grocery", "hardware", "pawnshop", "clothing"],
 }
 
 
@@ -150,6 +154,12 @@ func _build_region() -> void:
 					_township_memorial(r)
 				"pt_docks":
 					_docks_block(bi, bj, r)
+				"gy_mill":
+					_mill_block(bi, bj, r)
+				"gy_depot":
+					_depot_block(bi, bj, r)
+				"gy_homes":
+					_houses_block(bi, bj, r, d)
 				_:
 					_street_wall_block(bi, bj, r, d)
 	if WorldLayout.AIRFIELD["bi0"] <= WorldLayout.AIRFIELD["bi1"]:
@@ -162,6 +172,8 @@ func _build_region() -> void:
 			_township_extras()
 		"port":
 			_port_extras()
+		"gary":
+			_gary_extras()
 	_landmarks()
 	_region_edges()
 
@@ -359,6 +371,10 @@ func _region_edges() -> void:
 		"port":
 			var sea: Rect2 = Regions.SEA["port"]
 			wb.flat(Vector3(sea.position.x + 1500.0, -0.4, 0.0), 3000.0, 6000.0, Color(0.09, 0.19, 0.28))
+		"gary":
+			# Lake Michigan along the north shore, out past the furnaces.
+			var lake: Rect2 = Regions.SEA["gary"]
+			wb.flat(Vector3(lake.get_center().x - 1500.0, -0.4, lake.end.y - 1500.0), lake.size.x + 3000.0, 3000.0, Color(0.1, 0.21, 0.3))
 	wb.commit(_water_parent_holder(), Mats.water, 0.0, "Water")
 	var far := BuildCtx.new()
 	var r2 := RandomNumberGenerator.new()
@@ -371,13 +387,15 @@ func _region_edges() -> void:
 		var skip := false
 		match reg:
 			"chicago":
-				skip = cx > x1 + 200.0
+				skip = cx > x1 + 200.0 or cos(a) < -0.6 # the lake east, Gary west
 			"highway":
 				skip = true # cities and towns on every side now
 			"township":
 				skip = cos(a) > 0.3 # I-80 is east
 			"port":
 				skip = cos(a) > 0.2 or cos(a) < -0.5 # ocean east, I-80 west
+			"gary":
+				skip = cos(a) > -0.4 or sin(a) < -0.3 # Chicago east, the lake north, the township south
 		if skip:
 			a += 0.08
 			continue
@@ -613,6 +631,10 @@ func _neighbour_skylines() -> void:
 				Props.place(landmark_far, "crane", Vector3(cp.x - 14.0, 0, cp.y), PI * 0.5, 1.6)
 			var lh := Regions.to_local(WorldLayout.region, Regions.to_world(str(reg), PT_LIGHTHOUSE))
 			_lighthouse_tower(landmark_far, Vector3(lh.x, 0, lh.y), 28.0)
+		if bool(S.get("furnaces", false)):
+			for fu in GY_FURNACES:
+				var fp := Regions.to_local(WorldLayout.region, Regions.to_world(str(reg), fu))
+				_blast_furnace(landmark_far, Vector3(fp.x, 0, fp.y))
 
 
 
@@ -722,6 +744,10 @@ func _houses_block(bi: int, bj: int, r: Rect2, d: String) -> void:
 	var siding := [Color(0.85, 0.84, 0.78), Color(0.8, 0.74, 0.55), Color(0.55, 0.65, 0.72), Color(0.6, 0.66, 0.55), Color(0.62, 0.6, 0.58), Color(0.7, 0.6, 0.48), Color(0.72, 0.5, 0.42)]
 	if d == "pt_homes":
 		siding = [Color(0.5, 0.5, 0.5), Color(0.62, 0.6, 0.56), Color(0.4, 0.45, 0.5), Color(0.85, 0.84, 0.8), Color(0.35, 0.42, 0.5), Color(0.55, 0.3, 0.25)]
+	elif d == "gy_homes":
+		# Brick bungalows, some of them long empty.
+		siding = [Color(0.45, 0.22, 0.16), Color(0.5, 0.3, 0.22), Color(0.38, 0.2, 0.15), Color(0.55, 0.42, 0.32), Color(0.62, 0.6, 0.55), Color(0.42, 0.36, 0.3)]
+		lawn = Color(0.22, 0.25, 0.14)
 	var roofs := [Color(0.22, 0.2, 0.2), Color(0.3, 0.22, 0.18), Color(0.2, 0.24, 0.28), Color(0.35, 0.33, 0.3)]
 	for face in [-1.0, 1.0]:
 		var x := r.position.x + 2.0
@@ -982,6 +1008,145 @@ func _exit_gantries() -> void:
 			else:
 				txt = "EXIT 42  PORT RAMSEY >" if north else "< EXIT 42  PORT RAMSEY"
 			c.label(p + Vector3(sx, 8.0, 0.12 if yaw == 0.0 else -0.12), txt, 44, Color(0.95, 0.95, 0.95), yaw, 300.0, 0.02)
+
+
+# ------------------------------------------------------------------- gary
+## A blast furnace on the lakeshore: the stack, its stoves, the downcomer,
+## a flare that still flickers at night although nothing's been poured here
+## for a year.
+func _blast_furnace(c: BuildCtx, p: Vector3) -> void:
+	var rust := Color(0.42, 0.24, 0.16)
+	c.props.cyl(p + Vector3(0, 22.0, 0), 7.0, 10.0, 44.0, rust, 14)
+	c.props.cyl(p + Vector3(0, 46.0, 0), 4.0, 7.2, 5.0, rust.darkened(0.2), 12)
+	c.props.box(p + Vector3(0, 30.0, 0), Vector3(22.0, 1.0, 22.0), Color(0.3, 0.3, 0.32))
+	for k in 3:
+		c.props.cyl(p + Vector3(-18.0, 18.0, -12.0 + float(k) * 12.0), 4.4, 4.4, 36.0, Color(0.5, 0.5, 0.5), 10)
+	c.props.box_xf(Transform3D(Basis(Vector3.FORWARD, 0.7), p + Vector3(9.0, 40.0, 0)), Vector3(22.0, 2.2, 2.2), rust.darkened(0.1))
+	c.props.cyl(p + Vector3(16.0, 30.0, 6.0), 1.0, 1.4, 60.0, Color(0.35, 0.33, 0.32), 8)
+	c.glow.cyl(p + Vector3(16.0, 61.5, 6.0), 0.2, 1.4, 3.0, Color(1.0, 0.55, 0.15), 8, Vector2(Props.K_FLICKER, 0.4))
+	c.glow.cyl(p + Vector3(0, 48.8, 0), 3.8, 3.8, 0.3, Color(1.0, 0.4, 0.1), 12, Vector2(Props.K_NIGHT, 0))
+	c.glow.sphere(p + Vector3(0, 49.5, 0), 0.5, Color(1.0, 0.12, 0.1), 6, 3, Vector2(Props.K_BLINK, 0))
+
+
+## Gary Works: long sheds gone to rust, conveyor gantries, ore heaps, rail.
+func _mill_block(bi: int, bj: int, r: Rect2) -> void:
+	var c := ctx_at(r.get_center().x, r.get_center().y)
+	c.ground.flat(Vector3(r.get_center().x, 0.012, r.get_center().y), r.size.x, r.size.y, Color(0.2, 0.17, 0.15), 0.0, Vector2(1, 0))
+	if bj == 0:
+		# The lakeshore row: the furnaces themselves, their solids and a
+		# cast house between them.
+		for fu in GY_FURNACES:
+			if r.has_point(fu):
+				_blast_furnace(landmark_far, Vector3(fu.x, 0, fu.y))
+				c.solid(Vector3(fu.x, 22.0, fu.y), Vector3(18.0, 44.0, 18.0))
+				for k in 3:
+					c.solid(Vector3(fu.x - 18.0, 18.0, fu.y - 12.0 + float(k) * 12.0), Vector3(8.8, 36.0, 8.8))
+				var ch := Rect2(fu.x - 20.0, fu.y + 14.0, 40.0, 20.0)
+				if _is_free(bi, bj, ch) and r.encloses(ch):
+					_building(ch, 16.0, 5, Color(0.36, 0.22, 0.16), false, 1.0, "industrial", "none", false)
+		return
+	var shed := Rect2(r.position.x + 6.0, r.position.y + 8.0, r.size.x - 12.0, r.size.y * rng.randf_range(0.45, 0.6))
+	if _is_free(bi, bj, shed):
+		var col: Color = [Color(0.38, 0.22, 0.16), Color(0.32, 0.3, 0.28), Color(0.44, 0.3, 0.22), Color(0.3, 0.26, 0.24)][rng.randi() % 4]
+		_building(shed, rng.randf_range(18.0, 26.0), 5, col, false, 1.0, "industrial", "mech")
+		# Roof monitor along the ridge.
+		c.facade.box(Vector3(shed.get_center().x, 0.0, shed.get_center().y) + Vector3(0, 26.0, 0), Vector3(shed.size.x * 0.9, 3.0, 6.0), col.darkened(0.15), 0.0, Vector2(5, 3))
+	# A conveyor gantry across the yard, and heaps of ore and slag.
+	var gy := r.end.y - 18.0
+	for k in 4:
+		var gx := r.position.x + 12.0 + float(k) * (r.size.x - 24.0) / 3.0
+		c.props.box(Vector3(gx, 5.0, gy), Vector3(0.6, 10.0, 0.6), Color(0.3, 0.3, 0.32))
+		c.solid(Vector3(gx, 5.0, gy), Vector3(0.8, 10.0, 0.8))
+	c.props.box(Vector3(r.get_center().x, 10.4, gy), Vector3(r.size.x - 20.0, 1.6, 2.4), Color(0.45, 0.3, 0.15))
+	for k in 2:
+		var hp := Vector3(r.position.x + 20.0 + float(k) * 50.0, 0, r.end.y - 6.0)
+		if _is_free(bi, bj, Rect2(hp.x - 8.0, hp.z - 8.0, 16.0, 8.0)):
+			c.props.cyl(hp + Vector3(0, 2.5, 0), 1.0, 8.0, 5.0, [Color(0.3, 0.16, 0.12), Color(0.2, 0.2, 0.22)][k], 10)
+			c.solid(hp + Vector3(0, 2.0, 0), Vector3(10.0, 4.0, 10.0))
+	# Rail spur along the north side of the yard.
+	for t in [-0.7, 0.7]:
+		c.ground.flat(Vector3(r.get_center().x, 0.02, r.position.y + 3.0 + t), r.size.x, 0.1, Color(0.4, 0.38, 0.35))
+	Props.fence_line(c, Vector3(r.position.x, 0, r.end.y), Vector3(r.get_center().x - 7.0, 0, r.end.y), 2.6)
+	Props.fence_line(c, Vector3(r.get_center().x + 7.0, 0, r.end.y), Vector3(r.end.x, 0, r.end.y), 2.6)
+	Props.light_pool(c, Vector3(r.get_center().x, 0, r.end.y - 4.0), 9.0, Color(1.0, 0.75, 0.45))
+
+
+## FreightOS's depot: rows of white trucks with nobody in them, charging
+## gantries, light masts, a fence that hums.
+func _depot_block(bi: int, bj: int, r: Rect2) -> void:
+	var c := ctx_at(r.get_center().x, r.get_center().y)
+	c.ground.flat(Vector3(r.get_center().x, 0.013, r.get_center().y), r.size.x, r.size.y, Color(0.16, 0.16, 0.17), 0.0, Vector2(1, 0))
+	var z := r.position.y + 10.0
+	while z < r.end.y - 8.0:
+		var x := r.position.x + 6.0
+		while x < r.end.x - 6.0:
+			var spot := Rect2(x - 1.6, z - 4.2, 3.2, 8.4)
+			c.props.flat(Vector3(x + 2.0, 0.02, z), 0.15, 8.0, Color(0.8, 0.8, 0.75))
+			if rng.randf() < 0.7 and _is_free(bi, bj, spot.grow(1.0)):
+				Props.place(c, "car_truck_%d" % [0, 4, 6][rng.randi() % 3], Vector3(x, 0, z), 0.0)
+				c.solid(Vector3(x, 1.5, z), Vector3(2.4, 3.0, 7.6))
+				c.glow.box(Vector3(x, 3.4, z - 3.0), Vector3(0.6, 0.1, 0.1), Color(0.3, 0.8, 1.0), 0.0, Vector2(Props.K_BLINK, rng.randf()))
+			x += 4.0
+		# A charging gantry over each row.
+		if _is_free(bi, bj, Rect2(r.position.x, z - 5.0, 2.0, 2.0)):
+			c.props.box(Vector3(r.position.x + 2.0, 3.5, z - 5.0), Vector3(0.3, 7.0, 0.3), Color(0.5, 0.52, 0.55))
+			c.props.box(Vector3(r.end.x - 2.0, 3.5, z - 5.0), Vector3(0.3, 7.0, 0.3), Color(0.5, 0.52, 0.55))
+			c.props.box(Vector3(r.get_center().x, 7.0, z - 5.0), Vector3(r.size.x - 4.0, 0.4, 0.4), Color(0.5, 0.52, 0.55))
+		z += 22.0
+	for k in 2:
+		var mp := Vector3(r.position.x + r.size.x * (0.3 + 0.4 * float(k)), 0, r.get_center().y)
+		if _is_free(bi, bj, Rect2(mp.x - 1.0, mp.z - 1.0, 2.0, 2.0)):
+			c.props.box(mp + Vector3(0, 8.0, 0), Vector3(0.4, 16.0, 0.4), Color(0.4, 0.4, 0.42))
+			c.glow.box(mp + Vector3(0, 16.2, 0), Vector3(2.4, 0.4, 0.8), Color(0.95, 0.95, 1.0), 0.0, Vector2(Props.K_NIGHT, 0))
+			c.solid(mp + Vector3(0, 8.0, 0), Vector3(0.6, 16.0, 0.6))
+			Props.light_pool(c, mp, 16.0, Color(0.9, 0.95, 1.0))
+	Props.fence_line(c, Vector3(r.position.x, 0, r.end.y), Vector3(r.get_center().x - 8.0, 0, r.end.y), 3.0, Color(0.5, 0.52, 0.55))
+	Props.fence_line(c, Vector3(r.get_center().x + 8.0, 0, r.end.y), Vector3(r.end.x, 0, r.end.y), 3.0, Color(0.5, 0.52, 0.55))
+
+
+## Things only Gary has: the ore boat on the lake, the mill gate sign, the
+## welcome sign, FreightOS's billboard.
+func _gary_extras() -> void:
+	var lf := landmark_far
+	# An ore boat laid up off the furnaces, rusting at anchor.
+	var bp := Vector3(-420.0, 0, -720.0)
+	lf.props.box(bp + Vector3(0, 3.0, 0), Vector3(190.0, 9.0, 22.0), Color(0.42, 0.18, 0.12))
+	lf.props.box(bp + Vector3(0, -0.8, 0), Vector3(190.4, 1.6, 22.4), Color(0.12, 0.12, 0.14))
+	lf.facade.box(bp + Vector3(84.0, 12.0, 0), Vector3(16.0, 10.0, 18.0), Color(0.88, 0.88, 0.85), 0.0, Vector2(8, 21))
+	lf.props.box(bp + Vector3(-86.0, 10.0, 0), Vector3(12.0, 5.0, 16.0), Color(0.88, 0.88, 0.85))
+	lf.props.box(bp + Vector3(84.0, 20.0, 4.0), Vector3(2.0, 6.0, 2.0), Color(0.1, 0.1, 0.12))
+	lf.glow.sphere(bp + Vector3(84.0, 24.0, 0), 0.4, Color(1.0, 0.15, 0.1), 6, 3, Vector2(Props.K_BLINK, 0))
+	ctx_at(bp.x, bp.z).label(bp + Vector3(0, 5.0, 11.1), "EDMUND J. KOWALSKI · GARY", 140, Color(0.95, 0.95, 0.9), 0.0, 500.0, 0.03)
+	# The mill's gate on Broadway and Dunes Highway.
+	var gp := Vector3(-140.0, 0, -40.0)
+	var gc := ctx_at(gp.x, gp.z)
+	for sx in [-9.0, 9.0]:
+		gc.props.box(gp + Vector3(sx, 4.5, 0), Vector3(1.2, 9.0, 1.2), Color(0.35, 0.3, 0.28))
+		gc.solid(gp + Vector3(sx, 4.5, 0), Vector3(1.4, 9.0, 1.4))
+	gc.props.box(gp + Vector3(0, 9.4, 0), Vector3(20.0, 1.8, 0.4), Color(0.25, 0.22, 0.2))
+	gc.label(gp + Vector3(0, 9.4, 0.25), "GARY WORKS", 120, Color(0.9, 0.75, 0.4), 0.0, 300.0, 0.02)
+	gc.label(gp + Vector3(0, 9.4, -0.25), "GARY WORKS", 120, Color(0.9, 0.75, 0.4), PI, 300.0, 0.02)
+	gc.label(gp + Vector3(0, 6.5, 0.7), "PRODUCTION PAUSED · E CORP STEEL", 32, Color(0.95, 0.95, 0.95), 0.0, 60.0, 0.01)
+	# Welcome sign on the I-90 stub.
+	var ws := Vector3(746.0, 0, 14.0)
+	var cw := ctx_at(ws.x, ws.z)
+	cw.props.box(ws + Vector3(0, 1.2, 0), Vector3(0.6, 2.4, 9.0), Color(0.3, 0.3, 0.32))
+	cw.props.box(ws + Vector3(0, 2.6, 0), Vector3(0.3, 2.4, 8.4), Color(0.12, 0.25, 0.45))
+	cw.label(ws + Vector3(-0.2, 3.2, 0), "GARY, INDIANA", 40, Color(1, 1, 1), -PI * 0.5, 80.0, 0.01)
+	cw.label(ws + Vector3(-0.2, 2.6, 0), "CITY OF THE CENTURY · EST. 1906", 22, Color(0.95, 0.85, 0.4), -PI * 0.5, 60.0, 0.01)
+	cw.label(ws + Vector3(-0.22, 1.9, 0.3), "WHO'S DRIVING?", 56, Color(1.0, 0.85, 0.2, 0.9), -PI * 0.5, 80.0, 0.01, {"font": "graffiti", "tilt": -0.05})
+	cw.solid(ws + Vector3(0, 1.8, 0), Vector3(0.8, 3.6, 9.0))
+	Props.light_pool(cw, ws + Vector3(-2.0, 0, 0), 5.0, Color(1.0, 0.9, 0.7))
+	# FreightOS's billboard over the depot fence.
+	var fb := Vector3(280.0, 0, -112.0)
+	var fc := ctx_at(fb.x, fb.z)
+	for sx in [-6.0, 6.0]:
+		fc.props.box(fb + Vector3(sx, 5.0, 0), Vector3(0.4, 10.0, 0.4), Color(0.3, 0.3, 0.32))
+		fc.solid(fb + Vector3(sx, 5.0, 0), Vector3(0.5, 10.0, 0.5))
+	fc.props.box(fb + Vector3(0, 11.5, 0), Vector3(16.0, 4.0, 0.3), Color(0.95, 0.95, 0.95))
+	fc.label(fb + Vector3(0, 12.2, 0.2), "FREIGHTOS", 90, Color(0.1, 0.4, 0.8), 0.0, 400.0, 0.02)
+	fc.label(fb + Vector3(0, 10.9, 0.2), "THE ROAD DRIVES ITSELF", 44, Color(0.2, 0.2, 0.22), 0.0, 300.0, 0.02)
+	fc.glow.box(fb + Vector3(0, 13.8, 0.3), Vector3(15.0, 0.2, 0.2), Color(1.0, 0.95, 0.85), 0.0, Vector2(Props.K_NIGHT, 0))
 
 # ------------------------------------------------------------ reservations
 func _reserve(bi: int, bj: int, r: Rect2) -> void:
@@ -1284,6 +1449,7 @@ const DIST_PARAMS := {
 	# The small towns off the interstate.
 	"tw_main": {"lot": [8.0, 14.0], "depth": [16.0, 22.0], "h": [6.0, 11.0], "styles": [1, 2, 1], "fe": 0.1, "shops": 0.9, "tall": 0.0, "tall_h": [12.0, 14.0], "alley": 0.45, "cols": "brick"},
 	"pt_town": {"lot": [7.0, 12.0], "depth": [16.0, 24.0], "h": [6.0, 12.0], "styles": [1, 2, 6], "fe": 0.15, "shops": 0.6, "tall": 0.04, "tall_h": [15.0, 20.0], "alley": 0.5, "cols": "mixed"},
+	"gy_town": {"lot": [9.0, 16.0], "depth": [18.0, 26.0], "h": [7.0, 16.0], "styles": [1, 1, 2, 8], "fe": 0.3, "shops": 0.55, "tall": 0.06, "tall_h": [24.0, 40.0], "alley": 0.4, "cols": "brick"},
 }
 
 
@@ -1333,7 +1499,7 @@ func _block(bi: int, bj: int) -> void:
 func _street_wall_block(bi: int, bj: int, r: Rect2, d: String) -> void:
 	var P: Dictionary = DIST_PARAMS.get(d, DIST_PARAMS["les"])
 	var alley := rng.randf() < float(P["alley"])
-	var small_town := d in ["tw_main", "pt_town"]
+	var small_town := d in ["tw_main", "pt_town", "gy_town"]
 	if small_town:
 		alley = false # deep small-town blocks get a parking lot out back instead
 	var depth_n := rng.randf_range(float(P["depth"][0]), float(P["depth"][1]))
@@ -1544,6 +1710,9 @@ const TAGS_NYC := ["FSOCIETY", "HELLO FRIEND", "WAKE UP", "E CORP OWNS YOU", "DE
 const TAGS_CREW := ["RICO", "C.H.", "VERA'S", "LES KINGS", "DUTCH WAS HERE", "KAOS", "SPYDA", "M3KA", "ZEPH", "TOXIK", "SKIP", "NOVA", "ROACH"]
 const TAGS_CHI := ["LOU 4EVER", "WINDY CITY HACKS", "NOT ON THE APP", "PHONY STOLE MY GAMES", "PRINT THE ODDS", "SOUTH SIDE", "CHI-TOWN", "RESPAWN CHI", "YOU OWN WHAT YOU PAID FOR"]
 const TAGS_ROAD := ["JESUS SAVES", "KEEP DRIVING", "TRUCKERS AGAINST FREIGHTOS", "TURN BACK", "E.A. WAS HERE", "LENNOX PA"]
+const TAGS_TOWNSHIP := ["E CORP KILLED US", "26", "WHAT'S IN THE POND", "REMEMBER 1993", "THE STACKS RUN AT NIGHT", "WALT WAS RIGHT", "WTWP", "WE STILL DRINK THIS WATER"]
+const TAGS_PORT := ["ASK TEDDY GRIECO", "NO FISH NO PEACE", "DARK SHIPS", "BERTH 2 KNOWS", "RAMSEY POINT", "WE FISHED HERE FIRST", "E CORP LOGISTICS = PIRATES"]
+const TAGS_GARY := ["LOCAL 1014", "WE BUILT THIS", "WHO'S DRIVING?", "GARY 4 LIFE", "CITY OF THE CENTURY", "AN INJURY TO ONE", "THE MILL WILL RISE", "STEEL CITY", "BLINK"]
 const SPRAY := [Color(1.0, 0.22, 0.25), Color(0.2, 0.95, 0.4), Color(0.25, 0.7, 1.0), Color(1.0, 0.85, 0.2), Color(1.0, 0.4, 0.95), Color(0.95, 0.95, 0.95), Color(1.0, 0.55, 0.15), Color(0.6, 0.4, 1.0)]
 
 
@@ -1555,6 +1724,14 @@ func _graffiti_pool(d: String) -> Array:
 			pool.append_array(TAGS_CREW.slice(5))
 		"highway":
 			pool.append_array(TAGS_ROAD)
+		"township":
+			pool.append_array(TAGS_TOWNSHIP)
+			pool.append_array(TAGS_ROAD.slice(0, 3))
+		"port":
+			pool.append_array(TAGS_PORT)
+		"gary":
+			pool.append_array(TAGS_GARY)
+			pool.append_array(TAGS_CREW.slice(0, 5))
 		_:
 			pool.append_array(TAGS_NYC)
 			pool.append_array(TAGS_CREW)

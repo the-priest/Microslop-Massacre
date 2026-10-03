@@ -155,6 +155,7 @@ PIXEL: Respawn's thread about you is four thousand pages now. Half of it is peop
 
 === kenny
 -- start
+? q.sq_gy3>=30 & !q.sq_gy3.done -> kenny_slop
 ? flag.kenny_badge -> after
 ? !q.mq_rs1.started -> early
 > A thin guy at the end of the bar with a lanyard he never took off: ROCKSTARVED GAMES — QA — CRUNCH TEAM C. He's talking to his drink about frame pacing.

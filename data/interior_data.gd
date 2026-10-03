@@ -973,6 +973,94 @@ const INTERIORS := {
 		{"id": "ramsey_weather", "kind": "text", "title": "Weather Terminal", "verb": "Check", "pos": [1.5, 1.1, 1.5], "size": [1.0, 1.0, 1.0], "text": "Wind off the ocean, ten knots. Visibility good. West over I-80 to Kearney Strip in Washington Township: one airspace over and then another. Follow the county road; it runs straight there. North-west to Chicago, south-west to New York."},
 	],
 },
+# ====================================================== GARY, INDIANA
+"gy_union": {
+	"name": "USW Local 1014 — Union Hall", "amb": "interior", "ambient": Color(0.4, 0.36, 0.32),
+	"rooms": [{"r": [0, 0, 16, 10], "h": 4.0, "wall": Color(0.5, 0.42, 0.34), "floor": F_WOOD, "light": Color(1.0, 0.86, 0.62), "energy": 1.0, "lights": [[4, 3.7, 5], [12, 3.7, 5]]}],
+	"exits": [{"pos": [8, 0], "face": "n", "to": "world:d_gy_union", "label": "Broadway"}],
+	"furn": [["table", 8, 6.5, 0, {"w": 3.0, "d": 1.2}], ["chair", 7, 7.6, 180], ["chair", 9, 7.6, 180], ["seats", 4, 3.5, 180], ["seats", 12, 3.5, 180], ["coffee_machine", 15.4, 1.0, -90], ["boxes", 1.2, 9.0, 0], ["boxes", 2.6, 9.2, 0], ["poster", 0.15, 5, 90, {"col": Color(0.7, 0.15, 0.1)}], ["poster", 15.85, 5, -90, {"col": Color(0.7, 0.15, 0.1)}], ["trophies", 8, 9.6, 180], ["radiator", 0.3, 2.0, 90]],
+	"spots": [
+		{"id": "gy_union_photos", "kind": "text", "title": "Photo Wall", "verb": "Look", "pos": [8.0, 1.8, 9.8], "size": [6.0, 1.4, 0.3], "text": "A hundred years of Local 1014 in black and white and then color. The 1919 strike line, men in caps four deep on Broadway. A picnic in 1955 with a thousand people in it. The Christmas party, 1978. The last photo is from last year: forty people in front of the chained Gary Works gate, holding a bedsheet that says WE BUILT THIS. Then a gap on the wall where a banner used to hang."},
+		{"id": "gy_union_flyers", "kind": "text", "title": "Flyers", "verb": "Read", "pos": [8.0, 1.0, 6.5], "size": [3.0, 0.6, 1.2], "text": "FREIGHTOS IS HIRING — ASK US WHY. A pay stub photocopied a hundred times, one line circled in red marker: 'ATTENTION DEDUCTION (BLINK EVENTS: 71) ........ $14.20.' Under it, in Marcus's handwriting: 'They pay you to watch the road and charge you for closing your eyes.'"},
+	],
+},
+"gy_diner": {
+	"name": "The Steel City Grill", "amb": "jazz", "ambient": Color(0.42, 0.36, 0.3),
+	"rooms": [{"r": [0, 0, 14, 8], "h": 3.2, "wall": Color(0.55, 0.3, 0.22), "floor": Color(0.7, 0.68, 0.64), "floor_kind": "tile", "light": Color(1.0, 0.88, 0.7), "energy": 1.15, "lights": [[4, 2.9, 4], [10, 2.9, 4]]}],
+	"exits": [{"pos": [7, 0], "face": "n", "to": "world:d_gy_diner", "label": "Broadway"}],
+	"furn": [["bar_counter", 7, 6.6, 180, {"w": 8.0, "neon": Color(1.0, 0.55, 0.2)}], ["stool", 4.5, 5.4, 180], ["stool", 6, 5.4, 180], ["stool", 7.5, 5.4, 180], ["stool", 9, 5.4, 180], ["booth", 2, 1.8, 180, {"col": Color(0.6, 0.15, 0.1)}], ["booth", 6, 1.8, 180, {"col": Color(0.6, 0.15, 0.1)}], ["booth", 10, 1.8, 180, {"col": Color(0.6, 0.15, 0.1)}], ["jukebox", 13.4, 4, -90], ["coffee_machine", 10.5, 7.4, 180], ["window", 7, 0.15, 0, {"w": 8.0}]],
+	"spots": [
+		{"id": "gy_diner_shop", "kind": "shop", "title": "Counter", "verb": "Order", "pos": [7, 1, 5.6], "size": [8, 2, 1.2], "shop": "gen_diner"},
+		{"id": "gy_diner_menu", "kind": "text", "title": "Menu Board", "verb": "Read", "pos": [3.0, 2.2, 7.8], "size": [2.4, 0.8, 0.3], "text": "THE OPEN HEARTH (two eggs, hash, toast) — $6. THE BLAST FURNACE (chili on everything) — $9. THE SHIFT CHANGE (coffee, refills till you leave) — $2. And a handwritten card taped in the corner: 'FreightOS operators eat half price. You look tired, baby. — Rosa.'"},
+	],
+},
+"gy_ops": {
+	"name": "FreightOS Depot — Control Tower", "amb": "office", "ambient": Color(0.36, 0.4, 0.46), "restricted": "ecorp", "allowed_when": "day & !flag.gy_alarm | disguise.ecorp",
+	"rooms": [{"r": [0, 0, 18, 12], "h": 3.6, "wall": Color(0.2, 0.24, 0.3), "floor": Color(0.18, 0.2, 0.24), "floor_kind": "tile", "light": Color(0.7, 0.85, 1.0), "energy": 0.9, "lights": [[5, 3.3, 6], [13, 3.3, 6]]}],
+	"exits": [{"pos": [9, 12], "face": "s", "to": "world:d_gy_tower", "label": "Depot Yard"}],
+	"furn": [["monitor_wall", 9, 0.4, 0], ["desk_pc", 3, 3.5, 0], ["desk_pc", 6, 3.5, 0], ["desk_pc", 9, 3.5, 0], ["desk_pc", 12, 3.5, 0], ["desk_pc", 15, 3.5, 0], ["desk_pc", 3, 6.5, 0], ["desk_pc", 6, 6.5, 0], ["desk_pc", 9, 6.5, 0], ["desk_pc", 12, 6.5, 0], ["desk_pc", 15, 6.5, 0], ["office_desk", 16, 1.2, 0], ["water_cooler", 0.6, 11.0, 90], ["vending", 17.4, 10.5, -90], ["whiteboard", 0.15, 6, 90]],
+	"spots": [
+		{"id": "gy_ops_board", "kind": "text", "title": "Leaderboard", "verb": "Read", "pos": [0.2, 1.6, 6.0], "size": [0.3, 1.2, 2.0], "text": "OPERATOR FOCUS LEADERBOARD — WEEK 41. 1. J. BELL — 97.2% attention, 71 blink events. 2. T. KOWALSKI — 96.8%. 3. R. HALL — 96.1%. At the bottom, in red: 'Remember: autonomous trucks don't blink. Neither do champions!' Somebody has drawn a tiny pair of closed eyes next to it, peaceful, with Zs."},
+		{"id": "fleet_term", "kind": "terminal", "title": "Fleet Operations Terminal", "verb": "Use", "pos": [16.0, 1.1, 1.2], "size": [1.4, 1.2, 0.9], "hack": 45, "header": "FREIGHTOS // GARY DEPOT // FLEET OPS", "welcome": "Two hundred trucks on a map of I-80 and I-90, every one tagged AUTONOMOUS. Click any of them and a face appears in the corner: the operator driving it, from a desk twenty feet behind you.",
+			"entries": [
+				{"title": "Operator telemetry", "text": "Eye tracking at 120 hertz on every operator. Every blink longer than 300 milliseconds is an 'attention event.' Every attention event is a deduction. The highest-scoring operator in the building, a J. Bell, has been docked $14.20 this week for 71 blinks. A note in the config file: 'Do not reduce threshold. Legal says drowsiness is the operator's liability, not ours.'"},
+				{"title": "Pay sheet", "text": "Operators are 'independent mobility supervisors,' paid per mile driven, from $0.11 to $0.19. Shifts are sixteen hours with a twelve-minute unpaid break. Three hundred and four operators. Two hundred and ninety-one are former employees of Gary Works."},
+				{"title": "Investor deck: 'Driverless'", "text": "Slide 7: 'Fully autonomous freight, zero labor exposure.' Slide 8, marked CONFIDENTIAL: 'Remote supervision bridges the autonomy gap. Operators are positioned as safety monitors to avoid driver classification.' Slide 9 is a stock photo of an empty truck cab at sunrise."},
+			],
+			"actions": [
+				{"title": "Send every operator their own telemetry: every blink, every deduction", "result": "At 5:58 AM three hundred and four phones buzz in the parking lot. Every blink they were charged for, timestamped, with the dollar amount next to it. Nobody calls a meeting. Nobody has to. At six, the day shift doesn't come in.", "fx": "set gy_told ; quest sq_gy1 40 ; xp 140", "when": "q.sq_gy1>=20 & !flag.gy_fleet_hacked"},
+				{"title": "Paint each operator's name and hourly wage on the side of their truck", "result": "Every trailer in the fleet has a digital side panel for ads. Now each one reads, in letters four feet high: DRIVEN BY J. BELL — $11.40/HR. DRIVEN BY T. KOWALSKI — $9.85/HR. Two hundred trucks rolling down I-80 telling everybody who's really driving and what he's worth to FreightOS.", "fx": "set gy_names ; set gy_fleet_hacked ; quest sq_gy1 40 ; xp 150", "when": "q.sq_gy1>=20 & !flag.gy_fleet_hacked"},
+				{"title": "Pause the whole fleet for one hour: a strike, by software", "result": "At six AM every FreightOS truck in four states signals, pulls onto the shoulder, puts its hazards on and stops. Every screen in the tower goes black and then white: ONE HOUR — SOLIDARITY. The operators look at each other. Then, slowly, they stand up.", "fx": "set gy_strike ; set gy_fleet_hacked ; quest sq_gy1 40 ; infamy ecorp 2 ; xp 150", "when": "q.sq_gy1>=20 & !flag.gy_fleet_hacked"},
+			]},
+	],
+},
+"gy_millofc": {
+	"name": "Gary Works — Main Office", "amb": "interior", "ambient": Color(0.22, 0.22, 0.24),
+	"rooms": [
+		{"r": [0, 0, 10, 8], "h": 3.4, "wall": Color(0.42, 0.4, 0.36), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.6, 0.65, 0.75), "energy": 0.45, "lights": [[5, 3.1, 4]]},
+		{"r": [10, 0, 16, 8], "h": 3.4, "wall": Color(0.38, 0.32, 0.26), "floor": F_WOOD, "light": Color(0.65, 0.6, 0.55), "energy": 0.45, "lights": [[13, 3.1, 4]]},
+	],
+	"doors": [[10, 4, 1.2]],
+	"exits": [{"pos": [5, 8], "face": "s", "to": "world:d_gy_millofc", "label": "Mill Yard"}],
+	"furn": [["reception", 5, 2.0, 0, {"col": Color(0.3, 0.25, 0.2)}], ["filing_cabinet", 0.5, 4, 90], ["filing_cabinet", 0.5, 5, 90], ["trash_pile", 8.5, 6.5, 0], ["boxes", 2.0, 7.0, 0], ["bench", 7.0, 6.8, 0, {"w": 2.4}], ["poster", 5, 0.15, 0, {"col": Color(0.5, 0.3, 0.1)}],
+		["office_desk", 13, 1.6, 0], ["bookshelf", 15.5, 4.5, -90], ["clock", 13, 0.2, 0, {"y": 2.4}], ["safe", 10.8, 7.2, 90], ["window", 13, 7.85, 180, {"w": 2.0}]],
+	"containers": [
+		{"id": "gy_banner_case", "title": "Glass Case", "pos": [12.0, 4.6], "y": 1.2, "size": [2.4, 1.6, 0.4], "items": {"union_banner": 1}, "owner_ok": "true", "fx_open": "quest sq_gy2 30"},
+		{"id": "gy_super_safe", "title": "Superintendent's Safe", "pos": [10.8, 7.2], "y": 0.5, "size": [0.8, 1.0, 0.8], "items": {"gold_chain": 1, "watch": 1}, "cash": 140, "lock": 55},
+	],
+	"spots": [
+		{"id": "gy_millofc_clock", "kind": "text", "title": "Punch Clock", "verb": "Look", "pos": [5.0, 1.4, 0.4], "size": [1.0, 1.0, 0.4], "text": "A brass punch clock and a rack of cards, a hundred of them still in their slots. The last card in the rack, KOWALSKI T., is punched IN on the last day and never punched OUT. Someone has written on the wall above it in marker: 'WE'RE STILL ON SHIFT.'"},
+	],
+},
+"gy_cluster": {
+	"name": "SlopForge Training Cluster", "amb": "office", "ambient": Color(0.3, 0.36, 0.34), "restricted": "ecorp", "allowed_when": "disguise.ecorp",
+	"rooms": [{"r": [0, 0, 24, 12], "h": 5.0, "wall": Color(0.12, 0.14, 0.16), "floor": F_CONCRETE, "light": Color(0.45, 0.95, 0.55), "energy": 0.85, "lights": [[6, 4.6, 6], [18, 4.6, 6]]}],
+	"exits": [{"pos": [12, 12], "face": "s", "to": "world:d_gy_cluster", "label": "Mill Yard"}],
+	"furn": [["server_rack", 3, 1.2, 0, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 5, 1.2, 0, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 7, 1.2, 0, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 9, 1.2, 0, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 11, 1.2, 0, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 13, 1.2, 0, {"led": Color(0.35, 1.0, 0.45)}],
+		["server_rack", 3, 6.0, 180, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 5, 6.0, 180, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 7, 6.0, 180, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 9, 6.0, 180, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 11, 6.0, 180, {"led": Color(0.35, 1.0, 0.45)}], ["server_rack", 13, 6.0, 180, {"led": Color(0.35, 1.0, 0.45)}],
+		["tape_library", 17, 1.2, 0], ["tape_library", 19, 1.2, 0], ["climate_unit", 23.4, 6, -90], ["desk_pc", 22, 1.2, 0], ["logo_wall", 12, 11.85, 180, {"w": 6.0, "glow": Color(0.35, 1.0, 0.45)}]],
+	"spots": [
+		{"id": "slop_console", "kind": "terminal", "title": "SlopForge Training Console", "verb": "Use", "pos": [22.0, 1.1, 1.2], "size": [1.4, 1.2, 0.9], "hack": 55, "when": "q.sq_gy3>=10", "header": "SLOPFORGE // TRAINING // EPOCH 41", "welcome": "Loss curve trending down. 'Creativity index' trending up. Training set: 'acquired studio assets (all).'",
+			"entries": [
+				{"title": "Training set manifest", "text": "Seventeen closed studios, twenty-two years of work: source code, concept art, voice sessions, motion capture, design documents, a level designer's personal notebook scanned page by page. Labelled 'acquired assets, rights cleared.' The rights were cleared by the studios being closed."},
+				{"title": "Output samples", "text": "'BLADE FORGE 4 (generated).' It's the first level of Blade Forge 2, almost exactly, with the hero's face averaged into nobody and the music re-hummed slightly flat. The level designer's notebook doodles are in the background textures. You recognise a QA tester's joke from Kenny's old Twitter, baked into a loading screen."},
+			],
+			"actions": [
+				{"title": "Delete the whole training set and every checkpoint", "result": "Twenty-two years of other people's work, wiped out of the machine that was eating it, and every model checkpoint with it. The loss curve flatlines. SlopForge goes back to knowing nothing, which is the only thing it ever honestly knew.", "fx": "set slop_deleted ; set slop_done ; quest sq_gy3 30 ; xp 160", "when": "!flag.slop_done"},
+				{"title": "Give every closed studio its own work back", "result": "Seventeen archives, one per studio, sent to the last address of every developer on every credit list, with a note: 'This was always yours.' Then the cluster's copies go. Half the internet's game developers are on Discord within the hour, crying and arguing about whether they can just start again.", "fx": "set slop_returned ; set slop_done ; quest sq_gy3 30 ; fame gamers 3 ; xp 180", "when": "!flag.slop_done"},
+				{"title": "Teach it one thing: every game ends with the credits of the people it was made from", "result": "You don't delete anything. You add a rule at the very bottom of the model's training, where it will never forget it: every output ends with the full credits of every person whose work it learned from, unskippable. Forty minutes of names. It will learn to make games. It will never again learn to forget who made them.", "fx": "set slop_credits ; set slop_done ; quest sq_gy3 30 ; xp 170", "when": "!flag.slop_done"},
+			]},
+	],
+},
+"gy_hangar": {
+	"name": "Gary/Chicago Airport — Office", "amb": "office", "ambient": Color(0.44, 0.44, 0.42),
+	"rooms": [{"r": [0, 0, 10, 8], "h": 3.2, "wall": Color(0.62, 0.6, 0.56), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.95, 0.92, 0.82), "energy": 1.05, "lights": [[5, 2.9, 4]]}],
+	"exits": [{"pos": [10, 4], "face": "e", "to": "world:d_gy_hangar", "label": "Airport Road"}],
+	"furn": [["counter", 5, 1.4, 0, {"w": 4.0}], ["desk_pc", 1.5, 1.5, 90], ["bench", 2, 6.5, 0, {"w": 2.4}], ["coffee_machine", 9.4, 0.6, 0], ["poster", 0.15, 4, 90, {"col": Color(0.8, 0.5, 0.1)}], ["plant", 9.4, 7.2, 0], ["window", 5, 7.85, 180, {"w": 2.0}]],
+	"spots": [
+		{"id": "gy_airport_log", "kind": "text", "title": "Flight Log", "verb": "Read", "pos": [5.0, 1.1, 1.4], "size": [1.6, 0.6, 0.8], "text": "Gary/Chicago Airport. The log goes back to 1949: DC-3s, a Beatles charter in 1964, cargo 727s, a regional jet service that lasted eleven months. The last six months are two Skyhawks and the same initials, L.P., every day, on 'local pattern work.' Practice landings. Hundreds of them. Nobody to fly anywhere. Somebody keeping her hand in, just in case."},
+	],
+},
 "rockstarved_hq": {
 	"name": "Rockstarved Games — Floor 88", "amb": "office", "ambient": Color(0.34, 0.3, 0.3), "restricted": "ecorp", "allowed_when": "item.rs_badge>=1 & !flag.rs_alarm",
 	"rooms": [

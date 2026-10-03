@@ -59,6 +59,12 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       **Project** arc (*Bill of Lading, Night Freight, The Machine*). Air-freight and
       long-haul jobs between towns. `towns_walk` plays all of it
 
+- [x] **Pass 6 (Gary):** a third town, **Gary, Indiana**, on the lake between the
+      township and Chicago: blast furnaces, an ore boat, Gary Works, the FreightOS
+      depot, Broadway, the Gary/Chicago Airport; I-90 east into Chicago and State Road
+      912 south into the township. *Ghost Fleet, The Banner, Who's Driving?* (a banner
+      tow flown and landed) and *The Training Set* (Microslop's SlopForge). `gary_walk`
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

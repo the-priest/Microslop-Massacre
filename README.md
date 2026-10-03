@@ -48,24 +48,25 @@ A first-person open-world RPG that takes the systems of *Fallout: New Vegas* (sk
 perks, traits, V.A.T.S., factions, companions, branching quests, a talking epilogue)
 and drops them into the New York of *Mr. Robot*, then lets you drive or fly out of it.
 
-- **Five connected maps, one world about 11.6 by 8.7 kilometres:** New York, three
-  kilometres of Interstate 80 farmland, Chicago, and two towns off the interstate:
-  **Washington Township** to the west and **Port Ramsey** on the coast to the east.
+- **Six connected maps, one world about 11.6 by 8.7 kilometres:** New York, three
+  kilometres of Interstate 80 farmland, Chicago, and three towns: **Washington
+  Township** west of the interstate, **Port Ramsey** on the coast to the east, and
+  **Gary, Indiana** on the lake, with I-90 east into Chicago.
   You can see the next skyline (or smokestack, or crane) on the horizon, drive there
   through the highway gates, or fly a plane straight across from one into the next and
-  land on its runway. Four airfields, one in every city and town.
+  land on its runway. Five airfields, one in every city and town.
 - **14 endings**, from blowing up the world's debt with fsociety to walking away and
   going to therapy on Tuesdays. Some never touch the hack at all.
-- **106 epilogue slides** that remember what you did: who you saved, who you sold out,
+- **114 epilogue slides** that remember what you did: who you saved, who you sold out,
   whose debt you deleted, which game companies you broke and how, whether Lopez ever
   caught you.
-- **47 quests** (20 main, 27 side) with several real outcomes each, and a story director
+- **51 quests** (20 main, 31 side) with several real outcomes each, and a story director
   that keeps every quest moving no matter what order you do things in.
-- **97 conversations, about 40,000 words of original dialogue**, and honest skill
+- **102 conversations, about 45,000 words of original dialogue**, and honest skill
   checks: a white `[SPEECH 40]` means you pass.
 - **Four companions** with their own skills, opinions, barks, heart-to-hearts and
   breaking points.
-- **Every parked car can be stolen. There are four airfields. The planes fly, all the
+- **Every parked car can be stolen. There are five airfields. The planes fly, all the
   way to the next city or town, and you can land at every one of them.**
 
 It's a fan project: an original story that runs alongside the show rather than
@@ -117,11 +118,22 @@ Light Inn, the harbormaster's office, and Ramsey Point Light on its jetty, kept 
 man who's been turning it on for fifty-one years. Ramsey Field is a single runway on
 the west edge of town.
 
+### Gary, Indiana
+
+North of the township on State Road 912, or west out of Chicago on I-90. Three cold
+blast furnaces and a rusting ore boat on the Lake Michigan shore; the long sheds of
+Gary Works, "production paused" by E Corp Steel; FreightOS's depot on the old rail yard,
+two hundred white trucks with nobody in them and a glass control tower where it turns
+out somebody is driving after all; Broadway's brick storefronts, the Steel City Grill,
+the union hall of USW Local 1014 with its lights still on; Emerson's bungalows; and the
+Gary/Chicago Airport on the east side, run by one woman and two Skyhawks.
+
 ### One world
 
 The maps sit side by side in a shared world: New York in the south, I-80 in the
 middle, Chicago in the north, Washington Township and Port Ramsey either side of
-the interstate, with roughly three kilometres of farmland between the cities. Farmland fills every bit of sky between them, the interstate runs through it,
+the interstate, and Gary on the lake between the township and Chicago, with roughly
+three kilometres of farmland between the cities. Farmland fills every bit of sky between them, the interstate runs through it,
 and each city's skyline (lit floors at night, red beacons on top) stands where it
 really is on the other maps' horizons. Fly across the edge of one map's airspace and
 you come in over the next with the same plane, height, speed and heading, and the
@@ -146,7 +158,7 @@ road, every airfield and you on it.
 - **Every building has a door, and thousands of them open:** apartments, bodegas,
   pawn shops, diners, dive bars, offices, warehouses, squats and gang hideouts. Each is
   generated from its address, so the same door always leads to the same rooms.
-- **66 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
+- **72 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
   tower, the Fun Society arcade, Steel Mountain, the Rose Garden, Floor 88 of the North
   Tower, Microslop's showcase on Floor 101, E Corp Midwest's data floor, a lighthouse,
   a cannery full of servers, and a sublevel under a power plant that isn't on any drawing.
@@ -254,6 +266,10 @@ built the right bonds, kept the truth, and held your mind together.
 | **The Box in the Closet** | The Moss house / New York | Angela's room is the way she left it at nine. Find the shoebox in her closet and carry it home to her. |
 | **Air Mail** | Kearney Strip to Ramsey Field | Walt's hands shake now. Fly the township's prescriptions east across I-80 to the coast and land at Ramsey Field. (Drive it if you must. Marisol will laugh at you.) |
 | **No Fishing** | Port Ramsey | E Corp built its terminal over the fishing berths and the harbormaster revoked every license, then went on a cruise. Talk him out of it, blackmail him, or reinstate all forty-four from his computer. |
+| **Ghost Fleet** | Gary | FreightOS's "driverless" trucks are driven by laid-off steelworkers in a glass tower, paid by the mile and docked for blinking. Show them their own telemetry, paint their names and wages on their trucks, or pause the whole fleet for an hour. |
+| **The Banner** | Gary Works | Local 1014's 1919 strike banner is still in the mill office, the demolition crew comes Monday and the scrappers come every night. Bring it home. |
+| **Who's Driving?** | Gary/Chicago Airport | Tow fifty feet of FREIGHTOS — WHO'S DRIVING? past the control tower, over the mill and down Broadway, and land it. |
+| **The Training Set** | Gary Works / New York | After Floor 101, Microslop moved SlopForge into a glass box in the dead mill's yard. Delete what it learned from, give every closed studio its work back, or make it credit everyone, forever. |
 | **The Light** | Ramsey Point Light | Three nights a month the "smart beacon" goes dark and a ship comes in with no lights. Put the lamp back in its keeper's hands. |
 | **No Heat / Street Sermon / Lost / Dead Drops** | All over | A boiler held hostage by a subscription, a busker who needs a signal, a lost dog, packages nobody opens. |
 
@@ -312,7 +328,8 @@ New York: one runway, a control tower, two hangars, three Skyhawk trainers and E
 corporate jet. Chicago has Meigs Field on the lakeshore, with two more Skyhawks;
 Washington Township has Kearney Strip, a nine-hundred-metre crop-duster runway on the
 west edge of town where Walt Kearney keeps his late wife's yellow plane; Port Ramsey has
-Ramsey Field, one runway by the county road. Every runway has numbers, threshold bars,
+Ramsey Field, one runway by the county road; Gary has the Gary/Chicago Airport on its
+east side, where Lena Park will lend you a Skyhawk once you've earned it. Every runway has numbers, threshold bars,
 edge lights at night, a windsock and a rotating beacon you can see from the air. Fly
 Gus's ring course and he'll let you take a trainer whenever you like; earn Walt's trust
 and his planes are yours too. The jet you can
@@ -460,7 +477,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.3.0-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.4.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
@@ -504,6 +521,7 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `story_walk`, `playthrough` | The main quest and the side stories played from the first line to an ending, the way a player does: follow the marker, walk through the door, talk to whoever is really there |
 | `respawn_walk` | Final Notice, then the whole game war: Pixel, Kenny, Floor 88, the drive to Chicago, both hacks on the Midwest data floor, the drive home, Microslop's Floor 101, and the epilogue slides it earns |
 | `roads_walk` | The out-of-town side stories: Last Load and Room 9 on I-80, then Five Stars and Field Office in Chicago |
+| `gary_walk` | Gary's four stories (the fleet terminal, the mill office, the banner tow flown and landed, the SlopForge console, Kenny in New York), driving I-90 into Chicago and back and State Road 912 to the township, and flying the township's border into Gary |
 | `towns_walk` | Every story in the two towns: Going Home, Night Shift, Paper Rain (its ring course flown and the plane landed), Pre-Existing Condition, Small Town Cop, Air Mail (flown from Kearney Strip across the I-80 airspace into Port Ramsey and landed at Ramsey Field), No Fishing, The Light, an air-freight job, the whole Project arc (the night freight truck driven from the port up I-80 to the plant) and the box carried home to Angela in New York |
 | `region_test`, `ride_test` | Driving between maps through the highway gates with the same car; flying from Chicago across I-80 into New York in one plane, keeping height, speed and heading |
 | `ending_walk` | One ending per run (set the `ENDING` environment variable) through the dialogue that really offers it |

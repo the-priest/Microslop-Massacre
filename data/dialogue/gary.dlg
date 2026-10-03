@@ -1,0 +1,139 @@
+### Gary, Indiana: Ghost Fleet, The Banner, Who's Driving, The Training Set.
+### Marcus and Local 1014, the FreightOS depot, the old Gary Works office,
+### Lena at the airport, and Microslop's SlopForge cluster in the mill yard.
+
+=== marcus
+-- start
+? q.sq_gy2.done & q.sq_gy1.done -> after
+? q.sq_gy2>=30 -> banner_back
+? q.sq_gy1>=40 -> fleet_done
+? q.sq_gy1>=20 -> fleet_wait
+> A broad man in a Local 1014 windbreaker at a folding table under a wall of framed photographs: men in hard hats, a parade, a strike line in snow. Coffee urn, stacks of flyers, a phone that never stops buzzing face-down.
+MARCUS: You're not FreightOS and you're not a reporter. Reporters wear better shoes. Sit. Coffee's free, it's the only thing in Gary that still is.
+* "What's Local 1014?" -> local
+* "The sign out front says FreightOS is hiring. Ask you why." -> why
+-- local
+MARCUS: United Steelworkers, Local 1014. Gary Works. Thirty thousand men and women in that mill in '69. Eight hundred when E Corp Steel bought it. Zero when they 'paused production' last year. The hall's still open because I'm too stubborn to give back the keys.
+-> why
+-- why
+MARCUS: FreightOS opened a depot on our old rail yard. 'Autonomous trucking.' Driverless. Two hundred trucks on I-80 and I-90 with nobody in the cab, it says on the billboard.
+MARCUS: Except they hired my guys. Laid-off steelworkers, three hundred of them. They sit in a glass tower at the depot in front of three screens each and drive the 'driverless' trucks remotely, sixteen hours a shift. Paid by the mile. And the software docks them for blinking. I'm not making that up. My nephew showed me his pay stub. 'Attention deduction: $14.20.'
+* "Show me." -> show
+* [HACKING 40] "Software that docks pay for blinking logs every blink. I can get you the logs." -> show_hack | show
+* "That's grim. Good luck." -> END
+-- show
+MARCUS: The control tower's the glass box in the middle of the depot, north side of town, on the old rail yard. Day shift lets in contractors and suppliers, nobody checks. Night shift's got security, and dogs that are also robots, because of course they are.
+! quest sq_gy1 20
+-> END
+-- show_hack
+MARCUS: (He leans back and looks at you for a long time.) My nephew said there'd be somebody, someday. Somebody who could read the machine back to itself. Control tower, the glass box in the depot on the old rail yard. Go by day. Look like you belong.
+! quest sq_gy1 20 ; set marcus_hacker
+-> END
+-- fleet_wait
+MARCUS: The glass tower in the depot. Day shift's easier. And if you see a kid named Jamal on the third row with his eyes taped open, tell him his uncle says go home.
+-> menu
+-- fleet_done
+? flag.gy_strike -> done_strike
+? flag.gy_names -> done_names
+MARCUS: Every operator in that tower opened their phone this morning and saw it. Every blink. Every deduction. Every 'attention score.' They're in the parking lot right now, three hundred of them, not going in. Nobody called a strike. Nobody had to. They just read it.
+! quest sq_gy1 done ; set gy_fleet_done ; fame locals 4 ; infamy ecorp 3 ; xp 120
+-> after_fleet
+-- done_strike
+MARCUS: The whole fleet stopped at six this morning. Two hundred trucks pulled onto the shoulder and put their hazards on, all at once, and on every screen in that tower it said ONE HOUR — SOLIDARITY. The operators stood up from their desks and walked out for coffee. First break most of them have had in a month. Some of them didn't go back.
+! quest sq_gy1 done ; set gy_fleet_done ; fame locals 5 ; infamy ecorp 4 ; xp 130
+-> after_fleet
+-- done_names
+MARCUS: Every driverless truck on I-80 now has a name painted on the trailer in digital letters. 'DRIVEN BY JAMAL BELL, $11.40/HR.' 'DRIVEN BY TERESA KOWALSKI, $9.85/HR.' Somebody posted a photo and it's everywhere. FreightOS's stock dropped nine percent by lunch. You know what they called it on the news? 'A labor transparency incident.' Ha!
+! quest sq_gy1 done ; set gy_fleet_done ; fame locals 5 ; infamy ecorp 3 ; xp 130
+-> after_fleet
+-- after_fleet
+MARCUS: One more thing, since you're the kind who goes places. Our banner. The Local's banner from the 1919 strike, hand-stitched. It was hanging in the Gary Works main office when E Corp chained the gates. Demolition crew's due Monday, and scrappers strip that place every night. I'd like it back on this wall before it's copper wire and landfill.
+MARCUS: And if you fly, and I think you're the type: I had a new one printed this morning. Fifty feet of vinyl. Lena Park out at the airport has a banner-tow rig and a dad who was Local 1014. Tell her I sent you.
+! quest sq_gy2 10 ; quest sq_gy4 10
+-> END
+-- banner_back
+> You unroll it on his folding table: red wool gone the color of brick, gold letters, LOCAL 1014 — 1919 — AN INJURY TO ONE. One corner scorched. He touches the scorch mark with two fingers like it's a wound.
+MARCUS: My great-grandfather carried this down Broadway with three hundred other men and the Army waiting at the end of it. They lost that strike. They won the next one. (He has to stop for a second.) It goes over the door. Where everybody sees it coming in.
+! quest sq_gy2 done ; set gy_banner_home ; fame locals 3 ; stab 3 ; xp 90
+-> END
+-- after
+MARCUS: Look who it is. Coffee's still free. The banner's over the door. Jamal's back at community college. Things are bad in Gary, they've been bad since before I was born, but this week they're bad with a little bit of a grin on them.
+-> menu
+-- menu
+* [if q.sq_gy2>=10 & !q.sq_gy2.done] "About the banner..." -> banner_wait
+* "See you around, Marcus." -> END
+-- banner_wait
+MARCUS: Gary Works main office, inside the mill on the lake side, by the old gate. The superintendent's office at the back, that's where it was. Boarded up, and the scrappers come at night with bolt cutters and worse. Go careful.
+-> END
+
+=== lena
+-- start
+? q.sq_gy4.done -> after
+? q.sq_gy4>=40 -> done
+? q.sq_gy4>=30 -> land
+? q.sq_gy4>=20 -> go
+> A woman in an orange hi-vis vest over a flight jacket, eating cereal out of a mug at the counter of the airport office, watching the windsock through the window like it owes her money.
+LENA: Gary/Chicago Airport. We used to have a regional airline. Then we had a cargo hub. Now we have me, two Skyhawks, a banner-tow rig nobody's rented since the county fair, and a lot of very nice runway.
+* [if q.sq_gy1.done] "Marcus at the union hall says you might rent me that banner rig." -> banner
+* "Quiet day?" -> quiet
+-- quiet
+LENA: Every day's quiet. I talk to the pigeons. Two of them have names. If you're here to fly, I need a license or a very good reason. If you're here to talk, the pigeons are better listeners.
+-> END
+-- banner
+LENA: Marcus. (She smiles, a little.) My dad was Local 1014. Rolling mill, thirty-two years. Okay. What's the banner say?
+ELLIOT (V.O.): Marcus had it printed this morning. Fifty feet of vinyl, red on white: FREIGHTOS — WHO'S DRIVING?
+LENA: (She laughs out loud.) Oh, I love that. I LOVE that. Take the yellow Skyhawk on the apron. Banner's already hooked on, it picks up off the poles when you take off. Fly it over the depot, low and slow over the mill, then right down Broadway so the whole city sees it. Then land on my runway and stop, nicely, because that's my plane.
+! quest sq_gy4 20 ; set gy_plane_ok ; xp 40
+-> END
+-- go
+LENA: The yellow one, on the apron. Rings will show you the route. Depot, mill, Broadway. Don't wrap my banner around a smokestack.
+-> END
+-- land
+LENA: I saw it from the tower. Everybody saw it. My phone's going crazy. Now land. Gently. Mind the crosswind off the lake.
+-> END
+-- done
+> Lena's at the office door with her phone held out at arm's length, playing a video somebody posted: the yellow Skyhawk and fifty feet of FREIGHTOS — WHO'S DRIVING? sliding past the control tower's glass, three hundred operators at the windows, standing up.
+LENA: Two million views. FreightOS's PR account replied 'Our trucks are driven by innovation,' and the internet is eating them alive. Dad would've loved it. Planes are yours whenever you want them. Fuel's on Marcus.
+! quest sq_gy4 done ; set gy_banner_flown ; fame locals 3 ; infamy ecorp 2 ; xp 100
+-> END
+-- after
+LENA: My favorite banner pilot. Skyhawks are fueled. Pigeons say hi.
+-> END
+
+=== toby
+-- start
+> A man in a FreightOS polo and a lanyard heavy with badges, holding a tablet like a shield. His name tag says TOBY — OPERATIONS EXCELLENCE.
+TOBY: Hi! Are you here for the operator assessment? We're always looking for talent. Ninety-second onboarding. Eye calibration, attention baseline, and you're driving by lunch! Well, supervising the autonomous systems. Driving is a strong word. Legally.
+* "What happens if an operator blinks?" -> blink
+* "Just looking around." -> look
+-- blink
+TOBY: (He laughs, too fast.) Blinking is totally fine! Blinking is human! We just have a, an attention optimization framework that, um, gamifies focus. Operators can earn back deductions with, with streaks. People love streaks!
+ELLIOT (V.O.): He believes it. Or he believes he has to. From the outside those look exactly the same.
+-> END
+-- look
+TOBY: Sure, sure. Visitors' lanyards are at the desk. Please don't make eye contact with the operators, it affects their scores.
+-> END
+
+=== kenny_slop
+-- start
+> You tell Kenny about the mill, the glass box in the yard, the racks of every game his old studio ever shipped, and what you did with them.
+? flag.slop_returned -> returned
+? flag.slop_credits -> credits
+KENNY: Deleted. The whole training set. Twenty years of other people's work, gone out of a machine that was going to chew it into sequels. Microslop's going to say it was a 'data incident.' I'm going to frame the press release.
+! quest sq_gy3 done ; fame gamers 5 ; infamy ecorp 3 ; xp 120
+-> END
+-- returned
+KENNY: Every studio they closed just got an email with their own games in it. Source, art, music, all of it. Seventeen studios. Half of them are on Discord right now trying to figure out who sent it and whether it's legal and whether they can just... start again. (He has to put the beer down.) I worked at one of those studios.
+! quest sq_gy3 done ; fame gamers 8 ; infamy ecorp 4 ; stab 3 ; xp 160
+-> END
+-- credits
+KENNY: So now every single thing SlopForge makes ends with forty minutes of credits. Every artist, every coder, every QA tester whose work it was trained on, by name, unskippable. Somebody timed it: a SlopForge 'original' game is three minutes of slop and forty minutes of the people it stole from. (He laughs until he's crying a little.) I'm in there. I'm in every one.
+! quest sq_gy3 done ; fame gamers 7 ; infamy ecorp 3 ; xp 150
+-> END
+
+=== dolores_gary
+-- start
+> Dolores is at the back of the union hall in her red trucker's jacket, arms folded, listening to Marcus with the face of somebody who has heard this speech before and agreed with it every time.
+DOLORES: Hon! Look at you, two states over. Marcus asked me to come talk to his operators about what it was like, before. Before the trucks drove us. I told them: you get to see the sun come up over Iowa and nobody docks you for looking at it.
+DOLORES: FreightOS locked me out of my own rig on the I-80 shoulder. These kids are locked INTO a tower in front of three screens. Same company. Same idea. People are a cost. You help Marcus, you hear me? You help him like you helped me.
+-> END

@@ -615,6 +615,8 @@ func _district_labels() -> Array:
 			return [["THE LOOP", -120, -120], ["RIVER NORTH", -120, -600], ["WEST LOOP", -620, -100], ["SOUTH SIDE", -200, 560], ["LAKESHORE", 520, 400], ["MEIGS FIELD", 560, -200], ["LAKE MICHIGAN", 780, 0], ["I-90 / TO NEW YORK", -40, 780]]
 		"township":
 			return [["KEARNEY STRIP", -560, -300], ["THE PLANT", -300, -440], ["MAIN STREET", 40, -60], ["MAPLE RIDGE", 440, -200], ["MEMORIAL", -120, 330], ["TOWNSHIP FARMS", 260, 440], ["TO I-80", 600, -30]]
+		"gary":
+			return [["GARY WORKS", -560, -420], ["FREIGHTOS DEPOT", 40, -460], ["BROADWAY", -260, 200], ["EMERSON", 380, 420], ["GARY/CHICAGO AIRPORT", 440, -620], ["LAKE MICHIGAN", -300, -700], ["I-90 / CHICAGO", 640, -30], ["SR 912 / TOWNSHIP", -60, 660]]
 		"port":
 			return [["RAMSEY FIELD", -760, -620], ["CAPE ROW", -740, 300], ["OLD PORT", -60, -300], ["CANNERY ROW", -300, 480], ["CONTAINER TERMINAL", 380, -420], ["LIGHTHOUSE", 640, -600], ["ATLANTIC", 720, 200], ["TO I-80", -880, -30]]
 	return [["WASHINGTON HEIGHTS", -450, -700], ["INDUSTRIAL NORTH", 450, -760], ["MIDTOWN", -150, -380], ["DOCKS", -760, -150], ["CENTRAL PARK", -65, 80], ["HELL'S KITCHEN", -520, 100], ["UPPER EAST", 450, 100], ["LOWER EAST SIDE", -480, 440], ["CIVIC", 60, 460], ["CHINATOWN", 480, 460], ["CONEY ISLAND", 0, 650], ["INWOOD", -640, -1000], ["FORT TRYON", -700, -1330], ["HARLEM", 180, -1000], ["THE BRONX", 60, -1420], ["HUNTS POINT", 1180, -1250], ["ASTORIA", 1180, -480], ["LONG ISLAND CITY", 1140, 220]]
@@ -648,7 +650,7 @@ func _draw_world_inset(font: Font, r: Rect2) -> void:
 		if str(reg) == WorldLayout.region:
 			col = UI.GREEN
 		_map_overlay.draw_rect(Rect2(a, cr.size * sc), col, str(reg) != WorldLayout.region, 1.0)
-		var lbl: String = {"nyc": "NYC", "highway": "I-80", "chicago": "CHICAGO", "township": "TWP", "port": "RAMSEY"}.get(str(reg), str(reg))
+		var lbl: String = {"nyc": "NYC", "highway": "I-80", "chicago": "CHICAGO", "township": "TWP", "port": "RAMSEY", "gary": "GARY"}.get(str(reg), str(reg))
 		var lp := a + Vector2(cr.size.x * sc * 0.5 - float(lbl.length()) * 2.6, -3.0)
 		_map_overlay.draw_string(font, lp, str(lbl), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, UI.GREEN_DIM)
 	# The roads: every travel gate to the gate it leads to, and I-80 itself.

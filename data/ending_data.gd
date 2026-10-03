@@ -153,6 +153,22 @@ static func slides(ending: String) -> Array:
 		out.append(_s("PORT RAMSEY", "The Miss Ruthie went out at four in the morning the day after the licenses came back, and every boat in Port Ramsey went with her. They came back at noon with fluke and sea bass and nothing to sell it to but each other, so they had a fish fry on the quay that went on until the terminal called the police, who stayed for seconds."))
 	if GS.has_flag("silas_lamp"):
 		out.append(_s("RAMSEY POINT", "Silas Pell turns the light on at dusk and off at dawn, by hand, with a brass switch that clicks. No ship has come into Port Ramsey dark since. The Coast Guard sent a letter about 'unauthorized modification of a smart navigational asset.' He used it to light the stove."))
+	if GS.has_flag("gy_strike"):
+		out.append(_s("GARY", "The one-hour software strike became a three-day real one. FreightOS settled: hourly pay, real breaks, no eye tracking, and the word 'driver' back on the job title. The trucks still drive themselves on the billboards. In the tower, the operators blink whenever they want."))
+	elif GS.has_flag("gy_names"):
+		out.append(_s("GARY", "FreightOS spent a fortune trying to scrub the names off its trailers and never quite managed it. Every few weeks a truck on I-80 flickers and says, for a mile or two, DRIVEN BY J. BELL. People honk. Jamal Bell went back to community college. He's studying labor law."))
+	elif GS.has_flag("gy_told"):
+		out.append(_s("GARY", "Three hundred and four operators read their own blinks on their phones in a parking lot at dawn and didn't go in. Local 1014 signed up two hundred and eighty of them by Friday. The union hall on Broadway has its lights on every night now."))
+	if GS.has_flag("gy_banner_home"):
+		out.append(_s("THE BANNER", "The 1919 banner hangs over the door of the union hall on Broadway, scorched corner and all. Kids from the high school come in to see it on field trips. Marcus tells them the strike was lost. Then he tells them about the next one."))
+	if GS.has_flag("gy_banner_flown"):
+		out.append(_s("WHO'S DRIVING?", "The video of a yellow Skyhawk towing FREIGHTOS — WHO'S DRIVING? past the control tower got eleven million views. Lena Park started a banner-tow business. Her first customer was Local 1014. Her second was a man proposing to his girlfriend over Lake Michigan. She said yes; the banner was spelled wrong."))
+	if GS.has_flag("slop_returned"):
+		out.append(_s("SLOPFORGE", "Seventeen studios got their own work back in their inboxes. Nine of them started again, under new names, with old friends. The first game out of the nine was small and strange and nobody's sequel, and it ended with forty minutes of credits that the players sat through on purpose."))
+	elif GS.has_flag("slop_credits"):
+		out.append(_s("SLOPFORGE", "Every game SlopForge ever made ended with forty minutes of unskippable credits naming every person it learned from. Microslop shelved it within the year. Speedrunners still argue about the fastest way through the credits. There isn't one. That was the point."))
+	elif GS.has_flag("slop_deleted"):
+		out.append(_s("SLOPFORGE", "SlopForge woke up knowing nothing and Microslop never gave it anything to learn from again. The glass box in the Gary Works yard sits empty, humming to itself. Somebody spray-painted WE OWN OUR GAMES on the door, and nobody's bothered to scrub it off."))
 	if GS.has_flag("pr_machine_drowned"):
 		out.append(_s("THE PROJECT", "The stacks over Washington Township have been cold since the night B2 flooded. Black SUVs came and went for a week, and then nobody came at all. Somewhere a woman who keeps a thousand clocks wrote your name in a very small notebook. She has not crossed it out. She also has not done anything about it. Yet."))
 	elif GS.has_flag("pr_machine_on"):

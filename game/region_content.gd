@@ -37,6 +37,14 @@ const LANDMARKS := {
 		"pt_cannery": {"rect": [-300, 320, -200, 400], "h": 12.0, "style": 5, "color": Color(0.45, 0.4, 0.35), "sign": "OCEAN BRIGHT CANNERY", "sign_col": Color(0.9, 0.5, 0.3), "door": "d_pt_cannery", "flicker": true},
 		"pt_hangar": {"rect": [-680, -150, -652, -110], "h": 8.0, "style": 5, "color": Color(0.55, 0.57, 0.6), "sign": "RAMSEY FIELD", "sign_col": Color(0.9, 0.9, 0.95), "door": "d_pt_hangar"},
 	},
+	"gary": {
+		"gy_union": {"rect": [-120, 10, -80, 44], "h": 10.0, "style": 1, "color": Color(0.42, 0.24, 0.18), "sign": "USW LOCAL 1014", "sign_col": Color(1.0, 0.4, 0.3), "door": "d_gy_union"},
+		"gy_diner": {"rect": [30, 10, 62, 40], "h": 7.0, "style": 2, "color": Color(0.6, 0.36, 0.26), "sign": "STEEL CITY GRILL", "sign_col": Color(1.0, 0.6, 0.2), "door": "d_gy_diner", "awning": Color(0.6, 0.12, 0.08)},
+		"gy_tower": {"rect": [40, -330, 80, -290], "h": 22.0, "style": 7, "color": Color(0.2, 0.3, 0.42), "sign": "FREIGHTOS · FLEET OPERATIONS", "sign_col": Color(0.3, 0.75, 1.0), "door": "d_gy_tower", "roof": "antenna"},
+		"gy_millofc": {"rect": [-390, -60, -330, -20], "h": 12.0, "style": 1, "color": Color(0.36, 0.22, 0.16), "sign": "GARY WORKS · MAIN OFFICE", "sign_col": Color(0.9, 0.75, 0.4), "door": "d_gy_millofc", "boarded": true, "flicker": true},
+		"gy_cluster": {"rect": [-540, -220, -450, -150], "h": 14.0, "style": 7, "color": Color(0.14, 0.28, 0.2), "sign": "SLOPFORGE", "sign_col": Color(0.35, 1.0, 0.45), "door": "d_gy_cluster"},
+		"gy_hangar": {"rect": [650, -120, 686, -84], "h": 8.0, "style": 5, "color": Color(0.55, 0.57, 0.6), "sign": "GARY/CHICAGO AIRPORT", "sign_col": Color(1.0, 0.7, 0.2), "door": "d_gy_hangar"},
+	},
 }
 
 const DOORS := {
@@ -73,6 +81,14 @@ const DOORS := {
 		"d_pt_cannery": {"pos": [-250, 400], "face": "s", "interior": "pt_cannery", "name": "Ocean Bright Cannery", "lock": 45, "unlock_when": "q.mq_pr1>=30"},
 		"d_pt_hangar": {"pos": [-652, -130], "face": "e", "interior": "pt_hangar", "name": "Ramsey Field Office"},
 	},
+	"gary": {
+		"d_gy_union": {"pos": [-100, 10], "face": "n", "interior": "gy_union", "name": "USW Local 1014 Union Hall"},
+		"d_gy_diner": {"pos": [46, 10], "face": "n", "interior": "gy_diner", "name": "Steel City Grill"},
+		"d_gy_tower": {"pos": [60, -290], "face": "s", "interior": "gy_ops", "name": "FreightOS Control Tower"},
+		"d_gy_millofc": {"pos": [-360, -20], "face": "s", "interior": "gy_millofc", "name": "Gary Works Main Office", "lock": 30},
+		"d_gy_cluster": {"pos": [-495, -150], "face": "s", "interior": "gy_cluster", "name": "SlopForge Training Cluster", "lock": 50, "unlock_when": "q.sq_gy3>=10"},
+		"d_gy_hangar": {"pos": [686, -102], "face": "e", "interior": "gy_hangar", "name": "Gary/Chicago Airport Office"},
+	},
 }
 
 const POIS := {
@@ -103,6 +119,13 @@ const POIS := {
 		"poi_pt_old": {"pos": [0, -80], "name": "Old Port", "r": 120.0},
 		"poi_pt_field": {"pos": [-720, -300], "name": "Ramsey Field", "r": 120.0},
 		"poi_pt_cannery": {"pos": [-250, 420], "name": "Ocean Bright Cannery", "r": 50.0},
+	},
+	"gary": {
+		"poi_gy_mill": {"pos": [-420, -300], "name": "Gary Works", "r": 160.0},
+		"poi_gy_depot": {"pos": [140, -360], "name": "FreightOS Depot", "r": 150.0},
+		"poi_gy_broadway": {"pos": [-140, 200], "name": "Broadway", "r": 120.0},
+		"poi_gy_airport": {"pos": [560, -300], "name": "Gary/Chicago Airport", "r": 140.0},
+		"poi_gy_lake": {"pos": [-200, -660], "name": "Lake Michigan shore", "r": 80.0},
 	},
 }
 

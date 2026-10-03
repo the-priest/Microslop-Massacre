@@ -150,7 +150,9 @@ func _ready() -> void:
 	game.races.start("hunts")
 	await _frames(5)
 	_ok("race started in Dez's loaner", game.races.is_racing() and game.player.driving == game.races.car and GameState.cash == 800)
-	for i in 240:
+	for i in 900:
+		if game.races.countdown <= 0.0 and game.races.is_racing():
+			break
 		await get_tree().physics_frame
 	var pts: Array = game.races.def["points"]
 	for l in 2:
@@ -163,7 +165,9 @@ func _ready() -> void:
 	# And lose one: the rival gets round first.
 	game.races.start("hunts")
 	await _frames(5)
-	for i in 240:
+	for i in 900:
+		if game.races.countdown <= 0.0 and game.races.is_racing():
+			break
 		await get_tree().physics_frame
 	var r: Vehicle = game.races.rival
 	for l in 2:

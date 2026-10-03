@@ -22,6 +22,7 @@
 +++ road | Out of Town
 +++ project | The Project
 +++ port | Port Ramsey
++++ gary | Gary, Indiana
 
 === mq_hello | Hello, Friend | main | 150 | fsociety
 Elliot Alderson. Cybersecurity engineer by day. By night, he reads people. Something was on his computer this morning that he doesn't remember putting there.
@@ -294,6 +295,36 @@ Ruthie Doyle has fished out of Port Ramsey since 1984. Last spring E Corp Logist
 Silas Pell has kept Ramsey Point Light for fifty-one years. The Coast Guard automated it in 1998 and sold it to E Corp with the terminal, and now, three nights a month, the light goes dark and a ship with no lights comes into berth 2.
 10 The 'smart beacon' controller is in the lamp room, through the door from Silas's kitchen. Put the light back in his hands @cell:pt_lighthouse:12.4,1.8
 30 Tell Silas @npc:silas
+40 done
+
+=== sq_gy1 | Ghost Fleet | side | 280 | gary
+FreightOS runs two hundred 'driverless' trucks out of a depot on Gary's old rail yard. The union hall on Broadway says the trucks have drivers after all: three hundred laid-off steelworkers in a glass tower, driving remotely by the mile, docked for blinking.
+10 Marcus Bell keeps USW Local 1014 open in the old union hall on Broadway. He's been waiting for someone like you @npc:marcus
+20 The FreightOS control tower is the glass box in the middle of the depot on the old rail yard, north side of town. Contractors walk in by day. Get inside @d_gy_tower
+30 The fleet operations terminal is at the supervisor's desk in the back of the control room @cell:gy_ops:16,1.8
+40 It's done. Tell Marcus, at the union hall @npc:marcus
+50 done
+
+=== sq_gy2 | The Banner | side | 200 | gary
+Local 1014's banner from the 1919 steel strike, hand-stitched, was left hanging in the Gary Works main office when E Corp Steel chained the gates. The demolition crew comes Monday. The scrappers come every night.
+10 The Gary Works main office is inside the mill on the lake side of town, boarded up. Get inside @d_gy_millofc
+20 The banner hung in the superintendent's office at the back @cell:gy_millofc:12,4.4
+30 Bring the banner home to Marcus at the union hall @npc:marcus
+40 done
+
+=== sq_gy4 | Who's Driving? | side | 200 | gary
+Marcus had fifty feet of vinyl printed: FREIGHTOS — WHO'S DRIVING? Lena at the Gary/Chicago Airport has a banner-tow rig nobody's rented since the county fair, and a father who was Local 1014.
+10 Lena runs the Gary/Chicago Airport out of the little office by the apron, east side of town @npc:lena
+20 Take the yellow Skyhawk up with the banner and fly the rings: over the FreightOS depot, low over the mill, and down Broadway @ring
+30 Bring Lena's plane home: land on the runway at Gary/Chicago Airport and stop @poi_gy_airport
+40 Lena's waiting at the office @npc:lena
+50 done
+
+=== sq_gy3 | The Training Set | side | 300 | microslop
+After Floor 101, Microslop moved SlopForge's training cluster somewhere cheap and out of the way: a new glass building in the yard of the dead steel mill in Gary, Indiana. Every game from every studio Microslop ever closed is in there, being chewed into sequels.
+10 The SlopForge cluster is the new glass building in the Gary Works yard, inside the mill on the lake side of town. Get in @d_gy_cluster
+20 The training console is at the far end of the cluster @cell:gy_cluster:22,1.8
+30 Tell Kenny what you did. He's at The Rabbit Hole in New York @npc:kenny
 40 done
 
 === sq_cat | Lost | side | 60 | odd

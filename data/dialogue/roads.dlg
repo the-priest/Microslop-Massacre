@@ -118,6 +118,7 @@ TREVOR: Four hundred real reviews so far. Do you know how good it feels to write
 
 === dolores
 -- start
+? in.gy_union -> dolores_gary
 ? q.sq_rig.done -> after
 ? q.sq_rig>=40 -> report
 ? q.sq_rig>=20 -> waiting

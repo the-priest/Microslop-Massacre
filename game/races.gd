@@ -27,6 +27,7 @@ var countdown: float = 0.0
 var _rival_mark: Node3D
 var _column: MeshInstance3D
 var _last_count: int = -1
+var _armed := false # false until you're actually sitting in the loaner
 
 
 func is_racing() -> bool:
@@ -42,6 +43,7 @@ func start(id: String) -> void:
 		return
 	GameState.add_cash(-int(def["bet"]))
 	active = id
+	_armed = false
 	cp = 0
 	lap = 0
 	rival_cp = 0
@@ -67,6 +69,7 @@ func start(id: String) -> void:
 	add_child(_rival_mark)
 	await get_tree().process_frame
 	game.enter_vehicle(car)
+	_armed = true
 	countdown = 3.5
 	_last_count = -1
 	_show_column()
@@ -74,7 +77,7 @@ func start(id: String) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if active == "":
+	if active == "" or not _armed:
 		return
 	if not is_instance_valid(car) or car.dead or game.player.driving != car or GameState.cell != "world":
 		_finish(false, "You bailed. The bet stays with Dez.")
@@ -148,6 +151,7 @@ func _show_column() -> void:
 func _finish(won: bool, why: String) -> void:
 	var id := active
 	active = ""
+	_armed = false
 	if _column != null:
 		_column.queue_free()
 		_column = null

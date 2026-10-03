@@ -155,6 +155,8 @@ func _crossing_line(from: String, to: String) -> String:
 			return "Washington Township, New Jersey. A water tower, a Main Street, a memorial wall, and the stacks of the plant that was supposed to have closed in 1994."
 		"port":
 			return "Port Ramsey. Half fishing town, half E Corp freight terminal, and the freight half is winning. A lighthouse at the end of a jetty, and a ship the size of a street at berth 2."
+		"gary":
+			return "Gary, Indiana. Cold blast furnaces on the lakeshore, a depot of trucks with nobody in them, and a union hall on Broadway with its lights still on."
 	return _loading_tip()
 
 
@@ -2473,6 +2475,9 @@ const COURSES := {
 	# Paper Rain: out of Kearney Strip, over the plant's stacks, down Main
 	# Street over the festival, and over the memorial wall.
 	"paper": {"quest": "sq_tw3", "stage": 20, "region": "township", "flag": "paper", "rings": [Vector3(-470, 60, -200), Vector3(-240, 112, -345), Vector3(-60, 70, 0), Vector3(150, 55, 0), Vector3(-75, 55, 300)]},
+	# Who's Driving?: the banner over the FreightOS depot, low over the mill,
+	# then down Broadway.
+	"banner": {"quest": "sq_gy4", "stage": 20, "region": "gary", "flag": "banner", "rings": [Vector3(420, 70, -380), Vector3(150, 60, -340), Vector3(-280, 85, -300), Vector3(-140, 55, 120), Vector3(-140, 50, 420)]},
 }
 ## Landings that count: stop a plane on that map's airfield while the quest
 ## sits at `stage` and the flag is set (the story director does the rest).
@@ -2480,6 +2485,7 @@ const LANDINGS := [
 	{"quest": "sq_wings", "stage": 30, "region": "nyc", "flag": "wings_landed"},
 	{"quest": "sq_tw3", "stage": 30, "region": "township", "flag": "paper_landed"},
 	{"quest": "sq_airmail", "stage": 20, "region": "port", "flag": "airmail_landed"},
+	{"quest": "sq_gy4", "stage": 30, "region": "gary", "flag": "banner_landed"},
 ]
 
 
@@ -2501,6 +2507,8 @@ func _update_airfield() -> void:
 				a.locked = false # Gus said yes
 			if a.owner_tag == "walt" and a.locked and walt_ok and not a.driving:
 				a.locked = false # Walt said yes
+			if a.owner_tag == "lena" and a.locked and GameState.flags.has("gy_plane_ok") and not a.driving:
+				a.locked = false # Lena said yes
 			var dist := a.global_position.distance_to(pp)
 			if not a.driving and (dist > 1800.0 or (a.dead and dist > 300.0)):
 				a.queue_free()
@@ -2534,6 +2542,11 @@ func _spawn_plane(sid: String, m: String, pos: Vector3, yaw: float) -> Aircraft:
 		a.owner_tag = "walt"
 		a.lock_dc = 35
 		a.locked = not GameState.flags.has("walt_plane_ok")
+	elif sid.begins_with("gary_"):
+		# Gary/Chicago Airport: Lena's two Skyhawks.
+		a.owner_tag = "lena"
+		a.lock_dc = 35
+		a.locked = not GameState.flags.has("gy_plane_ok")
 	elif sid.begins_with("port_"):
 		# Ramsey Field: Marisol's one plane, and the answer is no.
 		a.owner_tag = "marisol"
@@ -2973,6 +2986,8 @@ func _airspace_hint() -> String:
 			return "Nothing out that way but fields to the horizon. I-80 is east; follow the county road."
 		"port":
 			return "Open Atlantic. Turn back west: I-80 is past the county road."
+		"gary":
+			return "Lake Michigan and nothing else. Chicago is east, Washington Township south."
 	return "Nothing out that way. Turn back."
 
 
@@ -3074,6 +3089,7 @@ func _atc_hello(from: String) -> void:
 		"highway": ["LENNOX TRAFFIC", "Lennox traffic, unidentified aircraft over the interstate... ah, nobody's listening on this frequency anyway. Follow I-80. " + ("Chicago's dead ahead." if from == "nyc" else "New York's dead ahead.")],
 		"nyc": ["NEW YORK APPROACH", "Aircraft over the Bronx, New York Approach. Bowery Bay is on the Queens waterfront, east of you. Mind the towers. Welcome home."],
 		"township": ["KEARNEY UNICOM", "Kearney traffic, this is Kearney Strip, which is me, Walt. Strip's on the west edge of town, runway north-south, nine hundred metres of it. Water tower's your landmark. Don't land on Main Street, we're having a festival."],
+		"gary": ["GARY TOWER", "Aircraft over the lakeshore, Gary Tower, which is a very grand name for one woman with a radio. Runway's on the east side of town, north-south, past the truck depot. The furnaces are taller than they look. Welcome to Gary."],
 		"port": ["RAMSEY UNICOM", "Aircraft over the county road, Ramsey Field. Runway's on the west side of town, north-south, wind off the water at ten. The cranes are tall and the lighthouse is taller. Welcome to Port Ramsey."],
 	}
 	var l: Array = lines.get(WorldLayout.region, [])

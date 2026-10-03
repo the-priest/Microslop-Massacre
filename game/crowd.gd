@@ -36,7 +36,7 @@ func _ready() -> void:
 	for bj in WorldLayout.NBJ:
 		for bi in WorldLayout.NBI:
 			var d := WorldLayout.district(bi, bj)
-			if d in ["park", "steel", "farm", "airfield", "reststop", "tw_field"]:
+			if d in ["park", "steel", "farm", "airfield", "reststop", "tw_field", "gy_mill", "gy_depot"]:
 				continue
 			_blocks.append({"rect": WorldLayout.block_rect(bi, bj).grow(1.2), "d": d})
 	# Coney row (New York only).
@@ -47,7 +47,7 @@ func _ready() -> void:
 	target_count = Settings.crowd_count() if not _blocks.is_empty() else 0
 	if WorldLayout.region == "highway":
 		target_count = mini(target_count, 6)
-	elif WorldLayout.region in ["township", "port"]:
+	elif WorldLayout.region in ["township", "port", "gary"]:
 		target_count = mini(target_count, maxi(8, int(target_count * 0.6))) # small towns, quieter streets
 	Settings.applied.connect(func() -> void: target_count = Settings.crowd_count())
 
