@@ -52,5 +52,8 @@ const HEADLINES := [
 	{"when": "flag.race_won_lakeshore | flag.race_won_quay | flag.race_won_broadway", "text": "Police in three cities report a rise in late-night street racing complaints. Witnesses describe the same quiet driver in a borrowed sedan."},
 	{"when": "flag.taxi_fares>=5", "text": "Cab dispatchers report a new driver who never talks, never takes the highway, and always gets there on time. Passengers describe him as 'unsettling, five stars.'"},
 	{"when": "item.hidden_mask>=10", "text": "Plastic fsociety masks have been found zip-tied to street corners in New York, Chicago and several smaller towns. Police are calling it vandalism. Collectors are calling it a game."},
+	{"when": "flag.cloud_told", "text": "A billion E Corp account holders woke up to an email listing every file they ever deleted, and confirming E Corp kept all of it. E Corp calls the message 'unauthorized but technically accurate.'"},
+	{"when": "flag.cloud_wiped", "text": "E Corp Cloud's Long Island City data center reports a 'storage optimization event' that freed four hundred petabytes overnight. The company insists no customer data was lost. That, it turns out, is the problem."},
+	{"when": "flag.cloud_sold", "text": "E Corp Cloud says it has 'resolved a security matter' at its Long Island City facility through its bug bounty program. The program did not exist until this morning."},
 	{"when": "flag.township_public", "text": "Terry Colby's 1993 emails on the Washington Township leak continue to dominate headlines. 'Proceed with the cleanup. Do not disclose.' Mr. Colby's lawyers say he does not recall writing them."},
 ]

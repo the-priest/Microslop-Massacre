@@ -1,6 +1,8 @@
 extends "res://test/towns_walk.gd"
 ## Repeatable activities: a taxi fare picked up and dropped off (and one
-## abandoned), then a street race won on every map that has one.
+## abandoned), a respray, hidden masks, the Bronx and Long Island City side
+## stories (Rent Is Due, The Cloud), the news radio, then a street race won
+## on every map that has one.
 
 
 func _ready() -> void:
@@ -13,6 +15,7 @@ func _ready() -> void:
 	await _respray()
 	await _masks()
 	await _rent_is_due()
+	await _cloud()
 	await _radio()
 	for id in ["lakeshore", "interstate", "mainstreet", "quay", "broadway"]:
 		await _race(id)
@@ -124,6 +127,41 @@ func _rent_is_due() -> void:
 	await _follow("sq_rent") # -> Ms. Alvarez
 	await _talk("alvarez", [])
 	_ok("rent is due done", GameState.quest_state("sq_rent") == "done")
+
+
+func _cloud() -> void:
+	print("PHASE the cloud")
+	GameState.set_flag("joined_fsociety")
+	GameState.complete_quest("mq_steel")
+	GameState.game_minutes = maxf(3.0, float(GameState.day())) * 1440.0 + 13 * 60.0
+	GameState.cash = 1000
+	await _enter_world_at(Vector3(1000, 0, 60))
+	_expect("sq_cloud", 10)
+	GameState.tracked_quest = "sq_cloud"
+	await _follow("sq_cloud") # -> Raj at the Court Square Tavern
+	await _talk("raj", ["data center", "Three hundred"])
+	_expect("sq_cloud", 20)
+	_ok("bought raj's badge", GameState.has_item("dc_badge") and GameState.cash == 700)
+	_ok("no badge, no cameras: the cloud is off limits", game.cell_restricted("dc_floor", "ecorp"))
+	await _follow("sq_cloud") # -> the junction box on the avenue
+	_night()
+	await _wait_rules()
+	await _term("ws_dc_junction", ["Camera map"], ["Loop every camera"])
+	_ok("cameras looped", GameState.has_flag("dc_cams"))
+	_ok("badge plus looped cameras gets you in", not game.cell_restricted("dc_floor", "ecorp"))
+	_expect("sq_cloud", 30)
+	await _follow("sq_cloud") # -> the server hall
+	await _term("cloud_console", ["Retention policy", "ALDERSON"], ["Tell everyone"])
+	_ok("told everyone", GameState.has_flag("cloud_told"))
+	_expect("sq_cloud", 40)
+	_day()
+	await _follow("sq_cloud") # -> Trenton at the arcade
+	await _talk("trenton_n", [])
+	_ok("the cloud done", GameState.quest_state("sq_cloud") == "done")
+	var titles: Array = []
+	for sl in EndingData.slides("quiet"):
+		titles.append(str((sl as Dictionary)["title"]))
+	_ok("the epilogue remembers the cloud", titles.any(func(t: Variant) -> bool: return str(t).contains("CLOUD")))
 
 
 func _radio() -> void:

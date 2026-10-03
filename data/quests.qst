@@ -372,6 +372,14 @@ Somebody is selling 'candy' on the Carver Houses corners in the Bronx: bright li
 40 It's over, one way or another. Go tell Mrs. Reyes at the candles in the Carver Houses courtyard @npc:mrs_reyes
 50 done
 
+=== sq_cloud | The Cloud | side | 380 | fsociety
+E Corp's 'Delete' button doesn't delete anything. Trenton found it buried in a patent: every photo, message and file anyone ever deleted on an E Corp device, kept forever in a windowless building in Long Island City. They call it the Cloud. Trenton calls it the Basement.
+10 The data center's night technician drinks at the Court Square Tavern in Long Island City after his shift. Raj Mehta. He has a badge, and he has opinions @npc:raj
+20 The data center's cameras run through a junction box on the sidewalk outside, on the avenue at the west side of the building. Loop them, after dark @pos:1048,120
+30 Badge in through the staff door on the south side and reach the archive console at the back of the server hall @cell:dc_floor:27,-19.4
+40 Get out, and tell Trenton at the arcade @npc:trenton_n
+50 done
+
 === sq_rent | Rent Is Due | side | 240 | bronx
 Carmen Alvarez has organized tenants at 2290 Fordham Road for twenty years. Now the landlord runs the building through an app called RentTrack, and heat, hot water and the elevator are 'premium amenities' at $49 a month. In January.
 10 Ms. Alvarez is handing out flyers outside 2290 Fordham Road in the Bronx, by day. Hear her out @npc:alvarez

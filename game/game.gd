@@ -563,6 +563,7 @@ func _make_world_interactables() -> void:
 			continue
 		_spawn_pickup(world_inter, pk, Vector3.ZERO)
 	_spawn_hidden_masks()
+	var smesh := MeshBatch.new()
 	for sp in WorldObjects.SPOTS:
 		var sd: Dictionary = sp
 		if str(sd.get("region", "nyc")) != WorldLayout.region:
@@ -571,6 +572,14 @@ func _make_world_interactables() -> void:
 		var sz3: Array = sd.get("size", [1.2, 1.8, 1.2])
 		var it3 := Interactable.new().setup(str(sd.get("kind", "convo")), str(sd["id"]), str(sd.get("title", "")), str(sd.get("verb", "Examine")), Vector3(float(pa3[0]), float(pa3[1]), float(pa3[2])), Vector3(float(sz3[0]), float(sz3[1]), float(sz3[2])), sd)
 		world_inter.add_child(it3)
+		if str(sd.get("prop", "")) == "jbox":
+			# A utility box on a pole: grey steel, a door, a warning sticker.
+			var bx3 := Vector3(float(pa3[0]), 0.0, float(pa3[2]))
+			smesh.box(bx3 + Vector3(0, 1.6, 0.25), Vector3(0.14, 3.2, 0.14), Color(0.36, 0.37, 0.38))
+			smesh.box(bx3 + Vector3(0, 1.25, 0), Vector3(0.8, 1.0, 0.4), Color(0.52, 0.54, 0.55))
+			smesh.box(bx3 + Vector3(0, 1.25, -0.21), Vector3(0.66, 0.86, 0.03), Color(0.46, 0.48, 0.5))
+			smesh.box(bx3 + Vector3(0.12, 1.5, -0.235), Vector3(0.22, 0.14, 0.01), Color(0.9, 0.75, 0.1))
+	smesh.commit(world_inter, Mats.lit, 160.0, "WorldSpotProps")
 
 
 func _spawn_pickup(parent: Node3D, pk: Dictionary, origin: Vector3) -> void:
@@ -2737,6 +2746,12 @@ func _companion_tick() -> void:
 				GameState.flags[key] = true
 				_cbark(id, str(cd["react"][f]))
 				return
+		# The first time you reach another city or town together.
+		var rkey := "cregion_%s_%s" % [id, WorldLayout.region]
+		if GameState.cell == "world" and (cd.get("regions", {}) as Dictionary).has(WorldLayout.region) and not GameState.flags.has(rkey):
+			GameState.flags[rkey] = true
+			_cbark(id, str(cd["regions"][WorldLayout.region]))
+			return
 		if new_cell:
 			for ck in (cd.get("cells", {}) as Dictionary).keys():
 				var c := str(ck)

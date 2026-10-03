@@ -57,12 +57,12 @@ and drops them into the New York of *Mr. Robot*, then lets you drive or fly out 
   land on its runway. Five airfields, one in every city and town.
 - **14 endings**, from blowing up the world's debt with fsociety to walking away and
   going to therapy on Tuesdays. Some never touch the hack at all.
-- **118 epilogue slides** that remember what you did: who you saved, who you sold out,
+- **121 epilogue slides** that remember what you did: who you saved, who you sold out,
   whose debt you deleted, which game companies you broke and how, whether Lopez ever
   caught you.
-- **52 quests** (20 main, 32 side) with several real outcomes each, and a story director
+- **53 quests** (20 main, 33 side) with several real outcomes each, and a story director
   that keeps every quest moving no matter what order you do things in.
-- **109 conversations, about 47,000 words of original dialogue**, and honest skill
+- **111 conversations, about 48,000 words of original dialogue**, and honest skill
   checks: a white `[SPEECH 40]` means you pass.
 - **Four companions** with their own skills, opinions, barks, heart-to-hearts and
   breaking points.
@@ -158,7 +158,7 @@ road, every airfield and you on it.
 - **Every building has a door, and thousands of them open:** apartments, bodegas,
   pawn shops, diners, dive bars, offices, warehouses, squats and gang hideouts. Each is
   generated from its address, so the same door always leads to the same rooms.
-- **74 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
+- **76 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
   tower, the Fun Society arcade, Steel Mountain, the Rose Garden, Floor 88 of the North
   Tower, Microslop's showcase on Floor 101, E Corp Midwest's data floor, a lighthouse,
   a cannery full of servers, and a sublevel under a power plant that isn't on any drawing.
@@ -267,6 +267,7 @@ built the right bonds, kept the truth, and held your mind together.
 | **Air Mail** | Kearney Strip to Ramsey Field | Walt's hands shake now. Fly the township's prescriptions east across I-80 to the coast and land at Ramsey Field. (Drive it if you must. Marisol will laugh at you.) |
 | **No Fishing** | Port Ramsey | E Corp built its terminal over the fishing berths and the harbormaster revoked every license, then went on a cruise. Talk him out of it, blackmail him, or reinstate all forty-four from his computer. |
 | **Rent Is Due** | The Bronx | A landlord's app sells his tenants their own heat as a "premium amenity." Help Carmen Alvarez: lean on Vince Carbone, or get into RentTrack and refund every fee, turn every boiler back on, or turn every smart lock against him. |
+| **The Cloud** | Long Island City | E Corp's "Delete" button never deleted anything: every file anyone trashed is kept forever in a windowless data center in Queens. Talk (or pay) the night tech out of his badge, loop the perimeter cameras from a junction box on the avenue after dark, and reach the archive console. Wipe it, tell a billion people what was kept, or sell it back. |
 | **Ghost Fleet** | Gary | FreightOS's "driverless" trucks are driven by laid-off steelworkers in a glass tower, paid by the mile and docked for blinking. Show them their own telemetry, paint their names and wages on their trucks, or pause the whole fleet for an hour. |
 | **The Banner** | Gary Works | Local 1014's 1919 strike banner is still in the mill office, the demolition crew comes Monday and the scrappers come every night. Bring it home. |
 | **Who's Driving?** | Gary/Chicago Airport | Tow fifty feet of FREIGHTOS — WHO'S DRIVING? past the control tower, over the mill and down Broadway, and land it. |
@@ -291,6 +292,9 @@ once they trust you, themselves.
 | **Leon** | Coney Island | +10 GUNS; hands you a sandwich when you're dying | *The Number Four*: +5 GUNS |
 | **Trenton** | The arcade (fsociety) | +10 SNEAK, +5 SPEECH | *Keep the Number*: +5 SPEECH |
 | **Shayla** | Your building (once she's free) | +10 MEDICINE, +5 BARTER, and something from her bag every day | *Neighbor*: +5 MEDICINE |
+
+They have something to say about every town you take them to (Darlene knows the
+township better than she'd like), and about what you did there.
 
 Heart-to-hearts open up the longer you travel together. Companions react to your big
 choices, and each has a line they won't follow you over: sell out fsociety, kill
@@ -494,7 +498,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.6.1-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.7.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
@@ -546,7 +550,7 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `vehicle_test`, `flight_test` | Stealing, driving, crashing, carjacking; taking off, turning, rings, landing, crashing |
 | `pad_test`, `menu_pad_test` | The whole game driven by a simulated controller: menus, phone, map, pause, minigames, level-up, dialogue, terminals, cars |
 | `companion_test` | Recruiting, following, riding along, heart-to-hearts, reactions, leaving |
-| `activities_test` | A taxi fare found, picked up, delivered and paid (and the shift ending when you get out), a respray that loses two stars and a repair, Rent Is Due played through, then on every map a street race won and a hidden mask found |
+| `activities_test` | A taxi fare found, picked up, delivered and paid (and the shift ending when you get out), a respray that loses two stars and a repair, Rent Is Due and The Cloud played through, then on every map a street race won and a hidden mask found |
 | `heat_test` | Stars rising with crimes, officers and cruisers responding, a cruiser routing along the streets to your car, a roadblock at four stars, the FBI at five, losing them outdoors and indoors, selling a stolen car to Rafi, and winning and losing a street race |
 | `dd_*`, `deepdebug`, `smoke`, `intro_test` | Interiors, exploits, death, the open world's doors, loot and pickups, the intro |
 | `shots`, `world_shots`, `air_shots` | Screenshots for eyeballing: streets at any hour, the connected world from the air, the airfield |

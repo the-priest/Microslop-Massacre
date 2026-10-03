@@ -379,6 +379,9 @@ static var LANDMARKS := {
 	"carver_houses": {"rect": [-100, -1425, -50, -1385], "h": 48.0, "style": 1, "color": Color(0.46, 0.24, 0.18), "sign": "CARVER HOUSES  BLDG C", "sign_col": Color(0.9, 0.85, 0.7), "door": "d_carver", "roof": "tank", "memorial": [-62, -1384.4]},
 	"fordham_2290": {"rect": [30, -1352, 72, -1316], "h": 30.0, "style": 1, "color": Color(0.44, 0.26, 0.2), "sign": "2290 FORDHAM", "sign_col": Color(0.9, 0.85, 0.7), "door": "d_fordham", "fire_escape": "n"},
 	"carbone_realty": {"rect": [160, -1352, 200, -1324], "h": 14.0, "style": 2, "color": Color(0.5, 0.42, 0.32), "sign": "CARBONE REALTY · RENTTRACK", "sign_col": Color(1.0, 0.8, 0.3), "door": "d_carbone"},
+	# Long Island City -------------------------------------------------------------
+	"ecorp_cloud": {"rect": [1060, 92, 1150, 148], "h": 30.0, "style": 5, "color": Color(0.36, 0.37, 0.4), "sign": "E CORP CLOUD · LIC-1", "sign_col": Color(0.35, 0.55, 1.0), "door": "d_cloud", "roof": "mech"},
+	"court_tavern": {"rect": [940, 92, 980, 122], "h": 12.0, "style": 1, "color": Color(0.3, 0.2, 0.16), "sign": "COURT SQUARE TAVERN", "sign_col": Color(1.0, 0.6, 0.3), "door": "d_tavern", "awning": Color(0.15, 0.25, 0.15)},
 	# Hunts Point ----------------------------------------------------------------
 	"airfield_office": {"rect": [1312, -1345, 1352, -1310], "h": 8.0, "style": 2, "color": Color(0.62, 0.6, 0.56), "sign": "BOWERY BAY AIRFIELD", "sign_col": Color(0.4, 0.75, 1.0), "door": "d_airfield"},
 	"hunts_lab": {"rect": [1200, -1180, 1260, -1140], "h": 12.0, "style": 5, "color": Color(0.3, 0.28, 0.26), "sign": "TERMINAL MARKET  UNIT 9", "sign_col": Color(0.9, 0.8, 0.5), "door": "d_hunts_lab"},
@@ -392,6 +395,8 @@ static var LANDMARKS := {
 static var DOORS := {
 	"d_apt": {"pos": [-466, 328], "face": "n", "interior": "apt_building", "name": "Your Building"},
 	"d_bodega": {"pos": [-409, 328], "face": "n", "interior": "bodega", "name": "Bodega"},
+	"d_cloud": {"pos": [1105, 148], "face": "s", "interior": "dc_floor", "name": "E Corp Cloud — LIC-1", "lock": 70, "key": "dc_badge"},
+	"d_tavern": {"pos": [960, 92], "face": "n", "interior": "court_tavern", "name": "Court Square Tavern"},
 	"d_fordham": {"pos": [51, -1352], "face": "n", "interior": "fordham_lobby", "name": "2290 Fordham Road"},
 	"d_carbone": {"pos": [180, -1352], "face": "n", "interior": "carbone_office", "name": "Carbone Realty", "lock": 40, "unlock_when": "day"},
 	"d_krista": {"pos": [-339, 312], "face": "s", "interior": "krista_office", "name": "Krista Gordon, LCSW"},

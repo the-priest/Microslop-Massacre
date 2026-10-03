@@ -731,6 +731,41 @@ const INTERIORS := {
 			{"title": "Flip Phony's account authority: unlock every revoked library, lock out their admins", "result": "Every game Phony ever revoked unlocks at once, for everyone, worldwide. Then their own admin credentials stop working, replaced by a single read-only line on every screen in the building: YOU OWN WHAT YOU PAID FOR. They can't even log in to argue.", "fx": "set phony_freed ; quest mq_chi3 20 ; fame gamers 8 ; infamy ecorp 6 ; xp 200", "when": "q.mq_chi3>=10 & !flag.phony_freed"},
 		]}],
 },
+# ================================================= LONG ISLAND CITY: THE CLOUD
+"court_tavern": {
+	"name": "Court Square Tavern", "amb": "jazz", "ambient": Color(0.32, 0.28, 0.26),
+	"rooms": [{"r": [0, 0, 12, 8], "h": 3.2, "wall": Color(0.3, 0.24, 0.2), "floor": F_WOOD, "light": Color(1.0, 0.75, 0.5), "energy": 0.9, "lights": [[3, 2.9, 4], [9, 2.9, 4]]}],
+	"exits": [{"pos": [6, 0], "face": "n", "to": "world:d_tavern", "label": "Jackson Ave"}],
+	"furn": [["bar_counter", 6, 6.6, 180, {"w": 7.0, "neon": Color(1.0, 0.6, 0.3)}], ["bar_shelf", 6, 7.7, 180], ["stool", 3.5, 5.4, 180], ["stool", 5, 5.4, 180], ["stool", 6.5, 5.4, 180], ["stool", 8, 5.4, 180], ["booth", 1.6, 1.8, 180, {"col": Color(0.2, 0.25, 0.2)}], ["booth", 10.4, 1.8, 180, {"col": Color(0.2, 0.25, 0.2)}], ["tv", 11.6, 5.0, -90], ["poster", 0.15, 4, 90, {"col": Color(0.6, 0.4, 0.2)}]],
+	"spots": [{"id": "tavern_shop", "kind": "shop", "title": "Bar", "verb": "Order", "pos": [6, 1, 5.6], "size": [7, 2, 1.2], "shop": "gen_bar"}],
+},
+"dc_floor": {
+	"name": "E Corp Cloud — LIC-1", "amb": "office", "ambient": Color(0.3, 0.34, 0.42), "restricted": "ecorp", "allowed_when": "item.dc_badge & flag.dc_cams | disguise.ecorp",
+	"rooms": [
+		{"r": [0, 0, 12, 8], "h": 3.4, "wall": Color(0.4, 0.42, 0.46), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.8, 0.88, 1.0), "energy": 1.0, "lights": [[6, 3.1, 4]]},
+		{"r": [-6, -22, 30, 0], "h": 5.0, "wall": W_DARK, "floor": F_CONCRETE, "light": Color(0.45, 0.6, 1.0), "energy": 0.8, "lights": [[0, 4.6, -6], [12, 4.6, -6], [24, 4.6, -6], [0, 4.6, -16], [12, 4.6, -16], [24, 4.6, -16]]},
+	],
+	"doors": [[6, 0, 1.6]],
+	"exits": [{"pos": [6, 8], "face": "s", "to": "world:d_cloud", "label": "Staff Door"}],
+	"furn": [["security_desk", 9, 3, 0], ["metal_detector", 6, 2.5, 0], ["turnstile", 3, 2.5, 0], ["logo_wall", 6, 7.85, 180, {"w": 4.0, "glow": Color(0.35, 0.55, 1.0)}],
+		["server_rack", -4, -3, 90, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", -4, -5, 90, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", -4, -7, 90, {"led": Color(0.35, 0.55, 1.0)}],
+		["server_rack", 2, -10, 0, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 4, -10, 0, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 6, -10, 0, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 8, -10, 0, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 10, -10, 0, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 12, -10, 0, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 14, -10, 0, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 16, -10, 0, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 18, -10, 0, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 20, -10, 0, {"led": Color(0.35, 0.55, 1.0)}],
+		["server_rack", 2, -14, 180, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 4, -14, 180, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 6, -14, 180, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 8, -14, 180, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 10, -14, 180, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 12, -14, 180, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 14, -14, 180, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 16, -14, 180, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 18, -14, 180, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 20, -14, 180, {"led": Color(0.35, 0.55, 1.0)}],
+		["tape_library", 27, -6, -90], ["tape_library", 27, -10, -90], ["climate_unit", 29.4, -16, -90], ["desk_pc", 27, -20, 0], ["whiteboard", 12, -21.85, 0]],
+	"spots": [
+		{"id": "dc_board", "kind": "text", "title": "Whiteboard", "verb": "Read", "pos": [12.0, 1.6, -21.7], "size": [2.0, 1.2, 0.3], "text": "RETENTION TARGETS Q3: 'Deleted' items 412 petabytes (+9%). Below it in smaller writing, somebody's math: average user has deleted 31,000 photos. We kept all of them. Under that, in different marker: 'we are so going to hell.'"},
+		{"id": "cloud_console", "kind": "terminal", "title": "Shadow Archive Console", "verb": "Use", "pos": [27.0, 1.1, -20.4], "size": [1.4, 1.2, 0.9], "hack": 55, "when": "q.sq_cloud>=30", "header": "E CORP CLOUD // LIC-1 // RETENTION (INTERNAL ONLY)", "welcome": "Every file anyone ever deleted on an E Corp phone, laptop or account. 'Deleted' is a status flag. Nothing here has ever been removed.",
+			"entries": [
+				{"title": "Retention policy", "text": "'Deletion is a user-interface event. Data is retained indefinitely to support product improvement, law enforcement requests and future monetization.' Approved by Legal, 2009. Never disclosed. The words 'future monetization' are underlined twice, by hand, on a scanned printout."},
+				{"title": "Search: ALDERSON", "text": "You shouldn't, and you do. Eleven thousand of your own deleted files. A photo of you and Darlene at the beach you don't remember taking. A draft email to your father, from a dead account, from a version of you who was eleven. You close it. Your hands aren't steady for a while."},
+			],
+			"actions": [
+				{"title": "Wipe the shadow archive, every petabyte, and the backups", "result": "You don't flag it. You overwrite it, three passes, every disk, then the tape libraries, then the offsite replication target in Ohio you find in the config. Four hundred and twelve petabytes of things people asked to forget, finally forgotten. The racks go quiet one row at a time.", "fx": "set cloud_wiped ; set cloud_done ; quest sq_cloud 40 ; infamy ecorp 4 ; xp 220", "when": "!flag.cloud_done"},
+				{"title": "Tell everyone: send every user a list of what E Corp kept of theirs", "result": "A billion emails go out at 4 AM, one per account: 'You deleted 31,214 files. We kept all of them. Here is the list.' Signed with the E Corp logo, because it's their mail server. By breakfast it's the only story on Earth. By lunch E Corp is in front of a Senate committee.", "fx": "set cloud_told ; set cloud_done ; quest sq_cloud 40 ; infamy ecorp 6 ; fame fsociety 5 ; xp 240", "when": "!flag.cloud_done"},
+				{"title": "Sell it back: E Corp pays $5,000 to have you forget you were here", "result": "You leave a note on the console with a crypto wallet and a number. The money arrives in nine minutes, which tells you exactly how much they think the archive is worth. You walk out richer. Every deleted photo in the world stays exactly where it is.", "fx": "set cloud_sold ; set cloud_done ; quest sq_cloud 40 ; cash 5000 ; stab -4 ; xp 120", "when": "!flag.cloud_done"},
+			]},
+	],
+},
 # ======================================================= THE BRONX: RENT IS DUE
 "fordham_lobby": {
 	"name": "2290 Fordham Road — Lobby", "amb": "interior", "ambient": Color(0.28, 0.26, 0.24),

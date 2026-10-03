@@ -153,6 +153,12 @@ static func slides(ending: String) -> Array:
 		out.append(_s("PORT RAMSEY", "The Miss Ruthie went out at four in the morning the day after the licenses came back, and every boat in Port Ramsey went with her. They came back at noon with fluke and sea bass and nothing to sell it to but each other, so they had a fish fry on the quay that went on until the terminal called the police, who stayed for seconds."))
 	if GS.has_flag("silas_lamp"):
 		out.append(_s("RAMSEY POINT", "Silas Pell turns the light on at dusk and off at dawn, by hand, with a brass switch that clicks. No ship has come into Port Ramsey dark since. The Coast Guard sent a letter about 'unauthorized modification of a smart navigational asset.' He used it to light the stove."))
+	if GS.has_flag("cloud_told"):
+		out.append(_s("THE CLOUD", "A billion people got an email from E Corp's own servers listing everything they'd deleted that E Corp had kept. The Senate hearings ran for a month. 'Delete means delete' is a law now, in eleven countries. In the twelfth, E Corp is still arguing about what 'means' means."))
+	elif GS.has_flag("cloud_wiped"):
+		out.append(_s("THE CLOUD", "Four hundred and twelve petabytes of things people asked to forget, forgotten. Nobody ever found out what had been kept, or that it was gone. Somewhere in there was a photo of you and Darlene at the beach. You decided you didn't need proof. You remember it now. Mostly."))
+	elif GS.has_flag("cloud_sold"):
+		out.append(_s("THE CLOUD", "E Corp paid five thousand dollars to make you forget a building in Long Island City. The archive grew by nine percent the next year. Every so often you delete a photo and think about where it goes, and who's keeping it, and what you got for it."))
 	if GS.has_flag("rent_heat"):
 		out.append(_s("2290 FORDHAM", "The radiators at 2290 Fordham have banged every winter since, loud enough to wake the dead. Nobody complains. Carmen Alvarez's tenants' association now covers forty-one buildings and has a lawyer on retainer and a group chat that Vince Carbone has nightmares about."))
 	elif GS.has_flag("rent_refunded"):

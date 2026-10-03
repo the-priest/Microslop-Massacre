@@ -313,11 +313,11 @@ ANGELA: I made you that bracelet. You wore it for a whole summer and then you lo
 * (Say nothing. Let her have it.) -> quiet
 -- lilies
 ANGELA: (She's quiet for a long time.) Thank you. For going. I couldn't. I still can't. But somebody went, and it was you, and that's... that's the right person.
-! take moss_box ; quest sq_moss done ; trust angela 4 ; stab 4 ; xp 80
+! take moss_box ; quest sq_moss done ; set moss_box_given ; trust angela 4 ; stab 4 ; xp 80
 -> END
 -- quiet
 > She ties the bracelet back on your wrist without asking. It barely fits. She doesn't say anything either. Neither of you does, for a while, and it's the best conversation you've had in a year.
-! take moss_box ; quest sq_moss done ; trust angela 4 ; stab 5 ; xp 80
+! take moss_box ; quest sq_moss done ; set moss_box_given ; trust angela 4 ; stab 5 ; xp 80
 -> END
 
 # ======================================================= THE PROJECT

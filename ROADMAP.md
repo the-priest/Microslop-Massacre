@@ -75,6 +75,13 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       at 10, 25 and 50; five new achievements (FIFTY FACES, ROAD TRIP, FIVE FIELDS,
       LOCAL LEGEND, YOU TALKIN' TO ME?); a new Bronx story, *Rent Is Due*
 
+- [x] **Pass 9 (the news and the Cloud):** E NEWS 24, a talk station that reads
+      headlines about what you did, plus local traffic and weather for every map; a
+      Long Island City heist, *The Cloud* (a night tech's badge, a camera junction box
+      after dark, the shadow archive of everything anyone ever deleted); companions
+      with a line for every town and its big moments; taxi dispatch that finds fares
+      near the cab on the big maps; the validator now checks world terminal actions
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

@@ -223,8 +223,14 @@ func _finish(won: bool, why: String) -> void:
 			game.hud.subtitle(str(def["host"]), why, 4.0)
 	# The rival drives off into the night.
 	if is_instance_valid(rival):
+		# The timer lives on the rival, so a map change that frees it frees this too.
 		var r := rival
-		get_tree().create_timer(20.0).timeout.connect(func() -> void:
-			if is_instance_valid(r) and not r.driving:
+		var t := Timer.new()
+		t.wait_time = 20.0
+		t.one_shot = true
+		t.autostart = true
+		r.add_child(t)
+		t.timeout.connect(func() -> void:
+			if not r.driving:
 				r.queue_free())
 	rival = null

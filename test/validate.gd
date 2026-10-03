@@ -444,6 +444,13 @@ func _check_story() -> void:
 		var sd3: Dictionary = sp3
 		_cond_str(str(sd3.get("when", "")), "world spot " + str(sd3.get("id", "?")))
 		_fx_str(str(sd3.get("fx", "")), "world spot " + str(sd3.get("id", "?")))
+		_fx_str(str(sd3.get("fx_hack", "")), "world spot " + str(sd3.get("id", "?")))
+		for e3 in sd3.get("entries", []):
+			_cond_str(str((e3 as Dictionary).get("when", "")), "world spot %s entry" % sd3.get("id", "?"))
+			_fx_str(str((e3 as Dictionary).get("fx", "")), "world spot %s entry" % sd3.get("id", "?"))
+		for a3 in sd3.get("actions", []):
+			_cond_str(str((a3 as Dictionary).get("when", "")), "world spot %s action" % sd3.get("id", "?"))
+			_fx_str(str((a3 as Dictionary).get("fx", "")), "world spot %s action" % sd3.get("id", "?"))
 	for i in range(n0, DialogueManager.parse_errors.size()):
 		_err("effect parse: " + str(DialogueManager.parse_errors[i]))
 	# Every objective stage must be set by something, and every quest must finish.

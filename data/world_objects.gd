@@ -76,6 +76,9 @@ const PICKUPS := [
 ]
 
 const SPOTS := [
+	{"id": "ws_dc_junction", "kind": "terminal", "title": "Camera Junction Box", "verb": "Open", "pos": [1048.0, 1.25, 120.0], "size": [1.2, 1.6, 1.2], "prop": "jbox", "hack": 35, "when": "q.sq_cloud>=20 & night", "header": "E CORP CLOUD // PERIMETER CCTV // JB-07", "welcome": "A grey box on a pole, a padlock somebody forgot to close, and a maintenance port that still answers to the vendor's default login.",
+		"entries": [{"title": "Camera map", "text": "Twenty-six cameras: the street, the staff door, the lobby, the server hall in four sections, and one pointed at the parking space with RESERVED: VP RETENTION painted on it."}],
+		"actions": [{"title": "Loop every camera on last night's footage", "result": "Twenty-six feeds, each now playing the same empty Tuesday from a week ago, on repeat, timestamps rewritten to match. The guard at the desk will watch nothing happen all night. He'll be grateful.", "fx": "set dc_cams ; quest sq_cloud 30 ; xp 80", "when": "!flag.dc_cams"}]},
 	# Top of the North Tower.
 	{"id": "ws_wtc_elev", "kind": "exit", "title": "Express Elevator", "verb": "Ride down", "pos": [-96, 381.3, 368.1], "size": [2.0, 2.4, 0.8], "to": "interior:wtc_lobby:1"},
 	# Washington Township and Port Ramsey.
@@ -196,6 +199,8 @@ const TRIGGERS := [
 	{"id": "sd_gy3_call", "cell": "*", "when": "q.mq_ms.done & q.sq_gy1.started & !q.sq_gy3.started", "fx": "quest sq_gy3 10", "bark": "Dude. DUDE. Microslop didn't kill SlopForge, they MOVED it. A training cluster in a glass box in the yard of a dead steel mill in Gary, Indiana. Every game from every studio they closed is in there getting chewed into sequels. Including mine. Please. — Kenny", "speaker": "KENNY (TEXT)"},
 	{"id": "sd_gy_cluster_in", "cell": "gy_cluster", "when": "q.sq_gy3==10", "fx": "quest sq_gy3 20", "bark": "Green light, cold air, the hum of a thousand GPUs learning to make games out of other people's games. The training console's at the far end.", "speaker": "ELLIOT (V.O.)"},
 
+	# ---- Long Island City: The Cloud.
+	{"id": "sd_cloud_start", "cell": "*", "when": "flag.joined_fsociety & q.mq_steel.done & !q.sq_cloud.started & daynum>=3", "fx": "quest sq_cloud 10", "bark": "Found something. E Corp's 'Delete' doesn't delete. Every file anyone ever trashed on their devices, kept forever, in a data center in Long Island City. The night tech drinks at the Court Square Tavern. Raj. I think he hates it as much as we do. — T", "speaker": "TRENTON (TEXT)"},
 	# ---- The Bronx: Rent Is Due.
 	{"id": "sd_rent_start", "cell": "world", "pos": [50, -1356], "r": 45.0, "when": "!q.sq_rent.started & day", "fx": "quest sq_rent 10", "bark": "A woman in a red coat outside 2290 Fordham, handing out flyers to people who are trying not to take them. RENTTRACK IS STEALING YOUR HEAT. She looks like she's been out here since dawn, and like she'll be out here tomorrow.", "speaker": "ELLIOT (V.O.)"},
 	# ---- Hidden masks and the road-trip achievements.

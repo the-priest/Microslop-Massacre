@@ -104,9 +104,14 @@ func _physics_process(delta: float) -> void:
 
 ## A street-side spot on the grid, a short drive away, where someone's waving.
 func _new_fare(p: Vector3) -> void:
+	# Only look at the blocks around the cab; the big maps are mostly too far.
+	var ci := int(round((p.x - WorldLayout.AX0) / WorldLayout.AXS))
+	var cj := int(floor((p.z - WorldLayout.SZ0) / WorldLayout.SZS))
+	var ri := int(ceil(PICKUP_MAX / WorldLayout.AXS))
+	var rj := int(ceil(PICKUP_MAX / WorldLayout.SZS))
 	for tries in 40:
-		var i := _rng.randi_range(1, WorldLayout.NA - 2)
-		var j := _rng.randi_range(0, WorldLayout.NS - 2)
+		var i := clampi(ci + _rng.randi_range(-ri, ri), 1, WorldLayout.NA - 2)
+		var j := clampi(cj + _rng.randi_range(-rj, rj), 0, WorldLayout.NS - 2)
 		if not WorldLayout.avenue_segment_exists(i, j):
 			continue
 		var side := 1.0 if _rng.randf() < 0.5 else -1.0
