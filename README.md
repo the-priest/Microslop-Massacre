@@ -420,6 +420,9 @@ a crime.
   Loop past Microslop HQ in Redmont, in an intern car with the self-driving turned off. Each host
   lends you the car and bets you can't beat their driver; the big orange lights mark
   the corners you have to hit.
+- **Stunt jumps:** fourteen ramps on Coney Island's beach and on the grass beside every
+  airfield's runway. Hit one at speed and the world slows down while you fly; come down
+  on your wheels far enough away and it pays. Land them all for AIR TIME.
 - **Body shops** on every map (Rafi's and LES Collision in New York, one in each other
   city and town): roll into the blue bay with the stars on you, stop, and they'll respray
   the car and swap the plates so the cops lose you. Banged up and not wanted? They fix it.
@@ -468,7 +471,7 @@ a crime.
 | Lockpicking and terminals | 8 minigames: lockpick, terminal exploit, network recon, brute force, signal tap, cascade, log hunt, and a playable Space Invaders cabinet |
 | The intro | A narrated cold open over the city that tells the world's story up to tonight |
 | The epilogue | Slides for every thread you pulled |
-| Achievements | 21, from FISH WHISPERER to MICROSLOP MASSACRE, FIFTY FACES, SIX FIELDS and WHEELS DOWN |
+| Achievements | 22, from FISH WHISPERER to MICROSLOP MASSACRE, FIFTY FACES, SIX FIELDS, WHEELS DOWN and AIR TIME |
 
 ## Controls
 
@@ -554,7 +557,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.10.0-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.11.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
@@ -609,6 +612,7 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `companion_test` | Recruiting, following, riding along, heart-to-hearts, reactions, leaving |
 | `activities_test` | A taxi fare found, picked up, delivered and paid (and the shift ending when you get out), a paramedic call delivered to Mercy General, a vigilante takedown and a suspect who got away, a respray that loses two stars and a repair, Rent Is Due and The Cloud played through, then on every map a street race won, a hidden mask found, and the town's ER visited (patched up, out the right door) |
 | `heli_test` | Bowery Bay's chopper taken with Gus's yes, lifted straight off, held in a hover, flown forward and turned, set down on the control tower roof and back on the pad, and a hard arrival that's a crash |
+| `stunt_test` | Every map's ramps placed with clear run-ups and landings, Coney Island and Bowery Bay jumps landed (the launch, the slow motion, the pay), one taken too slowly, and Microslop Field's |
 | `air_race_test` | The Harbor Lap started from Marisol's board, flown and landed for gold; The Reservoir from Port Ramsey into Redmont; The Lakefront from Gary across the border into Chicago with its clock and rings carried over; The Ore Run abandoned by climbing out |
 | `heat_test` | Stars rising with crimes, officers and cruisers responding, a cruiser routing along the streets to your car, a roadblock at four stars, the FBI at five, losing them outdoors and indoors, selling a stolen car to Rafi, and winning and losing a street race |
 | `dd_*`, `deepdebug`, `smoke`, `intro_test` | Interiors, exploits, death, the open world's doors, loot and pickups, the intro |

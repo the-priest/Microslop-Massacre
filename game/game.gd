@@ -282,6 +282,10 @@ func _build_world() -> void:
 	emergency.name = "Emergency"
 	emergency.game = self
 	add_child(emergency)
+	stunts = StuntJumps.new()
+	stunts.name = "StuntJumps"
+	stunts.game = self
+	add_child(stunts)
 	jobs = Jobs.new()
 	jobs.name = "Jobs"
 	jobs.game = self
@@ -591,6 +595,7 @@ func _make_world_interactables() -> void:
 			smesh.box(bx3 + Vector3(0.12, 1.5, -0.235), Vector3(0.22, 0.14, 0.01), Color(0.9, 0.75, 0.1))
 	smesh.commit(world_inter, Mats.lit, 160.0, "WorldSpotProps")
 	air_races.spawn_board(world_inter)
+	stunts.build(world_inter)
 	emergency.call_deferred("spawn_parked")
 
 
@@ -2513,6 +2518,7 @@ var races: Races
 var taxi: Taxi
 var air_races: AirRaces
 var emergency: Emergency
+var stunts: StuntJumps
 var airfield_slots: Array = [] # from CityBuilder.airfield_planes
 var _af_filled: Dictionary = {} # slot -> true once spawned this session
 var rings: Node3D = null

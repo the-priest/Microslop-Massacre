@@ -219,6 +219,7 @@ const TRIGGERS := [
 	{"id": "sd_road_trip", "cell": "*", "when": "flag.visited_highway & flag.visited_chicago & flag.visited_township & flag.visited_port & flag.visited_gary & flag.visited_redmont", "fx": "achieve road_trip ; xp 200"},
 	{"id": "sd_airfields", "cell": "*", "when": "flag.landed_nyc & flag.landed_chicago & flag.landed_township & flag.landed_port & flag.landed_gary & flag.landed_redmont", "fx": "achieve airfields ; xp 250"},
 	{"id": "sd_racer", "cell": "*", "when": "flag.race_won_hunts & flag.race_won_lakeshore & flag.race_won_interstate & flag.race_won_mainstreet & flag.race_won_quay & flag.race_won_broadway & flag.race_won_campus", "fx": "achieve racer ; xp 300 ; cash 1000"},
+	{"id": "sd_air_time", "cell": "*", "when": "flag.jumps_done>=14", "fx": "achieve air_time ; xp 300 ; cash 1000"},
 	{"id": "sd_aces", "cell": "*", "when": "flag.ar_medal_hop>=3 & flag.ar_medal_lakefront>=3 & flag.ar_medal_express>=3 & flag.ar_medal_commuter>=3 & flag.ar_medal_ore_run>=3 & flag.ar_medal_harbor>=3 & flag.ar_medal_reservoir>=3 & flag.ar_medal_long_way>=3", "fx": "achieve aces ; xp 400 ; cash 1500"},
 	{"id": "sd_taxi", "cell": "*", "when": "flag.taxi_fares>=10", "fx": "achieve taxi ; xp 150"},
 

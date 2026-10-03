@@ -103,6 +103,10 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       lit helipads; set down on pads, parking lots and rooftops, cross map borders, fly
       the air races. `heli_test`
 
+- [x] **Pass 13 (stunt jumps):** cars launch off ramps with the slope's climb and a
+      floatier fall; fourteen ramps on the beach and every airfield, slow motion in the
+      air, pay for landing each one, AIR TIME for all of them. `stunt_test`
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

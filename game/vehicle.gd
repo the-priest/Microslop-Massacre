@@ -45,6 +45,11 @@ var _ai_turn_at := Vector3.INF # the next corner it has to turn at, if routing
 var _hit_cool: float = 0.0
 var _burn_t: float = 0.0
 var _last_hit_ped: float = 0.0
+var launched := false # flying off a ramp (lighter gravity until the wheels come down)
+var air_time := 0.0
+var _ramp_n := Vector3.UP # the last slope you drove up, remembered for a moment
+var _ramp_t := 0.0
+var _was_floor := true
 
 static var _engine_stream: AudioStreamWAV = null
 
@@ -165,7 +170,8 @@ func orbit(dx: float, dy: float) -> void:
 func _physics_process(delta: float) -> void:
 	_hit_cool = maxf(0.0, _hit_cool - delta)
 	if not is_on_floor():
-		velocity.y -= GRAVITY * delta
+		velocity.y -= GRAVITY * (0.62 if launched else 1.0) * delta
+		air_time += delta
 	else:
 		velocity.y = -0.5
 	if dead:
@@ -351,6 +357,25 @@ func _move(delta: float) -> void:
 	velocity.y = vy
 	var before := speed
 	move_and_slide()
+	# Off the top of a ramp: keep the climb the slope gave you, and fly.
+	_ramp_t = maxf(0.0, _ramp_t - delta)
+	if is_on_floor():
+		var fn := get_floor_normal()
+		if fn.y < 0.985 and fwd.dot(fn) < -0.05:
+			_ramp_n = fn # climbing a slope
+			_ramp_t = 0.3
+		_was_floor = true
+		if launched and air_time > 0.05:
+			launched = false
+		air_time = 0.0
+	elif _was_floor:
+		_was_floor = false
+		if _ramp_t > 0.0 and speed > 4.0:
+			var along := (fwd - _ramp_n * fwd.dot(_ramp_n)).normalized()
+			if along.y > 0.05:
+				velocity.y = maxf(velocity.y, speed * along.y * 1.05)
+				launched = true
+				air_time = 0.0
 	# Crashes: speed into a wall or another car hurts both.
 	for i in get_slide_collision_count():
 		var c := get_slide_collision(i)
