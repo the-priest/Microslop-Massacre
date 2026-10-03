@@ -133,6 +133,32 @@ static func slides(ending: String) -> Array:
 		out.append(_s("WASHINGTON TOWNSHIP", "Colby's emails ran on every front page by morning. It didn't bring anyone's mother back. But their names stopped being a secret the company got to keep, and Angela finally slept a full night, for the first time in twenty years."))
 	elif GS.has_flag("township_resolved"):
 		out.append(_s("WASHINGTON TOWNSHIP", "The Washington Township case reopened, slowly, in the careful language of lawyers. It will take years. But the file exists now, in the light, and E Corp's name is finally in the sentence next to the word 'knew.'"))
+	if GS.has_flag("tw_paper_rain"):
+		out.append(_s("PAPER RAIN", "Kids in Washington Township still find the pages, years later, in gutters and attics and the crooks of trees: thirty-one years of discharge logs, signed every month. The class action Margaret Hale filed in 1994 was settled in 2029 for an amount E Corp's lawyers asked the court to seal. The judge, who grew up on Walnut Street, said no."))
+	elif GS.has_flag("hale_filed"):
+		out.append(_s("KEARNEY ET AL.", "Margaret Hale filed the discharge logs the night you brought them. Discovery took four years. The banker's boxes in her office reached the ceiling and then the next room. When the verdict came she didn't cry until she got to the car."))
+	if GS.has_flag("brandt_testifies"):
+		out.append(_s("THE SHERIFF", "Dale Brandt testified for three days. He brought every envelope. He lost his badge and his pension and got, in exchange, a standing ovation at the Township Diner that went on so long Bev had to turn the jukebox off. He fishes the lake again. He doesn't eat what he catches. He just likes the quiet."))
+	elif GS.has_flag("brandt_owned"):
+		out.append(_s("THE SHERIFF", "Sheriff Brandt kept not seeing things, for a new employer. Some nights he drives up Plant Road at two in the morning, parks, and watches the stacks with the engine off. He never writes anything down. He's good at that."))
+	if GS.has_flag("tw_claims_all"):
+		out.append(_s("THE TOWNSHIP DINER", "Two hundred and twelve claims, approved at three in the morning. E Corp's lawyers spent two years trying to un-send the letters. Not one family gave theirs back. Bev framed Hank's and hung it next to the 1992 softball team, beside a photo of somebody in a hoodie with no face."))
+	elif GS.has_flag("hank_approved"):
+		out.append(_s("THE TOWNSHIP DINER", "Hank Coyle finished his treatment in the spring and was well enough by summer to complain about Bev's pie in person. 'Occupational exposure acknowledged,' the letter said. He keeps it in his wallet. He shows it to strangers."))
+	if GS.quest_state("sq_moss") == "done":
+		out.append(_s("THE BOX", "Angela kept the shoebox on her bookshelf, lid on, for a year. Then one night she opened it and played every mixtape in order, and called you at three in the morning to sing you the worst one. You didn't hang up. You never told her you still had the bracelet on."))
+	if GS.quest_state("sq_airmail") == "done":
+		out.append(_s("TUESDAYS", "Someone flew Tuesday, every Tuesday, Kearney Strip to Ramsey Field. Marisol started leaving a thermos of coffee on the apron. Walt started calling her on Wednesdays. Nobody in either town has said a word about it, which is how you know they all know."))
+	if GS.has_flag("licenses_back"):
+		out.append(_s("PORT RAMSEY", "The Miss Ruthie went out at four in the morning the day after the licenses came back, and every boat in Port Ramsey went with her. They came back at noon with fluke and sea bass and nothing to sell it to but each other, so they had a fish fry on the quay that went on until the terminal called the police, who stayed for seconds."))
+	if GS.has_flag("silas_lamp"):
+		out.append(_s("RAMSEY POINT", "Silas Pell turns the light on at dusk and off at dawn, by hand, with a brass switch that clicks. No ship has come into Port Ramsey dark since. The Coast Guard sent a letter about 'unauthorized modification of a smart navigational asset.' He used it to light the stove."))
+	if GS.has_flag("pr_machine_drowned"):
+		out.append(_s("THE PROJECT", "The stacks over Washington Township have been cold since the night B2 flooded. Black SUVs came and went for a week, and then nobody came at all. Somewhere a woman who keeps a thousand clocks wrote your name in a very small notebook. She has not crossed it out. She also has not done anything about it. Yet."))
+	elif GS.has_flag("pr_machine_on"):
+		out.append(_s("THE PROJECT", "Every night at 2 a.m. the lights in Washington Township dim for exactly one second, and every clock in the county loses it. Nobody can explain it. Walt Kearney says that on still nights, out at the strip, he can hear a hum under everything, like the world is clearing its throat before it says something."))
+	elif GS.has_flag("pr_copied_plans"):
+		out.append(_s("THE PROJECT", "The drive with the drawings lives in a coffee can buried under Walt Kearney's hangar floor, where only two people know to look. Under the plant, the machine hums on, unfinished, waiting for someone to choose. You've started to suspect that was always the point."))
 	if int(GS.stats.get("kills", 0)) == 0:
 		out.append(_s("CLEAN", "In all of it — the mountain, the tower, the docks — you never took a life. In a city built to make killers of everyone, that turned out to be the hardest hack of all, and the only one nobody could undo."))
 	elif int(GS.stats.get("kills", 0)) > 30:

@@ -116,7 +116,7 @@ func _check_fx(fx: Array, where: String, items: Dictionary) -> void:
 				if not DB.FACTIONS.has(a0):
 					_warn("%s: unknown faction '%s' in %s" % [cmd, a0, where])
 			"trust":
-				if not ["darlene", "angela", "robot", "krista", "shayla", "leon", "tyrell", "trenton", "gideon", "whiterose", "dipierro"].has(a0):
+				if not ["darlene", "angela", "robot", "krista", "shayla", "leon", "tyrell", "trenton", "gideon", "whiterose", "dipierro", "walt", "bev", "hale", "brandt", "ruthie", "silas"].has(a0):
 					_warn("trust: unknown '%s' in %s" % [a0, where])
 			"ending":
 				if not EndingData.NAMES.has(a0):
@@ -340,7 +340,7 @@ func _atom_ok(a: Dictionary, where: String) -> void:
 		"dead":
 			if not NPCData.NPCS.has(rest):
 				_warn("%s: dead.<npc> unknown npc '%s'" % [where, rest])
-		"trust", "perk", "trait", "companion", "seen", "disguise", "flag":
+		"trust", "perk", "trait", "companion", "seen", "disguise", "flag", "driving":
 			pass
 		_:
 			_err("%s: unknown condition namespace '%s' in '%s'" % [where, ns, key])
@@ -453,6 +453,8 @@ func _check_story() -> void:
 				continue
 			if int(stage) == 10 and str(qid) == "mq_hello":
 				continue # set in code at New Game
+			if int(stage) == 20 and str(qid) == "mq_pr2":
+				continue # set in code when you climb into the night freight truck
 			if not sets.has(int(stage)):
 				_err("quest %s stage %s is never set by any effect" % [qid, stage])
 		if not sets.has("done") and not sets.has(done_stage):

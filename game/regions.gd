@@ -7,10 +7,12 @@ extends RefCounted
 ##
 ## The maps sit side by side in one shared world (WORLD offsets): New York in
 ## the south, about three kilometres of Pennsylvania farmland on I-80, then
-## Chicago in the north. Their airspaces touch edge to edge, so a plane flies
-## straight from one into the next with the same speed, height and heading.
+## Chicago in the north. Off the interstate, a county road runs west to
+## Washington Township and another east to Port Ramsey on the coast. Every
+## airspace touches its neighbours edge to edge, so a plane flies straight
+## from one into the next with the same speed, height and heading.
 
-const NAMES := {"nyc": "New York", "highway": "Interstate 80", "chicago": "Chicago"}
+const NAMES := {"nyc": "New York", "highway": "Interstate 80", "chicago": "Chicago", "township": "Washington Township", "port": "Port Ramsey"}
 
 ## Travel gates: drive into one and you're offered the road beyond it.
 ## to = [region, gate id on the other side]. "sign" is the green highway sign.
@@ -21,9 +23,17 @@ const GATES := {
 	"highway": {
 		"hw_east": {"pos": [0.0, 860.0], "r": 24.0, "to": ["nyc", "nyc_west"], "sign": "I-80 EAST  ·  NEW YORK CITY", "yaw": PI, "arrive_yaw": 0.0},
 		"hw_west": {"pos": [0.0, -860.0], "r": 24.0, "to": ["chicago", "chi_south"], "sign": "I-80 WEST  ·  CHICAGO", "yaw": 0.0, "arrive_yaw": PI},
+		"hw_tw": {"pos": [-520.0, 0.0], "r": 24.0, "to": ["township", "tw_east"], "sign": "EXIT 41  ·  WASHINGTON TOWNSHIP", "yaw": PI * 0.5},
+		"hw_port": {"pos": [520.0, 0.0], "r": 24.0, "to": ["port", "pt_west"], "sign": "EXIT 42  ·  PORT RAMSEY", "yaw": -PI * 0.5},
 	},
 	"chicago": {
 		"chi_south": {"pos": [20.0, 800.0], "r": 24.0, "to": ["highway", "hw_west"], "sign": "I-90 EAST  ·  NEW YORK", "yaw": PI, "arrive_yaw": 0.0},
+	},
+	"township": {
+		"tw_east": {"pos": [680.0, 0.0], "r": 24.0, "to": ["highway", "hw_tw"], "sign": "TO I-80  ·  NEW YORK  ·  CHICAGO", "yaw": -PI * 0.5},
+	},
+	"port": {
+		"pt_west": {"pos": [-880.0, 0.0], "r": 24.0, "to": ["highway", "hw_port"], "sign": "TO I-80  ·  NEW YORK  ·  CHICAGO", "yaw": PI * 0.5},
 	},
 }
 
@@ -33,6 +43,10 @@ const ARRIVE := {
 	"hw_east": {"pos": [0.0, 800.0], "yaw": 0.0},
 	"hw_west": {"pos": [0.0, -800.0], "yaw": PI},
 	"chi_south": {"pos": [20.0, 745.0], "yaw": 0.0},
+	"hw_tw": {"pos": [-468.0, 0.0], "yaw": -PI * 0.5},
+	"hw_port": {"pos": [468.0, 0.0], "yaw": PI * 0.5},
+	"tw_east": {"pos": [628.0, 0.0], "yaw": PI * 0.5},
+	"pt_west": {"pos": [-828.0, 0.0], "yaw": -PI * 0.5},
 }
 
 ## Airspace per region (Rect2 x, z, w, d, local coordinates). In world
@@ -42,13 +56,18 @@ const SKY := {
 	"nyc": Rect2(-1700.0, -2500.0, 4300.0, 3900.0),
 	"highway": Rect2(-2400.0, -900.0, 4800.0, 1800.0),
 	"chicago": Rect2(-2300.0, -1500.0, 4600.0, 3000.0),
+	"township": Rect2(-1700.0, -900.0, 3400.0, 1800.0),
+	"port": Rect2(-1700.0, -900.0, 3400.0, 1800.0),
 }
 
-## Where each map's origin sits in the shared world (x, z).
+## Where each map's origin sits in the shared world (x, z). The township and
+## the port sit either side of I-80, level with Lennox.
 const WORLD := {
 	"nyc": Vector2(0.0, 0.0),
 	"highway": Vector2(-390.0, -3400.0),
 	"chicago": Vector2(-410.0, -5800.0),
+	"township": Vector2(-4490.0, -3400.0),
+	"port": Vector2(3710.0, -3400.0),
 }
 
 ## Silhouettes you see of a city from the other maps: its centre (local),
@@ -56,6 +75,8 @@ const WORLD := {
 const SKYLINE := {
 	"nyc": {"c": Vector2(250.0, -350.0), "spread": 1100.0, "n": 70, "h": 220.0},
 	"chicago": {"c": Vector2(-60.0, -80.0), "spread": 650.0, "n": 50, "h": 200.0},
+	"township": {"c": Vector2(-330.0, -300.0), "spread": 160.0, "n": 8, "h": 48.0, "stacks": true},
+	"port": {"c": Vector2(450.0, -100.0), "spread": 260.0, "n": 12, "h": 40.0, "cranes": true},
 }
 
 ## Landing approach per region when you fly in: [x, altitude, z, heading].
@@ -63,6 +84,8 @@ const FLY_IN := {
 	"nyc": [1570.0, 160.0, -500.0, 0.0],
 	"chicago": [640.0, 150.0, 700.0, 0.0],
 	"highway": [0.0, 160.0, 600.0, 0.0],
+	"township": [-545.0, 140.0, 800.0, 0.0],
+	"port": [-720.0, 140.0, 500.0, 0.0],
 }
 
 ## Grid and geography for each non-NYC region (overrides WorldLayout).
@@ -79,6 +102,26 @@ const DEFS := {
 		"START_POS": Vector3(20, 0, 745), "START_YAW": 0.0,
 		"AIRFIELD": {"bi0": 10, "bi1": 11, "bj0": 2, "bj1": 8}, "RUNWAY_X": 640.0, "RUNWAY_HW": 18.0, "RUNWAY_Z0": -470.0, "RUNWAY_Z1": 110.0,
 		"DISTRICT_NAMES": {"loop": "The Loop", "river": "River North", "west": "West Loop", "south": "South Side", "lake": "Lakeshore", "airfield": "Meigs Field"},
+	},
+	# Where Elliot's father worked and Angela's mother lived: a crop-duster
+	# strip on the west edge, the E Corp plant in the north-west corner, Main
+	# Street in the middle, houses to the east and the memorial to the south.
+	"township": {
+		"SEED": 1979, "BJ0": 0, "AX0": -600.0, "AXS": 150.0, "NA": 9, "SZ0": -500.0, "SZS": 125.0, "NS": 9,
+		"NBI": 8, "NBJ": 8, "WORLD_X": 640.0, "WORLD_XE": 720.0, "WORLD_ZN": -540.0, "BEACH_Z1": 540.0,
+		"START_POS": Vector3(628, 0, 0), "START_YAW": PI * 0.5,
+		"AIRFIELD": {"bi0": 0, "bi1": 0, "bj0": 0, "bj1": 7}, "RUNWAY_X": -548.0, "RUNWAY_HW": 14.0, "RUNWAY_Z0": -470.0, "RUNWAY_Z1": 470.0,
+		"DISTRICT_NAMES": {"tw_plant": "Washington Township Plant", "tw_main": "Main Street", "tw_homes": "Maple Ridge", "tw_field": "Township Farms", "tw_memorial": "Township Memorial", "airfield": "Kearney Strip"},
+	},
+	# A fishing town that E Corp turned into a freight port: a runway on the
+	# west edge, the old town and the canneries in the middle, container docks
+	# and a lighthouse on the Atlantic.
+	"port": {
+		"SEED": 4242, "BJ0": 0, "AX0": -800.0, "AXS": 160.0, "NA": 10, "SZ0": -600.0, "SZS": 150.0, "NS": 9,
+		"NBI": 9, "NBJ": 8, "WORLD_X": 920.0, "WORLD_XE": 820.0, "WORLD_ZN": -640.0, "BEACH_Z1": 640.0,
+		"START_POS": Vector3(-828, 0, 0), "START_YAW": -PI * 0.5,
+		"AIRFIELD": {"bi0": 0, "bi1": 0, "bj0": 0, "bj1": 3}, "RUNWAY_X": -730.0, "RUNWAY_HW": 15.0, "RUNWAY_Z0": -575.0, "RUNWAY_Z1": -25.0,
+		"DISTRICT_NAMES": {"pt_town": "Old Port", "pt_homes": "Cape Row", "pt_ind": "Cannery Row", "pt_docks": "Ramsey Container Terminal", "airfield": "Ramsey Field"},
 	},
 }
 
@@ -106,6 +149,24 @@ static func district(region: String, bi: int, bj: int) -> String:
 			if bi <= 2:
 				return "west"
 			return "loop"
+		"township":
+			if bj <= 2 and bi <= 3:
+				return "tw_plant"
+			if bj >= 6:
+				return "tw_memorial" if bi == 3 and bj == 6 else "tw_field"
+			if bi >= 6:
+				return "tw_homes"
+			if bi >= 3 and bi <= 5 and bj >= 3 and bj <= 4:
+				return "tw_main"
+			return "tw_homes" if bj >= 3 else "tw_field"
+		"port":
+			if bi >= 7:
+				return "pt_docks"
+			if bi <= 1 and bj >= 4:
+				return "pt_homes"
+			if bj >= 5 and bi >= 2 and bi <= 4:
+				return "pt_ind"
+			return "pt_town"
 	return "les"
 
 
@@ -122,6 +183,15 @@ const CITY := {
 	"nyc": Rect2(-906.0, -1706.0, 2722.0, 2536.0),
 	"highway": Rect2(-310.0, -910.0, 620.0, 1820.0),
 	"chicago": Rect2(-800.0, -800.0, 1700.0, 1660.0),
+	"township": Rect2(-610.0, -510.0, 1220.0, 1020.0),
+	"port": Rect2(-810.0, -610.0, 1510.0, 1220.0),
+}
+
+## Open water inside an airspace (local): Lake Michigan off Chicago and the
+## Atlantic off Port Ramsey. No farmland is laid over it, from any map.
+const SEA := {
+	"chicago": Rect2(860.0, -1500.0, 1440.0, 3000.0),
+	"port": Rect2(700.0, -900.0, 1000.0, 1800.0),
 }
 
 
@@ -136,6 +206,8 @@ static func is_country(region: String, p: Vector2) -> bool:
 			return p.y < -1706.0 and p.x > -1100.0 and p.x < 2000.0
 		"chicago":
 			return p.x < 920.0
+		"port":
+			return p.x < 700.0
 	return true
 
 

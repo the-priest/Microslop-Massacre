@@ -613,15 +613,19 @@ func _district_labels() -> Array:
 			return [["INTERSTATE 80", 30, -400], ["BIG RIG REST STOP", 60, 40], ["LENNOX, PA", 60, 660], ["TO CHICAGO", -40, -880], ["TO NEW YORK", -40, 900]]
 		"chicago":
 			return [["THE LOOP", -120, -120], ["RIVER NORTH", -120, -600], ["WEST LOOP", -620, -100], ["SOUTH SIDE", -200, 560], ["LAKESHORE", 520, 400], ["MEIGS FIELD", 560, -200], ["LAKE MICHIGAN", 780, 0], ["I-90 / TO NEW YORK", -40, 780]]
+		"township":
+			return [["KEARNEY STRIP", -560, -300], ["THE PLANT", -300, -440], ["MAIN STREET", 40, -60], ["MAPLE RIDGE", 440, -200], ["MEMORIAL", -120, 330], ["TOWNSHIP FARMS", 260, 440], ["TO I-80", 600, -30]]
+		"port":
+			return [["RAMSEY FIELD", -760, -620], ["CAPE ROW", -740, 300], ["OLD PORT", -60, -300], ["CANNERY ROW", -300, 480], ["CONTAINER TERMINAL", 380, -420], ["LIGHTHOUSE", 640, -600], ["ATLANTIC", 720, 200], ["TO I-80", -880, -30]]
 	return [["WASHINGTON HEIGHTS", -450, -700], ["INDUSTRIAL NORTH", 450, -760], ["MIDTOWN", -150, -380], ["DOCKS", -760, -150], ["CENTRAL PARK", -65, 80], ["HELL'S KITCHEN", -520, 100], ["UPPER EAST", 450, 100], ["LOWER EAST SIDE", -480, 440], ["CIVIC", 60, 460], ["CHINATOWN", 480, 460], ["CONEY ISLAND", 0, 650], ["INWOOD", -640, -1000], ["FORT TRYON", -700, -1330], ["HARLEM", 180, -1000], ["THE BRONX", 60, -1420], ["HUNTS POINT", 1180, -1250], ["ASTORIA", 1180, -480], ["LONG ISLAND CITY", 1140, 220]]
 
 
-## The whole world in a corner: New York, I-80 and Chicago where they really
-## sit, the road between them, and you.
+## The whole world in a corner: New York, I-80, Chicago and the towns where
+## they really sit, the roads between them, the airfields, and you.
 func _draw_world_inset(font: Font, r: Rect2) -> void:
 	# In the margin beside the map when there's room, else over its corner.
 	var bx := r.end.x + 14.0 if _map_overlay.size.x - r.end.x > 165.0 else r.end.x - 150.0
-	var box := Rect2(bx, r.position.y + 8.0, 140.0, 236.0)
+	var box := Rect2(bx, r.position.y + 8.0, 150.0, 140.0)
 	_map_overlay.draw_rect(box, Color(0.0, 0.06, 0.03, 0.88))
 	_map_overlay.draw_rect(box, UI.GREEN_DIM, false, 1.0)
 	_map_overlay.draw_string(font, box.position + Vector2(6, 14), "THE WORLD", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, UI.GREEN)
@@ -644,12 +648,26 @@ func _draw_world_inset(font: Font, r: Rect2) -> void:
 		if str(reg) == WorldLayout.region:
 			col = UI.GREEN
 		_map_overlay.draw_rect(Rect2(a, cr.size * sc), col, str(reg) != WorldLayout.region, 1.0)
-		var lbl: String = {"nyc": "NEW YORK", "highway": "I-80", "chicago": "CHICAGO"}.get(str(reg), str(reg))
-		_map_overlay.draw_string(font, a + Vector2(cr.size.x * sc + 3.0, cr.size.y * sc * 0.5 + 4.0), str(lbl), HORIZONTAL_ALIGNMENT_LEFT, -1, 9, UI.GREEN_DIM)
-	# The road: NYC's on-ramp, up I-80, into Chicago.
-	var g0: Array = Regions.GATES["nyc"]["nyc_west"]["pos"]
-	var g1: Array = Regions.GATES["chicago"]["chi_south"]["pos"]
-	_map_overlay.draw_line(to_inset.call(Regions.to_world("nyc", Vector2(float(g0[0]), float(g0[1])))), to_inset.call(Regions.to_world("chicago", Vector2(float(g1[0]), float(g1[1])))), Color(0.9, 0.75, 0.3, 0.7), 1.0)
+		var lbl: String = {"nyc": "NYC", "highway": "I-80", "chicago": "CHICAGO", "township": "TWP", "port": "RAMSEY"}.get(str(reg), str(reg))
+		var lp := a + Vector2(cr.size.x * sc * 0.5 - float(lbl.length()) * 2.6, -3.0)
+		_map_overlay.draw_string(font, lp, str(lbl), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, UI.GREEN_DIM)
+	# The roads: every travel gate to the gate it leads to, and I-80 itself.
+	var hs: Rect2 = Regions.SKY["highway"]
+	_map_overlay.draw_line(to_inset.call(Regions.to_world("highway", Vector2(0.0, hs.position.y))), to_inset.call(Regions.to_world("highway", Vector2(0.0, hs.end.y))), Color(0.9, 0.75, 0.3, 0.7), 1.0)
+	for ra in Regions.GATES.keys():
+		for gid in Regions.GATES[ra].keys():
+			var g: Dictionary = Regions.GATES[ra][gid]
+			var to: Array = g["to"]
+			var gb: Dictionary = (Regions.GATES.get(str(to[0]), {}) as Dictionary).get(str(to[1]), {})
+			if gb.is_empty():
+				continue
+			var pa: Array = g["pos"]
+			var pb: Array = gb["pos"]
+			_map_overlay.draw_line(to_inset.call(Regions.to_world(str(ra), Vector2(float(pa[0]), float(pa[1])))), to_inset.call(Regions.to_world(str(to[0]), Vector2(float(pb[0]), float(pb[1])))), Color(0.9, 0.75, 0.3, 0.7), 1.0)
+	# Airfields.
+	for reg2 in Jobs.AIRFIELDS.keys():
+		var ap: Vector2 = (Jobs.AIRFIELDS[reg2] as Array)[1]
+		_map_overlay.draw_rect(Rect2(to_inset.call(Regions.to_world(str(reg2), ap)) - Vector2(1.5, 1.5), Vector2(3, 3)), Color(0.5, 0.8, 1.0, 0.9))
 	# You.
 	var pp: Vector3 = game.player.global_position
 	if game.player.driving != null:

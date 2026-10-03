@@ -10,6 +10,8 @@ extends Node
 ##   heist      lift an encrypted drive from an office server room
 ##   repo       recover a marked item from an apartment
 ##   hit        clear out a gang hideout
+##   air        fly a crate to another town's airfield and land there
+##   haul       drive a crate to a diner or a bar in another town
 ##
 ## State lives in GameState.jobs_state so it saves with the game.
 
@@ -18,6 +20,24 @@ const CLIENTS := ["Dispatch", "A friend of a friend", "anon@onion", "Kowalski's 
 	"The Super", "Someone from the docks", "A guy named Solomon", "An E Corp middle manager (off the books)",
 	"A worried landlord", "Leon's cousin", "A voice with a Brooklyn accent"]
 const GANGS := ["the Ghost Street crew", "the 4th Ave Boys", "Vera's leftovers", "the Tunnel Rats", "some Jersey muscle", "the Eastside Kings"]
+
+## Airfields a freight run can end at: map -> [name, runway centre (local)].
+const AIRFIELDS := {
+	"nyc": ["Bowery Bay Airfield", Vector2(1570.0, -1280.0)],
+	"chicago": ["Meigs Field", Vector2(640.0, -180.0)],
+	"township": ["Kearney Strip", Vector2(-548.0, 0.0)],
+	"port": ["Ramsey Field", Vector2(-730.0, -300.0)],
+}
+## Out-of-town addresses for long hauls: door -> [map, where, interior].
+const HAUL_DOORS := {
+	"d_hw_diner": ["highway", "the Big Rig Diner on I-80", "hw_diner"],
+	"d_chi_diner": ["chicago", "Lou's Red Hots on Chicago's South Side", "chi_diner"],
+	"d_tw_diner": ["township", "the Township Diner on Main Street, Washington Township", "tw_diner"],
+	"d_pt_bar": ["port", "the Barnacle on Water Street, Port Ramsey", "pt_bar"],
+	"d_bodega": ["nyc", "the bodega on the Lower East Side", "bodega"],
+}
+const CARGO := ["engine parts for a crop duster", "lobster on ice", "a church organ's pipes, packed in straw", "server blades with no paperwork", "somebody's grandmother's piano bench",
+	"a case of insulin", "two hundred pounds of red-hot relish", "a used jet ski", "seed corn", "a wedding dress in a garment bag", "a box of vinyl that 'cannot get warm'"]
 
 var game: Node = null
 var _tick: float = 0.0
@@ -58,7 +78,27 @@ func _refresh_board() -> void:
 		var off := _make_offer(k, r, used)
 		if not off.is_empty():
 			b.append(off)
+	# Out-of-town work: a long haul always, and air freight once you can fly.
+	var haul := _make_offer("haul", r, used)
+	if not haul.is_empty():
+		b.append(haul)
+	if _can_fly():
+		var air := _make_offer("air", r, used)
+		if not air.is_empty():
+			b.append(air)
 	s["board"] = b
+
+
+func _can_fly() -> bool:
+	for f in ["pilot_license", "gus_plane_ok", "walt_plane_ok", "jet_owned"]:
+		if GameState.flags.has(f):
+			return true
+	return false
+
+
+## Straight-line distance between two places on different maps (world metres).
+func _world_dist(ra: String, a: Vector2, rb: String, b: Vector2) -> float:
+	return Regions.to_world(ra, a).distance_to(Regions.to_world(rb, b))
 
 
 func _pick_door(kinds: Array, r: RandomNumberGenerator, used: Dictionary) -> Dictionary:
@@ -132,6 +172,32 @@ func _make_offer(k: String, r: RandomNumberGenerator, used: Dictionary) -> Dicti
 			return {"id": id, "kind": k, "client": client, "door": gd5["id"], "pay": _pay(320, r), "xp": 90,
 				"title": "Hit: the crew at %s" % str(gd5["name"]),
 				"desc": "A crew runs guns out of %s in %s. The door's locked and they're armed. Clear the place and whatever's in their safe is yours too." % [str(gd5["name"]), _dist_name(gd5)]}
+		"air":
+			var here := WorldLayout.region
+			var dests: Array = []
+			for reg in AIRFIELDS.keys():
+				if str(reg) != here:
+					dests.append(str(reg))
+			var dest: String = dests[r.randi() % dests.size()]
+			var from_pt: Vector2 = (AIRFIELDS.get(here, AIRFIELDS["nyc"]) as Array)[1]
+			var d := _world_dist(here if AIRFIELDS.has(here) else "nyc", from_pt, dest, (AIRFIELDS[dest] as Array)[1])
+			var what: String = CARGO[r.randi() % CARGO.size()]
+			return {"id": id, "kind": k, "client": client, "region": dest, "pay": _pay(int(150.0 + d * 0.14), r), "xp": 80 + int(d / 100.0),
+				"title": "Air freight: %s" % str((AIRFIELDS[dest] as Array)[0]),
+				"desc": "Fly %s to %s in %s, about %.1f km as the crow flies. Take any plane you're allowed in, land on their runway and stop. The ground crew takes it from there." % [what, str((AIRFIELDS[dest] as Array)[0]), Regions.region_name(dest), d / 1000.0]}
+		"haul":
+			var keys: Array = []
+			for did in HAUL_DOORS.keys():
+				if str((HAUL_DOORS[did] as Array)[0]) != WorldLayout.region:
+					keys.append(str(did))
+			var hd: String = keys[r.randi() % keys.size()]
+			var H: Array = HAUL_DOORS[hd]
+			var here2 := WorldLayout.region
+			var d2 := _world_dist(here2, Vector2.ZERO, str(H[0]), Vector2.ZERO)
+			var what2: String = CARGO[r.randi() % CARGO.size()]
+			return {"id": id, "kind": k, "client": client, "door": hd, "region": str(H[0]), "interior": str(H[2]), "pay": _pay(int(180.0 + d2 * 0.08), r), "xp": 60 + int(d2 / 150.0),
+				"title": "Long haul: %s" % Regions.region_name(str(H[0])),
+				"desc": "Drive %s to %s. It won't fit on a bike. Take the travel gates out of town and follow the signs." % [what2, str(H[1])]}
 	return {}
 
 
@@ -152,6 +218,10 @@ func accept(job_id: String) -> bool:
 			"delivery":
 				GameState.give("job_package", 1)
 				GameState.unlocked[str(j["door"])] = true
+			"air":
+				GameState.give("air_cargo", 1)
+			"haul":
+				GameState.give("haul_crate", 1)
 			"heist", "repo":
 				# Make sure the target interior is rebuilt with the marked container.
 				_invalidate(str(j["door"]))
@@ -169,6 +239,10 @@ func abandon(job_id: String) -> void:
 			a.remove_at(i)
 			if str(j["kind"]) == "delivery":
 				GameState.take("job_package", 1, true)
+			elif str(j["kind"]) == "air":
+				GameState.take("air_cargo", 1, true)
+			elif str(j["kind"]) == "haul":
+				GameState.take("haul_crate", 1, true)
 			GameState.emit_signal("notify", "Job dropped: %s" % str(j["title"]), "warn")
 			return
 
@@ -255,6 +329,12 @@ func on_enter(cell: String) -> void:
 		var jd: Dictionary = j
 		var gid := str(jd["door"])
 		match str(jd["kind"]):
+			"haul":
+				if cell == str(jd.get("interior", "")) and GameState.has_item("haul_crate"):
+					GameState.take("haul_crate", 1, true)
+					if game != null:
+						game.hud.subtitle("ELLIOT (V.O.)", "Crate on the floor. Somebody signs for it with a pen on a string and says 'long way, huh.' Long way.", 4.0)
+					_complete(jd)
 			"delivery":
 				if cell == "bld:" + gid and GameState.has_item("job_package"):
 					GameState.take("job_package", 1, true)
@@ -282,13 +362,44 @@ func _process(delta: float) -> void:
 			_complete(jd)
 
 
-## Compass/map markers for active jobs.
+## A plane stopped on an airfield (Game._check_wings_landing): air freight
+## for this map is delivered.
+func on_landed(region: String) -> void:
+	for j in active().duplicate():
+		var jd: Dictionary = j
+		if str(jd["kind"]) == "air" and str(jd.get("region", "")) == region and GameState.has_item("air_cargo"):
+			GameState.take("air_cargo", 1, true)
+			if game != null:
+				game.hud.subtitle("GROUND CREW", "That's ours? Long way in a little plane. Sign here, and here, and... that's it. Go get a coffee, you look windblown.", 4.0)
+			_complete(jd)
+
+
+## Compass/map markers for active jobs (out-of-town ones point at the road
+## or sky toward that town).
 func marker_positions() -> Array:
 	var out: Array = []
 	if game == null:
 		return out
 	for j in active():
-		var gd: Dictionary = game.gen_doors.get(str((j as Dictionary)["door"]), {})
-		if not gd.is_empty():
-			out.append(gd["pos"])
+		var jd: Dictionary = j
+		var reg := str(jd.get("region", WorldLayout.region))
+		if reg != WorldLayout.region:
+			var gid := RegionContent.gate_toward(WorldLayout.region, reg)
+			var g: Dictionary = Regions.gates(WorldLayout.region).get(gid, {})
+			if not g.is_empty():
+				var gp: Array = g["pos"]
+				out.append(Vector3(float(gp[0]), 0, float(gp[1])))
+			continue
+		match str(jd["kind"]):
+			"air":
+				var ap: Vector2 = (AIRFIELDS.get(reg, AIRFIELDS["nyc"]) as Array)[1]
+				out.append(Vector3(ap.x, 0, ap.y))
+			"haul":
+				var dw := WorldLayout.door_world(str(jd["door"]))
+				if not dw.is_empty():
+					out.append(dw["pos"])
+			_:
+				var gd: Dictionary = game.gen_doors.get(str(jd.get("door", "")), {})
+				if not gd.is_empty():
+					out.append(gd["pos"])
 	return out

@@ -140,11 +140,21 @@ func _make_loading() -> void:
 func _crossing_line(from: String, to: String) -> String:
 	match to:
 		"highway":
-			return "Interstate 80. Three kilometres of Pennsylvania farmland, a diner, a motel, and billboards with opinions. " + ("Chicago is straight ahead." if from == "nyc" else "New York is straight ahead.")
+			var ahead := "New York is straight ahead."
+			match from:
+				"nyc":
+					ahead = "Chicago is straight ahead. Exit 41 west for Washington Township, Exit 42 east for Port Ramsey."
+				"township", "port":
+					ahead = "North for Chicago, south for New York, across for the other town."
+			return "Interstate 80. Three kilometres of Pennsylvania farmland, a diner, a motel, and billboards with opinions. " + ahead
 		"chicago":
 			return "Chicago. The Loop to the west of the lake, Meigs Field on the shore, and somewhere on the South Side a warehouse waiting for you."
 		"nyc":
 			return "New York. The Bronx under you, the towers on the horizon, and all of it exactly as loud as you left it."
+		"township":
+			return "Washington Township, New Jersey. A water tower, a Main Street, a memorial wall, and the stacks of the plant that was supposed to have closed in 1994."
+		"port":
+			return "Port Ramsey. Half fishing town, half E Corp freight terminal, and the freight half is winning. A lighthouse at the end of a jetty, and a ship the size of a street at berth 2."
 	return _loading_tip()
 
 
@@ -1679,6 +1689,11 @@ func _marker_region(m: String) -> String:
 	elif WorldLayout.all_doors().has(m) or m.begins_with("d_"):
 		var reg := _door_region(m)
 		return reg
+	elif m.begins_with("poi_"):
+		for r2 in RegionContent.POIS.keys():
+			if (RegionContent.POIS[r2] as Dictionary).has(m):
+				return str(r2)
+		return "nyc"
 	else:
 		return ""
 	if cell == "" or cell == "world":
@@ -1747,6 +1762,11 @@ func _marker_target(m: String) -> Dictionary:
 		var d: Dictionary = NPCData.NPCS.get(id, {})
 		if d.is_empty():
 			return {}
+		# Someone in another town: head for the road (or sky) that goes there.
+		var nr := npcs.placement_region(d)
+		if nr != "" and nr != WorldLayout.region:
+			var g2 := RegionContent.gate_toward(WorldLayout.region, nr)
+			return _gate_marker(g2) if g2 != "" else {}
 		var pl := npcs.placement(id, d)
 		if pl.is_empty():
 			return {}
@@ -1767,7 +1787,11 @@ func _marker_target(m: String) -> Dictionary:
 		var p: Array = WorldLayout.POIS[m]["pos"]
 		return {"cell": "world", "pos": Vector3(float(p[0]), 0, float(p[1]))}
 	if m == "ring":
-		return {"cell": "world", "pos": RINGS[clampi(ring_i, 0, RINGS.size() - 1)]}
+		var cid := _active_course()
+		if cid == "":
+			return {}
+		var pts: Array = (COURSES[cid] as Dictionary)["rings"]
+		return {"cell": "world", "pos": pts[clampi(ring_i, 0, pts.size() - 1)]}
 	if m.begins_with("pos:"):
 		var xy2 := m.substr(4).split(",")
 		return {"cell": "world", "pos": Vector3(float(xy2[0]), 0, float(xy2[1]))}
@@ -1878,6 +1902,7 @@ func _slow_update() -> void:
 	_update_airfield()
 	_update_rides()
 	_update_gates()
+	_update_quest_rides()
 	_companion_tick()
 	# The Kingpin path: the corners pay every morning.
 	if GameState.has_flag("kingpin"):
@@ -2438,8 +2463,24 @@ var airfield_slots: Array = [] # from CityBuilder.airfield_planes
 var _af_filled: Dictionary = {} # slot -> true once spawned this session
 var rings: Node3D = null
 var ring_i: int = 0
+var _course := ""
 ## The flight test: five rings over the city (sq_wings 20).
 const RINGS := [Vector3(1570, 70, -1790), Vector3(950, 110, -1900), Vector3(300, 130, -1250), Vector3(10, 190, -284), Vector3(-60, 90, 80)]
+## Ring courses: fly them in order while the quest sits at `stage` on that
+## map. Progress is saved as flags <flag>_ring and <flag>_rings_done.
+const COURSES := {
+	"wings": {"quest": "sq_wings", "stage": 20, "region": "nyc", "flag": "wings", "rings": RINGS},
+	# Paper Rain: out of Kearney Strip, over the plant's stacks, down Main
+	# Street over the festival, and over the memorial wall.
+	"paper": {"quest": "sq_tw3", "stage": 20, "region": "township", "flag": "paper", "rings": [Vector3(-470, 60, -200), Vector3(-240, 112, -345), Vector3(-60, 70, 0), Vector3(150, 55, 0), Vector3(-75, 55, 300)]},
+}
+## Landings that count: stop a plane on that map's airfield while the quest
+## sits at `stage` and the flag is set (the story director does the rest).
+const LANDINGS := [
+	{"quest": "sq_wings", "stage": 30, "region": "nyc", "flag": "wings_landed"},
+	{"quest": "sq_tw3", "stage": 30, "region": "township", "flag": "paper_landed"},
+	{"quest": "sq_airmail", "stage": 20, "region": "port", "flag": "airmail_landed"},
+]
 
 
 ## Keep the airfield's planes on their tie-downs (and clear wrecks away).
@@ -2448,6 +2489,7 @@ func _update_airfield() -> void:
 		return
 	var pp := player.global_position
 	var may_fly := GameState.flags.has("pilot_license") or GameState.flags.has("gus_plane_ok")
+	var walt_ok := GameState.flags.has("walt_plane_ok")
 	for sl in airfield_slots:
 		var sid := str(sl["slot"])
 		var a: Aircraft = planes.get(sid)
@@ -2457,6 +2499,8 @@ func _update_airfield() -> void:
 		if a != null:
 			if a.owner_tag == "gus" and a.locked and may_fly and not a.driving:
 				a.locked = false # Gus said yes
+			if a.owner_tag == "walt" and a.locked and walt_ok and not a.driving:
+				a.locked = false # Walt said yes
 			var dist := a.global_position.distance_to(pp)
 			if not a.driving and (dist > 1800.0 or (a.dead and dist > 300.0)):
 				a.queue_free()
@@ -2485,6 +2529,16 @@ func _spawn_plane(sid: String, m: String, pos: Vector3, yaw: float) -> Aircraft:
 		a.owner_tag = "ecorp"
 		a.lock_dc = 60
 		a.locked = true
+	elif sid.begins_with("township_"):
+		# Kearney Strip: Walt's planes. His word is the only license he cares about.
+		a.owner_tag = "walt"
+		a.lock_dc = 35
+		a.locked = not GameState.flags.has("walt_plane_ok")
+	elif sid.begins_with("port_"):
+		# Ramsey Field: Marisol's one plane, and the answer is no.
+		a.owner_tag = "marisol"
+		a.lock_dc = 45
+		a.locked = true
 	else:
 		a.owner_tag = "gus"
 		a.lock_dc = 35
@@ -2508,28 +2562,54 @@ func _plane_taken(a: Aircraft) -> void:
 		crime_witnessed(a.global_position)
 
 
+func _active_course() -> String:
+	if GameState.cell != "world":
+		return ""
+	for cid in COURSES.keys():
+		var c: Dictionary = COURSES[cid]
+		if str(c["region"]) == WorldLayout.region and GameState.quest_state(str(c["quest"])) == "active" and GameState.quest_stage(str(c["quest"])) == int(c["stage"]):
+			return str(cid)
+	return ""
+
+
+func _course_rings() -> Array:
+	return (COURSES[_course] as Dictionary)["rings"] if COURSES.has(_course) else RINGS
+
+
 func _plane_rings_tick() -> void:
-	var on := GameState.cell == "world" and GameState.quest_state("sq_wings") == "active" and GameState.quest_stage("sq_wings") == 20
-	if not on:
+	var cid := _active_course()
+	if cid != _course and rings != null:
+		rings.queue_free()
+		rings = null
+	_course = cid
+	if cid == "":
+		return
+	var C: Dictionary = COURSES[cid]
+	var pts: Array = C["rings"]
+	var fl := str(C["flag"])
+	if GameState.flags.has(fl + "_rings_done"):
 		if rings != null:
 			rings.queue_free()
 			rings = null
 		return
 	if rings == null:
-		ring_i = clampi(int(GameState.flags.get("wings_ring", 0)), 0, RINGS.size() - 1)
+		ring_i = clampi(int(GameState.flags.get(fl + "_ring", 0)), 0, pts.size() - 1)
 		_build_rings()
 	var v: Vehicle = player.driving
 	if v == null or not (v is Aircraft) or not (v as Aircraft).airborne:
 		return
-	if v.global_position.distance_to(RINGS[ring_i]) < 16.0:
+	if v.global_position.distance_to(pts[ring_i]) < 16.0:
 		ring_i += 1
-		GameState.flags["wings_ring"] = ring_i
+		GameState.flags[fl + "_ring"] = ring_i
 		AudioManager.play_success()
 		Pad.rumble(0.3, 0.2, 0.15)
-		if ring_i >= RINGS.size():
-			GameState.flags["wings_rings_done"] = true # the story director moves the quest on
+		if ring_i >= pts.size():
+			GameState.flags[fl + "_rings_done"] = true # the story director moves the quest on
+			if rings != null:
+				rings.queue_free()
+				rings = null
 		else:
-			hud.notify("Ring %d / %d" % [ring_i, RINGS.size()], "")
+			hud.notify("Ring %d / %d" % [ring_i, pts.size()], "")
 			_build_rings()
 
 
@@ -2539,11 +2619,12 @@ func _build_rings() -> void:
 	rings = Node3D.new()
 	rings.name = "FlightRings"
 	add_child(rings)
+	var pts := _course_rings()
 	for k in [ring_i, ring_i + 1]:
-		if k >= RINGS.size():
+		if k >= pts.size():
 			continue
-		var c: Vector3 = RINGS[k]
-		var prev: Vector3 = RINGS[k - 1] if k > 0 else Vector3(WorldLayout.RUNWAY_X, 0, WorldLayout.RUNWAY_Z0)
+		var c: Vector3 = pts[k]
+		var prev: Vector3 = pts[k - 1] if k > 0 else Vector3(WorldLayout.RUNWAY_X, 0, WorldLayout.RUNWAY_Z0)
 		var dir := (c - prev)
 		dir.y = 0.0
 		dir = dir.normalized()
@@ -2559,14 +2640,19 @@ func _build_rings() -> void:
 		mi.visibility_range_end = 4000.0
 
 
+## A plane stopped on this map's airfield counts for whichever landing the
+## story is waiting on.
 func _check_wings_landing() -> void:
-	if GameState.quest_state("sq_wings") != "active" or GameState.quest_stage("sq_wings") != 30:
-		return
 	var v: Vehicle = player.driving
 	if v == null or not (v is Aircraft) or (v as Aircraft).airborne or absf(v.speed) > 2.0 or v.dead:
 		return
-	if WorldLayout.airfield_rect().has_point(Vector2(v.global_position.x, v.global_position.z)):
-		GameState.flags["wings_landed"] = true
+	if not WorldLayout.airfield_rect().has_point(Vector2(v.global_position.x, v.global_position.z)):
+		return
+	for L in LANDINGS:
+		var ld: Dictionary = L
+		if str(ld["region"]) == WorldLayout.region and GameState.quest_state(str(ld["quest"])) == "active" and GameState.quest_stage(str(ld["quest"])) == int(ld["stage"]):
+			GameState.flags[str(ld["flag"])] = true
+	jobs.on_landed(WorldLayout.region)
 
 
 # -------------------------------------------------------------- companions
@@ -2864,7 +2950,7 @@ func airspace_exit(a: Aircraft) -> bool:
 		var now := Time.get_ticks_msec() / 1000.0
 		if now - _air_warn_t > 6.0:
 			_air_warn_t = now
-			hud.notify("Nothing out that way but haze and open water. The cities are north and south of here: New York, I-80, Chicago.", "warn")
+			hud.notify(_airspace_hint(), "warn")
 		return false
 	# Come in just over the line, same height, heading and speed.
 	var lp := Regions.to_local(nb, w)
@@ -2872,6 +2958,22 @@ func airspace_exit(a: Aircraft) -> bool:
 	lp += fwd * 40.0
 	go_region_air(nb, Vector3(lp.x, a.global_position.y, lp.y), a)
 	return true
+
+
+## Where the neighbours are, for a pilot about to fly off the edge of nothing.
+func _airspace_hint() -> String:
+	match WorldLayout.region:
+		"nyc":
+			return "Nothing out that way but haze and open water. Head north over the Bronx for I-80, and the towns and Chicago beyond it."
+		"highway":
+			return "Haze and empty farmland. I-80 runs north to Chicago and south to New York; Washington Township is west, Port Ramsey east."
+		"chicago":
+			return "Nothing out there but lake and prairie. New York and the towns are south, down I-80."
+		"township":
+			return "Nothing out that way but fields to the horizon. I-80 is east; follow the county road."
+		"port":
+			return "Open Atlantic. Turn back west: I-80 is past the county road."
+	return "Nothing out that way. Turn back."
 
 
 ## Fly into a neighbouring map at a precise spot (see airspace_exit).
@@ -2971,6 +3073,8 @@ func _atc_hello(from: String) -> void:
 		"chicago": ["CHICAGO APPROACH", "Aircraft inbound from the east, Chicago Approach. Meigs Field is on the lakeshore, runway runs north-south. Winds off the lake, fifteen gusting twenty-five. Welcome to Chicago."],
 		"highway": ["LENNOX TRAFFIC", "Lennox traffic, unidentified aircraft over the interstate... ah, nobody's listening on this frequency anyway. Follow I-80. " + ("Chicago's dead ahead." if from == "nyc" else "New York's dead ahead.")],
 		"nyc": ["NEW YORK APPROACH", "Aircraft over the Bronx, New York Approach. Bowery Bay is on the Queens waterfront, east of you. Mind the towers. Welcome home."],
+		"township": ["KEARNEY UNICOM", "Kearney traffic, this is Kearney Strip, which is me, Walt. Strip's on the west edge of town, runway north-south, nine hundred metres of it. Water tower's your landmark. Don't land on Main Street, we're having a festival."],
+		"port": ["RAMSEY UNICOM", "Aircraft over the county road, Ramsey Field. Runway's on the west side of town, north-south, wind off the water at ten. The cranes are tall and the lighthouse is taller. Welcome to Port Ramsey."],
 	}
 	var l: Array = lines.get(WorldLayout.region, [])
 	if l.is_empty():
@@ -2980,14 +3084,36 @@ func _atc_hello(from: String) -> void:
 		hud.subtitle(str(l[0]), str(l[1]), 6.0)
 
 
+# ------------------------------------------------------------- quest rides
+## The night freight (Night Freight): a box truck in the cannery yard after
+## dark, waiting for a driver. Get in and the job is yours.
+var _night_truck: Vehicle = null
+
+
+func _update_quest_rides() -> void:
+	if GameState.cell != "world" or vehicles_root == null:
+		return
+	var want := WorldLayout.region == "port" and GameState.quest_state("mq_pr2") == "active" and GameState.quest_stage("mq_pr2") == 10 and GameState.is_night()
+	if want and (_night_truck == null or not is_instance_valid(_night_truck)):
+		_night_truck = Vehicle.new().setup("truck", 0, Vector3(-232.0, 0.4, 424.0), PI * 0.5, self)
+		_night_truck.locked = false
+		_night_truck.lock_dc = 0
+		_night_truck.set_meta("night_freight", true)
+		vehicles_root.add_child(_night_truck)
+	if _night_truck != null and is_instance_valid(_night_truck) and player.driving == _night_truck and GameState.quest_stage("mq_pr2") == 10:
+		GameState.set_quest_stage("mq_pr2", 20)
+		hud.subtitle("ELLIOT (V.O.)", "Keys in the visor. A clipboard on the seat: WTE — DOCK 3. Nobody in the yard to stop me, because I'm exactly who they're expecting. West to I-80, north to Exit 41, into the township.", 6.0)
+
+
 # ------------------------------------------------------------------- rides
 ## Every car or plane you drive stays where you leave it. The four most recent
 ## stay put anywhere in the city; anything parked at home (outside your
 ## building, or at Bowery Bay for planes) or that you own stays forever.
 const RIDES_LOOSE := 4
 const HOMES := [
-	{"name": "outside your building", "pos": Vector2(-466, 320), "r": 26.0, "plane": false},
-	{"name": "at the Bowery Bay hangars", "pos": Vector2(1420, -1250), "r": 150.0, "plane": true},
+	{"name": "outside your building", "pos": Vector2(-466, 320), "r": 26.0, "plane": false, "region": "nyc"},
+	{"name": "at the Bowery Bay hangars", "pos": Vector2(1420, -1250), "r": 150.0, "plane": true, "region": "nyc"},
+	{"name": "on the apron at Kearney Strip", "pos": Vector2(-504, 0), "r": 90.0, "plane": true, "region": "township", "when": "flag.walt_plane_ok"},
 ]
 var ride_nodes: Dictionary = {} # uid -> Vehicle
 
@@ -3038,6 +3164,8 @@ func _remember_ride(v: Vehicle) -> void:
 	var was_home := bool(rec.get("home", false))
 	rec["home"] = false
 	for h in HOMES:
+		if str(h.get("region", "nyc")) != WorldLayout.region or (h.has("when") and not DialogueManager.check(str(h["when"]))):
+			continue
 		if bool(h["plane"]) == plane and Vector2(p.x, p.z).distance_to(h["pos"]) < float(h["r"]):
 			rec["home"] = true
 			if not was_home:

@@ -10,9 +10,10 @@ been waiting for you your whole life. E Corp owns seventy percent of the world's
 consumer debt, and through its game studios it owns most of what you play, too.
 
 Walk anywhere. Talk to anyone. Pick the lock, or pick a fight. Steal a car, or a plane,
-and fly it from New York across the Pennsylvania farmland to Chicago. Decide how the
-biggest company on Earth falls, how its game empire falls with it, and who you become
-while it does.
+and fly it from New York across the Pennsylvania farmland to Chicago, or off the
+interstate to the town where your father died and the port where something is coming
+in at night with its lights off. Decide how the biggest company on Earth falls, how its
+game empire falls with it, and who you become while it does.
 
 **Free. Original. No assets downloaded, nothing licensed, nothing ripped: every street,
 character, sound and song is built in code when the game starts.** Every game company in
@@ -47,22 +48,25 @@ A first-person open-world RPG that takes the systems of *Fallout: New Vegas* (sk
 perks, traits, V.A.T.S., factions, companions, branching quests, a talking epilogue)
 and drops them into the New York of *Mr. Robot*, then lets you drive or fly out of it.
 
-- **Three connected maps:** New York, about three kilometres of Interstate 80
-  farmland, and Chicago. They share one world: you can see the next city's skyline on
-  the horizon, and a plane flies straight from one into the next.
+- **Five connected maps, one world about 11.6 by 8.7 kilometres:** New York, three
+  kilometres of Interstate 80 farmland, Chicago, and two towns off the interstate:
+  **Washington Township** to the west and **Port Ramsey** on the coast to the east.
+  You can see the next skyline (or smokestack, or crane) on the horizon, drive there
+  through the highway gates, or fly a plane straight across from one into the next and
+  land on its runway. Four airfields, one in every city and town.
 - **14 endings**, from blowing up the world's debt with fsociety to walking away and
   going to therapy on Tuesdays. Some never touch the hack at all.
-- **91 epilogue slides** that remember what you did: who you saved, who you sold out,
+- **106 epilogue slides** that remember what you did: who you saved, who you sold out,
   whose debt you deleted, which game companies you broke and how, whether Lopez ever
   caught you.
-- **35 quests** (17 main, 18 side) with several real outcomes each, and a story director
+- **47 quests** (20 main, 27 side) with several real outcomes each, and a story director
   that keeps every quest moving no matter what order you do things in.
-- **80 conversations, about 30,000 words of original dialogue**, and honest skill
+- **97 conversations, about 40,000 words of original dialogue**, and honest skill
   checks: a white `[SPEECH 40]` means you pass.
 - **Four companions** with their own skills, opinions, barks, heart-to-hearts and
   breaking points.
-- **Every parked car can be stolen. There are two airfields. The planes fly, all the
-  way to the next city.**
+- **Every parked car can be stolen. There are four airfields. The planes fly, all the
+  way to the next city or town, and you can land at every one of them.**
 
 It's a fan project: an original story that runs alongside the show rather than
 retelling it. No scripts from the series are reproduced.
@@ -92,16 +96,40 @@ Meigs Field on the shore. E Corp Midwest's blue tower, a Federal Plaza field off
 diner, a motel, and a boarded South Side warehouse where fsociety's Chicago cell keeps
 one chair.
 
+### Washington Township
+
+Exit 41, west on the county road. A water tower that says WASHINGTON TWP like it's
+proud, a Main Street with a diner, a bar called the Spillway, a lawyer's office and a
+church, maple-lined streets of clapboard houses with porch lights and the family car
+in the drive, and in the north-west corner the E Corp plant that "closed" in 1994: two
+banded smokestacks, a fenced pond that's warm in October, and a sign by the visitor
+lot that says DAYS WITHOUT AN INCIDENT: 0. The memorial wall on the south side has
+twenty-six names. Your father's is the first. Kearney Strip, a crop-duster runway on
+the west edge, is where you land.
+
+### Port Ramsey
+
+Exit 42, east to the Atlantic. Half a fishing town and half an E Corp freight
+terminal, and the terminal is winning: gantry cranes on the quay, the container ship
+MV *Everbright* tied up at berth 2, the old Ocean Bright Cannery on Cannery Row, a bar
+called the Barnacle where the fishermen drink because they can't fish, the Harbor
+Light Inn, the harbormaster's office, and Ramsey Point Light on its jetty, kept by a
+man who's been turning it on for fifty-one years. Ramsey Field is a single runway on
+the west edge of town.
+
 ### One world
 
-The three maps sit side by side in a shared world: New York in the south, I-80 in the
-middle, Chicago in the north, with roughly three kilometres of farmland between the
-cities. Farmland fills every bit of sky between them, the interstate runs through it,
+The maps sit side by side in a shared world: New York in the south, I-80 in the
+middle, Chicago in the north, Washington Township and Port Ramsey either side of
+the interstate, with roughly three kilometres of farmland between the cities. Farmland fills every bit of sky between them, the interstate runs through it,
 and each city's skyline (lit floors at night, red beacons on top) stands where it
 really is on the other maps' horizons. Fly across the edge of one map's airspace and
-you come in over the next with the same plane, height, speed and heading. Drive
-through the green highway signs and your car comes with you. The phone's map shows
-the whole world in a corner, with the road between the cities and you on it.
+you come in over the next with the same plane, height, speed and heading, and the
+local airfield says hello on the radio. Drive through the green highway signs (or
+take the overhead EXIT 41 / EXIT 42 gantries on I-80) and your car comes with you;
+county roads and on-ramps run all the way between the gates, so from the air you can
+just follow the road. The phone's map shows the whole world in a corner, with every
+road, every airfield and you on it.
 
 ### Living streets
 
@@ -118,9 +146,10 @@ the whole world in a corner, with the road between the cities and you on it.
 - **Every building has a door, and thousands of them open:** apartments, bodegas,
   pawn shops, diners, dive bars, offices, warehouses, squats and gang hideouts. Each is
   generated from its address, so the same door always leads to the same rooms.
-- **50 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
+- **66 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
   tower, the Fun Society arcade, Steel Mountain, the Rose Garden, Floor 88 of the North
-  Tower, Microslop's showcase on Floor 101 and E Corp Midwest's data floor.
+  Tower, Microslop's showcase on Floor 101, E Corp Midwest's data floor, a lighthouse,
+  a cannery full of servers, and a sublevel under a power plant that isn't on any drawing.
 - **Everything on the street is searchable:** dumpsters, newsboxes, mailboxes, food carts,
   gloveboxes, shipping containers, hidden stashes.
 
@@ -174,6 +203,21 @@ cities:
   every rental into a game people own, open the books to every regulator and
   developer, or give the closed studios back their games and their names.
 
+**The Project.** After the Rose Garden, Leon calls from out of town. Whiterose's people
+are moving forty containers of "turbine parts" through Port Ramsey for the old plant in
+Washington Township, and they want you to make the paperwork boring:
+
+- **Bill of Lading.** Meet Leon at the Barnacle, clean (or copy) the *Everbright*'s
+  manifest in the E Corp Logistics terminal office, and look inside the cannery where the
+  boxes wait for the trucks.
+- **Night Freight.** At one in the morning a box truck leaves the cannery yard. Take it,
+  drive it up the county road, along I-80 and into the township, and back it into the
+  plant's loading dock. There is a freight elevator to a Sublevel B2 that isn't on any
+  drawing.
+- **The Machine.** Under the plant that killed your father, Whiterose has built
+  something she says can reach back to 1993 and put the world right. Finish it for her,
+  drown it in thirty years of Retention Pond 3, or copy the plans and walk away.
+
 **Act III: Five/Nine and after.** The hack, the morning after, and Phillip Price on
 television selling the cure: E Coin. Break the rollout, take it to the press, hand
 Price to the FBI, or let it settle. Then the Salina Hotel, Room 6, the people who own
@@ -202,6 +246,15 @@ built the right bonds, kept the truth, and held your mind together.
 | **Last Load** | Interstate 80 | A trucker's rig is locked by a lapsed autopilot subscription, with a clinic's insulin in the trailer. Jailbreak it, pull the fuse, or race the cooler to the Lennox Pharmacy yourself. |
 | **Field Office** | Chicago | After E Corp Midwest, an FBI agent who used to partner with DiPierro has your photo on her board. Talk, call in a favour, or rewrite her case file. |
 | **Room 9** | Lennox Motor Inn | A line in the guest book in your handwriting: 'Keep driving. — E.' Come back after dark. |
+| **Going Home** | Washington Township | Angela can't go back. You can. Lay her lilies under her mother's name, find your father's, and meet the old pilot on the bench who knew him. |
+| **Night Shift** | Washington Township | The plant "closed" in 1994. Watch Retention Pond 3 after dark, fill a jar, then get into the plant office and find thirty-one years of signed discharge logs. |
+| **Paper Rain** | Washington Township | A lawsuit takes eleven years. Walt Kearney wants the town to see it Saturday. Show the lawyer, then fly his late wife's crop duster through the rings over the stacks, Main Street's fall festival and the memorial, and land it home. |
+| **Pre-Existing Condition** | Township Diner | Bev's husband gave the plant thirty-one years and got a denial letter. Overturn it, or approve every retiree claim in the queue at three in the morning. |
+| **Small Town Cop** | Township Sheriff | The sheriff's parents are on the wall, and E Corp pays him $2,500 a month to not drive up Plant Road. Get him to testify, buy him yourself, or expose him. |
+| **The Box in the Closet** | The Moss house / New York | Angela's room is the way she left it at nine. Find the shoebox in her closet and carry it home to her. |
+| **Air Mail** | Kearney Strip to Ramsey Field | Walt's hands shake now. Fly the township's prescriptions east across I-80 to the coast and land at Ramsey Field. (Drive it if you must. Marisol will laugh at you.) |
+| **No Fishing** | Port Ramsey | E Corp built its terminal over the fishing berths and the harbormaster revoked every license, then went on a cruise. Talk him out of it, blackmail him, or reinstate all forty-four from his computer. |
+| **The Light** | Ramsey Point Light | Three nights a month the "smart beacon" goes dark and a ship comes in with no lights. Put the lamp back in its keeper's hands. |
 | **No Heat / Street Sermon / Lost / Dead Drops** | All over | A boiler held hostage by a subscription, a busker who needs a signal, a lost dog, packages nobody opens. |
 
 Every objective says where to go and how, and the compass points at it, even across
@@ -256,16 +309,24 @@ two stars.
 
 **Planes.** Bowery Bay Airfield sits on the Queens waterfront in the north-east corner of
 New York: one runway, a control tower, two hangars, three Skyhawk trainers and E Corp's
-corporate jet. Chicago has Meigs Field on the lakeshore, with two more Skyhawks. Fly
-Gus's ring course and he'll let you take a trainer whenever you like. The jet you can
+corporate jet. Chicago has Meigs Field on the lakeshore, with two more Skyhawks;
+Washington Township has Kearney Strip, a nine-hundred-metre crop-duster runway on the
+west edge of town where Walt Kearney keeps his late wife's yellow plane; Port Ramsey has
+Ramsey Field, one runway by the county road. Every runway has numbers, threshold bars,
+edge lights at night, a windsock and a rotating beacon you can see from the air. Fly
+Gus's ring course and he'll let you take a trainer whenever you like; earn Walt's trust
+and his planes are yours too. The jet you can
 steal (E Corp will notice), or save Gus's airfield the clever way and he signs it over
 to you, legally, for a dollar a year. Your own jet: no cops, no wanted level.
 
 **Flying between cities is a real flight.** Head north out of New York, follow the
 interstate across the fields, and Chicago's towers come up over the horizon; cross the
-edge of the map and you're over the next one without a menu. In a Skyhawk it's a few
-minutes; in the jet, less. Fly out over the ocean or the rivers and the plane banks you
-back toward land.
+edge of the map and you're over the next one without a menu, and the local field calls
+you on the radio. From I-80 turn west and the township's smokestacks and water tower
+come up out of the haze; turn east and you'll see the port's cranes and the lighthouse.
+Kearney Strip to Ramsey Field crosses two borders and the whole interstate. In a
+Skyhawk it's a few minutes; in the jet, less. Fly out over the ocean, the lake or the
+rivers and the plane banks you back toward land.
 
 **Everything you park stays parked.** The cars and planes you drive stay exactly where
 you leave them, across saves. Your four most recent rides stay anywhere in the city;
@@ -281,7 +342,9 @@ a crime.
 ## Making a living
 
 - **Job board** (phone → DATA → JOBS): new contracts every day: deliveries, bounties,
-  office data heists, repo jobs, hits on gang hideouts.
+  office data heists, repo jobs, hits on gang hideouts, **long hauls** (drive a crate to
+  a diner or a bar in another town) and, once you're allowed in a plane, **air freight**
+  (fly a crate to another town's airfield and land there; it pays by the kilometre).
 - **ATMs:** hack the cash cassette, or cash out stolen cards.
 - **Pickpocketing:** crouch behind anyone and press E.
 - **Gloveboxes:** steal a car and whatever's in the glovebox comes with it.
@@ -397,7 +460,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.2.0-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.3.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
@@ -441,6 +504,7 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `story_walk`, `playthrough` | The main quest and the side stories played from the first line to an ending, the way a player does: follow the marker, walk through the door, talk to whoever is really there |
 | `respawn_walk` | Final Notice, then the whole game war: Pixel, Kenny, Floor 88, the drive to Chicago, both hacks on the Midwest data floor, the drive home, Microslop's Floor 101, and the epilogue slides it earns |
 | `roads_walk` | The out-of-town side stories: Last Load and Room 9 on I-80, then Five Stars and Field Office in Chicago |
+| `towns_walk` | Every story in the two towns: Going Home, Night Shift, Paper Rain (its ring course flown and the plane landed), Pre-Existing Condition, Small Town Cop, Air Mail (flown from Kearney Strip across the I-80 airspace into Port Ramsey and landed at Ramsey Field), No Fishing, The Light, an air-freight job, the whole Project arc (the night freight truck driven from the port up I-80 to the plant) and the box carried home to Angela in New York |
 | `region_test`, `ride_test` | Driving between maps through the highway gates with the same car; flying from Chicago across I-80 into New York in one plane, keeping height, speed and heading |
 | `ending_walk` | One ending per run (set the `ENDING` environment variable) through the dialogue that really offers it |
 | `dlgwalk`, `fuzz_dlg` | Walks every dialogue node in several game states and runs every conversation in the real UI |

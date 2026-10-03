@@ -20,6 +20,8 @@
 +++ chicago | The Windy City
 +++ microslop | Microslop
 +++ road | Out of Town
++++ project | The Project
++++ port | Port Ramsey
 
 === mq_hello | Hello, Friend | main | 150 | fsociety
 Elliot Alderson. Cybersecurity engineer by day. By night, he reads people. Something was on his computer this morning that he doesn't remember putting there.
@@ -210,6 +212,89 @@ In 1993, a chemical leak in Washington Township killed people. Angela's mother. 
 10 Somewhere in E Corp's records room is proof they knew. Find the Colby archive inside the E Corp tower @d_ecorp
 20 You have the Colby emails. Bring them to Angela and decide what to do with the truth @npc:angela_n
 50 done
+
+=== sq_tw1 | Going Home | side | 180 | township
+Washington Township, New Jersey. Population four thousand and falling. The town where the leak was, where your father worked weekends at the plant, where Angela's mother is the third name in the third row. Nobody you know has been back.
+10 Get to Washington Township: drive I-80 to Exit 41 and head west on the county road, or fly in and land at Kearney Strip on the west edge of town @region:township
+20 The memorial wall is on the south side of town past Main Street, by the cemetery. Pay your respects @poi_tw_memorial
+30 The old man in the flight jacket on the bench behind the wall has been watching you. Walt Kearney @npc:walt
+40 done
+
+=== sq_tw2 | Night Shift | side | 260 | township
+Walt Kearney buried his wife and his six-year-old son in 1994, and he says the plant never stopped. Officially it's been 'in remediation' for thirty-one years. Unofficially, the stacks run at night and the trucks come at two in the morning.
+10 Walt says the plant dumps into Retention Pond 3 after dark. Go and see: the fenced pond beside the stacks in the north-west corner of town. It has to be night @poi_tw_pond
+20 You saw it, and you've got a jar of it. Now prove it on paper: the plant office on Plant Road runs everything from one terminal in its back office. Walk in by day, wear an E Corp uniform, or find your own way in at night @d_tw_plant
+30 The operations terminal is in the back office, past reception. Find the discharge logs @cell:tw_plant:3,-9.4
+40 Bring the logs to Walt at the Kearney Strip hangar, on the west edge of town @npc:walt
+50 done
+
+=== sq_tw3 | Paper Rain | side | 320 | township
+A case takes eleven years. Walt Kearney doesn't have eleven years, and he doesn't think the township should have to wait to find out what's been in its water. Saturday is the fall festival. E Corp sponsors it.
+10 Margaret Hale has kept the township's lawsuit alive since 1994 from a one-room office on Main Street, across from the diner. Show her the logs @npc:hale
+20 Walt's yellow crop duster is fueled on the apron at Kearney Strip, the hopper full of copies of the logs. Take her up and fly the rings: over the plant's stacks, along Main Street, and over the memorial @ring
+30 Bring Anne's plane home: land it back on the runway at Kearney Strip and stop @poi_tw_strip
+40 Walt's waiting at the hangar @npc:walt
+50 done
+
+=== sq_bev | Pre-Existing Condition | side | 180 | township
+Bev Coyle runs the Township Diner on Main Street. Her husband Hank gave the plant thirty-one years, and now he's sick, and E Corp's retiree plan has denied his treatment as a 'pre-existing condition.' Pre-existing what, Bev would like to know.
+10 Hank's denial lives on the plant's operations terminal, in the back office of the E Corp building on Plant Road. Overturn it @cell:tw_plant:3,-9.4
+30 It's done. Tell Bev, at the diner @npc:bev
+40 done
+
+=== sq_brandt | Small Town Cop | side | 200 | township
+Sheriff Dale Brandt's parents are on the memorial wall. For ten years E Corp has paid him $2,500 a month as the plant's 'community safety liaison.' What a sheriff's silence costs, per month, is right there in the ledger.
+10 Ask the sheriff about his envelopes. The Township Sheriff's office is on Main Street, west end @npc:brandt
+20 done
+
+=== sq_moss | The Box in the Closet | side | 150 | township
+The Moss house is still standing on Elm Street, boarded up since 1994. Nobody would buy it. Angela's room is the way she left it at nine years old, purple walls and a shoebox in the closet she never let you touch.
+10 The Moss house is on Elm Street at Maple Avenue, on the east side of town, boarded up. Get inside @d_tw_moss
+20 Angela's room is at the back. The box is in her closet @cell:tw_moss:12,5.4
+30 Bring Angela her box. She's in New York @npc:angela_n
+40 done
+
+=== sq_airmail | Air Mail | side | 220 | township
+Every Tuesday for two years Walt Kearney has flown the township's spare prescriptions east to Ramsey Field, because Port Ramsey's pharmacy closed in March. His hands shake now. Somebody has to fly Tuesday.
+10 Fly Walt's crate from Kearney Strip east to Port Ramsey: over I-80 and the county road, the coast is straight past it. Take a plane from the strip @region:port
+20 Ramsey Field is on the west edge of Port Ramsey, one runway running north-south. Land on it and stop @poi_pt_field
+30 Hand the crate to Marisol in the Ramsey Field office by the road @npc:marisol
+40 done
+
+=== mq_pr1 | Bill of Lading | main | 350 | project
+Whiterose's people are moving something big through Port Ramsey, an old fishing town on the coast that E Corp turned into a freight terminal. Leon says they want you to make sure the paperwork is clean. Leon also says he's never once seen Whiterose care about paperwork.
+10 Leon's waiting at the Barnacle on Water Street in Port Ramsey: take I-80 to Exit 42 and head east to the coast, or fly into Ramsey Field @npc:leon
+20 The cargo came in on the MV Everbright at berth 2. Its manifest is on the terminal in the back of the E Corp Logistics office, the blue-sign building by the cranes. Clean it, and read it @cell:pt_terminal:22,2.2
+30 The manifest says turbine parts for the Washington Township plant. The dock scale says otherwise. Whatever it is waits in the old Ocean Bright Cannery on Cannery Row before the trucks take it. Look inside @d_pt_cannery
+50 You know where the trucks go. Tell Leon, at the Barnacle @npc:leon
+60 done
+
+=== mq_pr2 | Night Freight | main | 400 | project
+Every night at one in the morning a box truck leaves the cannery for the Washington Township plant with a container nobody inspects. Leon wants to know what's at the other end. So do you. So, it turns out, does your father's name on the wall.
+10 The night freight truck waits in the cannery yard on Cannery Row after dark. Be there at night and take it @poi_pt_cannery
+20 Drive the truck to the plant's loading dock on Mill Street in Washington Township: west on the county road to I-80, north to Exit 41, west into town. Don't stop @poi_tw_dock
+30 The dock takes the truck and nobody asks for a signature. Inside the plant, past the back office, a freight elevator goes down to a Sublevel B2 that isn't on any drawing @cell:tw_plant:15,-6
+40 Sublevel B2. Find out what Whiterose is building under Washington Township @cell:tw_b2:15,8
+50 She's here. Whiterose is waiting for you by the machine @npc:whiterose_n
+60 done
+
+=== mq_pr3 | The Machine | main | 500 | project
+Under the plant that killed your father, Whiterose has built a machine she says can reach back to 1993 and put the world right. She wants you to finish it. Walt Kearney would want you to make sure nothing ever comes out of that plant again. Leon just wants you to tell him first.
+10 The bridge console is at the far end of B2. Finish Whiterose's machine, drown it with thirty years of Retention Pond 3, or copy the plans and walk away. You only get to choose once @cell:tw_b2:27.5,10
+20 It's done. Get out of the plant, back to the open air @d_tw_plant
+30 done
+
+=== sq_ruthie | No Fishing | side | 200 | port
+Ruthie Doyle has fished out of Port Ramsey since 1984. Last spring E Corp Logistics built its terminal over the fishing berths and the harbormaster revoked every license on the coast 'for safety.' The construction finished in June. The harbormaster went on a cruise.
+10 The harbormaster's office is the little white building at the end of Pier Road, on the quay. Get the licenses back: from Teddy Grieco himself by day, or from his computer @cell:pt_harbor:2,2.2
+30 Tell Ruthie, at the Barnacle @npc:ruthie
+40 done
+
+=== sq_keeper | The Light | side | 180 | port
+Silas Pell has kept Ramsey Point Light for fifty-one years. The Coast Guard automated it in 1998 and sold it to E Corp with the terminal, and now, three nights a month, the light goes dark and a ship with no lights comes into berth 2.
+10 The 'smart beacon' controller is in the lamp room, through the door from Silas's kitchen. Put the light back in his hands @cell:pt_lighthouse:12.4,1.8
+30 Tell Silas @npc:silas
+40 done
 
 === sq_cat | Lost | side | 60 | odd
 A woman by the park lost her dog. In this city, that's either nothing or everything.

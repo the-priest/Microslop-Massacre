@@ -1,0 +1,548 @@
+### The towns off I-80: Washington Township (west) and Port Ramsey (east).
+### Going Home, Night Shift, Paper Rain, Pre-Existing Condition, Small Town
+### Cop, The Box in the Closet, Air Mail; No Fishing, The Light; and the
+### Project arc that runs from the port's cannery to the plant's sublevel.
+
+# ================================================== WASHINGTON TOWNSHIP
+=== tw_wall
+-- start
+> Black granite, waist high, twenty-two feet long. Twenty-six names in three rows. Somebody keeps the flame lit. Somebody keeps the leaves off. Somebody has left a toy plane at the foot of it, yellow, a biplane.
+? q.sq_tw1>=30 -> again
+* [if item.angela_flowers] (Lay Angela's lilies under EMILY MOSS, third row.) -> flowers
+* (Find the name you're looking for.) -> father
+* (Just stand here a minute.) -> stand
+-- flowers
+> You set them down under her mother's name. The card faces out. For Emily Moss. Mom, I'm sorry I don't come.
+ELLIOT (V.O.): She hasn't been back since the funeral. She was nine. She'd hate that I'm reading the card. She'd hate more that nobody did.
+! take angela_flowers ; set tw_flowers ; trust angela 2 ; stab 2
+-> father
+-- father
+> Top row, first name. EDWARD ALDERSON. You don't touch it. You were going to touch it.
+ELLIOT (V.O.): He fixed computers in a shop on Main Street and he worked weekends at the plant because the plant paid. He coughed for a year and told everybody it was the cold. Then it wasn't a cold. Then it wasn't anything.
+MR. ROBOT: You don't have to stand here for me, kid. I'm not on the wall. I'm right behind you.
+ELLIOT (V.O.): I know. That's the problem with you.
+! quest sq_tw1 30 ; set tw_wall_seen ; stab -3
+-> END
+-- stand
+> The wind comes off the fields smelling of cut hay and, underneath it, faintly, something sweet and chemical that you remember from being small. A bench behind you creaks. Somebody's been sitting there the whole time.
+-> father
+-- again
+> The flame. The names. The toy plane. Someone has put Angela's lilies in a jar of water so they'll last.
+-> END
+
+=== walt
+-- start
+? q.mq_pr3.done -> after_project
+? q.sq_tw3.done -> after
+? q.sq_tw3>=40 -> paper_done
+? q.sq_tw3>=10 -> paper_wait
+? q.sq_tw2>=40 -> logs
+? q.sq_tw2>=10 -> shift_wait
+? q.sq_tw1.done -> hangar
+> An old man in a cracked leather flight jacket on the bench behind the wall. He's got a thermos and the look of somebody who comes here most days and has run out of things to say to granite.
+WALT: You're the Alderson boy. Don't make that face, I knew your father. You've got his chin and his way of standing like the ground owes you money.
+* "You knew my dad?" -> knew
+* "Who are you?" -> who
+-- who
+WALT: Walt Kearney. Kearney Strip, on the west side of town, that's my family's. Was. Anne and Billy are on the second row. My wife and my boy. Billy was six. He wanted to fly crop dusters like his old man, God help him.
+-> knew
+-- knew
+WALT: Ed fixed my radio for free three times because I wouldn't stop flying with it wet. He worked weekends in the plant's control room. Most of the men on that wall worked weekends at the plant. It paid. Nothing else in this county paid.
+WALT: They said 1993 was an accident. A valve. A one-time event. They paid out eleven thousand dollars a family and they put up a sign saying REMEDIATION and they 'closed' the plant in '94.
+WALT: Son, I fly over that plant twice a week. The stacks run at night. The trucks come at two in the morning. The pond by the stacks is warm in January. Nothing closed. They just stopped telling us.
+* "What do you mean, the trucks come at night?" -> trucks
+* "Why are you telling me?" -> why
+-- why
+WALT: Because you came. Nobody comes. And because I'm seventy-four and I've told the sheriff, and the county, and the state, and a reporter from Newark who stopped returning my calls the week E Corp bought her paper. You look like a man who knows how to find things out that people don't want found out. Your father was the same.
+-> trucks
+-- trucks
+WALT: Retention Pond 3. Behind the fence by the stacks, north-west corner of town. Go after dark, any night. Watch the fence. Bring a jar with a good lid. Then go look at what's in their books, if you know how. I'd bet the strip they write it all down. Companies like that always write it down. They think paper is the same as permission.
+* "I'll go tonight." -> yes
+* "This isn't my fight." -> no
+-- no
+WALT: It was your father's. ...Fine. I'm on the bench most afternoons, or at the strip. The pond'll still be warm whenever you change your mind.
+! quest sq_tw1 done ; quest sq_tw2 10 ; set walt_met
+-> END
+-- yes
+WALT: Good man. And listen. Emily Moss's house is still up on Elm by Maple Ave, boarded. Nobody'd buy it. Angela's room's the way she left it, the realtor told me, like nobody wanted to be the one to put her things in a bag. If you're talking to that girl, she might want something out of there.
+ELLIOT (V.O.): Angela's room. Purple walls. A shoebox in the closet she wouldn't let me touch. I'd forgotten that. I'd forgotten I'd forgotten it.
+! quest sq_tw1 done ; quest sq_tw2 10 ; quest sq_moss 10 ; set walt_met ; xp 40
+-> END
+-- hangar
+WALT: Back again. Pond's still warm, if you were wondering. Coffee's in the pot. It's terrible.
+-> menu
+-- shift_wait
+? q.sq_tw2>=20 -> shift_seen
+WALT: Night, son. It has to be night. Two in the morning they come, give or take. North-west corner, the fenced pond by the stacks.
+-> menu
+-- shift_seen
+WALT: You saw it. I can see on your face you saw it. Now their books. The plant office on Plant Road has a computer that runs the whole place. Somewhere in it's a log that says how much they put in that pond every night since 1994.
+-> menu
+-- logs
+> You put the jar of pond water on his workbench next to the logs. He reads three pages and has to stop. He reads three more.
+WALT: Eleven thousand gallons a night. Forty on busy nights. Thirty-one years. They signed it. Every month some plant manager signed his name to 'within remediation parameters' and went home to his kids.
+WALT: Margaret Hale's had our case open since 1994. She's got boxes. This goes in the boxes, and in eleven years a judge reads it, and by then I'll be on that wall too. ...Unless the town sees it first.
+WALT: Saturday's the fall festival. E Corp sponsors it. The whole township on Main Street, eating free hot dogs under an E Corp banner. Take this to Margaret first, do it right. Then come back here. I've got an idea, and it's got a propeller.
+! quest sq_tw2 done ; quest sq_tw3 10 ; trust walt 2 ; xp 60
+-> END
+-- paper_wait
+? q.sq_tw3>=30 -> paper_land
+? q.sq_tw3>=20 -> paper_go
+WALT: Margaret first. Main Street, across from the diner. She'll want to see the logs with her own eyes. Lawyers are like that. So are pilots.
+-> menu
+-- paper_go
+WALT: She's fueled. The yellow one on the apron, N1961K, Anne's plane. Hopper's full of copies of every page you brought me, six thousand of them, the print shop in Lennox thought I'd lost my mind. Over the festival on Main Street, over the plant, over the wall. Low and slow. Then bring her home.
+WALT: You fly before? ...Don't tell me. Throttle up, nose down till you've got speed, pull back gentle. Landing's just a takeoff you regret. The rings will show you the way. Billy's idea, years ago. I never took them down.
+! set walt_plane_ok
+-> END
+-- paper_land
+WALT: I watched it from here. White all over Main Street like the first snow. Now bring her down. Strip's long. Don't show off.
+-> END
+-- paper_done
+> Walt's standing at the hangar door with his hands in his jacket pockets, looking east toward Main Street. Even from here you can see white paper on every roof, in every tree.
+WALT: Six thousand pages. Barb Fisk called me crying. Hank Coyle called me swearing. The sheriff called me and didn't say anything for a whole minute, and then he said 'Walt,' and hung up. Margaret's phone hasn't stopped. The Star-Ledger's sending a reporter who doesn't work for E Corp.
+WALT: Thirty-one years I've been flying over that plant thinking somebody should do something. I'm glad it was you. I'm gladder it was her plane.
+! quest sq_tw3 done ; set tw_paper_rain ; fame locals 5 ; infamy ecorp 4 ; trust walt 3 ; stab 4 ; xp 120
+-> END
+-- after
+WALT: There he is. The man who made it snow in October. Coffee? It's still terrible.
+-> menu
+-- after_project
+? flag.pr_machine_drowned -> after_drowned
+? flag.pr_machine_on -> after_on
+WALT: There's something under that plant, isn't there. You don't have to tell me. I've seen the trucks. I just want to know one thing: is it going to hurt anybody else?
+ELLIOT (V.O.): I have the drawings in my pocket. I don't know the answer. I tell him I'm working on it. It's the truest thing I've said in a while.
+-> menu
+-- after_drowned
+WALT: Fire trucks at the plant at four in the morning. Then men in black SUVs, then nobody. The stacks are cold. First time since 1993 they've been cold at night. ...I don't want to know. I want to sleep. I think I might, tonight.
+-> menu
+-- after_on
+WALT: The stacks ran all night and the lights in town flickered at two. Every clock in my hangar stopped at the same second and started again. I'm an old man and I've seen a lot of weather, son. That wasn't weather.
+-> menu
+-- menu
+* [if q.sq_tw1.done & !q.sq_airmail.started] "Need anything flown?" -> airmail
+* [if q.sq_airmail>=10 & !q.sq_airmail.done] "About the prescription run..." -> airmail_wait
+* [if flag.walt_plane_ok & !flag.walt_lesson] "Teach me something about flying." -> lesson
+* [if q.mq_pr2>=20 & !flag.walt_project] "Walt, what do you know about the trucks from the coast?" -> project
+* "I'll see you around." -> END
+-- airmail
+WALT: As a matter of fact. Port Ramsey's pharmacy closed in March, and the nearest one after that is Lennox, which is forty minutes the wrong way down I-80. So every Tuesday I fly the township's spare prescriptions over to Ramsey Field and Marisol hands them out. Insulin, blood pressure, the heart pills.
+WALT: Except my hands have started doing this. (He holds one up. It shakes.) I missed the last three Tuesdays. You fly. Crate's by the door. Plane's on the apron. Straight east over I-80, the coast's right there past it. Land on the runway, not the ocean.
+! quest sq_airmail 10 ; give rx_crate 1 ; set walt_plane_ok
+-> END
+-- airmail_wait
+WALT: East. Over I-80, keep going till you see the cranes. Ramsey Field's on the west side of town, runway runs north-south. Marisol's in the little office by the road. She'll be glad. She worries.
+-> END
+-- lesson
+WALT: Three things. One: speed is life. A plane going too slow is just a very expensive rock. Two: the ground is patient, it will wait for you as long as it takes. Three: when you cross into somebody else's sky, say hello on the radio. It costs nothing and they might be the one who finds you.
+WALT: Billy used to ask me what the fourth thing was. I told him he'd figure it out. He didn't get the chance. I still haven't. Maybe you will.
+! set walt_lesson ; skill sneak 1 ; stab 2
+-> END
+-- project
+WALT: Box trucks. One a night, from the coast road, about two. They go in the loading dock on Mill Street and come out empty. Twenty minutes later the stacks start. Whatever they're bringing, it doesn't burn. It hums. You can hear it in the strip on still nights, under everything, like a refrigerator the size of the county.
+! set walt_project
+-> END
+
+=== bev
+-- start
+? q.sq_bev.done -> after
+? q.sq_bev>=30 -> news
+? q.sq_bev>=10 -> waiting
+> A woman in a pink Township Diner t-shirt refilling a coffee nobody asked her to refill, because her hands want something to do.
+BEV: Hi, hon. Sit anywhere. Coffee's on. Pie's apple, cherry, or 'Bev's surprise,' and you don't want to know.
+* "You look like somebody having a hard week." -> hank
+* "Just coffee." -> coffee
+-- coffee
+BEV: Coming up. (She pours. She doesn't leave.) Sorry. I'm not usually like this. I'm usually fun. Ask anybody.
+-> hank
+-- hank
+BEV: My husband Hank worked thirty-one years at the plant. Started in '89, retired last spring with a cake and a plaque. In June they found something on his lung. Doc says it's the plant. Every doc in this county says it's the plant, about everybody.
+BEV: E Corp's retiree plan denied his treatment. Pre-existing condition. I called and asked them, pre-existing WHAT? Pre-existing the plant? And the girl on the phone said 'ma'am, I can see you're upset,' like that's the problem. Like the problem is I'm upset.
+* "Where does the denial come from? Which system?" -> system
+* [HACKING 35] "Claims systems are just databases. Databases can be corrected." -> system_hack | system
+* "I'm sorry, Bev." -> sorry
+-- sorry
+BEV: Yeah. Everybody is. Pie's on me. Everybody's pie is on me this week; I can't stand people being nice to me and me not being nice back.
+! heal 20
+-> END
+-- system
+BEV: Hank says everything at that plant runs off one computer in the back office. Payroll, the safety stuff, the benefits. He said the IT man retired in 2008 and nobody ever changed the password. He said it like a joke. I didn't laugh.
+ELLIOT (V.O.): One terminal for everything and a password from 2008. They're not hiding the denials. They don't think anybody will look.
+! quest sq_bev 10
+-> END
+-- system_hack
+BEV: You can do that? ...Don't tell me if it's illegal. Tell me if it works. The plant office on Plant Road. Hank says it's all on one computer in the back. Same password since George W.
+! quest sq_bev 10 ; set bev_hacker
+-> END
+-- waiting
+BEV: Plant office, Plant Road, back room. Hank says the computer's the one with the coffee stain shaped like Florida. Be careful, hon. That place has a way of keeping what it takes.
+-> END
+-- news
+? flag.tw_claims_all -> news_all
+> Bev comes around the counter before you're through the door and hugs you hard enough to rearrange your spine.
+BEV: APPROVED. They called at seven this morning, all apologetic, 'a review of the file,' 'occupational exposure acknowledged.' ACKNOWLEDGED. Thirty-one years and a letter with that word on it. Hank cried. Hank doesn't cry. He cried at the Eagles in '18 and that's it.
+BEV: You eat free here. Forever. I'm writing it on the specials board. 'The quiet one eats free.'
+! quest sq_bev done ; fame locals 3 ; trust bev 3 ; cash 100 ; xp 60
+-> END
+-- news_all
+> The diner's full at nine on a weekday. Every booth, every stool, people standing. Half of them are crying, and the other half are pretending they're not.
+BEV: It wasn't just Hank. It was all of them. Two hundred and twelve families. Janet's husband. Owen's widow. Mrs. Pell. They're all here, they all got the letter. 'Occupational exposure acknowledged.' The phones started at three in the morning.
+BEV: I don't know who you are and I don't want to. But this whole town eats free on you today, and I'm putting your picture up next to the 1992 softball team. No face. Just a hoodie. They'll know.
+! quest sq_bev done ; fame locals 6 ; trust bev 4 ; cash 150 ; stab 3 ; xp 90
+-> END
+-- after
+BEV: The quiet one! Sit. Coffee, apple pie, and I won't talk at you. Much.
+! heal 40
+-> END
+
+=== hale
+-- start
+? q.sq_tw3>=20 -> after
+? q.sq_tw3>=10 -> logs
+> A woman in her sixties behind a desk buried in banker's boxes, reading glasses on a chain, a mug that says WORLD'S OKAYEST LAWYER.
+HALE: If you're from E Corp, the answer's no. If you're from the press, the answer's on the record and it's still no. If you're from the township, sit down, I'll find you a chair under something.
+* "I'm a friend of Walt Kearney's." -> walt
+* "What is all this?" -> boxes
+-- boxes
+HALE: Kearney et al. v. E Corp. Filed in 1994 by a first-year associate who'd just buried her daughter. That's me. Forty families took the settlement because they had funerals to pay for. Nine didn't. I've kept it alive on motions and spite for thirty-one years. E Corp has more lawyers in one building than this county has people.
+-> walt
+-- walt
+HALE: Walt. He thinks the plant never stopped. He's thought it since 1995. He's usually right about weather and engines and people, and he's never been able to prove a single thing. That's my department, and I haven't been able to either.
+-> END
+-- logs
+> You set the discharge logs on top of the nearest box. She reads the first page standing up. Then she sits down. Then she takes her glasses off and puts them back on, as if the numbers might change.
+HALE: These are signed. These are signed by plant managers, every month, for thirty-one years. Do you know what this is? This isn't evidence. This is a confession with a letterhead.
+HALE: I'll file tonight. Emergency injunction, discovery on everything from 1994, and the state AG will want copies whether he likes it or not. It will still take years. It always takes years. That's how they win, Mr. Alderson. Not in court. In the calendar.
+* "Walt wants the whole town to see it first. At the festival. From the air." -> walt_plan
+* "Then file it. I'll wait." -> file
+-- walt_plan
+HALE: (She laughs, then covers her mouth, then laughs again.) Of course he does. Anne used to say he'd die in that plane or in a fistfight, and she couldn't decide which she'd mind more.
+HALE: As your attorney, which I'm not: I can't advise you to drop six thousand copies of a corporate document over a public festival from an aircraft. As Beth's mother: fly low. Make sure they land on the E Corp tent.
+! quest sq_tw3 20 ; set hale_filed ; set walt_plane_ok ; trust hale 3 ; xp 60
+-> END
+-- file
+HALE: I'll file tonight. And Walt will do whatever Walt's going to do, which you should probably go hear about. He's at the strip. He's always at the strip.
+! quest sq_tw3 20 ; set hale_filed ; set walt_plane_ok ; trust hale 2 ; xp 50
+-> END
+-- after
+? flag.brandt_testifies -> after_brandt
+HALE: Discovery motion's filed. E Corp asked for a ninety-day extension within the hour. I asked the judge to deny it, and the judge, who grew up on Walnut Street, denied it. First time in thirty-one years I've been ahead of them on a calendar.
+-> END
+-- after_brandt
+HALE: Dale Brandt walked in here yesterday with a shoebox of E Corp envelopes and asked me where to sign. Ten years of them. He brought the stubs. He's going to testify about who paid him to look the other way, and why. ...His parents are on the wall too. I think he finally remembered.
+-> END
+
+=== brandt
+-- start
+? q.sq_brandt.done -> after
+? q.sq_brandt>=10 -> confront
+> A big man in a tan uniform with a coffee cup and a wedding ring he keeps turning. The radio on his desk is playing county traffic to nobody.
+BRANDT: Sheriff's office. If somebody stole your car, it's probably in the Walmart lot in Lennox. If somebody stole your bike, it's the Pell kid, and he'll bring it back if you ask nice.
+-> END
+-- confront
+BRANDT: Something on your mind, son? You've been looking at my plaque like it owes you money.
+* "Twenty-five hundred a month from the plant. 'Community safety liaison.' What does that buy, Sheriff?" -> money
+* "Never mind." -> END
+-- money
+> He sets the coffee down very carefully, like it might go off.
+BRANDT: It buys a sheriff who doesn't go up Plant Road at two in the morning. That's what it buys. That's all it's ever bought. I never hurt anybody. I just... didn't look.
+BRANDT: My folks are on that wall. Leo and Nora, second row. When the money started I told myself the plant was closed, so what was I not looking at? And then the trucks. And I kept cashing it, because the county pays me thirty-one hundred a month and my daughter's at Rutgers.
+* [SPEECH 45] "Then look now. Margaret Hale needs a witness who knows who paid whom. Your folks would want you on that stand." -> testify | testify_fail
+* [if mask | skill.melee>=40] "Here's what happens. You keep not looking, but now you're not looking for me." -> own
+* "I'm sending everything to the state Attorney General. You should know before you read it in the paper." -> expose
+-- testify
+> He looks at the photo on the wall for a long time. The older couple at the lake.
+BRANDT: ...Dad taught me to fish at that lake. Nobody fishes it now. Nobody would eat what they caught. (He picks up his hat.) Margaret's open till six. I'll bring the envelopes. I kept the stubs, God knows why. Maybe so somebody'd make me do this.
+! quest sq_brandt done ; set brandt_testifies ; fame locals 3 ; trust brandt 2 ; xp 100
+-> END
+-- testify_fail
+BRANDT: You don't know a damn thing about my folks. Get out of my office before I find a reason to keep you in that cell overnight.
+ELLIOT (V.O.): He's not angry at me. He's angry at the plaque. He'll get there. Or he won't, and Hale will have the ledger anyway.
+-> END
+-- own
+BRANDT: ...Yeah. Yeah, I figured it'd come to that eventually. Somebody always finds the envelope. Fine. In this town, you're a ghost. I've got good at not seeing things.
+ELLIOT (V.O.): I just bought a sheriff. It was easy. That's the part that should scare everybody.
+! quest sq_brandt done ; set brandt_owned ; xp 70
+-> END
+-- expose
+BRANDT: (He laughs, and there's nothing in it.) Do what you have to. Twenty years I've been waiting for somebody to knock on that door. You'd think I'd feel worse. I mostly feel tired.
+! quest sq_brandt done ; set brandt_exposed ; infamy ecorp 2 ; xp 70
+-> END
+-- after
+? flag.brandt_testifies -> after_testify
+? flag.brandt_owned -> after_owned
+BRANDT: Administrative leave, they're calling it. I'm still allowed to drink coffee in my own office until the county decides. Go on. You did what you came to do.
+-> END
+-- after_testify
+BRANDT: Deposition's Tuesday. Margaret says I'll be on the stand three days. My daughter called from Rutgers and said she was proud of me, and I had to pretend I had something in my eye.
+-> END
+-- after_owned
+BRANDT: I don't see you. I never saw you. Have a nice day in Washington Township.
+-> END
+
+=== father_doyle
+-- start
+> A priest with a farmer's hands, sweeping the aisle between the pews with a push broom. He has the unhurried look of a man who knows the church will still be here when he's done.
+FATHER DOYLE: Mass is at nine on Sundays, confession's whenever I'm here, and coffee's in the back regardless. Which are you after?
+* "I'm Ed Alderson's son." -> ed
+* "Just looking." -> look
+-- look
+FATHER DOYLE: Look all you like. It's a good room for looking. The memorial book's by the altar if you want it. It's been open since 1994. We've never closed it.
+-> END
+-- ed
+FATHER DOYLE: Elliot. I buried your father. You stood right there, third pew, and you wouldn't let your mother hold your hand. You didn't cry once. I worried about you for years after. I'm still a little worried, looking at you, if I'm honest.
+* "I don't remember the funeral." -> remember
+* "Did my father ever talk to you about the plant?" -> plant
+-- remember
+FATHER DOYLE: That's all right. Sometimes the mind does us a kindness and puts a thing in a drawer until we're strong enough to open it. Sometimes it loses the key. You'll know which it was when you know.
+! stab 2
+-> END
+-- plant
+FATHER DOYLE: Not in confession. I'd not tell you if he had. But once, at a church picnic, he told me he'd seen a number in the control room he wasn't supposed to see, and he'd asked his supervisor about it, and his supervisor told him to go home early. He went home early for a week. Then he got sick. I think about that week sometimes.
+ELLIOT (V.O.): He asked. He saw a number and he asked about it. I thought I got that from nowhere.
+! set doyle_ed ; stab -2
+-> END
+
+=== angela_box
+-- start
+> You put the shoebox on the table in front of her. ANGELA — KEEP OUT in purple marker. She knows what it is before she reads it.
+ANGELA: Where did you— You went to the house. You went INTO the house.
+ELLIOT (V.O.): She opens it. Mixtapes. A friendship bracelet, half unravelled. A photo of two kids on a swing set, the boy looking at the camera like it's going to hit him, the girl laughing so hard she's blurry.
+ANGELA: I made you that bracelet. You wore it for a whole summer and then you lost it and said a dog took it. There was no dog, Elliot. ...It was in my closet the whole time. I took it back. I was so mad at you.
+* "Your mom's name has lilies under it now." -> lilies
+* (Say nothing. Let her have it.) -> quiet
+-- lilies
+ANGELA: (She's quiet for a long time.) Thank you. For going. I couldn't. I still can't. But somebody went, and it was you, and that's... that's the right person.
+! take moss_box ; quest sq_moss done ; trust angela 4 ; stab 4 ; xp 80
+-> END
+-- quiet
+> She ties the bracelet back on your wrist without asking. It barely fits. She doesn't say anything either. Neither of you does, for a while, and it's the best conversation you've had in a year.
+! take moss_box ; quest sq_moss done ; trust angela 4 ; stab 5 ; xp 80
+-> END
+
+# ======================================================= THE PROJECT
+=== b2_machine
+-- start
+? q.mq_pr2>=50 -> again
+> It isn't a reactor. It isn't a server farm. It's both and neither: a ring of white racks around a core of something that bends the light near it, like heat over a road, cooled by pipes that run up through the ceiling into the stacks. The whole room hums at a pitch you feel in your back teeth.
+> On the floor around the core, someone has painted a circle of dates in white. 1993. 1993. 1993. Hundreds of times.
+ELLIOT (V.O.): Whatever this is, it was built on purpose, under the plant that killed my father, by someone who knew exactly where they were building it.
+MR. ROBOT: Kid. Kid, look at the clock in the corner. It's running backwards. Tell me you see that.
+ELLIOT (V.O.): I see it. I don't want to.
+! quest mq_pr2 50 ; set saw_machine ; stab -4
+-> END
+-- again
+> The hum. The bent light. The clock in the corner, slower than it should be.
+-> END
+
+=== whiterose_b2
+-- start
+? q.mq_pr3.done -> after
+? q.mq_pr3>=10 -> choose
+> Whiterose is standing at the edge of the painted circle with her back to you, in a long coat, hands clasped behind her. Two operatives by the elevator very carefully do not look at you.
+WHITEROSE: You drove my freight up the interstate. Ninety minutes, nobody stopped you, and you never once opened the container to look. I would have looked. That is the difference between us, and the reason I needed you.
+* "What is this?" -> what
+* "Why here? Why Washington Township?" -> why
+-- what
+WHITEROSE: A correction. The world took a wrong turn. Not a metaphor, a turn, a branch, and I have spent forty years finding the place where it branched. This machine is the hand that reaches back and moves the switch.
+-> why
+-- why
+WHITEROSE: Because this is where it went wrong. A valve in this plant, on a Tuesday in 1993. Twenty-six people on a granite wall. Your father among them. If there is a place where the world can be put right, it is the place where it broke. Places remember. So do you, though you work very hard not to.
+* "You're telling me this machine brings them back." -> back
+* [SPEECH 60] "You're telling me what I want to hear so I'll finish it for you." -> seen | back
+-- back
+WHITEROSE: I am telling you it may. I do not lie about probabilities. I am the only person in your life who does not.
+-> ask
+-- seen
+WHITEROSE: (For the first time, she turns around.) Yes. I am also telling you the truth. The two are not exclusive. You of all people should know a thing can be a manipulation and a mercy at once.
+! set wr_honest
+-> ask
+-- ask
+WHITEROSE: The bridge console by the far wall will connect this node to the others. I could have my people do it. I would rather it was you. The son of a man on the wall, choosing. It matters to the machine. It matters to me. Choose, Elliot. You will anyway, eventually. Everyone does.
+! quest mq_pr2 done ; quest mq_pr3 10 ; xp 150
+-> END
+-- choose
+WHITEROSE: The console. Bridge it, break it, or copy it and run, the way you always do. I have already planned for all three. I just would like to know which kind of man you are. I am curious. It is my only vice.
+-> END
+-- after
+WHITEROSE: Whatever you chose, it is chosen. Time is very patient with people like us. Go home, Elliot.
+-> END
+
+=== leon_port
+-- start
+? q.mq_pr1.done -> after
+? q.mq_pr1>=50 -> report
+? q.mq_pr1>=20 -> waiting
+> Leon is in the back booth of the Barnacle with a plate of fried clams he hasn't touched and Knight Rider playing on his phone, propped against the ketchup.
+LEON: Yo! There he is. Sit. Try a clam. Don't try a clam, actually. I been staring at these for an hour trying to decide if they're a clam or a philosophy.
+LEON: Business. Whiterose has a boat coming in. The Everbright, berth two, forty boxes for the old power plant over in Washington Township. She wants the paperwork clean. Weights, customs, all of it. You go in the E Corp Logistics office by the docks, you make the manifest boring. That's the job.
+* "What's in the boxes?" -> boxes
+* "Why me? You've got people." -> why
+-- boxes
+LEON: Turbine parts, man. It says turbine parts. You know what I learned in Bangkok? When a lady who keeps a thousand clocks says 'turbine parts,' you nod and you eat your clams.
+LEON: ...Okay, real talk, I don't know what's in the boxes. Nobody I know knows. And that's weird, man. Usually somebody knows. Usually it's me.
+-> go
+-- why
+LEON: 'Cause she asked for you. Specifically you. That's twice now, my man. Being asked for specifically by Whiterose is like being picked first for dodgeball by a hurricane.
+-> go
+-- go
+! quest mq_pr1 20 ; set leon_port_met
+LEON: Terminal office is the blue-sign building by the cranes. Daytime you can walk in like you're there to complain about a shipping fee. Night, they lock it. Do your thing and come tell me how it went. I'll be here. With the clams. Contemplating.
+-> END
+-- waiting
+? q.mq_pr1>=30 -> waiting_cannery
+LEON: The blue building by the cranes. Make it boring, man. Be the most boring man alive for ten minutes. You can do it. I believe in you.
+-> END
+-- waiting_cannery
+LEON: You clean it? Good. Now, I been watching. Boxes come off the boat, they go to the old cannery on Cannery Row, they sit there a day, then every night at one a truck takes one away. I'm curious. You're curious. Let's be curious together, but you do the walking.
+-> END
+-- report
+> You tell him about the server racks in foam, the dispatch board, WTE — DOCK 3 — B2, the white rose rubbed out with a thumb.
+LEON: B2. There ain't no B2 at a power plant. I looked. I looked 'cause I got a feeling, man, the feeling you get in a movie right before the music changes.
+LEON: Tonight, one AM, a truck leaves that cannery for the township. I say you're the driver. Whiterose's people won't stop you, you're on her list. Drive it up I-80 to the plant, see where the box goes. And hey. If what's down there is bad? Tell me first. I got a lot of opinions about this lady, and I'm gonna need to know which ones to keep.
+! quest mq_pr1 done ; quest mq_pr2 10 ; trust leon 2 ; xp 80
+-> END
+-- after
+? q.mq_pr3.done -> after_done
+LEON: One AM, the cannery yard, a box truck with nobody in it. Drive it to the plant. Don't stop for food, I know how you are with food. You're bad at food.
+-> END
+-- after_done
+? flag.pr_machine_drowned -> after_drowned
+LEON: So you saw it. Don't tell me. I can see it on you. ...I'm gonna go home and watch every episode of The Wire in order, and then I'm gonna think about my life choices, and then I'm probably gonna make the same ones. That's what a life choice is, man.
+-> END
+-- after_drowned
+LEON: You drowned it. You actually drowned Whiterose's thing. Man. MAN. Okay. Listen. Don't go to Chinatown for a while. Don't answer calls from numbers that are all nines. I'll tell her you were crazy. She already thinks so. It might even work.
+-> END
+
+# =========================================================== PORT RAMSEY
+=== ruthie
+-- start
+? q.sq_ruthie.done -> after
+? q.sq_ruthie>=30 -> licenses
+? q.sq_ruthie>=10 -> waiting
+> A woman built like a capstan in a yellow oilskin, at the end of the bar, drinking whiskey like it owes her money. Her hands are scarred white along the knuckles from forty years of rope.
+RUTHIE: You're not from here. Nobody's from here anymore. E Corp Logistics brought in four hundred contractors and they all drink at the place by the terminal that sells nine-dollar beer. This is the Barnacle. Beer's three. Fish is fresh. Was fresh.
+* "Was?" -> was
+* "I'll take a beer." -> beer
+-- beer
+RUTHIE: Kenny, get the kid a beer. On me. ...Don't look at me like that, I've got money. I've got nothing to spend it on but this stool.
+-> was
+-- was
+RUTHIE: Last April E Corp built their new terminal right over the town's fishing berths. Then Teddy Grieco, the harbormaster, revoked every commercial fishing license on the coast. 'Navigational safety during the expansion.' Expansion's been done since June. Nobody gave us back a damn thing.
+RUTHIE: Forty-four licenses. Mine's number one. I've had it since 1984. My boat, the Miss Ruthie, she's tied up at the south quay with seaweed on her waterline like a dog nobody walks. And Teddy's on a cruise. Teddy's always on a cruise now. Funny thing for a harbormaster to afford.
+* "Where's Grieco's office?" -> office
+* [if skill.hacking>=30] "Licenses live in a database. Databases can be persuaded." -> office_hack
+* "That's a raw deal." -> END
+-- office
+RUTHIE: End of Pier Road, the little white office by the quay. Teddy's in by day, when he's not floating off Cozumel. His computer's the one with his own face for a wallpaper.
+! quest sq_ruthie 10
+-> END
+-- office_hack
+RUTHIE: (She looks at you sideways for a long moment.) My grandson said that about my phone once and now it orders pizza in Spanish. ...End of Pier Road, the white office by the quay. If you can get my license back, there's a seat on the Miss Ruthie for you any morning you want it, four AM sharp.
+! quest sq_ruthie 10 ; set ruthie_hacker
+-> END
+-- waiting
+RUTHIE: White office, end of Pier Road. Teddy's computer. Forty-four licenses. You need a drink for courage, Kenny'll pour.
+-> END
+-- licenses
+> Ruthie is standing by the bar with her phone held out at arm's length, reading it with her whole face.
+RUTHIE: Active. ACTIVE. Every license on the coast, back to April, no fines, no gaps. The co-op group chat's gone insane. Bobby Mac sent a video of himself crying on his boat. Bobby Mac hasn't cried since Vietnam.
+RUTHIE: Four AM tomorrow, the Miss Ruthie goes out for the first time since spring. You're welcome aboard. I'm serious. You look like a man who's never seen the sun come up over water on purpose.
+! quest sq_ruthie done ; fame locals 4 ; trust ruthie 3 ; cash 150 ; xp 80
+-> END
+-- after
+RUTHIE: There's my lucky charm. Kenny, his beer's on my tab forever. We pulled forty pounds of fluke this morning. Forty! The ocean missed us.
+! heal 30
+-> END
+
+=== grieco
+-- start
+? flag.grieco_gone -> gone
+> A heavy man in a crisp white shirt with a sunburn in the exact shape of sunglasses. Cruise brochures fanned on the desk like a hand of cards.
+GRIECO: Harbormaster. If it's about a berth, there's a form. If it's about the noise from the terminal, there's a different form. If it's about fishing licenses, there's no form, because there are no fishing licenses.
+* [if q.sq_ruthie>=10 & !flag.licenses_back] "About those fishing licenses." -> licenses
+* "How was the cruise?" -> cruise
+-- cruise
+GRIECO: Which one? (He catches himself, too late.) ...I mean, it was very relaxing. Thank you for asking. Is there anything else?
+-> END
+-- licenses
+GRIECO: Revoked for navigational safety. It's in the regulations. I don't make the regulations, I just enforce them, from wherever I happen to be at the time.
+* [SPEECH 50] "Navigational safety ended in June. Reinstate them, or somebody starts asking who paid for the cruises." -> fold | fail
+* [if flag.grieco_dirty] "Ocean Bright Consulting. Nine thousand a month. Three cruises booked for three dark nights. Should I keep going?" -> fold_dirty
+* "Never mind." -> END
+-- fold
+GRIECO: ...You know, I was just reviewing those. The expansion is complete. Navigational safety is, as you say, assured. (He types for a while, sweating.) There. Reinstated. All of them. Please leave my office.
+! set licenses_back ; quest sq_ruthie 30 ; fame locals 3 ; xp 100
+-> END
+-- fold_dirty
+> He goes the color of the sunburn, all over.
+GRIECO: That's... those emails are private. (He types very fast.) Reinstated. Everything. Backdated. Is that... is that the end of it?
+ELLIOT (V.O.): It's the end of the licenses. Whether it's the end of Teddy depends on what else I find.
+! set licenses_back ; quest sq_ruthie 30 ; fame locals 3 ; xp 110
+-> END
+-- fail
+GRIECO: Who exactly do you think you are? Get out before I call the terminal's security. They're very large and they work for people who don't write things down.
+-> END
+-- gone
+> A note on the door: OFFICE CLOSED PENDING REVIEW. Through the window, the cruise brochures are gone.
+-> END
+
+=== silas
+-- start
+? q.sq_keeper.done -> after
+? q.sq_keeper>=30 -> lamp
+? q.sq_keeper>=10 -> waiting
+> A very old man in a navy peacoat with white hair to his collar, reading a paperback by the window with a magnifying glass. A kettle is going. It's been going, by the sound of it, for fifty years.
+SILAS: Visitor. Don't get many of those. Gulls, mostly. Sometimes a Coast Guard boy with a clipboard who looks surprised I'm alive. I'm Silas. I keep the light.
+* "I thought lighthouses were automated." -> auto
+* "What's it like, out here?" -> like
+-- like
+SILAS: Quiet. Loud when the weather wants. I've watched every ship come into Ramsey for fifty-one years and written each one down. I could tell you what the harbor was doing on any night since 1974. Nobody ever asks.
+-> auto
+-- auto
+SILAS: Automated in 1998, they tell me. A box in the lamp room does the job now. They forgot to tell me, or they told me and I forgot, and either way I kept coming up the stairs every evening at dusk. The box does the light. I do the watching.
+SILAS: Except lately the box turns the light OFF. Three nights this month, quarter to one in the morning, the lamp just goes dark. And the nights it goes dark, a ship comes into berth two with no name and no lights. I write it down. My hand shakes writing it. Fifty-one years I never had a ship come in dark.
+* "Who controls the box?" -> box
+* "Can I see your log?" -> log
+-- log
+SILAS: It's on the table. Read all you like. Then tell me I'm not a mad old man. I'd like someone to say it out loud, even if it's a lie.
+-> box
+-- box
+SILAS: E Corp. The Coast Guard sold the light's 'management' to E Corp Logistics two years ago, with the terminal. Smart beacon, they call it. The box in the lamp room has a little screen. I don't understand the screen. I understand the sea, and the sea's telling me somebody wants it dark.
+SILAS: If you could make the light just be a light again. A switch on the wall and an old man who flips it. That's all I'd want. That's all I've ever wanted.
+! quest sq_keeper 10
+-> END
+-- waiting
+SILAS: The box is up in the lamp room, through the door. Mind the stairs. They've been trying to kill me since Nixon.
+-> END
+-- lamp
+> Silas is in the lamp room with his hand flat on the brass switch on the wall, like it's a dog he hasn't seen in years.
+SILAS: It works. The switch works. I turned it off and on four times just to hear it click. Tonight I'll turn it on at dusk and off at dawn and not a minute different, and if a ship wants to come in dark it'll have to do it in my light.
+SILAS: Take this. (He hands you a battered logbook.) The last three months. The dark ships. Somebody should have it who knows what to do with it. I only know how to write things down.
+! give lighthouse_log 1 ; quest sq_keeper done ; fame locals 3 ; trust silas 3 ; stab 3 ; xp 80
+-> END
+-- after
+SILAS: Light's on. Sea's honest. Kettle's going. You're welcome to sit. Most folks can't stand the quiet. I think you might be the kind that needs it.
+! stab 2
+-> END
+
+=== marisol
+-- start
+? q.sq_airmail.done -> after
+? item.rx_crate -> crate
+> A woman in a Ramsey Field windbreaker with three phones on the counter and a headset around her neck, running an entire airport out of a room the size of a garage.
+MARISOL: Ramsey Field. If you're here for fuel, it's self-serve and we trust you. If you're here for a charter, there's one plane and it's mine and no. If you're here about Walt, I'll put the kettle on.
+-> END
+-- crate
+? flag.airmail_landed -> crate_flew
+MARISOL: That's Walt's crate. That's Walt's handwriting. You... drove it? (She laughs, then can't stop.) He'd be horrified. He'd say a box like that deserves altitude. Thank you. Mrs. Doyle's heart pills are in there and she's been rationing.
+! take rx_crate ; quest sq_airmail done ; cash 120 ; fame locals 2 ; xp 60
+-> END
+-- crate_flew
+MARISOL: I heard you come in. Nobody lands on my strip that soft except Walt, and Walt's not flying anymore, is he. ...His hands. He told me in March and swore me to secrecy, the old goat.
+MARISOL: Thank you. There's insulin in here for the Pell boy and heart pills for Ruthie's mother. Tell Walt Tuesday's covered as long as you want it covered. And tell him to call me. He won't. Tell him anyway.
+! take rx_crate ; quest sq_airmail done ; cash 220 ; fame locals 3 ; trust walt 2 ; xp 100
+-> END
+-- after
+MARISOL: My favorite courier. Coffee's on. Wind's off the water. Walt called me, by the way. Forty minutes. Mostly about engines. It was nice.
+-> END

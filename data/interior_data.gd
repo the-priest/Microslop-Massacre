@@ -731,6 +731,248 @@ const INTERIORS := {
 			{"title": "Flip Phony's account authority: unlock every revoked library, lock out their admins", "result": "Every game Phony ever revoked unlocks at once, for everyone, worldwide. Then their own admin credentials stop working, replaced by a single read-only line on every screen in the building: YOU OWN WHAT YOU PAID FOR. They can't even log in to argue.", "fx": "set phony_freed ; quest mq_chi3 20 ; fame gamers 8 ; infamy ecorp 6 ; xp 200", "when": "q.mq_chi3>=10 & !flag.phony_freed"},
 		]}],
 },
+# ===================================================== WASHINGTON TOWNSHIP
+"tw_diner": {
+	"name": "Township Diner", "amb": "jazz", "ambient": Color(0.44, 0.38, 0.32),
+	"rooms": [{"r": [0, 0, 14, 8], "h": 3.2, "wall": Color(0.78, 0.74, 0.62), "floor": Color(0.72, 0.7, 0.66), "floor_kind": "tile", "light": Color(1.0, 0.9, 0.72), "energy": 1.2, "lights": [[4, 2.9, 4], [10, 2.9, 4]]}],
+	"exits": [{"pos": [7, 8], "face": "s", "to": "world:d_tw_diner", "label": "Main Street"}],
+	"furn": [["bar_counter", 7, 1.4, 0, {"w": 8.0, "neon": Color(1.0, 0.45, 0.35)}], ["stool", 4.5, 2.6, 0], ["stool", 6, 2.6, 0], ["stool", 7.5, 2.6, 0], ["stool", 9, 2.6, 0], ["booth", 2, 6.2, 0, {"col": Color(0.2, 0.35, 0.6)}], ["booth", 6, 6.2, 0, {"col": Color(0.2, 0.35, 0.6)}], ["booth", 10, 6.2, 0, {"col": Color(0.2, 0.35, 0.6)}], ["jukebox", 13.4, 4, -90], ["coffee_machine", 10.5, 0.6, 0], ["window", 7, 7.85, 180, {"w": 8.0}], ["poster", 0.15, 4, 90, {"col": Color(0.2, 0.4, 0.2)}]],
+	"spots": [
+		{"id": "tw_diner_shop", "kind": "shop", "title": "Counter", "verb": "Order", "pos": [7, 1, 2.4], "size": [8, 2, 1.2], "shop": "gen_diner"},
+		{"id": "tw_diner_photo", "kind": "text", "title": "Photo Wall", "verb": "Look", "pos": [0.2, 1.6, 4.0], "size": [0.3, 1.2, 2.0], "text": "Forty years of the Township Diner in thumbtacked photos. The 1992 plant softball team, WASHINGTON TWP ENERGY on their shirts, grinning, beer in the dugout. Somebody has drawn little crosses in pen over nine of the faces. Then, later, in a different pen, over four more."},
+	],
+},
+"tw_law": {
+	"name": "Law Office of Margaret Hale", "amb": "office", "ambient": Color(0.4, 0.36, 0.32),
+	"rooms": [{"r": [0, 0, 9, 7], "h": 3.0, "wall": Color(0.5, 0.42, 0.34), "floor": F_WOOD, "light": Color(1.0, 0.85, 0.65), "energy": 1.1, "lights": [[4.5, 2.7, 3.5]]}],
+	"exits": [{"pos": [4.5, 7], "face": "s", "to": "world:d_tw_law", "label": "Main Street"}],
+	"furn": [["desk", 4.5, 1.0, 0], ["chair", 4.5, 2.4, 180], ["chair", 3.6, 3.6, 180], ["chair", 5.4, 3.6, 180], ["bookshelf", 0.5, 2.0, 90], ["bookshelf", 0.5, 4.0, 90], ["filing_cabinet", 8.5, 1.0, -90], ["filing_cabinet", 8.5, 2.0, -90], ["filing_cabinet", 8.5, 3.0, -90], ["boxes", 8.0, 5.8, 0], ["boxes", 6.8, 6.2, 0], ["window", 4.5, 6.85, 180, {"w": 2.0}], ["lamp", 7.8, 0.6, 0], ["clock", 0.2, 5.6, 90, {"y": 2.2}]],
+	"spots": [
+		{"id": "hale_boxes", "kind": "text", "title": "Case Boxes", "verb": "Read", "pos": [7.4, 0.6, 6.0], "size": [2.0, 1.0, 1.0], "text": "Banker's boxes floor to ceiling, every one labelled in the same hand: KEARNEY ET AL. v. E CORP. 1994. 1995. 1996. Up to this year. Thirty-one years of motions, continuances, depositions, a settlement offer of $11,000 per family that forty families signed because they had funerals to pay for, and nine that didn't."},
+		{"id": "hale_photo", "kind": "text", "title": "Framed Photo", "verb": "Look", "pos": [4.5, 1.2, 0.5], "size": [0.5, 0.5, 0.3], "text": "A girl of about eight in a soccer uniform, gap-toothed, holding a trophy taller than her arm. Engraved on the frame: BETH. 1986 – 1994. Next to it, a law degree dated 1995."},
+	],
+},
+"tw_bar": {
+	"name": "The Spillway", "amb": "jazz", "ambient": Color(0.32, 0.28, 0.26),
+	"rooms": [{"r": [0, 0, 14, 9], "h": 3.2, "wall": Color(0.32, 0.24, 0.2), "floor": F_WOOD, "light": Color(1.0, 0.75, 0.5), "energy": 0.9, "lights": [[3.5, 2.9, 4.5], [10.5, 2.9, 4.5]]}],
+	"exits": [{"pos": [7, 9], "face": "s", "to": "world:d_tw_bar", "label": "Main Street"}],
+	"furn": [["bar_counter", 7, 1.4, 0, {"w": 8.0, "neon": Color(0.4, 0.8, 1.0)}], ["bar_shelf", 7, 0.3, 0], ["stool", 4.5, 2.6, 0], ["stool", 6.5, 2.6, 0], ["stool", 8.5, 2.6, 0], ["pool_table", 10.5, 6.0, 0], ["booth", 2.0, 7.4, 0, {"col": Color(0.35, 0.12, 0.1)}], ["jukebox", 13.4, 3.0, -90], ["poster", 0.15, 4.5, 90, {"col": Color(0.6, 0.2, 0.15)}]],
+	"spots": [
+		{"id": "tw_bar_shop", "kind": "shop", "title": "Bar", "verb": "Order", "pos": [7, 1, 2.4], "size": [8, 2, 1.2], "shop": "gen_bar"},
+		{"id": "tw_bar_board", "kind": "text", "title": "Corkboard", "verb": "Read", "pos": [0.2, 1.6, 2.0], "size": [0.3, 1.0, 1.6], "text": "A spaghetti dinner for Janet Coyle's chemo. A pancake breakfast for Owen Fisk's chemo. A bowling night for the Pell twins, 'both of them now.' Under all of it, staples from older flyers, layers deep, like rings in a tree. A printed E Corp notice: 'Washington Township Energy is proud to sponsor the Township Fall Festival.'"},
+	],
+},
+"tw_sheriff": {
+	"name": "Washington Township Sheriff", "amb": "office", "ambient": Color(0.42, 0.42, 0.42),
+	"rooms": [
+		{"r": [0, 0, 12, 8], "h": 3.0, "wall": Color(0.6, 0.58, 0.5), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.95, 0.95, 0.88), "energy": 1.1, "lights": [[6, 2.7, 4]]},
+		{"r": [12, 0, 17, 8], "h": 3.0, "wall": W_CONCRETE, "floor": F_CONCRETE, "light": Color(0.85, 0.9, 0.95), "energy": 0.8, "lights": [[14.5, 2.7, 4]]},
+	],
+	"doors": [[12, 4, 1.2]],
+	"exits": [{"pos": [6, 0], "face": "n", "to": "world:d_tw_sheriff", "label": "Main Street"}],
+	"furn": [["desk_pc", 6, 4.4, 180], ["chair", 6, 5.4, 0], ["filing_cabinet", 11.5, 6.8, -90], ["gun_rack", 0.3, 5.0, 90], ["bench", 2.5, 1.0, 0, {"w": 2.4}], ["whiteboard", 6, 7.85, 180], ["coffee_machine", 11.4, 1.0, -90], ["cell_bars", 13.0, 4.0, 90], ["mattress", 15.5, 6.5, 0]],
+	"spots": [
+		{"id": "tw_sheriff_plaque", "kind": "text", "title": "Plaque", "verb": "Read", "pos": [6.0, 1.8, 7.8], "size": [1.2, 0.6, 0.3], "text": "'IN APPRECIATION: Sheriff Dale Brandt, Community Safety Liaison, Washington Township Energy. Ten Years of Partnership.' E Corp blue, brass letters. Beside it, smaller, a photo of an older couple at a lake, unframed, curling at the corners."},
+		{"id": "tw_sheriff_cell", "kind": "bed", "title": "Holding Cell Cot", "verb": "Sleep", "pos": [15.5, 0.4, 6.5], "size": [1.8, 0.8, 2.2]},
+	],
+},
+"tw_chapel": {
+	"name": "St. Brigid's Church", "amb": "interior", "ambient": Color(0.4, 0.36, 0.34),
+	"rooms": [{"r": [0, 0, 12, 18], "h": 6.0, "wall": Color(0.7, 0.66, 0.6), "floor": F_WOOD, "light": Color(1.0, 0.85, 0.6), "energy": 0.9, "lights": [[6, 5.6, 5], [6, 5.6, 13]]}],
+	"exits": [{"pos": [6, 0], "face": "n", "to": "world:d_tw_chapel", "label": "Main Street"}],
+	"furn": [["bench", 3.2, 4.0, 180, {"w": 4.0}], ["bench", 8.8, 4.0, 180, {"w": 4.0}], ["bench", 3.2, 6.5, 180, {"w": 4.0}], ["bench", 8.8, 6.5, 180, {"w": 4.0}], ["bench", 3.2, 9.0, 180, {"w": 4.0}], ["bench", 8.8, 9.0, 180, {"w": 4.0}], ["bench", 3.2, 11.5, 180, {"w": 4.0}], ["bench", 8.8, 11.5, 180, {"w": 4.0}], ["altar", 6, 16.5, 180], ["candles", 1.2, 16.0, 90], ["candles", 10.8, 16.0, -90], ["piano", 10.6, 14.0, -90], ["window", 0.15, 9, 90, {"w": 2.0}], ["window", 11.85, 9, -90, {"w": 2.0}]],
+	"spots": [
+		{"id": "chapel_book", "kind": "text", "title": "Memorial Book", "verb": "Read", "pos": [1.2, 1.0, 15.0], "size": [0.8, 0.8, 0.8], "text": "A guest book that's been open on this stand since 1994. Names, dates, prayers. 'For Billy, who liked planes.' 'For my wife Anne. Walt.' 'For Mom. — Angela, age 9,' in purple crayon. And one, small and careful, in a hand you know because it's yours, from when you were a boy: 'For Dad. I'm sorry I was mad at you. — E.'", "fx": "set read_chapel_book ; stab -3"},
+	],
+},
+"tw_plant": {
+	"name": "E Corp Washington Township Energy", "amb": "office", "ambient": Color(0.4, 0.42, 0.46), "restricted": "ecorp", "allowed_when": "disguise.ecorp | day & !flag.tw_alarm | q.mq_pr2>=30 & !q.mq_pr3.done",
+	"rooms": [
+		{"r": [0, 0, 16, 10], "h": 3.6, "wall": Color(0.55, 0.58, 0.62), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.85, 0.9, 1.0), "energy": 1.05, "lights": [[5, 3.3, 5], [11, 3.3, 5]]},
+		{"r": [0, -12, 16, 0], "h": 3.4, "wall": Color(0.48, 0.5, 0.52), "floor": F_CARPET, "light": Color(0.8, 0.85, 0.95), "energy": 0.85, "lights": [[4, 3.1, -6], [12, 3.1, -6]]},
+	],
+	"doors": [[8, 0, 1.4]],
+	"exits": [
+		{"pos": [8, 10], "face": "s", "to": "world:d_tw_plant", "label": "Plant Road"},
+		{"pos": [16, -6], "face": "e", "to": "interior:tw_b2:0", "label": "Freight Elevator — B2", "when": "q.mq_pr2>=30"},
+	],
+	"furn": [["reception", 8, 3.5, 0, {"col": Color(0.2, 0.25, 0.35), "glow": Color(0.35, 0.55, 1.0)}], ["logo_wall", 8, 0.2, 0, {"w": 6.0, "glow": Color(0.35, 0.55, 1.0)}], ["plant", 1, 9, 0], ["plant", 15, 9, 0], ["bench", 2.5, 6.5, 90, {"w": 2.4}], ["poster", 15.85, 5, -90, {"col": Color(0.2, 0.4, 0.8)}],
+		["desk_pc", 3, -10.4, 0], ["desk_pc", 7, -10.4, 0], ["office_desk", 12, -9, 0], ["filing_cabinet", 0.5, -6, 90], ["filing_cabinet", 0.5, -5, 90], ["filing_cabinet", 0.5, -4, 90], ["server_rack", 15.4, -10.8, -90, {"led": Color(0.35, 0.55, 1.0)}], ["whiteboard", 8, -11.85, 0], ["water_cooler", 15.4, -2.0, -90], ["elevator", 15.7, -6, -90]],
+	"spots": [
+		{"id": "plant_poster", "kind": "text", "title": "Lobby Poster", "verb": "Read", "pos": [15.8, 1.6, 5.0], "size": [0.3, 1.2, 1.4], "text": "'WASHINGTON TOWNSHIP ENERGY: 30 YEARS OF REMEDIATION.' A photo of a smiling family having a picnic on very green grass, with the stacks behind them, softly out of focus. In the corner, the E Corp logo and the line: 'Powering Communities.'"},
+		{"id": "plant_term", "kind": "terminal", "title": "Plant Operations Terminal", "verb": "Use", "pos": [3.0, 1.1, -10.4], "size": [1.4, 1.2, 0.9], "hack": 40, "header": "WTE-OPS-01  //  E CORP WASHINGTON TOWNSHIP ENERGY", "welcome": "Operations, compliance, community relations, retiree benefits. One login for all of it. Thirty years of a plant that officially closed in 1994.",
+			"entries": [
+				{"title": "Discharge log, 1994 – present", "text": "Nightly discharge to Retention Pond 3: eleven thousand gallons on a quiet night, forty thousand on a busy one. Every entry signed off 'within remediation parameters' by a plant manager, every month, for thirty-one years. None of it ever filed with the state. You copy all of it.", "fx": "give discharge_logs 1 ; set tw_logs ; quest sq_tw2 40", "when": "q.sq_tw2>=20 & !flag.tw_logs"},
+				{"title": "Discharge log, 1994 – present", "text": "Nightly volumes into Retention Pond 3, thirty-one years of them, signed 'within remediation parameters.' You already have a copy. You read it again anyway. It doesn't get better.", "when": "flag.tw_logs | !q.sq_tw2>=20"},
+				{"title": "Community relations ledger", "text": "Festival sponsorships. A new scoreboard for the high school. And a monthly line item, $2,500, since 2014: 'D. BRANDT — COMMUNITY SAFETY LIAISON.' The sheriff's salary, from the county, is $3,100 a month.", "fx": "set brandt_paid ; quest sq_brandt 10", "when": "!q.sq_brandt.started"},
+				{"title": "Community relations ledger", "text": "Festival sponsorships, a scoreboard, and the sheriff's monthly envelope. $2,500. Like clockwork.", "when": "q.sq_brandt.started"},
+				{"title": "Retiree benefits: claim queue", "text": "Two hundred and twelve claims from plant retirees in the last five years. Two hundred and nine denied. The reason code is always the same: PRE-EXISTING CONDITION. The condition, if you read the medical attachments, is always some kind of cancer. The 'pre-existing' is always the plant."},
+				{"title": "Freight elevator access log", "text": "Freight elevator to Sublevel B2: two hundred and fourteen trips this month, all between one and four in the morning. Badge holder: 'CONTRACTOR — CONSULTING (OVERSEAS).' You pull up the building drawings. There is no Sublevel B2.", "fx": "set knows_b2"},
+			],
+			"actions": [
+				{"title": "Overturn claim #4471-C: Henry Coyle, 31 years, 'pre-existing condition'", "result": "Claim #4471-C: APPROVED. Full coverage, retroactive to the diagnosis, reason code 'occupational exposure (acknowledged).' You set the acknowledgement flag that legal has never once let anyone set. Hank Coyle's treatment starts Monday, and somewhere in E Corp a liability model just ticked upward.", "fx": "set hank_approved ; quest sq_bev 30 ; xp 100", "when": "q.sq_bev>=10 & !flag.hank_approved"},
+				{"title": "Approve every pending retiree claim at once", "result": "Two hundred and twelve claims, approved, acknowledged, retroactive. The benefits system emails two hundred and twelve families at 3 AM. By breakfast the Township Diner is full of people reading their phones and crying into their eggs. E Corp's lawyers will spend years trying to un-send it.", "fx": "set hank_approved ; set tw_claims_all ; quest sq_bev 30 ; fame locals 4 ; infamy ecorp 3 ; xp 160", "when": "q.sq_bev>=10 & !flag.tw_claims_all & skill.hacking>=50"},
+			]},
+	],
+},
+"tw_b2": {
+	"name": "Sublevel B2", "amb": "interior", "ambient": Color(0.22, 0.24, 0.3), "restricted": "darkarmy", "allowed_when": "q.mq_pr2>=30 & !flag.pr_machine_drowned",
+	"rooms": [{"r": [0, 0, 30, 20], "h": 7.0, "wall": W_DARK, "floor": F_CONCRETE, "light": Color(0.75, 0.8, 1.0), "energy": 0.85, "lights": [[6, 6.6, 5], [15, 6.6, 5], [24, 6.6, 5], [6, 6.6, 15], [15, 6.6, 15], [24, 6.6, 15]]}],
+	"exits": [{"pos": [0, 10], "face": "w", "to": "interior:tw_plant:1", "label": "Freight Elevator — Up"}],
+	"furn": [["server_rack", 4, 1.2, 0, {"led": Color(1.0, 1.0, 1.0)}], ["server_rack", 6, 1.2, 0, {"led": Color(1.0, 1.0, 1.0)}], ["server_rack", 8, 1.2, 0, {"led": Color(1.0, 1.0, 1.0)}], ["server_rack", 22, 1.2, 0, {"led": Color(1.0, 1.0, 1.0)}], ["server_rack", 24, 1.2, 0, {"led": Color(1.0, 1.0, 1.0)}], ["server_rack", 26, 1.2, 0, {"led": Color(1.0, 1.0, 1.0)}],
+		["server_rack", 4, 18.8, 180, {"led": Color(1.0, 1.0, 1.0)}], ["server_rack", 6, 18.8, 180, {"led": Color(1.0, 1.0, 1.0)}], ["server_rack", 8, 18.8, 180, {"led": Color(1.0, 1.0, 1.0)}], ["server_rack", 22, 18.8, 180, {"led": Color(1.0, 1.0, 1.0)}], ["server_rack", 24, 18.8, 180, {"led": Color(1.0, 1.0, 1.0)}], ["server_rack", 26, 18.8, 180, {"led": Color(1.0, 1.0, 1.0)}],
+		["tape_library", 13, 8.5, 0], ["tape_library", 17, 8.5, 0], ["tape_library", 13, 11.5, 180], ["tape_library", 17, 11.5, 180], ["monitor_wall", 15, 0.4, 0], ["climate_unit", 29.4, 4, -90], ["climate_unit", 29.4, 16, -90], ["desk_pc", 27.5, 10, -90], ["crate", 2, 15, 0], ["crate", 2, 16.5, 0], ["boxes", 10, 16, 0], ["grandfather_clock", 29.5, 10, -90]],
+	"spots": [
+		{"id": "b2_machine", "kind": "convo", "title": "The Machine", "verb": "Look", "pos": [15.0, 1.6, 10.0], "size": [6.0, 3.2, 5.0], "convo": "b2_machine", "when": "q.mq_pr2>=40"},
+		{"id": "b2_console", "kind": "terminal", "title": "B2 Bridge Console", "verb": "Use", "pos": [27.5, 1.2, 10.0], "size": [1.0, 1.4, 1.4], "hack": 60, "when": "q.mq_pr3>=10", "header": "WR-PROJECT // NODE: WASHINGTON TOWNSHIP // BRIDGE", "welcome": "One prompt, blinking. Somebody configured this console to be operated by exactly one person, and left it unlocked for you.",
+			"entries": [
+				{"title": "What the machine does", "text": "Pages of physics you half understand and a summary line you understand completely: 'Phase alignment with the 1993 baseline.' Underneath, a note in an elegant hand: 'Washington Township is not where this ends. It is where it began. That is why it must be here.'"},
+				{"title": "Power budget", "text": "The machine draws more power than the township, the county and half of New Jersey together. The plant's stacks were never remediating anything. They were warming up."},
+			],
+			"actions": [
+				{"title": "Bridge the network: let Whiterose finish her machine", "result": "You type the bridge command and the room exhales. Every rack goes from white to gold. The grandfather clock in the corner stops, then starts again, a second slower. Somewhere upstairs the stacks begin to breathe. Whatever happens next happens on her schedule now. It always did.", "fx": "set pr_machine_on ; set pr_done ; quest mq_pr3 20 ; trust whiterose 4 ; fame darkarmy 6 ; xp 220", "when": "!flag.pr_done"},
+				{"title": "Open the pond: drown B2 with thirty years of Retention Pond 3", "result": "You open every valve the plant has. Thirty-one years of discharge, warm and grey-green, comes down the cable trays and pools around the racks. The white lights go amber, then red, then out, one row at a time. Somewhere behind you somebody starts shouting in Mandarin. Run.", "fx": "set pr_machine_drowned ; set pr_done ; quest mq_pr3 20 ; infamy darkarmy 8 ; fame locals 5 ; stab 3 ; xp 240", "when": "!flag.pr_done"},
+				{"title": "Copy the schematics and walk away", "result": "You copy everything to a drive the size of your thumbnail and leave the machine exactly as it was. It hums at you. It doesn't care. Somewhere, somebody who understands physics better than either of you is going to read this, and decide.", "fx": "give project_schematics 1 ; set pr_copied_plans ; set pr_done ; quest mq_pr3 20 ; xp 200", "when": "!flag.pr_done"},
+			]},
+	],
+},
+"tw_hangar": {
+	"name": "Kearney Strip — Hangar", "amb": "interior", "ambient": Color(0.42, 0.4, 0.36),
+	"rooms": [{"r": [0, 0, 12, 9], "h": 4.0, "wall": Color(0.55, 0.56, 0.58), "floor": F_CONCRETE, "light": Color(1.0, 0.9, 0.7), "energy": 1.0, "lights": [[6, 3.6, 4.5]]}],
+	"exits": [{"pos": [12, 4.5], "face": "e", "to": "world:d_tw_hangar", "label": "The Strip"}],
+	"furn": [["lab_bench", 6, 0.6, 0], ["shelf_industrial", 0.5, 2.5, 90], ["shelf_industrial", 0.5, 5.5, 90], ["mattress", 2.5, 8.0, 0], ["crate", 10.5, 8.0, 0], ["boxes", 9.0, 8.2, 0], ["desk", 9.5, 1.0, 0], ["chair", 9.5, 2.0, 180], ["coffee_machine", 11.4, 0.6, 0], ["poster", 6.0, 0.15, 0, {"col": Color(0.7, 0.5, 0.2)}], ["radiator", 0.3, 7.0, 90]],
+	"containers": [{"id": "tw_hangar_locker", "title": "Walt's Locker", "pos": [10.5, 8.0], "y": 0.5, "size": [1.0, 1.0, 1.0], "items": {"first_aid": 1, "bandages": 2, "coffee": 2}, "owner": "locals", "owner_ok": "q.sq_tw1.done"}],
+	"spots": [
+		{"id": "walt_photos", "kind": "text", "title": "Photos Over the Bench", "verb": "Look", "pos": [6.0, 1.7, 0.4], "size": [2.0, 1.0, 0.3], "text": "A woman laughing in the open cockpit of a yellow biplane, goggles pushed up. A boy of six in the pilot's seat of the same plane, both hands on the stick, enormously serious. ANNE '93. BILLY '93. Under the photos, a calendar from 1994 that nobody ever turned past October."},
+		{"id": "walt_cot", "kind": "bed", "title": "Cot", "verb": "Sleep", "pos": [2.5, 0.4, 8.0], "size": [1.8, 0.8, 2.2], "when": "q.sq_tw1.done"},
+	],
+},
+"tw_moss": {
+	"name": "The Moss House", "amb": "interior", "ambient": Color(0.26, 0.24, 0.24),
+	"rooms": [
+		{"r": [0, 0, 8, 7], "h": 2.7, "wall": Color(0.5, 0.46, 0.4), "floor": F_WOOD, "light": Color(0.7, 0.75, 0.85), "energy": 0.55, "lights": [[4, 2.4, 3.5]]},
+		{"r": [8, 0, 13, 7], "h": 2.7, "wall": Color(0.55, 0.45, 0.6), "floor": F_CARPET, "light": Color(0.7, 0.72, 0.85), "energy": 0.5, "lights": [[10.5, 2.4, 3.5]]},
+	],
+	"doors": [[8, 3.5, 1.0]],
+	"exits": [{"pos": [4, 7], "face": "s", "to": "world:d_tw_moss", "label": "Front Door"}],
+	"furn": [["sofa", 2.0, 1.2, 0, {"col": Color(0.4, 0.35, 0.3)}], ["tv", 2.0, 4.4, 180], ["coffee_table", 2.0, 2.8, 0], ["bookshelf", 7.5, 1.0, -90], ["boxes", 6.0, 6.0, 0], ["trash_pile", 0.8, 6.2, 0], ["kitchen", 5.5, 0.4, 0], ["fridge", 7.4, 0.5, 0],
+		["bed", 11.5, 2.0, -90, {"col": Color(0.6, 0.4, 0.65)}], ["dresser", 9.0, 6.4, 180], ["wardrobe", 12.5, 6.0, -90], ["poster", 12.85, 3.0, -90, {"col": Color(0.6, 0.2, 0.6)}], ["lamp", 9.0, 0.6, 0]],
+	"containers": [{"id": "moss_closet", "title": "Angela's Closet", "pos": [12.4, 6.0], "y": 1.0, "size": [0.8, 2.0, 1.4], "items": {"moss_box": 1}, "owner_ok": "true", "fx_open": "quest sq_moss 30"}],
+	"spots": [
+		{"id": "moss_fridge", "kind": "text", "title": "Fridge Door", "verb": "Look", "pos": [7.4, 1.4, 0.9], "size": [0.8, 1.2, 0.3], "text": "A calendar held up by a ladybug magnet: October 1993. 'Angela — dentist.' 'Emily — Dr. Price, oncology, 2:30.' 'Bake sale!!' Nothing after the 19th. A child's drawing of a house with a big yellow sun and three stick figures. The smallest one is labelled ME."},
+		{"id": "moss_window", "kind": "text", "title": "Window", "verb": "Look", "pos": [10.5, 1.5, 0.3], "size": [1.2, 1.0, 0.3], "text": "From Angela's old window you can see over the backyards all the way to the stacks. When you were little the two of you used to count the blinking red lights on top and make wishes. Angela always wished for a horse. You never told her what you wished for. You don't remember now. That might be a mercy."},
+	],
+},
+# ============================================================ PORT RAMSEY
+"pt_bar": {
+	"name": "The Barnacle", "amb": "jazz", "ambient": Color(0.32, 0.3, 0.3),
+	"rooms": [{"r": [0, 0, 16, 9], "h": 3.2, "wall": Color(0.25, 0.28, 0.3), "floor": F_WOOD, "light": Color(1.0, 0.78, 0.55), "energy": 0.9, "lights": [[4, 2.9, 4.5], [12, 2.9, 4.5]]}],
+	"exits": [{"pos": [8, 9], "face": "s", "to": "world:d_pt_bar", "label": "Water Street"}],
+	"furn": [["bar_counter", 8, 1.4, 0, {"w": 9.0, "neon": Color(0.3, 0.8, 1.0)}], ["bar_shelf", 8, 0.3, 0], ["stool", 5, 2.6, 0], ["stool", 7, 2.6, 0], ["stool", 9, 2.6, 0], ["stool", 11, 2.6, 0], ["booth", 2.0, 7.4, 0, {"col": Color(0.15, 0.25, 0.35)}], ["booth", 12.0, 7.4, 0, {"col": Color(0.15, 0.25, 0.35)}], ["pool_table", 6.5, 6.0, 0], ["jukebox", 15.4, 3.0, -90], ["fishtank", 0.6, 3.0, 90], ["poster", 15.85, 6.0, -90, {"col": Color(0.2, 0.3, 0.6)}]],
+	"spots": [
+		{"id": "pt_bar_shop", "kind": "shop", "title": "Bar", "verb": "Order", "pos": [8, 1, 2.4], "size": [9, 2, 1.2], "shop": "gen_bar"},
+		{"id": "pt_bar_wall", "kind": "text", "title": "Wall of Boats", "verb": "Look", "pos": [15.8, 1.6, 6.0], "size": [0.3, 1.2, 2.0], "text": "Photos of every boat that ever fished out of Port Ramsey, and a brass plate under the ones that didn't come back. The newest photo isn't a boat. It's a glossy E Corp Logistics brochure, 'NEW BERTHS, NEW JOBS, NEW RAMSEY,' pinned up with a fish hook through the CEO's forehead."},
+	],
+},
+"pt_inn": {
+	"name": "Harbor Light Inn", "amb": "interior", "ambient": Color(0.38, 0.34, 0.3),
+	"rooms": [
+		{"r": [0, 0, 8, 6], "h": 2.9, "wall": Color(0.7, 0.66, 0.58), "floor": F_WOOD, "light": Color(1.0, 0.85, 0.65), "energy": 1.0, "lights": [[4, 2.6, 3]]},
+		{"r": [0, 6, 8, 12], "h": 2.7, "wall": Color(0.55, 0.62, 0.68), "floor": F_CARPET, "light": Color(1.0, 0.85, 0.65), "energy": 0.85, "lights": [[4, 2.4, 9]]},
+	],
+	"doors": [[4, 6, 1.2]],
+	"exits": [{"pos": [4, 0], "face": "n", "to": "world:d_pt_inn", "label": "Front Street"}],
+	"furn": [["counter", 5.5, 2.4, 0, {"w": 3.0}], ["register", 6.2, 2.3, 0], ["armchair", 1.2, 4.6, 90], ["plant", 0.6, 0.6, 0], ["poster", 0.15, 2.5, 90, {"col": Color(0.2, 0.4, 0.6)}], ["bed_double", 2.2, 10.0, 0, {"col": Color(0.25, 0.4, 0.55)}], ["dresser", 7.3, 8.5, -90], ["window", 4, 11.85, 180, {"w": 1.6}], ["lamp", 0.6, 7.0, 0]],
+	"spots": [
+		{"id": "pt_inn_bed", "kind": "bed", "title": "Room 3", "verb": "Sleep", "pos": [2.2, 0.6, 10.0], "size": [1.8, 1, 2.2]},
+		{"id": "pt_inn_register", "kind": "text", "title": "Guest Register", "verb": "Read", "pos": [5.5, 1.1, 2.4], "size": [1.2, 0.5, 0.8], "text": "Mostly truckers and E Corp Logistics contractors. Six guests in the last month signed in with the same company name, 'Ocean Bright Consulting,' paid cash, and checked out at one in the morning. Every one of them wrote their name in the same careful block capitals, like people who learned the alphabet as adults, or in another one."},
+	],
+},
+"pt_terminal": {
+	"name": "E Corp Logistics — Terminal Office", "amb": "office", "ambient": Color(0.4, 0.42, 0.46), "restricted": "ecorp", "allowed_when": "disguise.ecorp | day & !flag.pt_alarm",
+	"rooms": [
+		{"r": [0, 0, 14, 8], "h": 3.4, "wall": Color(0.5, 0.54, 0.58), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.85, 0.9, 1.0), "energy": 1.05, "lights": [[7, 3.1, 4]]},
+		{"r": [14, 0, 24, 8], "h": 3.2, "wall": Color(0.45, 0.47, 0.5), "floor": F_CARPET, "light": Color(0.8, 0.85, 0.95), "energy": 0.9, "lights": [[19, 2.9, 4]]},
+	],
+	"doors": [[14, 4, 1.4]],
+	"exits": [{"pos": [7, 8], "face": "s", "to": "world:d_pt_terminal", "label": "The Docks"}],
+	"furn": [["reception", 7, 2.5, 0, {"col": Color(0.2, 0.25, 0.35), "glow": Color(0.35, 0.55, 1.0)}], ["logo_wall", 7, 0.2, 0, {"w": 5.0, "glow": Color(0.35, 0.55, 1.0)}], ["bench", 2, 6.5, 0, {"w": 2.4}], ["plant", 13.2, 7.2, 0], ["monitor_wall", 13.6, 4, -90],
+		["desk_pc", 22, 1.2, 0], ["desk_pc", 18, 1.2, 0], ["filing_cabinet", 23.5, 6.5, -90], ["whiteboard", 19, 7.85, 180], ["coffee_machine", 14.6, 7.2, 90]],
+	"spots": [
+		{"id": "pt_manifest", "kind": "terminal", "title": "Berth Manifest Terminal", "verb": "Use", "pos": [22.0, 1.1, 1.2], "size": [1.4, 1.2, 0.9], "hack": 45, "when": "q.mq_pr1>=20", "header": "ECL-RAMSEY // BERTH CONTROL // MANIFESTS", "welcome": "Every box that touches the quay, where it came from, where it goes, and what it says it is.",
+			"entries": [
+				{"title": "MV Everbright — berth 2 — manifest", "text": "Forty containers. Declared contents: 'turbine parts, refurbished.' Consignee: E Corp Washington Township Energy. Origin: a free-trade zone outside Shenzhen whose registered owner is a holding company whose registered owner is a holding company. Dock scale weights are thirty percent under what turbine parts weigh, and almost exactly what server racks weigh."},
+				{"title": "Customs exceptions", "text": "Every one of the forty boxes waived from inspection under 'critical infrastructure — expedited.' Authorizing official: T. Grieco, Harbormaster. He waived them from a cruise ship off Cozumel, according to the timestamps."},
+				{"title": "Night berth schedule", "text": "Berth 2 is closed to traffic from 00:45 to 01:30 three nights a month. Reason: 'beacon maintenance.' Those are the nights the Ramsey Point light goes dark."},
+			],
+			"actions": [
+				{"title": "Clean the manifest: everything matches, nothing to see (Whiterose's job)", "result": "Weights corrected, declarations tidied, the customs waivers backdated so they were never needed. The Everbright's paperwork is now the most boring document on the eastern seaboard. Whiterose will be pleased. You find you don't like how good you are at this.", "fx": "set pr_clean ; quest mq_pr1 30 ; fame darkarmy 3 ; xp 120", "when": "q.mq_pr1>=20 & !flag.pr_manifest_done"},
+				{"title": "Copy the manifest, then clean it", "result": "First a copy, every page, every weight, every waiver with Grieco's name on it. Then the clean version, perfect and boring. Whiterose gets what she asked for. You keep what she didn't ask about.", "fx": "set pr_clean ; give bill_of_lading 1 ; set pr_copied ; quest mq_pr1 30 ; xp 150", "when": "q.mq_pr1>=20 & !flag.pr_manifest_done"},
+			]},
+	],
+},
+"pt_harbor": {
+	"name": "Harbormaster's Office", "amb": "office", "ambient": Color(0.42, 0.42, 0.44),
+	"rooms": [{"r": [0, 0, 12, 8], "h": 3.0, "wall": Color(0.75, 0.75, 0.72), "floor": F_WOOD, "light": Color(0.95, 0.92, 0.85), "energy": 1.05, "lights": [[6, 2.7, 4]]}],
+	"exits": [{"pos": [12, 4], "face": "e", "to": "world:d_pt_harbor", "label": "The Quay"}],
+	"furn": [["office_desk", 6, 1.2, 0], ["desk_pc", 2, 1.2, 0], ["chair", 6, 2.4, 180], ["filing_cabinet", 0.5, 4, 90], ["filing_cabinet", 0.5, 5, 90], ["window", 11.85, 2, -90, {"w": 1.6}], ["window", 11.85, 6, -90, {"w": 1.6}], ["poster", 6, 7.85, 180, {"col": Color(0.2, 0.35, 0.6)}], ["plant", 0.6, 7.2, 0], ["clock", 0.2, 2.0, 90, {"y": 2.2}]],
+	"spots": [
+		{"id": "harbor_pc", "kind": "terminal", "title": "Harbormaster's Computer", "verb": "Use", "pos": [2.0, 1.1, 1.2], "size": [1.4, 1.2, 0.9], "hack": 35, "header": "PORT OF RAMSEY // HARBORMASTER // T. GRIECO", "welcome": "A desktop wallpaper of Teddy Grieco on a cruise ship deck, holding a drink with an umbrella in it, giving the camera two thumbs up.",
+			"entries": [
+				{"title": "Fishing licenses — revoked", "text": "Every commercial fishing license on the Ramsey coast, forty-four of them, revoked on the same day last April 'for navigational safety during terminal expansion.' The expansion was finished in June. Nobody reinstated them. Ruthie Doyle's is number one. She's held it since 1984."},
+				{"title": "Email: 'consulting'", "text": "From E Corp Logistics, to Grieco's personal address: 'Per our conversation, Ocean Bright Consulting will retain you as harbor liaison, $9,000/month, effective upon resolution of the berth question.' The berth question was resolved the next morning. So were the fishing licenses.", "fx": "set grieco_dirty"},
+				{"title": "Email: 'night berth'", "text": "From an address that's just a string of numbers: 'Three nights a month. No lights, no paper, no questions. You will be on vacation each time. We have booked the cruises already.' Attached: three cruise itineraries. Grieco replied with a single emoji: a thumbs up.", "fx": "set grieco_dirty"},
+			],
+			"actions": [
+				{"title": "Reinstate every fishing license on the coast", "result": "Forty-four licenses, active again, backdated so there's no gap and no fine. The state database syncs at midnight. By dawn there are lights on the water off Ramsey Point for the first time since April.", "fx": "set licenses_back ; quest sq_ruthie 30 ; fame locals 4 ; xp 120", "when": "q.sq_ruthie>=10 & !flag.licenses_back"},
+				{"title": "Forward Grieco's whole inbox to the state Attorney General", "result": "Every email, every itinerary, every thumbs-up. The Attorney General's office has a tip line that nobody reads and an intake address that somebody does. Grieco is placed on administrative leave on Thursday. He goes on a cruise. This one he pays for.", "fx": "set grieco_gone ; infamy ecorp 2 ; fame locals 2 ; xp 90", "when": "flag.grieco_dirty & !flag.grieco_gone"},
+			]},
+	],
+},
+"pt_lighthouse": {
+	"name": "Ramsey Point Light", "amb": "interior", "ambient": Color(0.38, 0.38, 0.4),
+	"rooms": [
+		{"r": [0, 0, 8, 6], "h": 2.8, "wall": Color(0.85, 0.85, 0.82), "floor": F_WOOD, "light": Color(1.0, 0.86, 0.62), "energy": 1.0, "lights": [[4, 2.5, 3]]},
+		{"r": [8, 0, 13, 6], "h": 3.2, "wall": Color(0.4, 0.4, 0.42), "floor": F_CONCRETE, "light": Color(1.0, 0.95, 0.75), "energy": 1.1, "lights": [[10.5, 2.9, 3]]},
+	],
+	"doors": [[8, 3, 1.0]],
+	"exits": [{"pos": [0, 3], "face": "w", "to": "world:d_pt_lighthouse", "label": "The Jetty"}],
+	"furn": [["bed", 1.2, 4.6, 90, {"col": Color(0.3, 0.35, 0.5)}], ["kitchen", 5.0, 0.4, 0], ["table", 4.5, 3.6, 0, {"w": 1.4, "d": 1.0}], ["chair", 4.5, 4.4, 180], ["bookshelf", 7.5, 4.8, -90], ["grandfather_clock", 7.6, 1.2, -90], ["radiator", 0.3, 1.2, 90], ["stairs_up", 12.0, 5.0, 0], ["server_rack", 12.4, 1.0, -90, {"led": Color(0.35, 0.55, 1.0)}], ["window", 10.5, 0.15, 0, {"w": 1.6}]],
+	"spots": [
+		{"id": "keeper_log", "kind": "text", "title": "Keeper's Log", "verb": "Read", "pos": [4.5, 1.0, 3.6], "size": [1.2, 0.5, 0.8], "text": "Fifty-one years of entries in neat pencil. 'Fog. Horn on at 4. Miss Ruthie in at 6, good catch, she says.' Weather, ships, birds. And three new entries this month, written harder than the rest, the pencil nearly through the page: 'Dark ship. No name, no flag, no lights. Berth 2. 1:05 AM. The lamp was OFF. I did not turn it off.'", "fx": "set read_keeper_log"},
+		{"id": "beacon_ctl", "kind": "terminal", "title": "Smart Beacon Controller", "verb": "Use", "pos": [12.4, 1.2, 1.0], "size": [0.9, 1.6, 1.0], "hack": 30, "header": "E CORP SMART BEACON v2.1 // RAMSEY POINT", "welcome": "Navigation light, now with remote scheduling, cloud telemetry, and an end-user license agreement for a lighthouse.",
+			"entries": [
+				{"title": "Beacon schedule", "text": "BEACON OFF 00:45 – 01:30. Requested by: E Corp Logistics, berth control. Recurrence: 'as needed.' Notes: 'Do not notify keeper.' There is a keeper. He's been here since before the beacon was invented.", "fx": "set beacon_schedule"},
+			],
+			"actions": [
+				{"title": "Put the light back on manual, permanently", "result": "You pull the smart controller out of the circuit and wire the lamp the way it was wired in 1962: a switch on the wall, a man who flips it. The cloud dashboard shows RAMSEY POINT: OFFLINE. The light shows the sea. Silas is going to cry. Leave before he does; he'd hate you to see it.", "fx": "set silas_lamp ; quest sq_keeper 30 ; fame locals 3 ; xp 100", "when": "q.sq_keeper>=10 & !flag.silas_lamp"},
+			]},
+		{"id": "keeper_bed", "kind": "bed", "title": "Keeper's Bunk", "verb": "Sleep", "pos": [1.2, 0.5, 4.6], "size": [2.2, 0.8, 1.0], "when": "flag.silas_lamp"},
+	],
+},
+"pt_cannery": {
+	"name": "Ocean Bright Cannery", "amb": "interior", "ambient": Color(0.26, 0.26, 0.28), "restricted": "darkarmy", "allowed_when": "day & !flag.pt_cannery_alarm",
+	"rooms": [{"r": [0, 0, 30, 16], "h": 7.0, "wall": W_CONCRETE, "floor": F_CONCRETE, "light": Color(0.8, 0.85, 0.9), "energy": 0.75, "lights": [[6, 6.5, 8], [15, 6.5, 8], [24, 6.5, 8]]}],
+	"exits": [{"pos": [15, 16], "face": "s", "to": "world:d_pt_cannery", "label": "Cannery Row"}],
+	"furn": [["container_a", 5, 3, 90], ["container_b", 12, 3, 90], ["container_a", 19, 3, 90], ["crate", 25, 2, 0], ["crate", 26.2, 2, 0], ["crate", 25.6, 3.2, 0], ["shelf_industrial", 29.5, 8, -90], ["shelf_industrial", 29.5, 11, -90], ["lab_bench", 8, 12, 0], ["boxes", 3, 13, 0], ["boxes", 4.5, 13.5, 0], ["whiteboard", 0.2, 8, 90], ["trash_pile", 27, 14, 0]],
+	"containers": [
+		{"id": "cannery_crate", "title": "Export Crate", "pos": [25.6, 2.6], "y": 0.6, "size": [2.0, 1.2, 2.0], "items": {"hard_drive": 2, "scrap_electronics": 3}, "owner": "darkarmy", "lock": 35},
+	],
+	"spots": [
+		{"id": "cannery_board", "kind": "text", "title": "Dispatch Board", "verb": "Read", "pos": [0.2, 1.6, 8.0], "size": [0.3, 1.2, 2.0], "text": "A whiteboard in two languages. Every night at 01:00: one container, one box truck, one driver, one destination, written the same way every time: 'WTE — DOCK 3 — B2.' Washington Township Energy. Somebody has drawn a tiny white rose in the corner, then rubbed it out with a thumb, not quite well enough.", "fx": "set pr_dispatch ; quest mq_pr1 50"},
+		{"id": "cannery_rack", "kind": "text", "title": "Open Container", "verb": "Look", "pos": [12, 1.5, 3], "size": [2.6, 2.6, 6.0], "text": "Not turbine parts. Server racks, still in foam, white bezels with no logo at all, and a cable trunk as thick as your leg coiled on a pallet. A packing slip with nothing on it but a serial number and a date in 1993."},
+	],
+},
+"pt_hangar": {
+	"name": "Ramsey Field — Office", "amb": "office", "ambient": Color(0.44, 0.44, 0.42),
+	"rooms": [{"r": [0, 0, 10, 8], "h": 3.2, "wall": Color(0.6, 0.62, 0.6), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.95, 0.92, 0.82), "energy": 1.05, "lights": [[5, 2.9, 4]]}],
+	"exits": [{"pos": [10, 4], "face": "e", "to": "world:d_pt_hangar", "label": "Airport Road"}],
+	"furn": [["counter", 5, 1.4, 0, {"w": 4.0}], ["desk_pc", 1.5, 1.5, 90], ["bench", 2, 6.5, 0, {"w": 2.4}], ["coffee_machine", 9.4, 0.6, 0], ["poster", 0.15, 4, 90, {"col": Color(0.2, 0.5, 0.8)}], ["plant", 9.4, 7.2, 0], ["window", 5, 7.85, 180, {"w": 2.0}]],
+	"spots": [
+		{"id": "ramsey_log", "kind": "text", "title": "Flight Log", "verb": "Read", "pos": [5.0, 1.1, 1.4], "size": [1.6, 0.6, 0.8], "text": "Ramsey Field. One runway, one office, one Marisol. The logbook: 'N1961K, Kearney Strip, Rx run, Walt.' Every Tuesday for two years in the same capitals. Then three Tuesdays with nothing. Then, under the last one, in Marisol's hand: 'Walt? Call me.'"},
+		{"id": "ramsey_weather", "kind": "text", "title": "Weather Terminal", "verb": "Check", "pos": [1.5, 1.1, 1.5], "size": [1.0, 1.0, 1.0], "text": "Wind off the ocean, ten knots. Visibility good. West over I-80 to Kearney Strip in Washington Township: one airspace over and then another. Follow the county road; it runs straight there. North-west to Chicago, south-west to New York."},
+	],
+},
 "rockstarved_hq": {
 	"name": "Rockstarved Games — Floor 88", "amb": "office", "ambient": Color(0.34, 0.3, 0.3), "restricted": "ecorp", "allowed_when": "item.rs_badge>=1 & !flag.rs_alarm",
 	"rooms": [

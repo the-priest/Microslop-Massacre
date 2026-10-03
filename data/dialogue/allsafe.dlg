@@ -74,6 +74,7 @@ ELLIOT (V.O.): I did this. Or I let it be done. In the Rose Garden it felt like 
 
 === angela
 -- start
+? item.moss_box & q.sq_moss>=30 & !q.sq_moss.done -> angela_box
 ? item.colby_archive>=1 & !flag.township_resolved -> colby
 ? flag.knows_angela_plan -> plan
 ? flag.angela_ecorp -> ecorp

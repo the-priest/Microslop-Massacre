@@ -148,6 +148,8 @@ const ITEMS := {
 	"stimpak_street": {"name": "Street Stim", "type": "aid", "value": 55, "fx": {"hp": 45, "focus": 15, "stab": -3}, "desc": "+45 HP, +15 FOCUS, -3 STABILITY. Don't ask what's in it."},
 	# ------------------------------------------------------- job items
 	"job_package": {"name": "Sealed Package", "type": "misc", "value": 0, "quest": true, "desc": "A contract delivery. Don't open it, don't lose it."},
+	"air_cargo": {"name": "Air Freight Crate", "type": "misc", "value": 0, "quest": true, "desc": "A strapped crate with a waybill: an airfield in another town. Land on its runway and stop; the ground crew does the rest."},
+	"haul_crate": {"name": "Long-Haul Crate", "type": "misc", "value": 0, "quest": true, "desc": "A heavy crate with an address in another town on the label. Drive it there. Bring a car with a trunk."},
 	"job_data": {"name": "Encrypted Drive", "type": "misc", "value": 0, "quest": true, "desc": "The data a client paid you to lift. Hand it off to get paid."},
 	"job_item": {"name": "Recovered Property", "type": "misc", "value": 0, "quest": true, "desc": "The thing a client wants back. Payment on delivery."},
 	# ------------------------------------------------------------ quest items
@@ -178,6 +180,14 @@ const ITEMS := {
 	"ecoin_plan": {"name": "E Coin Rollout Deck", "type": "misc", "value": 0, "quest": true, "desc": "Phillip Price's internal plan for E Coin. Slide 9: 'The crisis is the onboarding.'"},
 	"insulin_cooler": {"name": "Insulin Cooler", "type": "misc", "value": 0, "quest": true, "desc": "A white cooler, LENNOX COMMUNITY CLINIC on the lid in marker. Forty vials and two ice packs that are losing the argument with the sun."},
 	"ms_invite": {"name": "Microslop Showcase Invitation", "type": "key", "value": 0, "quest": true, "desc": "Heavy card stock, embossed. 'kennyQA — COMMUNITY VOICE. Floor 101. Please arrive with enthusiasm.' The elevator reads the chip in the corner."},
+	"angela_flowers": {"name": "Angela's Flowers", "type": "misc", "value": 0, "quest": true, "desc": "White lilies from the florist on Avenue B, wrapped in yesterday's Times. A card in Angela's handwriting: 'For Emily Moss. Third row. Mom, I'm sorry I don't come.'"},
+	"pond_sample": {"name": "Pond Sample", "type": "misc", "value": 0, "quest": true, "desc": "A mason jar of Retention Pond 3, grey-green and faintly warm. Walt said bring a jar with a good lid. You understand why now."},
+	"discharge_logs": {"name": "Plant Discharge Logs", "type": "misc", "value": 0, "quest": true, "desc": "Thirty years of 'remediation': nightly discharge volumes into Retention Pond 3, signed off by E Corp, never filed with anyone. The plant was never closed. It just stopped telling people."},
+	"moss_box": {"name": "Angela's Box", "type": "misc", "value": 0, "quest": true, "desc": "A shoebox from the closet of the Moss house. 'ANGELA — KEEP OUT' in purple marker. Mixtapes, a friendship bracelet, a photo of two kids on a swing set. One of them is you."},
+	"rx_crate": {"name": "Prescription Crate", "type": "misc", "value": 0, "quest": true, "desc": "A taped-up banana box of prescriptions, labelled in Walt's capitals: RAMSEY FIELD — FOR MARISOL — KEEP FLAT. Port Ramsey's pharmacy closed in March."},
+	"bill_of_lading": {"name": "Everbright Manifest", "type": "misc", "value": 0, "quest": true, "desc": "MV Everbright, berth 2. Forty containers declared as 'turbine parts' for E Corp Washington Township Energy. The dock scale says they're mostly servers."},
+	"lighthouse_log": {"name": "Keeper's Log", "type": "misc", "value": 0, "quest": true, "desc": "Fifty-one years of ships in Silas Pell's neat pencil. The last month has three entries with no name, no flag, and no lights: 'Dark ship. Berth 2. 1:05 AM.'"},
+	"project_schematics": {"name": "Project Schematics", "type": "misc", "value": 0, "quest": true, "desc": "A drive full of drawings for a machine under Washington Township that nobody can explain, signed with a single character: a white rose."},
 	"rs_badge": {"name": "Rockstarved QA Badge", "type": "key", "value": 0, "quest": true, "desc": "CRUNCH TEAM C. Laminated, never deactivated. Opens the Floor 88 service elevator."},
 	"whale_docs": {"name": "Project Whale Deck", "type": "misc", "value": 0, "quest": true, "desc": "Rockstarved's internal deck on 'whales'. The player is a funnel."},
 	"jet_keys": {"name": "Citation Keys", "type": "key", "value": 0, "quest": true, "desc": "Keys, logbook and a one-dollar lease from Bowery Bay Flight School. The jet in hangar two is legally yours. Gus stamped it himself."},

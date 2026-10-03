@@ -18,7 +18,8 @@ extends Node
 ##   flag, flag>=2, q.id>=20, q.id.done, item.id>=2, skill.speech>=40, cash>=50,
 ##   fame.f>=10, infamy.f, hostile.f, trust.who>=3, perk.id, trait.id,
 ##   companion.id, party>=2 (companions with you), dead.npc, seen.loc, equipped.item, disguise.f, mask, won,
-##   night, day, rain, level>=5, stab<30, hp<50, hour>=20, daynum>=2, chance<30
+##   night, day, rain, level>=5, stab<30, hp<50, hour>=20, daynum>=2, chance<30,
+##   driving.truck / driving.plane / driving.any (what you're at the wheel of)
 
 signal convo_finished(convo_id: String)
 
@@ -349,9 +350,27 @@ func _atom_value(a: Dictionary) -> bool:
 		"equipped": return GS.is_equipped(rest)
 		"disguise": return GS.disguise() == rest
 		"in": return GS.cell == rest or (rest == "subway" and GS.cell.begins_with("subway")) or (rest == "bld" and GS.cell.begins_with("bld:"))
+		"driving": return _driving(rest)
 		"flag": return _cmp(GS.flags.get(rest, false), op, val)
 	push_warning("unknown condition atom: " + key)
 	return false
+
+
+## driving.truck, driving.plane, driving.any: what you're at the wheel of.
+func _driving(what: String) -> bool:
+	if game == null:
+		return false
+	var pl: Variant = game.get("player")
+	if pl == null:
+		return false
+	var dv: Variant = (pl as Node).get("driving")
+	if dv == null or not is_instance_valid(dv):
+		return false
+	if what == "any":
+		return true
+	if dv is Aircraft:
+		return what == "plane" or (dv as Aircraft).model == what
+	return (dv as Vehicle).kind == what
 
 
 # ---------------------------------------------------------------- effects

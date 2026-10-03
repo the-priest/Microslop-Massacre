@@ -190,6 +190,7 @@ ELLIOT (V.O.): It's already rigged. The mountain's dying slow. Nothing left to d
 
 === leon
 -- start
+? in.pt_bar -> leon_port
 ? companion.leon -> comp_leon
 ? flag.met_leon -> again
 LEON: Yo. My man. You look like you're carrying the whole world's problems in that hoodie. Let me tell you something for free, 'cause I'm a giver. You gotta EAT, man. You gotta sit down, order the number four, and just... be a person for twenty minutes. The revolution can wait for the number four.

@@ -18,6 +18,25 @@ const LANDMARKS := {
 		"chi_fbi": {"rect": [130, -340, 220, -260], "h": 60.0, "style": 8, "color": Color(0.45, 0.43, 0.4), "sign": "FEDERAL PLAZA", "sign_col": Color(0.7, 0.8, 1.0), "door": "d_chi_fbi"},
 		"chi_hangar": {"rect": [560, 140, 610, 176], "h": 10.0, "style": 5, "color": Color(0.5, 0.52, 0.55), "sign": "MEIGS FIELD", "sign_col": Color(0.9, 0.9, 0.95), "door": "d_chi_hangar"},
 	},
+	"township": {
+		"tw_diner": {"rect": [20, -40, 52, -8], "h": 7.0, "style": 2, "color": Color(0.76, 0.72, 0.62), "sign": "TOWNSHIP DINER", "sign_col": Color(1.0, 0.4, 0.3), "door": "d_tw_diner", "awning": Color(0.65, 0.1, 0.08)},
+		"tw_law": {"rect": [62, -34, 88, -8], "h": 8.0, "style": 1, "color": Color(0.4, 0.26, 0.2), "sign": "M. HALE · ATTORNEY AT LAW", "sign_col": Color(1.0, 0.85, 0.5), "door": "d_tw_law"},
+		"tw_bar": {"rect": [232, -44, 272, -8], "h": 7.0, "style": 1, "color": Color(0.32, 0.22, 0.18), "sign": "THE SPILLWAY", "sign_col": Color(0.4, 0.8, 1.0), "door": "d_tw_bar", "flicker": true},
+		"tw_sheriff": {"rect": [-130, 8, -86, 40], "h": 8.0, "style": 8, "color": Color(0.55, 0.52, 0.46), "sign": "TOWNSHIP SHERIFF", "sign_col": Color(0.9, 0.9, 1.0), "door": "d_tw_sheriff"},
+		"tw_chapel": {"rect": [180, 10, 208, 48], "h": 10.0, "style": 8, "color": Color(0.58, 0.56, 0.52), "sign": "ST. BRIGID'S", "sign_col": Color(1.0, 0.9, 0.6), "door": "d_tw_chapel", "steeple": true},
+		"tw_plant": {"rect": [-120, -232, -40, -190], "h": 12.0, "style": 8, "color": Color(0.5, 0.52, 0.55), "sign": "E CORP · WASHINGTON TOWNSHIP ENERGY", "sign_col": Color(0.35, 0.55, 1.0), "door": "d_tw_plant"},
+		"tw_hangar": {"rect": [-492, 120, -462, 160], "h": 9.0, "style": 5, "color": Color(0.55, 0.57, 0.6), "sign": "KEARNEY STRIP · EST. 1961", "sign_col": Color(1.0, 0.8, 0.3), "door": "d_tw_hangar"},
+		"tw_moss": {"rect": [326, -40, 340, -16], "h": 6.0, "style": 2, "color": Color(0.7, 0.67, 0.6), "door": "d_tw_moss", "boarded": true, "gable": true},
+	},
+	"port": {
+		"pt_bar": {"rect": [40, -40, 80, -8], "h": 8.0, "style": 1, "color": Color(0.33, 0.29, 0.27), "sign": "THE BARNACLE", "sign_col": Color(0.3, 0.8, 1.0), "door": "d_pt_bar", "awning": Color(0.1, 0.2, 0.35)},
+		"pt_inn": {"rect": [-140, 10, -96, 40], "h": 9.0, "style": 2, "color": Color(0.82, 0.8, 0.74), "sign": "HARBOR LIGHT INN", "sign_col": Color(1.0, 0.75, 0.4), "door": "d_pt_inn"},
+		"pt_terminal": {"rect": [340, -204, 400, -160], "h": 14.0, "style": 8, "color": Color(0.45, 0.47, 0.5), "sign": "E CORP LOGISTICS · TERMINAL OFFICE", "sign_col": Color(0.35, 0.55, 1.0), "door": "d_pt_terminal"},
+		"pt_harbor": {"rect": [592, 96, 626, 132], "h": 8.0, "style": 2, "color": Color(0.82, 0.82, 0.8), "sign": "HARBORMASTER", "sign_col": Color(0.9, 0.95, 1.0), "door": "d_pt_harbor"},
+		"pt_lighthouse": {"rect": [744, -574, 760, -558], "h": 28.0, "style": 2, "color": Color(0.92, 0.92, 0.9), "door": "d_pt_lighthouse", "lighthouse": true},
+		"pt_cannery": {"rect": [-300, 320, -200, 400], "h": 12.0, "style": 5, "color": Color(0.45, 0.4, 0.35), "sign": "OCEAN BRIGHT CANNERY", "sign_col": Color(0.9, 0.5, 0.3), "door": "d_pt_cannery", "flicker": true},
+		"pt_hangar": {"rect": [-680, -150, -652, -110], "h": 8.0, "style": 5, "color": Color(0.55, 0.57, 0.6), "sign": "RAMSEY FIELD", "sign_col": Color(0.9, 0.9, 0.95), "door": "d_pt_hangar"},
+	},
 }
 
 const DOORS := {
@@ -35,6 +54,25 @@ const DOORS := {
 		"d_chi_fbi": {"pos": [175, -260], "face": "s", "interior": "chi_fbi", "name": "Federal Plaza"},
 		"d_chi_hangar": {"pos": [585, 176], "face": "s", "interior": "chi_hangar", "name": "Meigs Field Hangar"},
 	},
+	"township": {
+		"d_tw_diner": {"pos": [36, -8], "face": "s", "interior": "tw_diner", "name": "Township Diner"},
+		"d_tw_law": {"pos": [75, -8], "face": "s", "interior": "tw_law", "name": "Law Office of Margaret Hale"},
+		"d_tw_bar": {"pos": [252, -8], "face": "s", "interior": "tw_bar", "name": "The Spillway"},
+		"d_tw_sheriff": {"pos": [-108, 8], "face": "n", "interior": "tw_sheriff", "name": "Township Sheriff"},
+		"d_tw_chapel": {"pos": [194, 10], "face": "n", "interior": "tw_chapel", "name": "St. Brigid's Church"},
+		"d_tw_plant": {"pos": [-80, -190], "face": "s", "interior": "tw_plant", "name": "E Corp Washington Township Energy"},
+		"d_tw_hangar": {"pos": [-462, 140], "face": "e", "interior": "tw_hangar", "name": "Kearney Strip Hangar"},
+		"d_tw_moss": {"pos": [333, -16], "face": "s", "interior": "tw_moss", "name": "The Moss House", "lock": 25},
+	},
+	"port": {
+		"d_pt_bar": {"pos": [60, -8], "face": "s", "interior": "pt_bar", "name": "The Barnacle"},
+		"d_pt_inn": {"pos": [-118, 10], "face": "n", "interior": "pt_inn", "name": "Harbor Light Inn"},
+		"d_pt_terminal": {"pos": [370, -160], "face": "s", "interior": "pt_terminal", "name": "E Corp Logistics Terminal Office"},
+		"d_pt_harbor": {"pos": [626, 114], "face": "e", "interior": "pt_harbor", "name": "Harbormaster's Office"},
+		"d_pt_lighthouse": {"pos": [744, -566], "face": "w", "interior": "pt_lighthouse", "name": "Ramsey Point Light"},
+		"d_pt_cannery": {"pos": [-250, 400], "face": "s", "interior": "pt_cannery", "name": "Ocean Bright Cannery", "lock": 45, "unlock_when": "q.mq_pr1>=30"},
+		"d_pt_hangar": {"pos": [-652, -130], "face": "e", "interior": "pt_hangar", "name": "Ramsey Field Office"},
+	},
 }
 
 const POIS := {
@@ -48,6 +86,23 @@ const POIS := {
 		"poi_chi_meigs": {"pos": [640, -180], "name": "Meigs Field", "r": 120.0},
 		"poi_chi_lake": {"pos": [760, 300], "name": "Lake Michigan", "r": 80.0},
 		"poi_chi_south": {"pos": [-200, 600], "name": "South Side", "r": 80.0},
+	},
+	"township": {
+		"poi_tw_main": {"pos": [100, 0], "name": "Main Street", "r": 120.0},
+		"poi_tw_plant": {"pos": [-250, -330], "name": "The Plant", "r": 120.0},
+		"poi_tw_pond": {"pos": [-375, -187], "name": "Retention Pond 3", "r": 45.0},
+		"poi_tw_memorial": {"pos": [-75, 286], "name": "Township Memorial", "r": 30.0},
+		"poi_tw_strip": {"pos": [-525, 0], "name": "Kearney Strip", "r": 120.0},
+		"poi_tw_tower": {"pos": [180, -300], "name": "Water Tower", "r": 30.0},
+		"poi_tw_dock": {"pos": [-225, -250], "name": "Plant Loading Dock (Mill St)", "r": 30.0},
+	},
+	"port": {
+		"poi_pt_docks": {"pos": [480, -150], "name": "Ramsey Container Terminal", "r": 150.0},
+		"poi_pt_ship": {"pos": [690, -175], "name": "MV Everbright (berth 2)", "r": 50.0},
+		"poi_pt_light": {"pos": [730, -566], "name": "Ramsey Point Light", "r": 30.0},
+		"poi_pt_old": {"pos": [0, -80], "name": "Old Port", "r": 120.0},
+		"poi_pt_field": {"pos": [-720, -300], "name": "Ramsey Field", "r": 120.0},
+		"poi_pt_cannery": {"pos": [-250, 420], "name": "Ocean Bright Cannery", "r": 50.0},
 	},
 }
 
@@ -80,7 +135,7 @@ static func gate_toward(from: String, to: String) -> String:
 	for gid in Regions.GATES.get(from, {}).keys():
 		if str(Regions.GATES[from][gid]["to"][0]) == to:
 			return str(gid)
-	# Two hops via the highway (NYC <-> Chicago).
+	# Two hops via the highway (NYC <-> Chicago, or any town off I-80).
 	for gid in Regions.GATES.get(from, {}).keys():
 		var mid := str(Regions.GATES[from][gid]["to"][0])
 		for gid2 in Regions.GATES.get(mid, {}).keys():

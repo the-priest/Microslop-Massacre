@@ -45,6 +45,20 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       brightness setting; validator clean on every map; `respawn_walk` plays the
       whole arc
 
+- [x] **Pass 4 (the heat):** 1-5 star wanted level, cruisers that route along the
+      streets, roadblocks, the FBI, losing them; Rafi's chop shop; street races
+
+- [x] **Pass 5 (the towns):** two new towns off I-80, each a full map with its own
+      airfield: **Washington Township** (Main Street, houses, the plant, the memorial,
+      Kearney Strip) and **Port Ramsey** (the quay, cranes, a container ship, the
+      cannery, a lighthouse, Ramsey Field). County roads and exit gantries from the
+      interstate, radio calls when you fly in, a five-map world map. Eleven new
+      quests: *Going Home, Night Shift, Paper Rain* (a flown ring course and a
+      landing), *Pre-Existing Condition, Small Town Cop, The Box in the Closet, Air
+      Mail* (fly town to town and land), *No Fishing, The Light*, and the three-part
+      **Project** arc (*Bill of Lading, Night Freight, The Machine*). Air-freight and
+      long-haul jobs between towns. `towns_walk` plays all of it
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

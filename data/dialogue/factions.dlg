@@ -2,6 +2,7 @@
 
 === whiterose
 -- start
+? in.tw_b2 -> whiterose_b2
 ? flag.da_betrayed -> betrayed
 ? q.mq_darkarmy.done -> allied
 ? q.mq_darkarmy>=35 -> waiting

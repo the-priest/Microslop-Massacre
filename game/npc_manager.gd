@@ -36,6 +36,19 @@ func placement(id: String, d: Dictionary) -> Dictionary:
 	return {}
 
 
+## Which map an NPC is on right now: the first spawn whose condition holds,
+## in any region ("" if none). Lets quest markers point at the right road.
+func placement_region(d: Dictionary) -> String:
+	for s in d.get("spawns", []):
+		var sd: Dictionary = s
+		if _cond(str(sd.get("when", ""))):
+			var c := str(sd.get("cell", "world"))
+			if c == "world":
+				return str(sd.get("region", "nyc"))
+			return RegionContent.region_of_interior(c)
+	return ""
+
+
 func refresh(force: bool) -> void:
 	if game == null:
 		return
