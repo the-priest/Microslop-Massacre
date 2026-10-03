@@ -49,8 +49,8 @@ class Car:
 
 
 func _ready() -> void:
-	target_count = Settings.traffic_count()
-	Settings.applied.connect(func() -> void: target_count = Settings.traffic_count())
+	target_count = Settings.traffic_count() if WorldLayout.region != "island" else 0
+	Settings.applied.connect(func() -> void: target_count = Settings.traffic_count() if WorldLayout.region != "island" else 0)
 
 
 func set_active(on: bool) -> void:

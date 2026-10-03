@@ -157,6 +157,8 @@ func _crossing_line(from: String, to: String) -> String:
 			return "Port Ramsey. Half fishing town, half E Corp freight terminal, and the freight half is winning. A lighthouse at the end of a jetty, and a ship the size of a street at berth 2."
 		"gary":
 			return "Gary, Indiana. Cold blast furnaces on the lakeshore, a depot of trucks with nobody in them, and a union hall on Broadway with its lights still on."
+		"island":
+			return "Price Island. Forty acres in the Atlantic, a house nobody lives in, a hill with a door in it, and a gardener who has kept one man's secrets for twenty-two years."
 		"redmont":
 			return "Redmont. Microslop's town: the glass campus on the hill, the company store on Main Street, and the East-1 data center on the shore, drinking the reservoir one chiller at a time."
 	return _loading_tip()
@@ -215,7 +217,10 @@ func _build_world() -> void:
 	var lf := Node3D.new()
 	lf.name = "Landmarks"
 	city_extras.add_child(lf)
-	cb.landmark_far.commit(lf, 6000.0, 6000.0, false)
+	# No distance cutoff: this one mesh holds the map's own set pieces and the
+	# other cities' skylines, so its bounds' centre can be kilometres away
+	# (out on the island it's seven), and a cutoff would hide the lot.
+	cb.landmark_far.commit(lf, 0.0, 0.0, false)
 	# Ferris wheel (rotating rim).
 	if WorldLayout.region == "nyc":
 		ferris = _make_ferris(cb.ferris_center)
@@ -1734,6 +1739,19 @@ func _gate_marker(gid: String) -> Dictionary:
 
 
 ## Which region a marker's destination is on ("" if it's region-agnostic).
+## Somewhere no road goes (the island): point at it across the sky, a few
+## hundred metres out, so the compass shows which way to fly.
+func _toward_by_air(dest: String) -> Dictionary:
+	if not Regions.SKY.has(dest) or player == null:
+		return {}
+	var w := Regions.to_world(dest, (Regions.SKY[dest] as Rect2).get_center())
+	var lp := Regions.to_local(WorldLayout.region, w)
+	var pp := Vector2(player.global_position.x, player.global_position.z)
+	var dir := (lp - pp).normalized()
+	var p := pp + dir * 400.0
+	return {"cell": "world", "pos": Vector3(p.x, 0, p.y)}
+
+
 func _marker_region(m: String) -> String:
 	var cell := ""
 	if m.begins_with("cell:"):
@@ -1800,7 +1818,7 @@ func _marker_target(m: String) -> Dictionary:
 		if dest == WorldLayout.region:
 			return {}
 		var gr := RegionContent.gate_toward(WorldLayout.region, dest)
-		return _gate_marker(gr) if gr != "" else {}
+		return _gate_marker(gr) if gr != "" else _toward_by_air(dest)
 	# If the marker points into another region, steer the player to the gate
 	# that heads there instead of a door that isn't on this map.
 	var mr := _marker_region(m)
@@ -1808,6 +1826,7 @@ func _marker_target(m: String) -> Dictionary:
 		var g := RegionContent.gate_toward(WorldLayout.region, mr)
 		if g != "":
 			return _gate_marker(g)
+		return _toward_by_air(mr)
 	if m.begins_with("npc:"):
 		var id := m.substr(4)
 		var n := npcs.get_npc(id)
@@ -1820,7 +1839,7 @@ func _marker_target(m: String) -> Dictionary:
 		var nr := npcs.placement_region(d)
 		if nr != "" and nr != WorldLayout.region:
 			var g2 := RegionContent.gate_toward(WorldLayout.region, nr)
-			return _gate_marker(g2) if g2 != "" else {}
+			return _gate_marker(g2) if g2 != "" else _toward_by_air(nr)
 		var pl := npcs.placement(id, d)
 		if pl.is_empty():
 			return {}
@@ -2608,6 +2627,11 @@ func _spawn_plane(sid: String, m: String, pos: Vector3, yaw: float) -> Aircraft:
 		a.owner_tag = "lena"
 		a.lock_dc = 35
 		a.locked = not GameState.flags.has("gy_plane_ok")
+	elif sid.begins_with("island_"):
+		# Price's own aircraft. Taking one is exactly as illegal as it sounds.
+		a.owner_tag = "ecorp"
+		a.lock_dc = 60
+		a.locked = true
 	elif sid.begins_with("redmont_"):
 		# Microslop Field: Ines logs every flight as 'proficiency.'
 		a.owner_tag = "ines"
@@ -3059,9 +3083,11 @@ func _airspace_hint() -> String:
 		"township":
 			return "Nothing out that way but fields to the horizon. I-80 is east; follow the county road."
 		"port":
-			return "Open Atlantic. Turn back west for I-80, or north up Route 9 for Redmont."
+			return "Open Atlantic, except for one island, due east. Turn back west for I-80, or north up Route 9 for Redmont."
 		"gary":
 			return "Lake Michigan and nothing else. Chicago is east, Washington Township south."
+		"island":
+			return "Open Atlantic in every direction. Port Ramsey is back west."
 		"redmont":
 			return "Woods and hills, all the way to the horizon, all of it Microslop's. Port Ramsey is south, down Route 9; Chicago is west, across the water."
 	return "Nothing out that way. Turn back."
@@ -3166,6 +3192,7 @@ func _atc_hello(from: String) -> void:
 		"nyc": ["NEW YORK APPROACH", "Aircraft over the Bronx, New York Approach. Bowery Bay is on the Queens waterfront, east of you. Mind the towers. Welcome home."],
 		"township": ["KEARNEY UNICOM", "Kearney traffic, this is Kearney Strip, which is me, Walt. Strip's on the west edge of town, runway north-south, nine hundred metres of it. Water tower's your landmark. Don't land on Main Street, we're having a festival."],
 		"gary": ["GARY TOWER", "Aircraft over the lakeshore, Gary Tower, which is a very grand name for one woman with a radio. Runway's on the east side of town, north-south, past the truck depot. The furnaces are taller than they look. Welcome to Gary."],
+		"island": ["PRICE ISLAND", "Unidentified aircraft, this is private airspace, owned by E Corp, and you are not on the list. Strip is on the west side, north-south. Please state your business. ...Hello? Is anyone up there?"],
 		"redmont": ["MICROSLOP FIELD", "Aircraft over the reservoir, Microslop Field Unicom. Runway's on the east side of town, north-south, past the campus. Corporate traffic has priority. You are not corporate traffic. Welcome to Redmont, where your future is saved."],
 		"port": ["RAMSEY UNICOM", "Aircraft over the county road, Ramsey Field. Runway's on the west side of town, north-south, wind off the water at ten. The cranes are tall and the lighthouse is taller. Welcome to Port Ramsey."],
 	}
@@ -3181,7 +3208,7 @@ func _atc_hello(from: String) -> void:
 ## Fifty fsociety masks, zip-tied to street corners across all six maps. Where
 ## they go is fixed per map (a seeded walk over the intersections), so the
 ## same mask is always on the same corner and saves remember which you took.
-const MASKS_PER := {"nyc": 10, "highway": 5, "chicago": 8, "township": 7, "port": 7, "gary": 8, "redmont": 5}
+const MASKS_PER := {"nyc": 10, "highway": 5, "chicago": 8, "township": 7, "port": 7, "gary": 8, "redmont": 5, "island": 0}
 const MASKS_TOTAL := 50
 
 

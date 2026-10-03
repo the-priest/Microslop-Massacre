@@ -879,6 +879,56 @@ const INTERIORS := {
 		{"id": "rm_field_log", "kind": "text", "title": "Flight Log", "verb": "Read", "pos": [5.0, 1.1, 6.6], "size": [1.6, 0.6, 0.8], "text": "Microslop Field. Executive shuttle to Seattle, twice daily, VP and above. 'Proficiency flights': two a day, logged by I. Calder, destination 'local.' One entry from last spring in different ink: 'Took the left Skyhawk up at sunset to see the reservoir from above. It's so much smaller than they say. — I.'"},
 	],
 },
+# ------------------------------------------------------------ Price Island
+"isl_house": {
+	"name": "The House", "amb": "interior", "ambient": Color(0.44, 0.4, 0.36),
+	"rooms": [
+		{"r": [0, 0, 20, 10], "h": 6.0, "wall": Color(0.88, 0.85, 0.78), "floor": F_WOOD, "light": Color(1.0, 0.92, 0.8), "energy": 1.1, "lights": [[5, 5.6, 5], [15, 5.6, 5]]},
+		{"r": [0, -9, 9, 0], "h": 3.6, "wall": Color(0.36, 0.26, 0.2), "floor": F_CARPET, "light": Color(1.0, 0.85, 0.65), "energy": 0.9, "lights": [[4.5, 3.3, -4.5]]},
+		{"r": [11, -9, 20, 0], "h": 3.0, "wall": W_DARK, "floor": F_CONCRETE, "light": Color(0.9, 0.75, 0.55), "energy": 0.6, "lights": [[15.5, 2.7, -4.5]]},
+	],
+	"doors": [[4.5, 0, 1.6], [15.5, 0, 1.4]],
+	"exits": [{"pos": [10, 10], "face": "s", "to": "world:d_isl_house", "label": "The Lawn"}],
+	"furn": [["sofa", 4, 6.5, 180], ["armchair", 7.5, 6.5, -90], ["coffee_table", 4.5, 5.0, 0], ["rug", 5, 5.5, 0], ["piano", 15, 6.5, 180], ["grandfather_clock", 19.4, 1.0, -90], ["plant", 0.8, 9.2, 0], ["plant", 19.2, 9.2, 0], ["window", 10, 9.85, 180, {"w": 4.0}],
+		["desk", 4.5, -6.5, 0], ["chair", 4.5, -5.5, 180], ["bookshelf", 0.4, -4.5, 90], ["bookshelf", 8.6, -4.5, -90], ["safe", 1.0, -8.3, 0],
+		["shelf_industrial", 12.0, -8.3, 0], ["shelf_industrial", 15.5, -8.3, 0], ["shelf_industrial", 19.0, -8.3, 0], ["crate", 18.5, -1.5, 0]],
+	"containers": [
+		{"id": "isl_cellar", "title": "Wine Racks", "pos": [15.5, -7.8], "y": 1.0, "size": [3.0, 1.8, 0.8], "items": {"whiskey": 3}, "cash": 400, "owner": "ecorp"},
+		{"id": "isl_study_safe", "title": "Study Safe", "pos": [1.0, -8.3], "y": 0.5, "size": [0.9, 0.9, 0.9], "items": {"ark_key": 1}, "cash": 1500, "owner": "ecorp", "lock": 85},
+	],
+	"spots": [
+		{"id": "isl_portrait", "kind": "text", "title": "Portrait", "verb": "Look", "pos": [10.0, 3.0, 0.3], "size": [3.0, 2.0, 0.3], "text": "Phillip Price, in oils, nine feet tall, painted looking slightly past you, at something more important. The brass plate says only PRICE. Under the frame, on the wainscot, very small, someone has scratched: 'he's never even been here.'"},
+		{"id": "isl_desk", "kind": "terminal", "title": "Price's Desk", "verb": "Read", "pos": [4.5, 1.1, -6.6], "size": [1.4, 1.0, 1.0], "hack": 55, "header": "E CORP // OFFICE OF THE CEO // ISLAND TERMINAL", "welcome": "A terminal nobody has logged into in months, and a single unread email pinned to the top.",
+			"entries": [
+				{"title": "Re: the Ark", "text": "'The ledger survives in one place. When the dust settles and the public has been reassured that their debts are gone, we restore it, quietly, account by account, under a new name. People forget what they owed. We never do.' — P.P."},
+				{"title": "Guest list", "text": "Four names in eleven years. Two are senators. One has been crossed out so hard the pen went through the screen protector. The fourth is 'W.R.', with a note: 'never again, she brought her own tea.'"},
+			]},
+	],
+},
+"isl_ark": {
+	"name": "The Ark", "amb": "office", "ambient": Color(0.3, 0.36, 0.42), "restricted": "ecorp", "allowed_when": "item.ark_key & !flag.ark_alarm",
+	"rooms": [
+		{"r": [0, 0, 6, 16], "h": 3.0, "wall": W_CONCRETE, "floor": F_CONCRETE, "light": Color(0.85, 0.9, 1.0), "energy": 0.8, "lights": [[3, 2.7, 4], [3, 2.7, 12]]},
+		{"r": [-8, 16, 14, 32], "h": 4.5, "wall": W_DARK, "floor": F_CONCRETE, "light": Color(0.4, 0.6, 1.0), "energy": 0.85, "lights": [[-2, 4.1, 24], [8, 4.1, 24]]},
+	],
+	"doors": [[3, 16, 2.0]],
+	"exits": [{"pos": [3, 0], "face": "n", "to": "world:d_isl_bunker", "label": "The Hill"}],
+	"furn": [["locker_row", 5.4, 6, -90], ["security_desk", 1.2, 10, 90], ["gun_rack", 5.6, 13, -90],
+		["tape_library", -7.4, 20, 90], ["tape_library", -7.4, 24, 90], ["tape_library", -7.4, 28, 90], ["server_rack", 13.4, 20, -90, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 13.4, 22, -90, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 13.4, 24, -90, {"led": Color(0.35, 0.55, 1.0)}], ["server_rack", 13.4, 26, -90, {"led": Color(0.35, 0.55, 1.0)}],
+		["climate_unit", 3, 31.4, 180], ["desk_pc", 3, 29.8, 180], ["logo_wall", 3, 31.85, 180, {"w": 4.0, "glow": Color(0.35, 0.55, 1.0)}]],
+	"spots": [
+		{"id": "ark_console", "kind": "terminal", "title": "The Ark", "verb": "Use", "pos": [3.0, 1.1, 29.4], "size": [1.4, 1.2, 1.0], "hack": 65, "header": "E CORP // ARK // COLD LEDGER // AIR-GAPPED", "welcome": "One terminal, no network cable, a fan that never stops, and every debt in the world as of the night before the hack.",
+			"entries": [
+				{"title": "Ledger", "text": "4.1 billion accounts. Mortgages, student loans, medical debt, credit cards, payday loans, a 1994 overdraft fee from a bank that no longer exists. Every one marked 'SUSPENDED — RESTORE ON INSTRUCTION.'"},
+				{"title": "Restore plan", "text": "'Phase 1: reconstitute high-value accounts under successor entities. Phase 2: consumer accounts, staggered over 36 months to avoid recognition. Phase 3: interest, backdated.' The plan is dated three weeks after the hack."},
+			],
+			"actions": [
+				{"title": "Wipe the Ark: every record, every tape, the firmware", "result": "You shred the ledger, then the tapes, then the controller firmware so nothing on this island will ever boot again. The fan stops. It's the quietest room you've ever been in. Five/Nine, finished.", "fx": "set ark_wiped ; set ark_alarm ; quest sq_ark 40 ; xp 150", "when": "!flag.ark_wiped & !flag.ark_letters & !flag.ark_fbi"},
+				{"title": "Send every debtor their own record, and the restore plan, then wipe it", "result": "Four billion letters, queued to go out through E Corp's own mail servers the next time this machine touches a network, which will be never, so you carry the queue out on a drive and leave the ledger in pieces. Darlene will know what to do with the letters.", "fx": "set ark_letters ; set ark_alarm ; quest sq_ark 40 ; xp 150", "when": "!flag.ark_wiped & !flag.ark_letters & !flag.ark_fbi"},
+				{"title": "Copy the restore plan for the FBI and leave the ledger sealed", "result": "Agent DiPierro gets a plan, dated, signed, describing a fraud bigger than the hack. The ledger stays where it is, sealed, evidence now instead of a weapon. Whether that's better depends on how much you trust the FBI.", "fx": "set ark_fbi ; set ark_alarm ; quest sq_ark 40 ; xp 120", "when": "!flag.ark_wiped & !flag.ark_letters & !flag.ark_fbi"},
+			]},
+	],
+},
 # The clinics and the small hospitals out of town share one waiting room.
 "clinic_er": {
 	"name": "Emergency Room", "amb": "office", "ambient": Color(0.42, 0.45, 0.47),

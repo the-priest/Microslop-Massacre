@@ -167,6 +167,12 @@ static func slides(ending: String) -> Array:
 		out.append(_s("2290 FORDHAM", "Vince Carbone spent a week trying to get back into his own buildings and a month trying to get back into his own office. The tenants changed nothing about the locks. They did, eventually, let him in to fix the boiler, under supervision."))
 	elif GS.has_flag("rent_fixed"):
 		out.append(_s("2290 FORDHAM", "Carbone fixed the heat, the elevator and the lobby light within the week, and never said why. Carmen Alvarez says it's the first time in twenty years a landlord's been scared of the right thing. She won't say what that is."))
+	if GS.has_flag("ark_wiped"):
+		out.append(_s("THE ARK", "The last copy of the debt ledger died in a bunker on an island nobody lived on. E Corp's restore plan stayed a plan. Graham Oakes looks after the birds there now. The bunker door rusts open."))
+	elif GS.has_flag("ark_letters"):
+		out.append(_s("THE ARK", "Four billion people got a letter: what they had owed, to whom, and E Corp's plan to quietly bill them again. Nobody ever paid a cent of it. The letters are framed on a lot of kitchen walls."))
+	elif GS.has_flag("ark_fbi"):
+		out.append(_s("THE ARK", "The FBI sealed the island and the plan went to a grand jury. The ledger is still down there, evidence now, behind a door with the government's lock on it instead of E Corp's. Some days that feels like enough."))
 	if GS.has_flag("scrip_cashed"):
 		out.append(_s("REDMONT", "Every SlopCredit in Redmont became a dollar one night, and Microslop never managed to turn them back. Dana Okafor bought her daughter's inhaler with a bank card. She still works the register. She smiles at the security dome now."))
 	elif GS.has_flag("scrip_fee"):

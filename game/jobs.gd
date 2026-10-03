@@ -29,6 +29,7 @@ const AIRFIELDS := {
 	"port": ["Ramsey Field", Vector2(-730.0, -300.0)],
 	"gary": ["Gary/Chicago Airport", Vector2(560.0, -300.0)],
 	"redmont": ["Microslop Field", Vector2(560.0, 300.0)],
+	"island": ["Price Island Strip", Vector2(-150.0, 0.0)],
 }
 ## Out-of-town addresses for long hauls: door -> [map, where, interior].
 const HAUL_DOORS := {

@@ -59,6 +59,10 @@ const LANDMARKS := {
 		"rm_clinic": {"rect": [30, 8, 90, 44], "h": 10.0, "style": 2, "color": Color(0.86, 0.88, 0.9), "sign": "REDMONT EMPLOYEE HEALTH", "sign_col": Color(1.0, 0.3, 0.3), "door": "d_rm_clinic", "awning": Color(0.1, 0.45, 0.85)},
 		"rm_hangar": {"rect": [650, 140, 686, 176], "h": 8.0, "style": 5, "color": Color(0.82, 0.84, 0.86), "sign": "MICROSLOP FIELD", "sign_col": Color(0.45, 0.78, 1.0), "door": "d_rm_hangar"},
 	},
+	"island": {
+		"isl_house": {"rect": [75, -185, 145, -145], "h": 10.0, "style": 2, "color": Color(0.92, 0.9, 0.85), "door": "d_isl_house", "stoop": true, "gable": true},
+		"isl_bunker": {"rect": [128, 150, 152, 162], "h": 4.5, "style": 5, "color": Color(0.5, 0.5, 0.48), "door": "d_isl_bunker"},
+	},
 }
 
 const DOORS := {
@@ -117,6 +121,10 @@ const DOORS := {
 		"d_rm_clinic": {"pos": [60, 8], "face": "n", "interior": "clinic_er", "name": "Redmont Employee Health"},
 		"d_rm_hangar": {"pos": [650, 158], "face": "w", "interior": "rm_hangar", "name": "Microslop Field Office"},
 	},
+	"island": {
+		"d_isl_house": {"pos": [110, -145], "face": "s", "interior": "isl_house", "name": "The House"},
+		"d_isl_bunker": {"pos": [140, 150], "face": "n", "interior": "isl_ark", "name": "The Ark", "lock": 95, "key": "ark_key"},
+	},
 }
 
 const POIS := {
@@ -162,6 +170,12 @@ const POIS := {
 		"poi_rm_launch": {"pos": [-720, 300], "name": "Reservoir Boat Launch", "r": 30.0},
 		"poi_rm_field": {"pos": [560, 300], "name": "Microslop Field", "r": 140.0},
 		"poi_rm_checkpoint": {"pos": [-11, 662], "name": "Route 9 Checkpoint", "r": 25.0},
+	},
+	"island": {
+		"poi_isl_strip": {"pos": [-150, 0], "name": "Price Island Strip", "r": 120.0},
+		"poi_isl_house": {"pos": [110, -170], "name": "The House", "r": 60.0},
+		"poi_isl_hill": {"pos": [140, 215], "name": "The Hill", "r": 60.0},
+		"poi_isl_dock": {"pos": [380, 50], "name": "The Dock (LEVERAGE)", "r": 40.0},
 	},
 }
 

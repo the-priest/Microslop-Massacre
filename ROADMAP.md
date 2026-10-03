@@ -107,6 +107,13 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       floatier fall; fourteen ramps on the beach and every airfield, slow motion in the
       air, pay for landing each one, AIR TIME for all of them. `stunt_test`
 
+- [x] **Pass 14 (Price Island):** an eighth map with no road to it, out in the Atlantic
+      east of Port Ramsey: the estate, the house, the hill and its bunker, a dock and a
+      yacht, a grass strip with E Corp's locked aircraft, Price's helicopter. *The Ark*,
+      the last offline copy of the debt ledger. Quest markers point across the sky when
+      no road goes where you're headed; an air race out to the island; the landmark
+      layer is no longer distance-culled by its own far-away skylines. `island_walk`
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

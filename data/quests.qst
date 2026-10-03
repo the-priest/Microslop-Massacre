@@ -365,6 +365,14 @@ Every Microslop computer in the world takes a picture of its own screen every fi
 30 The Recall archive terminal is in the cold room on the top floor @cell:rm_hq:24,-37.6
 40 done
 
+=== sq_ark | The Ark | side | 400 | fsociety
+E Corp keeps one copy of the debt ledger nowhere near a network: in a bunker on Phillip Price's private island, out in the Atlantic past Port Ramsey. Whatever anyone does to E Corp's servers, the Ark can put it all back. No road goes there. No ferry either.
+10 Price Island is out in the Atlantic, east of Port Ramsey. Fly there and land on the island's private strip @region:island
+20 The Ark is in a bunker in the hill behind the house. Graham Oakes, the estate manager, keeps the only other key @npc:graham
+30 The bunker door is in the hill behind the house. The Ark's console is at the bottom @cell:isl_ark:3,29.4
+40 Get off the island before E Corp Security works out what happened. Fly @region:port
+50 done
+
 === sq_cat | Lost | side | 60 | odd
 A woman by the park lost her dog. In this city, that's either nothing or everything.
 10 Find Flipper the dog. Her owner says she loved the pier at Coney Island @cell:world:-30,840

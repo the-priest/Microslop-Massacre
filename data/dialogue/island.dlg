@@ -1,0 +1,78 @@
+### Price Island: Phillip Price's private island off Port Ramsey. No road
+### goes there; you fly in or you don't go. The Ark (E Corp's last offline
+### copy of the debt ledger, in a bunker under the hill), Graham the estate
+### manager, and the people who keep the island running for one man.
+
+=== graham
+-- start
+? q.sq_ark.done -> after
+? item.ark_key -> have
+? flag.graham_met -> again
+> A man in a tweed jacket and rubber boots, clipping roses in the garden behind the house with the concentration of a surgeon. He doesn't look up when you come through the hedge.
+GRAHAM: You came in on the little plane. I heard it. Mr. Price's guests come in on the big one, or by helicopter, or not at all. And you're not on my list. I have a list. It is very short.
+! set graham_met
+-> menu
+-- again
+GRAHAM: Still here. Still not on my list.
+-> menu
+-- menu
+* "What is this place?" -> place
+* [if q.sq_ark>=20] "There's a bunker under the hill. I need the key." -> key
+* "Nice roses." -> roses
+* "I'll be going." -> END
+-- roses
+GRAHAM: They were Mrs. Price's. She hasn't been here in nine years. I keep them anyway. Somebody should keep something here that isn't a secret.
+-> menu
+-- place
+GRAHAM: Mr. Price's retreat. Forty acres, a house with eleven bedrooms he has never slept in, a strip, a dock, a boat he has never sailed, and me. Twenty-two years. I know where every pipe runs and what every room is for, including the ones I am not supposed to know about.
+-> menu
+-- key
+GRAHAM: (He stops clipping.) The Ark. (He says it like the name of a dog that bit someone.) E Corp built it under the hill the year before the hack. When the world's records burned, the Ark didn't. Every debt, every name, every penny. One man has a key. He gave a second one to me, because he doesn't trust anyone who wants anything, and I have never wanted anything. That's what he thinks.
+* [SPEECH 60] "You've kept his secrets twenty-two years. What do they cost you every morning?" -> give | refuse
+* [if cash>=2000] "Two thousand dollars, and you never saw me." -> bribe
+* "Where would a man like you keep a key?" -> where
+-- give
+> He looks at the roses for a long time. Then he takes a brass key on a green ribbon out of his waistcoat pocket and puts it in your palm and closes your fingers over it, like he's giving you something of his mother's.
+GRAHAM: My daughter's a nurse in Trenton. Her student loans were in that ledger. Then they weren't. For a year and a half she's been free, and she doesn't know it's because of people like you. (He goes back to the roses.) The bunker door is behind the house, in the hill. The guards change at the top of the hour. Don't hurt Collins, he's twenty and he's frightened of everything.
+! give ark_key 1 ; quest sq_ark 30 ; trust graham 3 ; xp 80
+-> END
+-- refuse
+GRAHAM: Everything, every morning. And I will pay it again tomorrow. Good day.
+-> END
+-- bribe
+GRAHAM: (He looks at the money like it's slightly dirty.) Mr. Price pays me a great deal more than that to not see things. But he has never once asked how I am. (He takes the key out of his waistcoat and drops it in your hand.) Behind the house, in the hill. Go before I find a reason to change my mind.
+! cash -2000 ; give ark_key 1 ; quest sq_ark 30 ; xp 50
+-> END
+-- where
+GRAHAM: Somewhere a man like me would keep it. (He pats his waistcoat pocket, very lightly, without meaning to, and then looks horrified at his own hand.) Good day.
+! set graham_tell
+-> END
+-- have
+GRAHAM: You have it. Go. The roses and I didn't see you.
+-> END
+-- after
+GRAHAM: The guests stopped coming. Mr. Price sold the island to a conservation trust, they tell me, for one dollar, in a hurry. I'm the caretaker for the birds now. Twenty-two years of keeping one man's secrets, and it turns out I'm much better at birds.
+-> END
+
+=== collins
+-- start
+? q.sq_ark.done -> after
+> A very young man in an E Corp Security polo two sizes too big, standing at the bunker door with a radio, a flashlight and the expression of someone who has rehearsed what to say if anyone ever shows up and has forgotten all of it.
+COLLINS: You can't — I mean, this is a restricted — ma'am? Sir? Are you on the list? Mr. Oakes has a list. Please be on the list.
+* [if item.ark_key] "Graham sent me. Here's his key." -> key
+* [SPEECH 45] "Relax. I'm the auditor. Nobody tells security about the auditor." -> pass | fail
+* "Never mind." -> END
+-- key
+COLLINS: (He sees the green ribbon and visibly deflates with relief.) Mr. Oakes's key. Okay. Okay! Then you're on the list. Probably. The vault's at the bottom. Please don't touch anything that beeps.
+! set collins_ok
+-> END
+-- pass
+COLLINS: An auditor. Right. Of course. They told us about... no, they didn't tell us anything. Okay. The door still needs the key, though. I don't have the key. Nobody gives me anything.
+! set collins_ok
+-> END
+-- fail
+COLLINS: I'm... going to radio this in. (He doesn't. He just holds the radio and looks at you.) Please leave before I find the button.
+-> END
+-- after
+COLLINS: I quit. I'm going to be a park ranger. On this island, actually. For the birds. Mr. Oakes put in a word.
+-> END

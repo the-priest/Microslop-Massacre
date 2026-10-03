@@ -11,11 +11,12 @@ extends RefCounted
 ## Washington Township and another east to Port Ramsey on the coast; north of
 ## the township, on the lake, Gary, Indiana, with I-90 east into Chicago; north
 ## of Port Ramsey, up Route 9 on the reservoir, Microslop's company town of
-## Redmont. Every
+## Redmont; and out in the Atlantic east of Port Ramsey, with no road to it at
+## all, Phillip Price's island. Every
 ## airspace touches its neighbours edge to edge, so a plane flies straight
 ## from one into the next with the same speed, height and heading.
 
-const NAMES := {"nyc": "New York", "highway": "Interstate 80", "chicago": "Chicago", "township": "Washington Township", "port": "Port Ramsey", "gary": "Gary, Indiana", "redmont": "Redmont"}
+const NAMES := {"nyc": "New York", "highway": "Interstate 80", "chicago": "Chicago", "township": "Washington Township", "port": "Port Ramsey", "gary": "Gary, Indiana", "redmont": "Redmont", "island": "Price Island"}
 
 ## Travel gates: drive into one and you're offered the road beyond it.
 ## to = [region, gate id on the other side]. "sign" is the green highway sign.
@@ -79,6 +80,7 @@ const SKY := {
 	"port": Rect2(-1700.0, -900.0, 3400.0, 1800.0),
 	"gary": Rect2(-1700.0, -1465.0, 3480.0, 3000.0),
 	"redmont": Rect2(-1820.0, -1465.0, 3520.0, 3000.0),
+	"island": Rect2(-1600.0, -900.0, 3200.0, 1800.0),
 }
 
 ## Where each map's origin sits in the shared world (x, z). The township and
@@ -91,6 +93,7 @@ const WORLD := {
 	"port": Vector2(3710.0, -3400.0),
 	"gary": Vector2(-4490.0, -5835.0),
 	"redmont": Vector2(3710.0, -5835.0),
+	"island": Vector2(7010.0, -3400.0),
 }
 
 ## Silhouettes you see of a city from the other maps: its centre (local),
@@ -102,6 +105,7 @@ const SKYLINE := {
 	"port": {"c": Vector2(450.0, -100.0), "spread": 260.0, "n": 12, "h": 40.0, "cranes": true},
 	"gary": {"c": Vector2(-200.0, -250.0), "spread": 320.0, "n": 12, "h": 46.0, "furnaces": true},
 	"redmont": {"c": Vector2(120.0, -380.0), "spread": 260.0, "n": 12, "h": 40.0, "campus": true},
+	"island": {"c": Vector2(110.0, -170.0), "spread": 40.0, "n": 2, "h": 14.0, "isle": true},
 }
 
 ## Landing approach per region when you fly in: [x, altitude, z, heading].
@@ -113,6 +117,7 @@ const FLY_IN := {
 	"port": [-720.0, 140.0, 500.0, 0.0],
 	"gary": [560.0, 140.0, 450.0, 0.0],
 	"redmont": [560.0, 140.0, 1000.0, 0.0],
+	"island": [-150.0, 120.0, 700.0, 0.0],
 }
 
 ## Grid and geography for each non-NYC region (overrides WorldLayout).
@@ -171,6 +176,16 @@ const DEFS := {
 		"AIRFIELD": {"bi0": 8, "bi1": 9, "bj0": 5, "bj1": 9}, "RUNWAY_X": 560.0, "RUNWAY_HW": 16.0, "RUNWAY_Z0": 30.0, "RUNWAY_Z1": 580.0,
 		"DISTRICT_NAMES": {"rm_dc": "East-1 Data Center", "rm_campus": "Microslop Campus", "rm_town": "The Commons", "rm_shore": "Reservoir Shore", "rm_homes": "Employee Housing", "airfield": "Microslop Field"},
 	},
+	# Phillip Price's island: a private strip on the west side, the house and
+	# its gardens to the east, a hill with a bunker in it, a dock and a yacht.
+	# No road reaches it. You fly in, or you don't go.
+	"island": {
+		"SEED": 1, "BJ0": 0, "AX0": -300.0, "AXS": 300.0, "NA": 3, "SZ0": -300.0, "SZS": 300.0, "NS": 3,
+		"NBI": 2, "NBJ": 2, "WORLD_X": 330.0, "WORLD_XE": 330.0, "WORLD_ZN": -330.0, "BEACH_Z1": 330.0,
+		"START_POS": Vector3(-105, 0, 120), "START_YAW": 0.0,
+		"AIRFIELD": {"bi0": 0, "bi1": 0, "bj0": 0, "bj1": 1}, "RUNWAY_X": -150.0, "RUNWAY_HW": 15.0, "RUNWAY_Z0": -280.0, "RUNWAY_Z1": 280.0,
+		"DISTRICT_NAMES": {"isl_estate": "The Estate", "isl_hill": "The Hill", "airfield": "Price Island Strip"},
+	},
 }
 
 ## Off: the NYC-only set pieces (Central Park, Coney, Steel Mountain, Fort Tryon).
@@ -225,6 +240,8 @@ static func district(region: String, bi: int, bj: int) -> String:
 			if bj <= 5 and bi <= 6:
 				return "rm_town"
 			return "rm_homes"
+		"island":
+			return "isl_estate" if bj == 0 else "isl_hill"
 		"port":
 			if bi >= 7:
 				return "pt_docks"
@@ -253,6 +270,7 @@ const CITY := {
 	"port": Rect2(-810.0, -610.0, 1510.0, 1220.0),
 	"gary": Rect2(-710.0, -610.0, 1420.0, 1220.0),
 	"redmont": Rect2(-750.0, -610.0, 1460.0, 1220.0),
+	"island": Rect2(-340.0, -340.0, 680.0, 680.0),
 }
 
 ## Open water inside an airspace (local): Lake Michigan off Chicago and Gary,
@@ -262,6 +280,7 @@ const SEA := {
 	"port": Rect2(700.0, -900.0, 1000.0, 1800.0),
 	"gary": Rect2(-1700.0, -1465.0, 3480.0, 825.0),
 	"redmont": Rect2(-1820.0, -1465.0, 920.0, 3000.0),
+	"island": Rect2(-1600.0, -900.0, 3200.0, 1800.0),
 }
 
 
@@ -282,6 +301,8 @@ static func is_country(region: String, p: Vector2) -> bool:
 			return p.y > -640.0
 		"redmont":
 			return p.x > -740.0 # west of town: the dry reservoir bed, then the water
+		"island":
+			return false # the Atlantic, all the way round
 	return true
 
 

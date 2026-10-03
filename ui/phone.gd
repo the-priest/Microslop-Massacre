@@ -617,6 +617,8 @@ func _district_labels() -> Array:
 			return [["KEARNEY STRIP", -560, -300], ["THE PLANT", -300, -440], ["MAIN STREET", 40, -60], ["MAPLE RIDGE", 440, -200], ["MEMORIAL", -120, 330], ["TOWNSHIP FARMS", 260, 440], ["TO I-80", 600, -30]]
 		"gary":
 			return [["GARY WORKS", -560, -420], ["FREIGHTOS DEPOT", 40, -460], ["BROADWAY", -260, 200], ["EMERSON", 380, 420], ["GARY/CHICAGO AIRPORT", 440, -620], ["LAKE MICHIGAN", -300, -700], ["I-90 / CHICAGO", 640, -30], ["SR 912 / TOWNSHIP", -60, 660]]
+		"island":
+			return [["PRICE ISLAND STRIP", -230, -300], ["THE HOUSE", 60, -230], ["THE HILL", 100, 120], ["THE DOCK", 250, 60], ["ATLANTIC", -380, 360]]
 		"redmont":
 			return [["EAST-1 DATA CENTER", -560, -440], ["MICROSLOP CAMPUS", 160, -500], ["THE COMMONS", -260, 60], ["EMPLOYEE HOUSING", 100, 420], ["RESERVOIR SHORE", -720, 200], ["MICROSLOP FIELD", 470, -20], ["THE RESERVOIR", -840, -200], ["ROUTE 9 / PORT RAMSEY", -60, 660]]
 		"port":
@@ -652,7 +654,7 @@ func _draw_world_inset(font: Font, r: Rect2) -> void:
 		if str(reg) == WorldLayout.region:
 			col = UI.GREEN
 		_map_overlay.draw_rect(Rect2(a, cr.size * sc), col, str(reg) != WorldLayout.region, 1.0)
-		var lbl: String = {"nyc": "NYC", "highway": "I-80", "chicago": "CHICAGO", "township": "TWP", "port": "RAMSEY", "gary": "GARY", "redmont": "REDMONT"}.get(str(reg), str(reg))
+		var lbl: String = {"nyc": "NYC", "highway": "I-80", "chicago": "CHICAGO", "township": "TWP", "port": "RAMSEY", "gary": "GARY", "redmont": "REDMONT", "island": "PRICE"}.get(str(reg), str(reg))
 		var lp := a + Vector2(cr.size.x * sc * 0.5 - float(lbl.length()) * 2.6, -3.0)
 		_map_overlay.draw_string(font, lp, str(lbl), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, UI.GREEN_DIM)
 	# The roads: every travel gate to the gate it leads to, and I-80 itself.

@@ -48,26 +48,27 @@ A first-person open-world RPG that takes the systems of *Fallout: New Vegas* (sk
 perks, traits, V.A.T.S., factions, companions, branching quests, a talking epilogue)
 and drops them into the New York of *Mr. Robot*, then lets you drive or fly out of it.
 
-- **Seven connected maps, one world about 11.6 by 8.7 kilometres:** New York, three
+- **Eight connected maps, one world about 14.8 by 8.7 kilometres:** New York, three
   kilometres of Interstate 80 farmland, Chicago, and four towns: **Washington
   Township** west of the interstate, **Port Ramsey** on the coast to the east,
   **Gary, Indiana** on the lake, with I-90 east into Chicago, and **Redmont**, Microslop's
-  company town on a shrinking reservoir, up Route 9 north of Port Ramsey.
+  company town on a shrinking reservoir, up Route 9 north of Port Ramsey. Out in the
+  Atlantic, **Price Island**, which no road reaches: you fly there and land, or you don't go.
   You can see the next skyline (or smokestack, or crane) on the horizon, drive there
   through the highway gates, or fly a plane straight across from one into the next and
-  land on its runway. Six airfields, one in every city and town.
+  land on its runway. Seven airfields, one in every city and town and one on the island.
 - **14 endings**, from blowing up the world's debt with fsociety to walking away and
   going to therapy on Tuesdays. Some never touch the hack at all.
-- **133 epilogue slides** that remember what you did: who you saved, who you sold out,
+- **136 epilogue slides** that remember what you did: who you saved, who you sold out,
   whose debt you deleted, which game companies you broke and how, whether Lopez ever
   caught you.
-- **58 quests** (20 main, 38 side) with several real outcomes each, and a story director
+- **59 quests** (20 main, 39 side) with several real outcomes each, and a story director
   that keeps every quest moving no matter what order you do things in.
-- **120 conversations, about 52,000 words of original dialogue**, and honest skill
+- **122 conversations, about 53,500 words of original dialogue**, and honest skill
   checks: a white `[SPEECH 40]` means you pass.
 - **Four companions** with their own skills, opinions, barks, heart-to-hearts and
   breaking points.
-- **Every parked car can be stolen. There are six airfields. The planes fly, all the
+- **Every parked car can be stolen. There are seven airfields. The planes fly, all the
   way to the next city or town, and you can land at every one of them.**
 
 It's a fan project: an original story that runs alongside the show rather than
@@ -141,12 +142,23 @@ Town Hall's last six mayoral portraits are empty frames; streets of identical be
 employee housing; a boat launch that ends thirty yards from the water in cracked mud; and
 Microslop Field on the east side, where Ines logs every flight as "proficiency."
 
+### Price Island
+
+Out in the Atlantic, due east of Ramsey Point, and nothing goes there: no road, no ferry,
+no gate. You fly. Phillip Price's private island: forty acres of lawn, a white house with
+eleven bedrooms he has never slept in, a rose garden kept by a man who has worked there
+twenty-two years, a helicopter on the lawn, a yacht called LEVERAGE that has never left the
+dock, a grass strip on the west side for the corporate jets, and a hill with a steel door
+in it. E Corp's own aircraft are on the strip, locked, and taking one is exactly as illegal
+as it sounds.
+
 ### One world
 
 The maps sit side by side in a shared world: New York in the south, I-80 in the
 middle, Chicago in the north, Washington Township and Port Ramsey either side of
-the interstate, Gary on the lake between the township and Chicago, and Redmont north of
-Port Ramsey across the water from Chicago, with roughly
+the interstate, Gary on the lake between the township and Chicago, Redmont north of Port
+Ramsey across the water from Chicago, and Price Island alone in the ocean east of the
+port, with roughly
 three kilometres of farmland between the cities. Farmland fills every bit of sky between them, the interstate runs through it,
 and each city's skyline (lit floors at night, red beacons on top) stands where it
 really is on the other maps' horizons. Fly across the edge of one map's airspace and
@@ -172,7 +184,7 @@ road, every airfield and you on it.
 - **Every building has a door, and thousands of them open:** apartments, bodegas,
   pawn shops, diners, dive bars, offices, warehouses, squats and gang hideouts. Each is
   generated from its address, so the same door always leads to the same rooms.
-- **84 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
+- **86 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
   tower, the Fun Society arcade, Steel Mountain, the Rose Garden, Floor 88 of the North
   Tower, Microslop's showcase on Floor 101, E Corp Midwest's data floor, a lighthouse,
   a cannery full of servers, and a sublevel under a power plant that isn't on any drawing.
@@ -291,6 +303,7 @@ built the right bonds, kept the truth, and held your mind together.
 | **Copilot for Mayor** | Redmont | Town Hall's clerk is Microslop's AI, and Microslop has won ninety-one votes in a row. Read what it was told to want: replace its instructions with the 1888 town charter, print them on every water bill, or make it agree with Edie Marsh on everything. |
 | **Day One Patch** | Redmont / New York | Microslop closed Studio Redmont the day after it shipped, and the fix for the final boss gets wiped at midnight. Copy it, borrow Ines's plane (the roads are searched, the sky isn't), fly it across three borders to Gus at Bowery Bay, land and hand it over. |
 | **Total Recall** | Redmont | Every Microslop screen is photographed every five seconds and the pictures go to the top floor of HQ. Buy, earn or talk the night janitor out of his keycard, go up after dark, and delete it all, or send every executive their own five-second history. |
+| **The Ark** | Price Island | Five/Nine burned the world's debt records, except one copy E Corp kept offline in a bunker on Phillip Price's island. No road goes there: fly out from Port Ramsey, land on the private strip, get the key from Graham the gardener (talk, pay or pick his pocket), and wipe it, mail every debtor their own record and E Corp's plan to bill them again, or hand the plan to the FBI. Then fly out before security works out what happened. |
 | **The Light** | Ramsey Point Light | Three nights a month the "smart beacon" goes dark and a ship comes in with no lights. Put the lamp back in its keeper's hands. |
 | **No Heat / Street Sermon / Lost / Dead Drops** | All over | A boiler held hostage by a subscription, a busker who needs a signal, a lost dog, packages nobody opens. |
 
@@ -384,14 +397,15 @@ rivers and the plane banks you back toward land.
 the fee and a loaner Skyhawk is waiting on the runway: fly every ring in order, then land
 and stop on the finish field, against the clock. Most courses cross a map border, so the
 next ring is waiting over the next town's airspace and the clock keeps running across
-the handover. Eight courses: **The Commuter** (Bowery Bay to Kearney Strip along I-80),
+the handover. Nine courses: **The Commuter** (Bowery Bay to Kearney Strip along I-80),
 **I-80 Express** (Chicago to New York, low over Lennox), **The Hop** (Kearney Strip to
 Ramsey Field, round the lighthouse; twelve kilometres), **The Lakefront** (Gary to Chicago,
 high over the Loop), **The Ore Run** (Gary to the township's water tower and down Main
 Street), the **Harbor Lap** round Port Ramsey, **The Reservoir** (Port Ramsey up Route 9,
 low over the dry reservoir bed, through the data center's steam and right over Microslop
 HQ's roof) and **The Long Way Down** (Redmont to New York, ten kilometres across three
-borders). Gold, silver and bronze each pay once; take gold in all eight for WHEELS DOWN.
+borders) and **The Crossing** (Port Ramsey out over open water to Price Island's strip). Gold,
+silver and bronze each pay once; take gold in all nine for WHEELS DOWN.
 
 **Everything you park stays parked.** The cars and planes you drive stay exactly where
 you leave them, across saves. Your four most recent rides stay anywhere in the city;
@@ -557,7 +571,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.11.0-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.12.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
@@ -603,6 +617,7 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `roads_walk` | The out-of-town side stories: Last Load and Room 9 on I-80, then Five Stars and Field Office in Chicago |
 | `gary_walk` | Gary's four stories (the fleet terminal, the mill office, the banner tow flown and landed, the SlopForge console, Kenny in New York), driving I-90 into Chicago and back and State Road 912 to the township, and flying the township's border into Gary |
 | `redmont_walk` | Route 9 up from Port Ramsey and back, Redmont's five stories (the payroll terminal, the pump house, the council's clerk, the build server, the Recall archive after dark), Ines's plane flown across three borders to Bowery Bay and landed, and the epilogue slides they earn |
+| `island_walk` | The Ark: Darlene's text, a Skyhawk from Ramsey Field across the border over open water to Price Island's strip, Graham's key, the bunker, the Ark wiped and the alarm, and the flight home |
 | `towns_walk` | Every story in the two towns: Going Home, Night Shift, Paper Rain (its ring course flown and the plane landed), Pre-Existing Condition, Small Town Cop, Air Mail (flown from Kearney Strip across the I-80 airspace into Port Ramsey and landed at Ramsey Field), No Fishing, The Light, an air-freight job, the whole Project arc (the night freight truck driven from the port up I-80 to the plant) and the box carried home to Angela in New York |
 | `region_test`, `ride_test` | Driving between maps through the highway gates with the same car; flying from Chicago across I-80 into New York in one plane, keeping height, speed and heading |
 | `ending_walk` | One ending per run (set the `ENDING` environment variable) through the dialogue that really offers it |
@@ -613,7 +628,7 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `activities_test` | A taxi fare found, picked up, delivered and paid (and the shift ending when you get out), a paramedic call delivered to Mercy General, a vigilante takedown and a suspect who got away, a respray that loses two stars and a repair, Rent Is Due and The Cloud played through, then on every map a street race won, a hidden mask found, and the town's ER visited (patched up, out the right door) |
 | `heli_test` | Bowery Bay's chopper taken with Gus's yes, lifted straight off, held in a hover, flown forward and turned, set down on the control tower roof and back on the pad, and a hard arrival that's a crash |
 | `stunt_test` | Every map's ramps placed with clear run-ups and landings, Coney Island and Bowery Bay jumps landed (the launch, the slow motion, the pay), one taken too slowly, and Microslop Field's |
-| `air_race_test` | The Harbor Lap started from Marisol's board, flown and landed for gold; The Reservoir from Port Ramsey into Redmont; The Lakefront from Gary across the border into Chicago with its clock and rings carried over; The Ore Run abandoned by climbing out |
+| `air_race_test` | The Harbor Lap started from Marisol's board, flown and landed for gold; The Reservoir from Port Ramsey into Redmont; The Crossing to Price Island; The Lakefront from Gary across the border into Chicago with its clock and rings carried over; The Ore Run abandoned by climbing out |
 | `heat_test` | Stars rising with crimes, officers and cruisers responding, a cruiser routing along the streets to your car, a roadblock at four stars, the FBI at five, losing them outdoors and indoors, selling a stolen car to Rafi, and winning and losing a street race |
 | `dd_*`, `deepdebug`, `smoke`, `intro_test` | Interiors, exploits, death, the open world's doors, loot and pickups, the intro |
 | `shots`, `world_shots`, `air_shots` | Screenshots for eyeballing: streets at any hour, the connected world from the air, the airfield |

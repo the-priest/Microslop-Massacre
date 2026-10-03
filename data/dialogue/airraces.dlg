@@ -31,6 +31,7 @@
 > Marisol's board has two routes in grease pencil: one around the harbor (up the coast, round the light, along the cranes, out over the water and home: HARBOR LAP), and one with an arrow off the top of the board: THE RESERVOIR, ROUTE 9 TO REDMONT. At the bottom: SILAS SAYS IF YOU HIT HIS LIGHTHOUSE HE'LL HIT YOU.
 * [if cash>=60] "Fly the Harbor Lap. ($60)" -> go ! airrace harbor
 * [if cash>=60] "Fly The Reservoir: up Route 9 to Redmont. ($60)" -> go ! airrace reservoir
+* [if cash>=80] "Fly The Crossing: out to Price Island. ($80)" -> go ! airrace crossing
 * "Read the rules." -> rules
 * "Not today." -> END
 -- gary

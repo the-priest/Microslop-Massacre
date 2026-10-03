@@ -33,6 +33,9 @@ const RACES := {
 	"long_way": {"name": "The Long Way Down", "from": "redmont", "to": "nyc", "dir": "s", "host": "INES", "fee": 100, "pay": [900, 500, 250], "medal": [205, 260, 340],
 		"go": "Redmont to Bowery Bay. South over Port Ramsey's cranes, west along the coast, down I-80 past Lennox and into New York. Log it as proficiency. Everything's proficiency.",
 		"rings": [[4270, 120, -4835], [4392, 95, -3550], [3000, 100, -3000], [1300, 150, -3000], [-390, 80, -2700], [600, 180, -2150], [1570, 90, -2300]]},
+	"crossing": {"name": "The Crossing", "from": "port", "to": "island", "dir": "n", "host": "MARISOL", "fee": 80, "pay": [650, 360, 180], "medal": [115, 145, 195],
+		"go": "East past the lighthouse, out over open water, low, and land on the rich man's strip. Don't ask for permission. Nobody out there will give it.",
+		"rings": [[4462, 80, -3966], [5200, 50, -3700], [6200, 40, -3500], [6860, 50, -3950]]},
 	"harbor": {"name": "Harbor Lap", "from": "port", "to": "port", "dir": "n", "host": "MARISOL", "fee": 60, "pay": [500, 280, 150], "medal": [115, 145, 195],
 		"go": "Up the coast, round Silas's light, along the cranes, out over the harbor and home. If you clip a crane, the union will want a word, and so will I.",
 		"rings": [[2980, 90, -4150], [3810, 100, -4050], [4462, 80, -3966], [4392, 95, -3550], [4310, 70, -3000], [3510, 80, -3050]]},
@@ -65,7 +68,7 @@ static func from_here(region: String) -> Array:
 
 
 static func field_name(region: String) -> String:
-	return str({"nyc": "Bowery Bay", "chicago": "the Chicago field", "township": "Kearney Strip", "port": "Ramsey Field", "gary": "Gary/Chicago Airport", "redmont": "Microslop Field"}.get(region, "the airfield"))
+	return str({"nyc": "Bowery Bay", "chicago": "the Chicago field", "township": "Kearney Strip", "port": "Ramsey Field", "gary": "Gary/Chicago Airport", "redmont": "Microslop Field", "island": "Price Island Strip"}.get(region, "the airfield"))
 
 
 ## A ring's position on this map, or null when it's over another one.

@@ -21,6 +21,7 @@ const REGION_AVENUES := {
 	"port": ["AIRPORT RD", "CAPE RD", "WHALER AVE", "MARKET ST", "ANCHOR AVE", "SCHOONER AVE", "DOCK ST", "TERMINAL AVE", "QUAY ST", "PIER RD"],
 	"gary": ["CLARK RD", "CHASE ST", "MADISON ST", "TAFT ST", "BROADWAY", "MASSACHUSETTS ST", "VIRGINIA ST", "GRANT ST", "MLK DR", "AIRPORT RD", "CLINE AVE"],
 	"redmont": ["SHORE DR", "INTAKE RD", "CHILLER WAY", "COMMONS AVE", "COPILOT WAY", "ROUTE 9", "SYNERGY AVE", "TEAMS AVE", "OFFICE LN", "FIELD RD", "EDGE ST"],
+	"island": ["STRIP RD", "HOUSE DR", "SHORE RD"],
 }
 const REGION_STREETS := {
 	"highway": ["FARM RD 1", "FARM RD 2", "FARM RD 3", "COUNTY RTE 41", "FARM RD 5", "LENNOX RD", "MAIN ST"],
@@ -29,6 +30,7 @@ const REGION_STREETS := {
 	"port": ["LIGHTHOUSE RD", "NORTH ST", "CANNERY ST", "SALT ST", "WATER ST", "FRONT ST", "HARBOR ST", "MARSH RD", "SOUTH ST"],
 	"gary": ["DUNES HWY", "5TH AVE", "7TH AVE", "9TH AVE", "11TH AVE", "15TH AVE", "19TH AVE", "21ST AVE", "25TH AVE", "35TH AVE", "RIDGE RD"],
 	"redmont": ["CAMPUS NORTH", "INNOVATION DR", "SYNERGY ST", "CLOUD ST", "1ST ST", "MAIN ST", "2ND ST", "3RD ST", "4TH ST", "5TH ST", "RESERVOIR RD"],
+	"island": ["NORTH DR", "GARDEN WALK", "SOUTH DR"],
 }
 ## Washington Township's plant stacks and Port Ramsey's cranes and lighthouse
 ## (local), drawn up close by their own map and from far away by the others.
@@ -171,6 +173,10 @@ func _build_region() -> void:
 					_datacenter_block(bi, bj, r)
 				"rm_campus":
 					_campus_block(bi, bj, r)
+				"isl_estate":
+					_estate_block(bi, bj, r)
+				"isl_hill":
+					_hill_block(bi, bj, r)
 				_:
 					_street_wall_block(bi, bj, r, d)
 	if WorldLayout.AIRFIELD["bi0"] <= WorldLayout.AIRFIELD["bi1"]:
@@ -187,6 +193,8 @@ func _build_region() -> void:
 			_gary_extras()
 		"redmont":
 			_redmont_extras()
+		"island":
+			_island_extras()
 	_body_shops()
 	_landmarks()
 	_region_edges()
@@ -418,6 +426,12 @@ func _region_edges() -> void:
 		"port":
 			var sea: Rect2 = Regions.SEA["port"]
 			wb.flat(Vector3(sea.position.x + 1500.0, -0.4, 0.0), 3000.0, 6000.0, Color(0.09, 0.19, 0.28))
+		"island":
+			# The Atlantic, all the way round.
+			wb.flat(Vector3(0.0, -0.4, 0.0), 7000.0, 7000.0, Color(0.08, 0.18, 0.27))
+			for s4 in 4:
+				var e := [Rect2(x0 - 34.0, z0 - 34.0, x1 - x0 + 68.0, 34.0), Rect2(x0 - 34.0, z1, x1 - x0 + 68.0, 34.0), Rect2(x0 - 34.0, z0, 34.0, z1 - z0), Rect2(x1, z0, 34.0, z1 - z0)][s4] as Rect2
+				landmark_far.props.flat(Vector3(e.get_center().x, 0.004, e.get_center().y), e.size.x, e.size.y, Color(0.78, 0.7, 0.5), 0.0, Vector2(1, 0))
 		"redmont":
 			# The reservoir to the west, past a strip of cracked mud where the
 			# water used to be.
@@ -458,6 +472,8 @@ func _region_edges() -> void:
 				skip = cos(a) > -0.4 or sin(a) < -0.3 # Chicago east, the lake north, the township south
 			"redmont":
 				skip = cos(a) < -0.3 or sin(a) > 0.4 # the reservoir west, Port Ramsey south
+			"island":
+				skip = true # open ocean
 		if skip:
 			a += 0.08
 			continue
@@ -697,6 +713,11 @@ func _neighbour_skylines() -> void:
 			for fu in GY_FURNACES:
 				var fp := Regions.to_local(WorldLayout.region, Regions.to_world(str(reg), fu))
 				_blast_furnace(landmark_far, Vector3(fp.x, 0, fp.y))
+		if bool(S.get("isle", false)):
+			# From the coast: a low green island on the horizon, a white house on it.
+			var ic := Regions.to_local(WorldLayout.region, Regions.to_world(str(reg), Vector2.ZERO))
+			landmark_far.props.flat(Vector3(ic.x, 0.02, ic.y), 720.0, 720.0, Color(0.24, 0.32, 0.16), 0.0, Vector2(1, 0))
+			landmark_far.props.sphere(Vector3(ic.x + 200.0, -40.0, ic.y + 210.0), 95.0, Color(0.2, 0.3, 0.14), 10, 5)
 		if bool(S.get("campus", false)):
 			var hp := Regions.to_local(WorldLayout.region, Regions.to_world(str(reg), RM_HQ))
 			_facade_box(landmark_far, Rect2(hp.x - 40.0, hp.y - 37.0, 80.0, 74.0), 0.0, 96.0, 7, Color(0.2, 0.26, 0.32), 17.0)
@@ -1388,6 +1409,86 @@ func _redmont_extras() -> void:
 	fc.glow.box(fb + Vector3(0, 13.8, 0.3), Vector3(15.0, 0.2, 0.2), Color(1.0, 0.95, 0.85), 0.0, Vector2(Props.K_NIGHT, 0))
 
 
+# ------------------------------------------------------------- the island
+## Price's estate: a long lawn, a pool, clipped hedges, the rose garden, a
+## helipad, gravel paths and lamps that are always on for nobody.
+func _estate_block(bi: int, bj: int, r: Rect2) -> void:
+	var c := ctx_at(r.get_center().x, r.get_center().y)
+	c.ground.flat(Vector3(r.get_center().x, 0.011, r.get_center().y), r.size.x, r.size.y, Color(0.22, 0.38, 0.15), 0.0, Vector2(1, 0))
+	# The pool and its terrace, south of the house.
+	var pool := Rect2(80.0, -120.0, 60.0, 22.0)
+	if _is_free(bi, bj, pool.grow(4.0)):
+		c.ground.flat(Vector3(pool.get_center().x, 0.016, pool.get_center().y), pool.size.x + 8.0, pool.size.y + 8.0, Color(0.85, 0.82, 0.74), 0.0, Vector2(1, 0))
+		c.props.flat(Vector3(pool.get_center().x, 0.03, pool.get_center().y), pool.size.x, pool.size.y, Color(0.25, 0.65, 0.85))
+		_reserve(bi, bj, pool.grow(4.0))
+	# Hedge rows and the rose garden.
+	for k in 6:
+		var hz := -60.0 + float(k) * 9.0
+		var hr := Rect2(30.0, hz, 40.0, 1.6)
+		if _is_free(bi, bj, hr):
+			c.props.box(Vector3(hr.get_center().x, 0.8, hr.get_center().y), Vector3(hr.size.x, 1.6, hr.size.y), Color(0.12, 0.26, 0.1))
+			c.solid(Vector3(hr.get_center().x, 0.8, hr.get_center().y), Vector3(hr.size.x, 1.6, hr.size.y))
+			for rk in 8:
+				c.props.sphere(Vector3(hr.position.x + 2.5 + float(rk) * 5.0, 1.7, hr.get_center().y), 0.35, [Color(0.85, 0.15, 0.2), Color(0.95, 0.85, 0.9), Color(0.95, 0.6, 0.2)][rk % 3], 5, 3)
+	# Lamps along the drive.
+	for k2 in 6:
+		var lp := Vector3(200.0, 0, -260.0 + float(k2) * 40.0)
+		if _is_free(bi, bj, Rect2(lp.x - 1.0, lp.z - 1.0, 2.0, 2.0)):
+			street_lamp_pair(lp.x, lp.z, PI * 0.5)
+
+
+## The hill: woods, and the bunker in it.
+func _hill_block(bi: int, bj: int, r: Rect2) -> void:
+	var c := ctx_at(r.get_center().x, r.get_center().y)
+	c.ground.flat(Vector3(r.get_center().x, 0.011, r.get_center().y), r.size.x, r.size.y, Color(0.18, 0.28, 0.12), 0.0, Vector2(1, 0))
+	# The hill itself, a grassy mound behind the bunker door.
+	landmark_far.props.sphere(Vector3(140.0, -26.0, 215.0), 52.0, Color(0.2, 0.32, 0.14), 12, 6)
+	c.solid(Vector3(140.0, 6.0, 215.0), Vector3(60.0, 12.0, 60.0))
+	_reserve(bi, bj, Rect2(100.0, 165.0, 80.0, 100.0))
+	var tr := RandomNumberGenerator.new()
+	tr.seed = 4410
+	for k in 90:
+		var p := Vector2(tr.randf_range(r.position.x + 4.0, r.end.x - 4.0), tr.randf_range(r.position.y + 4.0, r.end.y - 4.0))
+		if not _is_free(bi, bj, Rect2(p.x - 2.0, p.y - 2.0, 4.0, 4.0)):
+			continue
+		var h := tr.randf_range(6.0, 11.0)
+		c.props.box(Vector3(p.x, h * 0.35, p.y), Vector3(0.5, h * 0.7, 0.5), Color(0.3, 0.22, 0.14))
+		c.props.sphere(Vector3(p.x, h * 0.8, p.y), tr.randf_range(2.2, 3.4), Color(0.12, 0.26, 0.1).lerp(Color(0.2, 0.34, 0.12), tr.randf()), 7, 4)
+		c.solid(Vector3(p.x, 2.0, p.y), Vector3(0.6, 4.0, 0.6))
+
+
+## Things only the island has: the dock and Price's yacht, his helicopter on
+## its pad by the house, and the sign that tells you you're not welcome.
+func _island_extras() -> void:
+	var lf := landmark_far
+	# The dock on the east shore and the yacht, LEVERAGE, moored to it.
+	var dk := Vector3(380.0, 0, 40.0)
+	var cd := ctx_at(dk.x, dk.z)
+	lf.props.box(dk + Vector3(0.0, 0.3, 0), Vector3(60.0, 0.4, 5.0), Color(0.45, 0.34, 0.22))
+	for k in 6:
+		lf.props.box(dk + Vector3(-8.0 + float(k) * 7.0, -0.6, 2.4), Vector3(0.4, 2.0, 0.4), Color(0.3, 0.24, 0.16))
+		lf.props.box(dk + Vector3(-8.0 + float(k) * 7.0, -0.6, -2.4), Vector3(0.4, 2.0, 0.4), Color(0.3, 0.24, 0.16))
+	var yb := dk + Vector3(14.0, 0, 13.0)
+	lf.props.box(yb + Vector3(0, 1.5, 0), Vector3(36.0, 4.0, 8.0), Color(0.95, 0.95, 0.94))
+	lf.props.box(yb + Vector3(-2.0, 4.6, 0), Vector3(20.0, 2.4, 6.4), Color(0.9, 0.9, 0.9))
+	lf.props.box(yb + Vector3(-3.0, 6.8, 0), Vector3(10.0, 2.0, 5.0), Color(0.88, 0.88, 0.88))
+	lf.props.box(yb + Vector3(-2.0, 4.6, 0), Vector3(20.2, 1.0, 6.5), Color(0.1, 0.12, 0.16))
+	lf.props.box(yb + Vector3(0, -0.2, 0), Vector3(36.2, 0.8, 8.2), Color(0.12, 0.14, 0.2))
+	cd.label(yb + Vector3(16.0, 2.2, 4.05), "LEVERAGE", 120, Color(0.12, 0.14, 0.2), 0.0, 300.0, 0.02)
+	# The helicopter's pad on the lawn.
+	var hp := Vector3(230.0, 0, -60.0)
+	_helipad(ctx_at(hp.x, hp.z), hp)
+	airfield_planes.append({"slot": "island_heli", "model": "heli", "pos": hp, "yaw": PI})
+	# The sign at the strip.
+	var sg := Vector3(-95.0, 0, 150.0)
+	var cs := ctx_at(sg.x, sg.z)
+	cs.props.box(sg + Vector3(0, 1.2, 0), Vector3(0.6, 2.4, 6.0), Color(0.25, 0.25, 0.27))
+	cs.props.box(sg + Vector3(0, 2.4, 0), Vector3(0.3, 2.0, 5.6), Color(0.95, 0.95, 0.93))
+	cs.label(sg + Vector3(-0.2, 2.8, 0), "PRIVATE ISLAND", 40, Color(0.7, 0.1, 0.1), -PI * 0.5, 80.0, 0.01)
+	cs.label(sg + Vector3(-0.2, 2.2, 0), "NO LANDING WITHOUT PRIOR AUTHORIZATION · E CORP SECURITY", 16, Color(0.2, 0.2, 0.22), -PI * 0.5, 50.0, 0.01)
+	cs.solid(sg + Vector3(0, 1.4, 0), Vector3(0.8, 2.8, 6.0))
+
+
 # ------------------------------------------------------------ reservations
 func _reserve(bi: int, bj: int, r: Rect2) -> void:
 	var key := "%d,%d" % [bi, bj]
@@ -1456,9 +1557,10 @@ func _roads() -> void:
 			var z0 := WorldLayout.sz(j) + WorldLayout.ST_HW
 			var z1 := WorldLayout.sz(j + 1) - WorldLayout.ST_HW
 			_avenue_segment(x, z0, z1, i, j, asphalt, walk, curb, paint, yellow, G)
-		# Coney extension down to the boardwalk.
-		var zc0 := WorldLayout.sz(WorldLayout.NS - 1) + WorldLayout.ST_HW
-		_avenue_segment(x, zc0, WorldLayout.SURF_Z - WorldLayout.ST_HW, i, 99, asphalt, walk, curb, paint, yellow, G)
+		# Coney extension down to the boardwalk (not on the island: that's sea).
+		if WorldLayout.region != "island":
+			var zc0 := WorldLayout.sz(WorldLayout.NS - 1) + WorldLayout.ST_HW
+			_avenue_segment(x, zc0, WorldLayout.SURF_Z - WorldLayout.ST_HW, i, 99, asphalt, walk, curb, paint, yellow, G)
 	# Streets.
 	for j in WorldLayout.NS:
 		var z := WorldLayout.sz(j)
@@ -1469,7 +1571,7 @@ func _roads() -> void:
 			var x1 := WorldLayout.ax(i + 1) - WorldLayout.AVE_HW
 			_street_segment(z, x0, x1, i, j, asphalt, walk, curb, paint, G)
 	# Surf Avenue (Coney).
-	for i in WorldLayout.NA - 1:
+	for i in (WorldLayout.NA - 1 if WorldLayout.region != "island" else 0):
 		var x0s := WorldLayout.ax(i) + WorldLayout.AVE_HW
 		var x1s := WorldLayout.ax(i + 1) - WorldLayout.AVE_HW
 		_street_segment(WorldLayout.SURF_Z, x0s, x1s, i, 98, asphalt, walk, curb, paint, G)
@@ -1478,7 +1580,8 @@ func _roads() -> void:
 		for j in WorldLayout.NS:
 			if WorldLayout.intersection_exists(i, j):
 				_intersection(WorldLayout.ax(i), WorldLayout.sz(j), i, j, asphalt, walk, paint, G)
-		_intersection(WorldLayout.ax(i), WorldLayout.SURF_Z, i, 98, asphalt, walk, paint, G)
+		if WorldLayout.region != "island":
+			_intersection(WorldLayout.ax(i), WorldLayout.SURF_Z, i, 98, asphalt, walk, paint, G)
 
 
 func _avenue_segment(x: float, z0: float, z1: float, i: int, j: int, asphalt: Color, walk: Color, curb: Color, paint: Color, yellow: Color, G: Vector2) -> void:

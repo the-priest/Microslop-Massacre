@@ -12,6 +12,7 @@ func _ready() -> void:
 	GameState.cash = 2000
 	_day()
 	await _harbor()
+	await _crossing()
 	await _reservoir()
 	await _lakefront()
 	await _bail()
@@ -36,6 +37,37 @@ func _harbor() -> void:
 	await _touch_down(a)
 	_ok("harbor lap gold", int(GameState.flags.get("ar_medal_harbor", 0)) == 3 and not game.air_races.is_racing() and GameState.cash == 2000 - 60 + 500)
 	_ok("best time kept", float(GameState.flags.get("ar_best_harbor", 0.0)) > 0.0)
+
+
+func _crossing() -> void:
+	print("PHASE the crossing")
+	await _reload_keeping_state_at("port")
+	await _enter_world_at(AirRaces.board_pos() + Vector3(0, 0, -6.0))
+	await _spot("air_board", ["The Crossing"])
+	await _frames(10)
+	_ok("crossing started", game.air_races.active() == "crossing")
+	await _wait_countdown()
+	var a: Aircraft = game.player.driving
+	await _fly_rings(a)
+	_ok("port's rings flown", int(GameState.flags.get("ar_ring", 0)) == 2)
+	await _fly_border("island")
+	a = game.player.driving
+	await _fly_rings(a)
+	_ok("every crossing ring", int(GameState.flags.get("ar_ring", 0)) == (AirRaces.RACES["crossing"]["rings"] as Array).size())
+	await _touch_down(a)
+	_ok("crossing gold on price's strip", int(GameState.flags.get("ar_medal_crossing", 0)) == 3 and not game.air_races.is_racing())
+	game.exit_vehicle(true)
+	await _settle()
+	await _reload_keeping_state_at("port")
+
+
+func _reload_keeping_state_at(region: String) -> void:
+	if game.player.driving != null:
+		game.exit_vehicle(true)
+		await _settle()
+	GameState.region = region
+	GameState.cell = "world"
+	await _reload_keeping_state()
 
 
 func _reservoir() -> void:
