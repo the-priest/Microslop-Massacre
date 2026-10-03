@@ -4,12 +4,56 @@ extends Node3D
 ## rival driving the same pursuit AI the cruisers use (aimed at checkpoints
 ## instead of you), a countdown, laps, and money on the line.
 
+## One loop per map, each run by somebody local. Corners in order; the last
+## one is the start/finish line. yaw points the cars at the first corner.
 const RACES := {
 	"hunts": {
-		"name": "Hunts Point Loop", "laps": 2, "bet": 200, "xp": 80,
-		# Corners in order; the last one is the start/finish line.
+		"name": "Hunts Point Loop", "region": "nyc", "host": "DEZ", "laps": 2, "bet": 200, "xp": 80,
 		"points": [[1040, -1040], [1170, -1040], [1170, -1280], [1040, -1280], [1040, -1100]],
 		"start": [1040, -1118], "yaw": 0.0,
+		"go": "Two laps. Corners are marked. Hit every one or it doesn't count. Lights... in three.",
+		"win": "Okay. Okay! Somebody finally drove like they meant it. Money's yours. Keep the car tonight; bring it back never.",
+		"lose": "Dez's driver crosses the line first. The bet's gone.",
+	},
+	"lakeshore": {
+		"name": "Lakeshore Loop", "region": "chicago", "host": "TASHA", "laps": 2, "bet": 250, "xp": 90,
+		"points": [[260, -130], [500, -130], [500, 250], [260, 250], [260, 190]],
+		"start": [260, 205], "yaw": 0.0,
+		"go": "Up to Grand, right to the lake, down past the field, back on Jackson. Twice. Don't hit a tourist.",
+		"win": "Man. MAN. You drive like a Chicago winter: no mercy. Take the money before I change my mind.",
+		"lose": "Tasha's cousin takes the flag on the lakefront and doesn't even look back.",
+	},
+	"interstate": {
+		"name": "Interstate Loop", "region": "highway", "host": "BOBBY RAY", "laps": 1, "bet": 150, "xp": 90,
+		"points": [[0, -300], [300, -300], [300, 600], [0, 600], [0, 560]],
+		"start": [0, 575], "yaw": 0.0,
+		"go": "North up the big road, cut across the farm road, come back down the county road. One lap. That's three kilometres, city kid. Don't fall asleep.",
+		"win": "Well I'll be. Ain't nobody beat my nephew on that loop since the corn was knee high. Here.",
+		"lose": "Bobby Ray's nephew blows past the diner with his horn going. Bet's his.",
+	},
+	"mainstreet": {
+		"name": "Main Street Loop", "region": "township", "host": "THE PELL TWINS", "laps": 3, "bet": 100, "xp": 70,
+		"points": [[-150, -125], [150, -125], [150, 125], [-150, 125], [-150, 50]],
+		"start": [-150, 65], "yaw": 0.0,
+		"go": "Three laps round the square. Up First, across Elm, down Third, back on Walnut. Sheriff's asleep. Probably.",
+		"win": "You beat Danny! Nobody beats Danny! ...Danny's going to cry. Here's your money.",
+		"lose": "The other Pell twin takes the last corner on two wheels and screams all the way to the line.",
+	},
+	"quay": {
+		"name": "Quay Run", "region": "port", "host": "BOBBY MAC", "laps": 2, "bet": 200, "xp": 85,
+		"points": [[160, -300], [640, -300], [640, 150], [160, 150], [160, 90]],
+		"start": [160, 105], "yaw": 0.0,
+		"go": "Up Whaler, out to the quay, down past the ship, back on Harbor. Twice. Mind the cranes, they don't stop for nobody.",
+		"win": "Ha! Forty years on the water and I never seen anybody take the quay corner like that. Drinks are on you. Kidding. Money's yours.",
+		"lose": "Bobby Mac's grandson takes the quay corner flat out and wins by a boat length.",
+	},
+	"broadway": {
+		"name": "Broadway Drag", "region": "gary", "host": "JAMAL", "laps": 2, "bet": 200, "xp": 85,
+		"points": [[-140, 0], [280, 0], [280, 360], [-140, 360], [-140, 290]],
+		"start": [-140, 305], "yaw": 0.0,
+		"go": "Up Broadway, right on Fifteenth, down Grant, back on Twenty-Fifth. Twice. I drive trucks from a chair all day. Tonight I drive.",
+		"win": "First time all week anybody beat me at anything. Feels kind of good, honestly. Here.",
+		"lose": "Jamal crosses the line with both hands off the wheel, laughing. Sixteen hours of remote driving, and he can still really drive.",
 	},
 }
 const CP_RADIUS := 14.0
@@ -36,6 +80,8 @@ func is_racing() -> bool:
 
 func start(id: String) -> void:
 	if active != "" or not RACES.has(id) or game == null:
+		return
+	if str((RACES[id] as Dictionary).get("region", "nyc")) != WorldLayout.region:
 		return
 	def = RACES[id]
 	if GameState.cash < int(def["bet"]):
@@ -73,14 +119,14 @@ func start(id: String) -> void:
 	countdown = 3.5
 	_last_count = -1
 	_show_column()
-	game.hud.subtitle("DEZ", "Two laps. Corners are marked. Hit every one or it doesn't count. Lights... in three.", 3.5)
+	game.hud.subtitle(str(def["host"]), str(def["go"]), 3.5)
 
 
 func _physics_process(delta: float) -> void:
 	if active == "" or not _armed:
 		return
 	if not is_instance_valid(car) or car.dead or game.player.driving != car or GameState.cell != "world":
-		_finish(false, "You bailed. The bet stays with Dez.")
+		_finish(false, "You bailed. The bet stays with %s." % str(def["host"]).capitalize())
 		return
 	var pts: Array = def["points"]
 	if countdown > 0.0:
@@ -121,12 +167,15 @@ func _physics_process(delta: float) -> void:
 				rival_cp = 0
 				rival_lap += 1
 				if rival_lap >= int(def["laps"]):
-					_finish(false, "Dez's driver crosses the line first. The bet's gone.")
+					_finish(false, str(def["lose"]))
 					return
 			_aim_rival()
-	# Too far off the course: forfeit.
-	if Vector2(p.x - float(target[0]), p.z - float(target[1])).length() > 450.0:
-		_finish(false, "Wrong way, too far. Dez keeps the money.")
+	# Too far off the course: forfeit. "Too far" is the length of this leg
+	# (from the last corner, or the start line) plus a few blocks of slack.
+	var prev: Array = pts[cp - 1] if cp > 0 else (def["start"] if lap == 0 else pts[pts.size() - 1])
+	var leg := Vector2(float(prev[0]) - float(target[0]), float(prev[1]) - float(target[1])).length()
+	if Vector2(p.x - float(target[0]), p.z - float(target[1])).length() > leg + 300.0:
+		_finish(false, "Wrong way, too far. %s keeps the money." % str(def["host"]).capitalize())
 
 
 func _aim_rival() -> void:
@@ -166,12 +215,12 @@ func _finish(won: bool, why: String) -> void:
 		GameState.set_flag("race_won_" + id)
 		GameState.add_flag("races_won", 1)
 		game.hud.center("YOU WIN  +$%d" % pot, 3.0)
-		game.hud.subtitle("DEZ", "Okay. Okay! Somebody finally drove like they meant it. Money's yours. Keep the car tonight; bring it back never.", 5.0)
+		game.hud.subtitle(str(def["host"]), str(def["win"]), 5.0)
 		AudioManager.play_levelup()
 	else:
 		game.hud.center("YOU LOSE", 2.5)
 		if why != "":
-			game.hud.subtitle("DEZ", why, 4.0)
+			game.hud.subtitle(str(def["host"]), why, 4.0)
 	# The rival drives off into the night.
 	if is_instance_valid(rival):
 		var r := rival

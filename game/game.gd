@@ -268,6 +268,10 @@ func _build_world() -> void:
 	races.name = "Races"
 	races.game = self
 	add_child(races)
+	taxi = Taxi.new()
+	taxi.name = "Taxi"
+	taxi.game = self
+	add_child(taxi)
 	jobs = Jobs.new()
 	jobs.name = "Jobs"
 	jobs.game = self
@@ -1592,6 +1596,9 @@ func compass_markers() -> Array:
 			var dv: Vector3 = (wp as Vector3) - pp
 			out.append({"dir": dv, "kind": "quest", "dist": Vector2(dv.x, dv.z).length()})
 	if bool(Settings.get_v("show_markers")):
+		for tp in taxi.marker_positions():
+			var dvt: Vector3 = (tp as Vector3) - pp
+			out.append({"dir": dvt, "kind": "job", "dist": Vector2(dvt.x, dvt.z).length()})
 		for jp in jobs.marker_positions():
 			var jv: Variant = marker_pos_world(jp)
 			if jv != null:
@@ -2461,6 +2468,7 @@ func _hide_parked(id: String, e: Dictionary) -> void:
 var planes: Dictionary = {} # airfield slot -> Aircraft
 var night_lights: NightLights
 var races: Races
+var taxi: Taxi
 var airfield_slots: Array = [] # from CityBuilder.airfield_planes
 var _af_filled: Dictionary = {} # slot -> true once spawned this session
 var rings: Node3D = null

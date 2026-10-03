@@ -65,6 +65,11 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       912 south into the township. *Ghost Fleet, The Banner, Who's Driving?* (a banner
       tow flown and landed) and *The Training Set* (Microslop's SlopForge). `gary_walk`
 
+- [x] **Pass 7 (things to do):** taxi fares in any taxi on any map (pickup, address,
+      timer, tips, streaks, shifts); a street race on every map (Chicago, I-80, the
+      township, the port, Gary), each with its own host; races no longer forfeit you on
+      long legs. `activities_test`
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

@@ -365,9 +365,16 @@ a crime.
 - **ATMs:** hack the cash cassette, or cash out stolen cards.
 - **Pickpocketing:** crouch behind anyone and press E.
 - **Gloveboxes:** steal a car and whatever's in the glovebox comes with it.
-- **Street races** (Hunts Point, at night): Dez bets you $200 you can't beat his driver
-  over two laps of the loop. He lends you the car; the big orange lights mark the
-  corners you have to hit.
+- **Street races, one on every map, at night:** Dez's Hunts Point Loop in the Bronx,
+  Tasha's Lakeshore Loop in Chicago, Bobby Ray's three-kilometre Interstate Loop on
+  I-80, the Pell twins' Main Street Loop in Washington Township, Bobby Mac's Quay Run
+  past the container ship in Port Ramsey, and Jamal's Broadway Drag in Gary. Each host
+  lends you the car and bets you can't beat their driver; the big orange lights mark
+  the corners you have to hit.
+- **Taxi fares:** get behind the wheel of any taxi, on any map, and dispatch finds you
+  a fare. Pull up beside whoever's waving and stop, then get them to the address they
+  name before they lose patience and stop at the door. Fast pays a tip, a streak of
+  fares pays more, and getting out of the cab ends your shift.
 - **Rafi's Auto Body** (Hunts Point): roll a stolen car into the yellow bay and stop.
   Rafi pays by model and condition, double for the day's wanted model, three cars a
   day, and never for a car that's registered to you.
@@ -477,7 +484,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.4.0-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.5.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
@@ -529,6 +536,7 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `vehicle_test`, `flight_test` | Stealing, driving, crashing, carjacking; taking off, turning, rings, landing, crashing |
 | `pad_test`, `menu_pad_test` | The whole game driven by a simulated controller: menus, phone, map, pause, minigames, level-up, dialogue, terminals, cars |
 | `companion_test` | Recruiting, following, riding along, heart-to-hearts, reactions, leaving |
+| `activities_test` | A taxi fare found, picked up, delivered and paid (and the shift ending when you get out), then a street race won on every map outside New York |
 | `heat_test` | Stars rising with crimes, officers and cruisers responding, a cruiser routing along the streets to your car, a roadblock at four stars, the FBI at five, losing them outdoors and indoors, selling a stolen car to Rafi, and winning and losing a street race |
 | `dd_*`, `deepdebug`, `smoke`, `intro_test` | Interiors, exploits, death, the open world's doors, loot and pickups, the intro |
 | `shots`, `world_shots`, `air_shots` | Screenshots for eyeballing: streets at any hour, the connected world from the air, the airfield |

@@ -285,6 +285,9 @@ func _process(delta: float) -> void:
 			_car_lbl.add_theme_color_override("font_color", UI.RED if ac.warn != "" or ac.hp < 40.0 else UI.GREEN)
 		else:
 			_car_lbl.text = "%d km/h    %s %d%%%s" % [int(absf(car.speed) * 3.6), car.display_name().to_upper(), int(car.hp), "   ▲ STOLEN" if car.stolen else ""]
+			var ts: String = game.taxi.status() if game.get("taxi") != null else ""
+			if ts != "":
+				_car_lbl.text += "\n" + ts
 			_car_lbl.add_theme_color_override("font_color", UI.RED if car.hp < 30.0 else (UI.AMBER if car.hp < 60.0 else UI.GREEN))
 	else:
 		_car_lbl.text = ""

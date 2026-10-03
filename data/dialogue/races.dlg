@@ -1,0 +1,106 @@
+### Street races outside New York: one loop on every map, each with a local
+### who'll bet you can't beat their driver. (Dez runs Hunts Point; see roads.dlg.)
+
+=== tasha
+-- start
+? flag.race_won_lakeshore -> champ
+> A woman in a Bears jacket sitting on the hood of a purple Monte Carlo with the engine running, eating a Polish sausage out of a paper boat.
+TASHA: You're not from here. Nobody from here stands like that. You drive, or you just look at people who drive?
+-> offer
+-- champ
+TASHA: The one who beat my cousin on the lakefront. He's still telling people you cheated. Again?
+-> offer
+-- offer
+* [if cash>=250] "I drive. Two-fifty says I win." -> go
+* "Just looking." -> no
+-- go
+TASHA: Loaner's on the right. Orange lights mark the corners. Lake Shore at night is the best drive in America, so try not to die on it.
+! race lakeshore
+-> END
+-- no
+TASHA: Then look somewhere else, baby. This is for drivers.
+-> END
+
+=== bobby_ray
+-- start
+? flag.race_won_interstate -> champ
+> A trucker in a feed cap leaning on a lifted pickup on the interstate shoulder, a CB handset clipped to his shirt like a medal.
+BOBBY RAY: Evenin'. You look like you've been driving in circles. Out here we drive in one big circle. You want in? My nephew's never lost.
+-> offer
+-- champ
+BOBBY RAY: Well, if it ain't the one who made my nephew cry at the Big Rig Diner. He wants it back. Same stakes?
+-> offer
+-- offer
+* [if cash>=150] "One lap. One-fifty." -> go
+* "Some other night." -> no
+-- go
+BOBBY RAY: Loaner's the sedan. North on 80, cross the farm road, back down the county road. Watch for deer. Watch for the stalled blue Peterbilt. Watch for my nephew, mostly.
+! race interstate
+-> END
+-- no
+BOBBY RAY: Road ain't going anywhere. Neither am I.
+-> END
+
+=== danny_pell
+-- start
+? flag.race_won_mainstreet -> champ
+> A skinny teenager in a Township Wildcats hoodie, and next to him an identical skinny teenager in an identical hoodie. One is holding a stopwatch. The other is holding his mom's car keys like contraband.
+DANNY PELL: Are you a cop? You have to tell us if you're a cop. That's the law. ...Okay. Want to race? Three laps round the square. We do it every Friday. Every night is Friday if you think about it.
+-> offer
+-- champ
+DANNY PELL: You again. My brother says you got lucky. I say you're a professional. Rematch?
+-> offer
+-- offer
+* [if cash>=100] "A hundred says I beat you." -> go
+* "Does your mom know you have her car?" -> mom
+* "No thanks." -> no
+-- mom
+DANNY PELL: She knows we have A car. She doesn't know it's HER car. That's different. Legally. Probably.
+-> offer
+-- go
+DANNY PELL: Loaner's our uncle's sedan, don't scratch it, he'll know. Up First, across Elm, down Third, back on Walnut. Three times. GO when the lights say GO.
+! race mainstreet
+-> END
+-- no
+DANNY PELL: Your loss. Literally. Ha. Get it.
+-> END
+
+=== bobby_mac
+-- start
+? flag.race_won_quay -> champ
+> An old fisherman in yellow oilskins, sitting on a bollard on Harbor Street with a thermos, timing a car going round the block with a pocket watch.
+BOBBY MAC: Couldn't fish, so the boys took up racing. Now they can fish again and they still race. Can't take a man's hobby away twice. You want a go round the quay? My grandson's quick.
+-> offer
+-- champ
+BOBBY MAC: There's the one who took my grandson on the quay corner. He's been practising on the forklifts. Again?
+-> offer
+-- offer
+* [if cash>=200] "Two hundred. Round the quay." -> go
+* "Not tonight." -> no
+-- go
+BOBBY MAC: Loaner's by the hydrant. Up Whaler, out to the quay, down past the big ship, back on Harbor. Twice. If you go in the water, you're on your own.
+! race quay
+-> END
+-- no
+BOBBY MAC: Suit yourself. Tide'll be back. So will we.
+-> END
+
+=== jamal
+-- start
+? flag.race_won_broadway -> champ
+> A young man in a FreightOS polo with the logo picked off, leaning on a beat-up hatchback on Broadway, rubbing his eyes. He looks like he hasn't blinked all day, because he hasn't been allowed to.
+JAMAL: Sixteen hours driving a truck in Iowa from a chair in Indiana. At night I drive my own car, with my own eyes, as fast as I want. Want to see if you can keep up? Uncle Marcus says don't, which is why I do.
+-> offer
+-- champ
+JAMAL: Okay, you're good. Real good. Again? I'll actually try this time. That's a lie, I tried last time.
+-> offer
+-- offer
+* [if cash>=200] "Two hundred, Broadway." -> go
+* "Get some sleep, Jamal." -> sleep
+-- sleep
+JAMAL: (He laughs.) Sleep. Yeah. I've heard of it. Maybe after this one.
+-> offer
+-- go
+JAMAL: Loaner's the sedan. Up Broadway, right on Fifteenth, down Grant, back on Twenty-Fifth. Twice. Lights in three.
+! race broadway
+-> END
