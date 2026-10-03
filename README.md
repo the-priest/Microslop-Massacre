@@ -374,7 +374,8 @@ defaults (controls and audio are kept).
 
 ## Playing it
 
-Grab the latest build from **Releases**:
+Grab the latest build from **Releases**, or straight from the repo's `build/` folder
+(`MICROSLOP-MASSACRE-v2.1.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
