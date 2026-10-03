@@ -59,12 +59,12 @@ and drops them into the New York of *Mr. Robot*, then lets you drive or fly out 
   land on its runway. Seven airfields, one in every city and town and one on the island.
 - **14 endings**, from blowing up the world's debt with fsociety to walking away and
   going to therapy on Tuesdays. Some never touch the hack at all.
-- **136 epilogue slides** that remember what you did: who you saved, who you sold out,
+- **139 epilogue slides** that remember what you did: who you saved, who you sold out,
   whose debt you deleted, which game companies you broke and how, whether Lopez ever
   caught you.
-- **59 quests** (20 main, 39 side) with several real outcomes each, and a story director
+- **60 quests** (20 main, 40 side) with several real outcomes each, and a story director
   that keeps every quest moving no matter what order you do things in.
-- **122 conversations, about 53,500 words of original dialogue**, and honest skill
+- **123 conversations, about 54,500 words of original dialogue**, and honest skill
   checks: a white `[SPEECH 40]` means you pass.
 - **Four companions** with their own skills, opinions, barks, heart-to-hearts and
   breaking points.
@@ -184,7 +184,7 @@ road, every airfield and you on it.
 - **Every building has a door, and thousands of them open:** apartments, bodegas,
   pawn shops, diners, dive bars, offices, warehouses, squats and gang hideouts. Each is
   generated from its address, so the same door always leads to the same rooms.
-- **86 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
+- **87 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
   tower, the Fun Society arcade, Steel Mountain, the Rose Garden, Floor 88 of the North
   Tower, Microslop's showcase on Floor 101, E Corp Midwest's data floor, a lighthouse,
   a cannery full of servers, and a sublevel under a power plant that isn't on any drawing.
@@ -304,6 +304,7 @@ built the right bonds, kept the truth, and held your mind together.
 | **Day One Patch** | Redmont / New York | Microslop closed Studio Redmont the day after it shipped, and the fix for the final boss gets wiped at midnight. Copy it, borrow Ines's plane (the roads are searched, the sky isn't), fly it across three borders to Gus at Bowery Bay, land and hand it over. |
 | **Total Recall** | Redmont | Every Microslop screen is photographed every five seconds and the pictures go to the top floor of HQ. Buy, earn or talk the night janitor out of his keycard, go up after dark, and delete it all, or send every executive their own five-second history. |
 | **The Ark** | Price Island | Five/Nine burned the world's debt records, except one copy E Corp kept offline in a bunker on Phillip Price's island. No road goes there: fly out from Port Ramsey, land on the private strip, get the key from Graham the gardener (talk, pay or pick his pocket), and wipe it, mail every debtor their own record and E Corp's plan to bill them again, or hand the plan to the FBI. Then fly out before security works out what happened. |
+| **Cold Chain** | Lennox / Port Ramsey | The Lennox Pharmacy has been out of insulin for a month, and the price went from $35 to $300. The ship at Port Ramsey's berth 2 loads refrigerated containers at night with its lights off. Go up the gangway after dark and reroute forty-two reefers of insulin to every pharmacy on I-80, call in the Coast Guard through the lighthouse, or sell the manifest to E Corp's competitor. |
 | **The Light** | Ramsey Point Light | Three nights a month the "smart beacon" goes dark and a ship comes in with no lights. Put the lamp back in its keeper's hands. |
 | **No Heat / Street Sermon / Lost / Dead Drops** | All over | A boiler held hostage by a subscription, a busker who needs a signal, a lost dog, packages nobody opens. |
 
@@ -571,7 +572,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.12.0-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.13.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
@@ -618,6 +619,7 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `gary_walk` | Gary's four stories (the fleet terminal, the mill office, the banner tow flown and landed, the SlopForge console, Kenny in New York), driving I-90 into Chicago and back and State Road 912 to the township, and flying the township's border into Gary |
 | `redmont_walk` | Route 9 up from Port Ramsey and back, Redmont's five stories (the payroll terminal, the pump house, the council's clerk, the build server, the Recall archive after dark), Ines's plane flown across three borders to Bowery Bay and landed, and the epilogue slides they earn |
 | `island_walk` | The Ark: Darlene's text, a Skyhawk from Ramsey Field across the border over open water to Price Island's strip, Graham's key, the bunker, the Ark wiped and the alarm, and the flight home |
+| `cold_walk` | Cold Chain: Anita at the Lennox Pharmacy, the Everbright's gangway (closed by day, open after dark), the reefers and the manifest, and back to Lennox |
 | `towns_walk` | Every story in the two towns: Going Home, Night Shift, Paper Rain (its ring course flown and the plane landed), Pre-Existing Condition, Small Town Cop, Air Mail (flown from Kearney Strip across the I-80 airspace into Port Ramsey and landed at Ramsey Field), No Fishing, The Light, an air-freight job, the whole Project arc (the night freight truck driven from the port up I-80 to the plant) and the box carried home to Angela in New York |
 | `region_test`, `ride_test` | Driving between maps through the highway gates with the same car; flying from Chicago across I-80 into New York in one plane, keeping height, speed and heading |
 | `ending_walk` | One ending per run (set the `ENDING` environment variable) through the dialogue that really offers it |

@@ -1031,6 +1031,12 @@ func _port_extras() -> void:
 		for lz in [-4.8, 4.8]:
 			cc.solid(Vector3(cr.x - 14.0, 19.0, cr.y + lz), Vector3(1.4, 38.0, 1.4))
 		Props.light_pool(cc, Vector3(cr.x - 10.0, 0, cr.y), 10.0, Color(1.0, 0.85, 0.55))
+	# The gangway up to the ship's deck at berth 2.
+	var gw := ctx_at(qx, -150.0)
+	gw.props.box_xf(Transform3D(Basis(Vector3.BACK, 0.62), Vector3(qx + 6.0, 4.5, -150.0)), Vector3(15.0, 0.25, 2.0), Color(0.45, 0.46, 0.48))
+	for s5 in [-1.0, 1.0]:
+		gw.props.box_xf(Transform3D(Basis(Vector3.BACK, 0.62), Vector3(qx + 6.0, 5.4, -150.0 + 1.0 * float(s5))), Vector3(15.0, 0.08, 0.08), Color(0.8, 0.8, 0.78))
+	Props.light_pool(gw, Vector3(qx - 2.0, 0, -150.0), 6.0, Color(1.0, 0.85, 0.55))
 	# The ship: a long hull, a white bridge at the stern, boxes stacked on deck.
 	var sx := qx + 26.0
 	var sz0 := -330.0

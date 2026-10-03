@@ -929,6 +929,26 @@ const INTERIORS := {
 			]},
 	],
 },
+"pt_hold": {
+	"name": "MV Everbright — Hold", "amb": "interior", "ambient": Color(0.3, 0.32, 0.34),
+	"rooms": [{"r": [0, 0, 18, 30], "h": 7.0, "wall": Color(0.28, 0.3, 0.33), "floor": F_CONCRETE, "light": Color(0.85, 0.9, 1.0), "energy": 0.7, "lights": [[4.5, 6.6, 8], [13.5, 6.6, 8], [4.5, 6.6, 22], [13.5, 6.6, 22]]}],
+	"exits": [{"pos": [9, 0], "face": "n", "to": "world:d_pt_ship", "label": "Gangway"}],
+	"furn": [["container_a", 3, 7, 0], ["container_b", 3, 13, 0], ["container_a", 3, 19, 0], ["container_b", 15, 7, 0], ["container_a", 15, 13, 0], ["container_b", 15, 19, 0], ["climate_unit", 0.6, 24, 90], ["climate_unit", 17.4, 24, -90],
+		["crate", 8, 5, 0], ["crate", 10, 15, 0], ["boxes", 7, 22, 0], ["desk_pc", 9, 28.6, 180], ["lantern", 9, 0.6, 0], ["poster", 9, 29.85, 180, {"col": Color(0.3, 0.5, 0.8)}]],
+	"spots": [
+		{"id": "pt_reefers", "kind": "text", "title": "Reefer Containers", "verb": "Look", "pos": [3.0, 1.8, 13.0], "size": [2.6, 3.0, 14.0], "text": "Refrigerated containers, humming, frost on the seals. The placards say MEDICAL SUPPLIES — EXPORT GRADE — E CORP HEALTH. Through a vent you can see the boxes inside: insulin, stacked to the ceiling, enough for every town on I-80 for a year. The destination on the paperwork is a port you've never heard of, and a price column in a currency you have."},
+		{"id": "reefer_manifest", "kind": "terminal", "title": "Reefer Manifest", "verb": "Log in", "pos": [9.0, 1.1, 27.4], "size": [1.4, 1.2, 1.0], "hack": 40, "header": "E CORP LOGISTICS // MV EVERBRIGHT // COLD CHAIN MANIFEST", "welcome": "A ruggedized terminal bolted to the bulkhead, a container list, and a column labelled MARGIN.",
+			"entries": [
+				{"title": "Manifest", "text": "Forty-two reefers. Insulin, lispro and glargine, E Corp Health labels. Origin: the distributor in Allentown. Destination: overseas, 'secondary markets.' A note: 'Domestic allocation suspended to support pricing.'"},
+				{"title": "Margin", "text": "Domestic price, last year: $35/vial. Export price: $140. Domestic price after 'shortage': $300. A slide from an investor deck, pasted into the ship's log by someone with a sense of humor: SCARCITY IS A FEATURE."},
+			],
+			"actions": [
+				{"title": "Reroute the reefers to Lennox, the clinics and every pharmacy on I-80", "result": "You change forty-two destinations, billing to E CORP HEALTH — COMMUNITY GIVING, and schedule the trucks for six AM. The system is happy to do it. Nobody ever told the system it wasn't supposed to be generous.", "fx": "set insulin_rerouted ; quest sq_cold 40 ; xp 90", "when": "!flag.insulin_rerouted & !flag.insulin_seized & !flag.insulin_sold"},
+				{"title": "Call it in to the Coast Guard on the marine band", "result": "You raise the lighthouse on the ship's radio. Silas Pell answers on the second ring, listens to the whole thing, and says, very calmly, 'Leave it with me, son.' Twenty minutes later there's a blue light on the water.", "fx": "set insulin_seized ; quest sq_cold 40 ; xp 80", "when": "!flag.insulin_rerouted & !flag.insulin_seized & !flag.insulin_sold"},
+				{"title": "Sell the manifest to Mercer Pharma, E Corp's competitor ($3,000)", "result": "A burner email, a number, and a wire that clears before you're back down the gangway. Mercer will make this public, loudly, and then make money on it, quietly.", "fx": "set insulin_sold ; cash 3000 ; quest sq_cold 40 ; xp 40", "when": "!flag.insulin_rerouted & !flag.insulin_seized & !flag.insulin_sold"},
+			]},
+	],
+},
 # The clinics and the small hospitals out of town share one waiting room.
 "clinic_er": {
 	"name": "Emergency Room", "amb": "office", "ambient": Color(0.42, 0.45, 0.47),

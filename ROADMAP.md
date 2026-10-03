@@ -114,6 +114,10 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       no road goes where you're headed; an air race out to the island; the landmark
       layer is no longer distance-culled by its own far-away skylines. `island_walk`
 
+- [x] **Pass 15 (Cold Chain):** a story across two maps: Lennox's pharmacist, and the
+      MV Everbright's hold at Port Ramsey, up a gangway that's only there after dark.
+      `cold_walk`
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

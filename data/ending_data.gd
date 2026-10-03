@@ -167,6 +167,12 @@ static func slides(ending: String) -> Array:
 		out.append(_s("2290 FORDHAM", "Vince Carbone spent a week trying to get back into his own buildings and a month trying to get back into his own office. The tenants changed nothing about the locks. They did, eventually, let him in to fix the boiler, under supervision."))
 	elif GS.has_flag("rent_fixed"):
 		out.append(_s("2290 FORDHAM", "Carbone fixed the heat, the elevator and the lobby light within the week, and never said why. Carmen Alvarez says it's the first time in twenty years a landlord's been scared of the right thing. She won't say what that is."))
+	if GS.has_flag("insulin_rerouted"):
+		out.append(_s("COLD CHAIN", "Forty-two containers of insulin went to Lennox and every pharmacy on I-80 instead of overseas. E Corp Health never admitted it had a 'Community Giving' program, and never managed to shut it down. Anita Shah took the sticky notes off her wall and kept one."))
+	elif GS.has_flag("insulin_seized"):
+		out.append(_s("COLD CHAIN", "The Coast Guard held the Everbright's insulin as evidence, and E Corp Health went to court over a shortage it had invented. Insulin in Lennox costs forty dollars now. Silas Pell got a commendation. He used it to light the stove."))
+	elif GS.has_flag("insulin_sold"):
+		out.append(_s("COLD CHAIN", "Mercer Pharma made the scandal public and the profit private. Insulin came back to Lennox at a hundred and ten dollars a vial: cheaper, not cheap."))
 	if GS.has_flag("ark_wiped"):
 		out.append(_s("THE ARK", "The last copy of the debt ledger died in a bunker on an island nobody lived on. E Corp's restore plan stayed a plan. Graham Oakes looks after the birds there now. The bunker door rusts open."))
 	elif GS.has_flag("ark_letters"):

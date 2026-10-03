@@ -373,6 +373,14 @@ E Corp keeps one copy of the debt ledger nowhere near a network: in a bunker on 
 40 Get off the island before E Corp Security works out what happened. Fly @region:port
 50 done
 
+=== sq_cold | Cold Chain | side | 300 | road
+Lennox's pharmacy has been out of insulin for a month, and the price went from thirty-five dollars to three hundred when E Corp Health bought the distributor. The pharmacist's cousin loads the trucks. They don't go to Lennox. They go to the port.
+10 Anita Shah runs the Lennox Pharmacy on I-80. She's out of insulin again, and she thinks she knows why @npc:anita
+20 The MV Everbright at berth 2 in Port Ramsey loads refrigerated containers at night with her lights off. Go up the gangway after dark @d_pt_ship
+30 The reefer manifest is on a terminal at the back of the hold @cell:pt_hold:9,27.4
+40 Tell Anita what you did @npc:anita
+50 done
+
 === sq_cat | Lost | side | 60 | odd
 A woman by the park lost her dog. In this city, that's either nothing or everything.
 10 Find Flipper the dog. Her owner says she loved the pier at Coney Island @cell:world:-30,840

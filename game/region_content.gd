@@ -101,6 +101,7 @@ const DOORS := {
 		"d_pt_cannery": {"pos": [-250, 400], "face": "s", "interior": "pt_cannery", "name": "Ocean Bright Cannery", "lock": 45, "unlock_when": "q.mq_pr1>=30"},
 		"d_pt_hangar": {"pos": [-652, -130], "face": "e", "interior": "pt_hangar", "name": "Ramsey Field Office"},
 		"d_pt_clinic": {"pos": [65, 8], "face": "n", "interior": "clinic_er", "name": "Port Ramsey Urgent Care"},
+		"d_pt_ship": {"pos": [699, -150], "face": "w", "interior": "pt_hold", "name": "MV Everbright (gangway)", "when": "night"},
 	},
 	"gary": {
 		"d_gy_union": {"pos": [-100, 10], "face": "n", "interior": "gy_union", "name": "USW Local 1014 Union Hall"},

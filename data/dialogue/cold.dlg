@@ -1,0 +1,47 @@
+### Cold Chain: Lennox's pharmacist is out of insulin again, and the ship at
+### Port Ramsey's berth 2 loads refrigerated containers at night with its
+### lights off. Anita Shah at the Lennox Pharmacy on I-80; the MV Everbright's
+### hold and its manifest.
+
+=== anita
+-- start
+? q.sq_cold.done -> after
+? q.sq_cold>=40 -> back
+? q.sq_cold>=20 -> wait
+> A woman in a white coat behind the pharmacy counter, on the phone, writing something on a sticky note and adding it to a wall of sticky notes behind her. Every one of them says the same thing in different handwriting: INSULIN — ?
+ANITA: (Into the phone.) I know. I know. I'm sorry, Mrs. Kowalczyk, I'll call you the minute it comes in. (She hangs up.) That's the eleventh one today. Can I help you with something that isn't insulin? Because I can't help anybody with insulin.
+* "What happened to the insulin?" -> what
+* "Rough day?" -> what
+-- what
+ANITA: E Corp Health happened. They bought the distributor last year. Now the shipments to Lennox come 'when supply allows,' which is never, and the price went from thirty-five dollars a vial to three hundred. But here's the thing. (She lowers her voice.) There's no shortage. My cousin drives for the distributor. He loads reefers, refrigerated containers, full of insulin, every week. Not for here. For the port.
+ANITA: Port Ramsey. The big ship at berth 2, the Everbright. It loads at night with its lights off, and the insulin goes overseas where E Corp can charge four times what they charge here, and then they tell us there's a shortage, and then they charge us more. It's not a supply chain. It's a squeeze.
+* "Then I'll get on that ship." -> go
+* [MEDICINE 40] "Diabetics can't wait for supply to allow. How long do your patients have?" -> med | go
+* "That's awful. I'm sorry." -> END
+-- med
+ANITA: Some of them, days. Mr. Petrie on Elm Street is cutting his doses in half. People die doing that. Not dramatically. They just don't wake up. (She takes off her glasses and pinches her nose.) If you're going to do something, do it soon.
+-> go
+-- go
+ANITA: The gangway's on the quay by berth 2, past the cranes. The crew are contractors, nobody's paid enough to stop anybody, but the manifest's on a terminal in the back of the hold, and the containers go wherever the manifest says. After dark. They don't load in daylight.
+! quest sq_cold 20
+-> END
+-- wait
+ANITA: Berth 2, after dark, the manifest in the back of the hold. (The phone rings. She looks at it like it's a dog that bites.) Excuse me. Lennox Pharmacy. No, Mrs. Kowalczyk, not yet.
+-> END
+-- back
+? flag.insulin_seized -> seized
+? flag.insulin_sold -> sold
+ANITA: A truck pulled up at six this morning. Four pallets, refrigerated, addressed to Lennox Pharmacy, paid in full by E Corp Health, according to the paperwork. (She's crying a little and laughing about it.) I called Mrs. Kowalczyk first. Then everybody on the wall. Every clinic in three towns got the same truck. I don't know how you did it. I don't want to know. Thank you.
+! quest sq_cold done ; trust anita 3 ; fame locals 4 ; infamy ecorp 3 ; xp 160
+-> END
+-- seized
+ANITA: The Coast Guard boarded the Everbright at two in the morning. Somebody called it in on the marine band, an old man's voice, very calm. The insulin's evidence now, which means it sits in a warehouse for six months. (She sighs.) But E Corp Health's in front of a grand jury, and the price came down to forty dollars this morning. It's not today. It's every day after.
+! quest sq_cold done ; trust anita 2 ; fame locals 3 ; infamy ecorp 2 ; xp 140
+-> END
+-- sold
+ANITA: Somebody sold E Corp's manifest to Mercer Pharma. Mercer put out a press release about 'supply chain integrity' and started shipping insulin to every pharmacy E Corp shorted, at a hundred and ten dollars a vial. (She looks at you for a long time.) It's cheaper. It's not cheap. I suppose that's the world.
+! quest sq_cold done ; trust anita -1 ; xp 90
+-> END
+-- after
+ANITA: Insulin's on the shelf. The wall's down to two sticky notes, and they're both about sunscreen. Pick something up for yourself. It's on the house. Everything's on the house for you except the sunscreen.
+-> END
