@@ -240,7 +240,9 @@ func _build_world() -> void:
 	add_child(ground)
 	var base := MeshBatch.new()
 	# Big enough to run under every map in the shared world (see Regions).
-	base.flat(Vector3(0, -0.35, 0), 24000.0, 24000.0, Color(0.06, 0.06, 0.065))
+	# Below the water (which sits at -0.4 and swells 0.12 either way), or it
+	# hides every sea and lake on every map.
+	base.flat(Vector3(0, -0.9, 0), 24000.0, 24000.0, Color(0.06, 0.06, 0.065))
 	base.commit(city_extras, Mats.lit, 0.0, "BaseGround")
 	_loading_lbl.text = "> mapping ..."
 	await get_tree().process_frame

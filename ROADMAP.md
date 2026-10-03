@@ -118,6 +118,11 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       MV Everbright's hold at Port Ramsey, up a gangway that's only there after dark.
       `cold_walk`
 
+- [x] **Water you can see:** the dark base plane under every map sat above the water and
+      hid nearly every sea, lake and river; it's below the water now, and the water
+      itself is blue-green with wind streaks, ripples and sun glints up close, and no
+      aliasing far away.
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues
