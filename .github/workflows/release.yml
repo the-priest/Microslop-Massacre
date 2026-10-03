@@ -1,0 +1,25 @@
+name: Release
+
+# Pushing a version tag (v2.14.1-beta, v2.15.0, ...) publishes a GitHub
+# release with the Windows and Linux builds from build/ attached. Tags with
+# "beta" in them are marked as pre-releases.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish the release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Microslop Massacre ${{ github.ref_name }}
+          body_path: RELEASE_NOTES.md
+          prerelease: ${{ contains(github.ref_name, 'beta') }}
+          files: |
+            build/*.zip
