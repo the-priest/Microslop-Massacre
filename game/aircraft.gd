@@ -57,17 +57,18 @@ func setup_plane(m: String, pos: Vector3, yaw: float, g: Node) -> Aircraft:
 	hp = float(spec["hp"])
 	collision_layer = Phys.CAR | Phys.INTERACT
 	collision_mask = Phys.WORLD | Phys.CAR
+	_make_vis()
 	var meshes := build_meshes(m)
 	_mesh = MeshInstance3D.new()
 	_mesh.mesh = meshes[0]
 	_mesh.material_override = Mats.lit
 	_mesh.visibility_range_end = 1600.0
-	add_child(_mesh)
+	vis.add_child(_mesh)
 	_glow = MeshInstance3D.new()
 	_glow.mesh = meshes[1]
 	_glow.material_override = Mats.glow
 	_glow.visibility_range_end = 2400.0
-	add_child(_glow)
+	vis.add_child(_glow)
 	if m == "heli":
 		# The main rotor (spins about the mast) and, on the tail, a little one.
 		var rb := MeshBatch.new()
@@ -78,7 +79,7 @@ func setup_plane(m: String, pos: Vector3, yaw: float, g: Node) -> Aircraft:
 		_prop.mesh = rb.to_mesh()
 		_prop.material_override = Mats.lit
 		_prop.position = Vector3(0, 2.75, -0.2)
-		add_child(_prop)
+		vis.add_child(_prop)
 	elif m == "skyhawk":
 		var pb := MeshBatch.new()
 		pb.box(Vector3.ZERO, Vector3(2.0, 0.16, 0.05), Color(0.12, 0.12, 0.12))
@@ -87,7 +88,7 @@ func setup_plane(m: String, pos: Vector3, yaw: float, g: Node) -> Aircraft:
 		_prop.mesh = pb.to_mesh()
 		_prop.material_override = Mats.lit
 		_prop.position = Vector3(0, 1.15, -3.2)
-		add_child(_prop)
+		vis.add_child(_prop)
 	if m == "citation":
 		var lb := Label3D.new()
 		lb.text = "E CORP"
@@ -97,11 +98,11 @@ func setup_plane(m: String, pos: Vector3, yaw: float, g: Node) -> Aircraft:
 		lb.position = Vector3(1.0, 2.2, -1.0)
 		lb.rotation.y = PI * 0.5
 		lb.double_sided = false
-		add_child(lb)
+		vis.add_child(lb)
 		var lb2 := lb.duplicate() as Label3D
 		lb2.position = Vector3(-1.0, 2.2, -1.0)
 		lb2.rotation.y = -PI * 0.5
-		add_child(lb2)
+		vis.add_child(lb2)
 	var cs := CollisionShape3D.new()
 	var bs := BoxShape3D.new()
 	bs.size = spec["body"]
@@ -115,15 +116,25 @@ func setup_plane(m: String, pos: Vector3, yaw: float, g: Node) -> Aircraft:
 	_smoke.material_override = Mats.lit
 	_smoke.position = Vector3(0, 1.4, -2.2)
 	_smoke.visible = false
-	add_child(_smoke)
+	vis.add_child(_smoke)
 	position = pos
 	heading = yaw
 	rotation = Vector3(0, yaw, 0)
+	vis.transform = transform
 	return self
 
 
 func display_name() -> String:
-	return str(spec.get("name", "Plane"))
+	var n := str(spec.get("name", "Plane"))
+	var who := str(OWNERS.get(owner_tag, ""))
+	if owner_tag == "ecorp" and WorldLayout.region == "island":
+		who = "Phillip Price's"
+	return (who + " " + n) if who != "" else n
+
+
+## Whose plane it is, and who to ask for the keys instead of stealing it.
+const OWNERS := {"gus": "Gus's", "walt": "Walt's", "lena": "Lena's", "ines": "Microslop Field's", "marisol": "Marisol's", "ecorp": "E Corp's", "player": "Your"}
+const ASK := {"gus": "ask Gus in the Bowery Bay hangar for the keys", "walt": "ask Walt at Kearney Strip", "lena": "ask Lena at the Gary/Chicago Airport", "ines": "ask Ines in the Microslop Field hangar"}
 
 
 func interact_info() -> Dictionary:
@@ -132,9 +143,10 @@ func interact_info() -> Dictionary:
 	if not locked:
 		return {"verb": "Fly", "name": display_name()}
 	var ls := GameState.skill("lockpick")
+	var hint := ("  · or %s" % str(ASK[owner_tag])) if ASK.has(owner_tag) else ""
 	if ls >= lock_dc:
-		return {"verb": "Steal [LOCKPICK %d]" % lock_dc, "name": display_name()}
-	return {"verb": "Force the Door & Steal", "name": display_name() + "  (LOCKPICK %d/%d)" % [ls, lock_dc], "locked": true}
+		return {"verb": "Steal [LOCKPICK %d]" % lock_dc, "name": display_name() + hint}
+	return {"verb": "Force the Door & Steal", "name": display_name() + "  (LOCKPICK %d/%d)%s" % [ls, lock_dc, hint], "locked": true}
 
 
 func begin_drive() -> void:
@@ -560,34 +572,39 @@ func damage(d: float) -> void:
 
 
 # ------------------------------------------------------------------ camera
-func _process(delta: float) -> void:
-	if not driving or cam == null:
-		return
-	var b := global_transform.basis
+func _camera(delta: float) -> void:
+	# Everything from the drawn (interpolated) plane, not the physics body.
+	var xf := vis.global_transform if vis != null else global_transform
+	var b := xf.basis
+	var e := b.get_euler()
+	var hd := e.y
+	var pt := e.x
 	# Behind the plane by heading (not by nose: a steep climb mustn't swing the
 	# camera underneath), lifted a little with the nose so you still see ahead.
-	var back := Vector3(sin(heading), 0.0, cos(heading)).rotated(Vector3.UP, cam_yaw)
+	var back := Vector3(sin(hd), 0.0, cos(hd)).rotated(Vector3.UP, cam_yaw)
 	var dist := float(spec["cam"]) + speed * 0.04
-	var up := Vector3.UP * (2.6 + dist * 0.18 + _cam_pitch * 4.0 - sin(pitch) * dist * 0.45)
-	var want := global_position + back * dist * cos(pitch * 0.5) + up
-	var look := global_position + Vector3(0, float(spec["body_y"]) + 0.6, 0) - b.z * 6.0
+	var up := Vector3.UP * (2.6 + dist * 0.18 + _cam_pitch * 4.0 - sin(pt) * dist * 0.45)
+	var look := xf.origin + Vector3(0, float(spec["body_y"]) + 0.6, 0) - b.z * 6.0
+	var off := xf.origin + back * dist * cos(pt * 0.5) + up - look
+	var allowed := 1.0
 	if not airborne:
-		var q := PhysicsRayQueryParameters3D.create(look, want, Phys.WORLD)
-		q.exclude = [get_rid()]
-		var res := get_world_3d().direct_space_state.intersect_ray(q)
-		if not res.is_empty():
-			want = (res["position"] as Vector3) + (look - want).normalized() * 0.5
-	cam.global_position = cam.global_position.lerp(want, minf(1.0, delta * 6.0))
+		allowed = chase_clear(look, off, [get_rid()])
+	if _cam_dist < 0.0 or allowed < _cam_dist:
+		_cam_dist = allowed if _cam_dist < 0.0 else lerpf(_cam_dist, allowed, 1.0 - exp(-25.0 * delta))
+	else:
+		_cam_dist = lerpf(_cam_dist, allowed, 1.0 - exp(-2.5 * delta))
+	var want := look + off * _cam_dist
+	cam.global_position = cam.global_position.lerp(want, 1.0 - exp(-7.0 * delta))
 	if cam.global_position.distance_to(look) > 0.1:
 		cam.look_at(look, Vector3.UP.lerp(b.y, 0.35).normalized())
-	cam.fov = lerpf(cam.fov, 70.0 + speed * 0.12, minf(1.0, delta * 2.0))
+	cam.fov = lerpf(cam.fov, 70.0 + speed * 0.12, 1.0 - exp(-2.0 * delta))
 	# Up high you can see the next city on the horizon.
 	cam.far = 7000.0 if global_position.y > 40.0 else Settings.view_far()
 	# A far plane kilometres out needs a near plane further than a few
 	# centimetres, or the fields z-fight with the ground under them.
 	cam.near = clampf(global_position.y * 0.01, 0.1, 2.0)
 	if speed > 15.0:
-		cam_yaw = lerp_angle(cam_yaw, 0.0, minf(1.0, delta * 1.0))
+		cam_yaw = lerp_angle(cam_yaw, 0.0, 1.0 - exp(-1.0 * delta))
 
 
 # ------------------------------------------------------------------ meshes

@@ -70,7 +70,9 @@ fsociety can't do this alone. In Chinatown there is an army that answers to one 
 The hack needs a door inside E Corp itself. Somebody opened Allsafe's honeypot from the inside, using Gideon's credentials. Somebody at E Corp wants to be standing next to the fire.
 10 Get inside E Corp's headquarters in Midtown. Tyrell Wellick, SVP of Technology, has been asking about you in the lobby @npc:tyrell_n
 20 Tyrell wants to talk properly. Meet him at his penthouse, the Wellick Residence @d_tyrell
-30 Get to E Corp's network floor without Tyrell: take the keycard from the lobby security desk (or a guard), or wear an E Corp uniform, and ride the executive elevator @d_ecorp
+30 [if !in.ecorp_lobby] Get to E Corp's network floor without Tyrell. It starts in the tower lobby in Midtown, any time of day @d_ecorp
+30 [if in.ecorp_lobby & !item.ecorp_keycard & !disguise.ecorp] The executive elevator needs a keycard, and there's a spare in the security desk drawer. Lift it while the guard isn't looking (crouch, stay out of his eyeline), take one off a guard, or walk in wearing an E Corp uniform @cell:ecorp_lobby:9,5.5
+30 [if in.ecorp_lobby & item.ecorp_keycard | in.ecorp_lobby & disguise.ecorp] You're cleared. Ride the executive elevator at the back of the lobby up to the 23rd floor @cell:ecorp_lobby:15,1
 40 You're on the network. Plug fsociety's femtocell (from the arcade stash) into the E Corp terminal on the 23rd floor @cell:ecorp_floor:13,3
 50 done
 

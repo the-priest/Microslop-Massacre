@@ -402,10 +402,20 @@ func _load_quests(path: String) -> void:
 			elif rest.begins_with("@"):
 				marker = rest.substr(1).strip_edges()
 				rest = ""
+			# "[if cond] text": a line (and its marker) shown only while cond
+			# holds, so a stage can walk you through its steps one at a time.
+			var when := ""
+			if rest.begins_with("[if "):
+				var cb := rest.find("]")
+				when = rest.substr(4, cb - 4).strip_edges()
+				rest = rest.substr(cb + 1).strip_edges()
 			var st: Dictionary = QUESTS[cur]["stages"]
 			if not st.has(n):
 				st[n] = []
-			(st[n] as Array).append({"text": rest, "marker": marker})
+			var ob := {"text": rest, "marker": marker}
+			if when != "":
+				ob["when"] = when
+			(st[n] as Array).append(ob)
 		else:
 			var q: Dictionary = QUESTS[cur]
 			q["desc"] = (str(q["desc"]) + " " + line).strip_edges()
@@ -425,11 +435,22 @@ func line_pos(qid: String) -> Array:
 	return [qs.find(qid) + 1, qs.size()]
 
 
+var _obj_conds: Dictionary = {} # parsed "[if ...]" objective conditions
+
+
 func quest_objectives(qid: String, stage: int) -> Array:
 	if not QUESTS.has(qid):
 		return []
 	var st: Dictionary = QUESTS[qid]["stages"]
-	return st.get(stage, [])
+	var all: Array = st.get(stage, [])
+	var out: Array = []
+	for o in all:
+		var w := str((o as Dictionary).get("when", ""))
+		if w != "" and not _obj_conds.has(w):
+			_obj_conds[w] = DialogueManager.parse_cond(w, "quest %s %d" % [qid, stage])
+		if w == "" or DialogueManager.eval_cond(_obj_conds[w]):
+			out.append(o)
+	return out if not out.is_empty() else all
 
 
 ## XP needed to reach level L (New Vegas curve).

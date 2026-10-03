@@ -1937,6 +1937,10 @@ func _check_triggers() -> void:
 		var tid := str(td["id"])
 		if bool(td.get("once", true)) and GameState.flags.has("trig:" + tid):
 			continue
+		# Work from people starts when you talk to them (before_convo), never
+		# because you walked past.
+		if td.has("giver"):
+			continue
 		var tc := str(td.get("cell", "world"))
 		if tc != "*" and tc != cell and not (tc == "subway" and cell.begins_with("subway")):
 			continue
@@ -1954,12 +1958,17 @@ func _check_triggers() -> void:
 				_trig_conds[cw] = DialogueManager.parse_cond(cw, "trigger " + tid)
 			if not DialogueManager.eval_cond(_trig_conds[cw]):
 				continue
+		if td.has("lead") and not _lead_ready(td):
+			continue
 		GameState.flags["trig:" + tid] = true
 		_fire_trigger(td)
 		return
 
 
 func _fire_trigger(td: Dictionary) -> void:
+	if td.has("lead"):
+		await _lead_message(td)
+		return
 	if td.has("fx"):
 		await DialogueManager.run_effects(DialogueManager.parse_effects(str(td["fx"]), "trigger"))
 		# A rule can change who should be standing where (e.g. Whiterose appears).
@@ -1969,6 +1978,112 @@ func _fire_trigger(td: Dictionary) -> void:
 		await dialog.run(str(td["convo"]), npc)
 	elif td.has("bark"):
 		hud.subtitle(str(td.get("speaker", "ELLIOT (V.O.)")), str(td["bark"]), 5.0)
+
+
+# ------------------------------------------------------------------- leads
+## New work arrives one piece at a time. Somebody texts or calls (a trigger
+## with "lead": quest id), you read it, and you choose: reply "on my way" and
+## the quest starts, or leave it for later; it waits in your phone, and the
+## person will still give it to you face to face. Messages are spaced out: one
+## at a time, never right on top of another one or of a finished job, and the
+## main story never offers its next chapter while you're in the middle of one.
+const LEAD_GAP := 90.0 # game minutes between two messages (about 4.5 real minutes)
+const LEAD_AFTER_DONE := 30.0 # game minutes after you finish something
+
+
+func _lead_ready(td: Dictionary) -> bool:
+	var now := GameState.game_minutes
+	if now - float(GameState.flags.get("lead_last", -9999.0)) < LEAD_GAP:
+		return false
+	if now - float(GameState.flags.get("quest_done_t", -9999.0)) < LEAD_AFTER_DONE:
+		return false
+	if _in_combat() or GameState.is_wanted() or player.driving is Aircraft and (player.driving as Aircraft).airborne:
+		return false
+	var qid := str(td["lead"])
+	var pend := pending_leads()
+	if str(DB.QUESTS.get(qid, {}).get("kind", "side")) == "main":
+		for q in GameState.quests.keys():
+			if str(DB.QUESTS.get(q, {}).get("kind", "side")) == "main" and GameState.quest_state(str(q)) == "active":
+				return false
+		for l in pend:
+			if str(DB.QUESTS.get(str((l as Dictionary)["quest"]), {}).get("kind", "side")) == "main":
+				return false
+	elif pend.size() >= 2:
+		return false
+	return true
+
+
+## Messages you've had and not answered yet: [{quest, tid, speaker, text}].
+func pending_leads() -> Array:
+	var out: Array = []
+	for t in WorldObjects.TRIGGERS:
+		var td: Dictionary = t
+		if not td.has("lead"):
+			continue
+		var qid := str(td["lead"])
+		if GameState.flags.has("trig:" + str(td["id"])) and GameState.quest_state(qid) == "":
+			out.append({"quest": qid, "tid": str(td["id"]), "speaker": str(td.get("speaker", "")), "text": str(td.get("bark", ""))})
+	return out
+
+
+func _lead_message(td: Dictionary) -> void:
+	GameState.flags["lead_last"] = GameState.game_minutes
+	AudioManager.play_key()
+	hud.notify("NEW MESSAGE  ·  " + str(td.get("speaker", "")), "")
+	await reply_lead(str(td["id"]))
+
+
+## Read a lead and answer it (also from the phone, later).
+func reply_lead(tid: String) -> void:
+	var td: Dictionary = {}
+	for t in WorldObjects.TRIGGERS:
+		if str((t as Dictionary)["id"]) == tid:
+			td = t
+	if td.is_empty():
+		return
+	var qid := str(td["lead"])
+	if GameState.quest_state(qid) != "":
+		return
+	var cid := "_lead_" + tid
+	if not DialogueManager.has_convo(cid):
+		var acc := str(td.get("accept_fx", "quest %s 10" % qid))
+		var txt := "=== %s\n-- start\n%s: %s\n* \"%s\" -> END ! %s\n* \"Not now.\" -> later\n-- later\n> Saved to your phone. Answer it from the Quests tab whenever you're ready, or go and see them.\n-> END\n" % [cid, str(td.get("speaker", "MESSAGE")), str(td.get("bark", "")).replace("\n", " "), str(td.get("accept", "On my way.")), acc]
+		DialogueManager.parse_text(txt, "leads")
+	await dialog.run(cid, null)
+	npcs.refresh(false)
+
+
+## Talking to someone who has work for you: their trigger ("giver": convo)
+## starts the quest right before they speak.
+func before_convo(cid: String) -> void:
+	for t in WorldObjects.TRIGGERS:
+		var td: Dictionary = t
+		if str(td.get("giver", "")) != cid:
+			continue
+		var tid := str(td["id"])
+		if GameState.flags.has("trig:" + tid) or not _giver_open(td):
+			continue
+		GameState.flags["trig:" + tid] = true
+		await DialogueManager.run_effects(DialogueManager.parse_effects(str(td["fx"]), "giver " + tid))
+
+
+func _giver_open(td: Dictionary) -> bool:
+	var cw := str(td.get("when", ""))
+	if cw == "":
+		return true
+	if not _trig_conds.has(cw):
+		_trig_conds[cw] = DialogueManager.parse_cond(cw, "giver " + str(td["id"]))
+	return DialogueManager.eval_cond(_trig_conds[cw])
+
+
+## Conversations that would start a quest right now (people with work).
+func giver_convos() -> Dictionary:
+	var out := {}
+	for t in WorldObjects.TRIGGERS:
+		var td: Dictionary = t
+		if td.has("giver") and not GameState.flags.has("trig:" + str(td["id"])) and _giver_open(td):
+			out[str(td["giver"])] = true
+	return out
 
 
 func _slow_update() -> void:
@@ -2598,7 +2713,7 @@ func _update_airfield() -> void:
 			continue
 		var spot: Vector3 = sl["pos"]
 		var d2 := spot.distance_to(pp)
-		if d2 > 900.0 or (_af_filled.has(sid) and d2 < 250.0):
+		if d2 > 1500.0 or (_af_filled.has(sid) and d2 < 250.0):
 			continue # don't pop a plane in while you're watching the spot
 		if sid == "ecorp_jet" and GameState.flags.has("ecorp_jet_gone") and not GameState.flags.has("jet_owned"):
 			continue
@@ -2657,12 +2772,16 @@ func _spawn_plane(sid: String, m: String, pos: Vector3, yaw: float) -> Aircraft:
 ## Taking a plane you weren't given.
 func _plane_taken(a: Aircraft) -> void:
 	GameState.stat_add("planes_stolen")
-	if a.owner_tag == "ecorp":
+	if a.owner_tag == "ecorp" and a.slot == "ecorp_jet":
 		GameState.flags["ecorp_jet_gone"] = true
 		GameState.set_wanted(150.0)
 		GameState.add_infamy("ecorp", 8)
 		GameState.add_fame("fsociety", 4)
 		hud.notify("E Corp's jet. They'll notice. Everyone will notice.", "warn")
+	elif a.owner_tag == "ecorp":
+		GameState.set_wanted(90.0)
+		GameState.add_infamy("ecorp", 4)
+		hud.notify("Phillip Price's own aircraft. Somebody on the island is already on the radio.", "warn")
 	else:
 		crime_witnessed(a.global_position)
 
@@ -3384,6 +3503,7 @@ func _update_quest_rides() -> void:
 ## stay put anywhere in the city; anything parked at home (outside your
 ## building, or at Bowery Bay for planes) or that you own stays forever.
 const RIDES_LOOSE := 4
+const RIDES_LOOSE_AIR := 4 # planes and helicopters, kept apart from cars
 const HOMES := [
 	{"name": "outside your building", "pos": Vector2(-466, 320), "r": 26.0, "plane": false, "region": "nyc"},
 	{"name": "at the Bowery Bay hangars", "pos": Vector2(1420, -1250), "r": 150.0, "plane": true, "region": "nyc"},
@@ -3447,16 +3567,19 @@ func _remember_ride(v: Vehicle) -> void:
 	ride_nodes[uid] = v
 	v.locked = false
 	parked_cars.erase(v)
-	# Only the most recent loose rides are kept; older ones get towed.
+	# Only the most recent loose rides are kept; older ones get towed. Planes
+	# are counted on their own: stealing a few cars after you land never makes
+	# the plane you left on the field vanish.
 	GameState.rides.erase(rec)
 	GameState.rides.append(rec)
 	var loose := 0
+	var kind := str(rec.get("kind", "car"))
 	for i in range(GameState.rides.size() - 1, -1, -1):
 		var r: Dictionary = GameState.rides[i]
-		if bool(r.get("home", false)) or bool(r.get("owned", false)):
+		if bool(r.get("home", false)) or bool(r.get("owned", false)) or str(r.get("kind", "car")) != kind:
 			continue
 		loose += 1
-		if loose > RIDES_LOOSE:
+		if loose > (RIDES_LOOSE if kind == "car" else RIDES_LOOSE_AIR):
 			var old_uid := int(r.get("uid", -1))
 			GameState.rides.remove_at(i)
 			var on: Vehicle = ride_nodes.get(old_uid)
@@ -3488,7 +3611,7 @@ func _update_rides() -> void:
 				continue
 			if v == player.driving:
 				continue
-			if v.global_position.distance_to(pp) > 1300.0:
+			if v.global_position.distance_to(pp) > (1900.0 if v is Aircraft else 1300.0):
 				var vp := v.global_position
 				rec["pos"] = [vp.x, vp.y, vp.z]
 				rec["yaw"] = v.rotation.y
@@ -3498,7 +3621,9 @@ func _update_rides() -> void:
 			continue
 		var pa: Array = rec.get("pos", [0, 0, 0])
 		var pos := Vector3(float(pa[0]), float(pa[1]), float(pa[2]))
-		if pos.distance_to(pp) > 950.0:
+		# Planes are seen from a long way off (and from the air), so they're
+		# put back long before you could notice them appear.
+		if pos.distance_to(pp) > (1500.0 if str(rec.get("kind", "car")) == "plane" else 950.0):
 			continue
 		var nv: Vehicle
 		if str(rec.get("kind", "car")) == "plane":

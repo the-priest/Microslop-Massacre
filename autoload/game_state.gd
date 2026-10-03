@@ -684,6 +684,7 @@ func complete_quest(qid: String) -> void:
 		return
 	cur["state"] = "done"
 	cur["stage"] = maxi(int(cur["stage"]), 100)
+	flags["quest_done_t"] = game_minutes # the next message waits a little
 	stats["quests"] = int(stats.get("quests", 0)) + 1
 	var q: Dictionary = DB.QUESTS.get(qid, {})
 	emit_signal("quest_updated", qid, 100, "done")

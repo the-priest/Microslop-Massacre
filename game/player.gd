@@ -52,6 +52,11 @@ var _land_dip: float = 0.0
 var _was_air: bool = false
 var _fall_start_y: float = 0.0
 var _move_amount: float = 0.0
+## The body moves sixty times a second; the eye is drawn between the last two
+## physics positions so walking and strafing are smooth at any frame rate.
+var _eye_y: float = 1.62
+var _pp_prev := Vector3.ZERO
+var _pp_ok := false
 
 
 func _ready() -> void:
@@ -75,6 +80,9 @@ func _ready() -> void:
 	cam.fov = _base_fov
 	add_child(cam)
 	cam.make_current()
+	get_tree().physics_frame.connect(func() -> void:
+		_pp_prev = global_position
+		_pp_ok = true)
 	_lamp = SpotLight3D.new()
 	_lamp.position = Vector3(0.1, -0.05, 0.0)
 	_lamp.light_color = Color(1.0, 0.95, 0.85)
@@ -109,6 +117,7 @@ func _ready() -> void:
 ## Move without it counting as a fall (cell changes, elevators, leaving a car).
 func teleport(p: Vector3) -> void:
 	global_position = p
+	_pp_prev = p
 	velocity = Vector3.ZERO
 	_was_air = false
 	_fall_start_y = p.y
@@ -276,7 +285,7 @@ func _physics_process(delta: float) -> void:
 				AudioManager.play_step()
 	var bob := sin(_bob_t) * 0.04 * minf(1.0, _move_amount / RUN)
 	_land_dip = move_toward(_land_dip, 0.0, delta * 0.6)
-	cam.position.y = lerpf(cam.position.y, eye + bob - _land_dip, 0.25)
+	_eye_y = lerpf(_eye_y, eye + bob - _land_dip, 0.25)
 	# Noise: sprinting loud, crouch quiet.
 	if crouching:
 		_noise = 0.15
@@ -289,6 +298,12 @@ func _physics_process(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+	# The eye, between the last two physics positions (see _eye_y).
+	var cur := global_position
+	var ip := cur
+	if _pp_ok and driving == null and _pp_prev.distance_squared_to(cur) < 4.0:
+		ip = _pp_prev.lerp(cur, clampf(Engine.get_physics_interpolation_fraction(), 0.0, 1.0))
+	cam.position = global_transform.basis.inverse() * (ip - cur) + Vector3(0, _eye_y, 0)
 	# Mouse capture follows UI state.
 	var want_capture := not frozen and not get_tree().paused
 	if want_capture and Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:

@@ -50,6 +50,15 @@ var air_time := 0.0
 var _ramp_n := Vector3.UP # the last slope you drove up, remembered for a moment
 var _ramp_t := 0.0
 var _was_floor := true
+## The meshes and lights hang off `vis`, which is drawn part-way between the
+## last two physics ticks, so the car glides at any frame rate instead of
+## stepping sixty times a second while the camera moves every frame.
+var vis: Node3D
+var _xf_prev := Transform3D()
+var _xf_ok := false
+var _lean := Vector2.ZERO # body roll (x) and pitch (y), eased per frame
+var _lean_want := Vector2.ZERO
+var _cam_dist := -1.0 # how far back the chase camera may sit (walls pull it in)
 
 static var _engine_stream: AudioStreamWAV = null
 
@@ -63,18 +72,19 @@ func setup(k: String, ci: int, pos: Vector3, yaw: float, g: Node) -> Vehicle:
 	collision_mask = Phys.WORLD | Phys.CAR
 	floor_snap_length = 0.5
 	floor_max_angle = deg_to_rad(40.0)
+	_make_vis()
 	var meshes := Props.car_meshes("car_%s_%d" % [k, ci])
 	_mesh = MeshInstance3D.new()
 	_mesh.mesh = meshes[0]
 	_mesh.material_override = Mats.lit
 	_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	_mesh.visibility_range_end = 300.0
-	add_child(_mesh)
+	vis.add_child(_mesh)
 	_glow = MeshInstance3D.new()
 	_glow.mesh = meshes[1]
 	_glow.material_override = Mats.glow
 	_glow.visibility_range_end = 400.0
-	add_child(_glow)
+	vis.add_child(_glow)
 	var cs := CollisionShape3D.new()
 	var bs := BoxShape3D.new()
 	var big := k in ["van", "truck", "ambulance"]
@@ -90,10 +100,57 @@ func setup(k: String, ci: int, pos: Vector3, yaw: float, g: Node) -> Vehicle:
 	_smoke.material_override = Mats.lit
 	_smoke.position = Vector3(0, 1.2, -1.6)
 	_smoke.visible = false
-	add_child(_smoke)
+	vis.add_child(_smoke)
 	position = pos
 	rotation.y = yaw
+	vis.transform = transform
 	return self
+
+
+func _make_vis() -> void:
+	if vis != null:
+		return
+	vis = Node3D.new()
+	vis.name = "Vis"
+	vis.top_level = true
+	add_child(vis)
+
+
+func _enter_tree() -> void:
+	if not get_tree().physics_frame.is_connected(_tick_start):
+		get_tree().physics_frame.connect(_tick_start)
+	_xf_ok = false
+
+
+func _exit_tree() -> void:
+	if get_tree().physics_frame.is_connected(_tick_start):
+		get_tree().physics_frame.disconnect(_tick_start)
+
+
+## Where the body was when this physics tick began.
+func _tick_start() -> void:
+	_xf_prev = global_transform
+	_xf_ok = true
+
+
+## The body's transform as it should be drawn this frame: between where it
+## was a tick ago and where it is now. A jump of more than 20 m is a teleport.
+func vis_xf() -> Transform3D:
+	var cur := global_transform
+	if not _xf_ok or _xf_prev.origin.distance_squared_to(cur.origin) > 400.0:
+		return cur
+	return _xf_prev.interpolate_with(cur, clampf(Engine.get_physics_interpolation_fraction(), 0.0, 1.0))
+
+
+func _update_vis() -> void:
+	if vis != null and is_inside_tree():
+		vis.global_transform = vis_xf()
+
+
+## Snap the drawn car to the body (after moving it by hand).
+func snap_vis() -> void:
+	_xf_prev = global_transform
+	_update_vis()
 
 
 func display_name() -> String:
@@ -127,6 +184,7 @@ func begin_drive() -> void:
 	cam.global_position = global_position + global_transform.basis.z * 7.0 + Vector3(0, 2.6, 0)
 	cam.make_current()
 	cam_yaw = 0.0
+	_cam_dist = -1.0
 	if _engine == null:
 		_engine = AudioStreamPlayer3D.new()
 		_engine.stream = _engine_loop()
@@ -147,7 +205,7 @@ func begin_drive() -> void:
 		_headlights.shadow_enabled = false
 		_headlights.position = Vector3(0, 0.9, -2.4)
 		_headlights.rotation.x = -0.09
-		add_child(_headlights)
+		vis.add_child(_headlights)
 	_headlights.visible = false
 
 
@@ -223,7 +281,12 @@ func _physics_process(delta: float) -> void:
 	if hb:
 		grip *= 1.7
 	rotation.y += steer * grip * signf(speed) * delta
+	var spd0 := speed
 	_move(delta)
+	# The body leans out of turns and squats or dips with the throttle.
+	var turn_rate := steer * grip * signf(speed)
+	var accel := (speed - spd0) / maxf(delta, 0.001)
+	_lean_want = Vector2(clampf(-turn_rate * sp * 0.006, -0.07, 0.07), clampf(accel * 0.004, -0.05, 0.035))
 	if driving:
 		_run_over(delta)
 	if _engine != null and _engine.playing:
@@ -496,30 +559,73 @@ func _burn(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+	_update_vis()
+	if _mesh != null and not dead:
+		_lean = _lean.lerp(_lean_want if is_on_floor() else Vector2.ZERO, 1.0 - exp(-6.0 * delta))
+		_mesh.rotation = Vector3(_lean.y, 0.0, _lean.x)
+		_glow.rotation = _mesh.rotation
 	if not driving or cam == null:
 		return
+	_camera(delta)
+
+
+## Chase camera: behind the car, swings with the mouse, pulled in by walls
+## (not by every lamp post it passes), and eased out again once clear.
+func _camera(delta: float) -> void:
 	if _headlights != null:
 		var night := Mats.night
 		_headlights.visible = night > 0.2 or GameState.weather == "rain"
-	# Chase camera: behind the car, swings with the mouse, never inside a wall.
-	var back := global_transform.basis.z
+	var xf := vis.global_transform if vis != null else global_transform
+	var back := xf.basis.z
 	back.y = 0.0
 	back = back.normalized().rotated(Vector3.UP, cam_yaw)
 	var dist := 7.0 + absf(speed) * 0.06
-	var want := global_position + back * dist * cos(_cam_pitch) + Vector3(0, 1.4 + dist * sin(_cam_pitch), 0)
-	var look := global_position + Vector3(0, 1.3, 0)
-	var q := PhysicsRayQueryParameters3D.create(look, want, Phys.WORLD)
-	q.exclude = [get_rid()]
-	var res := get_world_3d().direct_space_state.intersect_ray(q)
-	if not res.is_empty():
-		want = (res["position"] as Vector3) + (look - want).normalized() * 0.4
-	cam.global_position = cam.global_position.lerp(want, minf(1.0, delta * 8.0))
+	var look := xf.origin + Vector3(0, 1.3, 0)
+	var off := back * dist * cos(_cam_pitch) + Vector3(0, 0.1 + dist * sin(_cam_pitch), 0)
+	var allowed := chase_clear(look, off, [get_rid()])
+	if _cam_dist < 0.0:
+		_cam_dist = allowed
+	elif allowed < _cam_dist:
+		_cam_dist = lerpf(_cam_dist, allowed, 1.0 - exp(-25.0 * delta))
+	else:
+		_cam_dist = lerpf(_cam_dist, allowed, 1.0 - exp(-2.5 * delta))
+	var want := look + off * _cam_dist
+	cam.global_position = cam.global_position.lerp(want, 1.0 - exp(-10.0 * delta))
 	if cam.global_position.distance_to(look) > 0.1:
 		cam.look_at(look, Vector3.UP)
-	cam.fov = lerpf(cam.fov, 70.0 + absf(speed) * 0.35, minf(1.0, delta * 3.0))
+	cam.fov = lerpf(cam.fov, 70.0 + absf(speed) * 0.35, 1.0 - exp(-3.0 * delta))
 	# Let cam_yaw drift back behind the car when you're driving forward.
 	if absf(speed) > 6.0:
-		cam_yaw = lerp_angle(cam_yaw, 0.0, minf(1.0, delta * 1.2))
+		cam_yaw = lerp_angle(cam_yaw, 0.0, 1.0 - exp(-1.2 * delta))
+
+
+## How much of `off` (0..1) the camera can have from `look` before a wall gets
+## in the way. Three rays side by side: a thin pole only ever blocks one of
+## them, so it's ignored; a wall blocks them all. The edge-of-map walls don't
+## count.
+func chase_clear(look: Vector3, off: Vector3, exclude: Array) -> float:
+	var space := get_world_3d().direct_space_state
+	var side := off.cross(Vector3.UP).normalized() * 0.7
+	var frac := [1.0, 1.0, 1.0]
+	var blocked := 0
+	for i in 3:
+		var o: Vector3 = side * float(i - 1)
+		var q := PhysicsRayQueryParameters3D.create(look + o * 0.3, look + off + o, Phys.WORLD)
+		q.exclude = exclude
+		var res := space.intersect_ray(q)
+		if res.is_empty():
+			continue
+		var col := res["collider"] as CollisionObject3D
+		if col != null:
+			var own: Object = col.shape_owner_get_owner(col.shape_find_owner(int(res["shape"])))
+			if own != null and str(own.get_meta("tag", "")) == "bounds":
+				continue
+		var d := (look + o * 0.3).distance_to(res["position"])
+		frac[i] = clampf((d - 0.5) / maxf(off.length(), 0.01), 0.12, 1.0)
+		blocked += 1
+	if blocked >= 2:
+		return minf(float(frac[1]), minf(float(frac[0]), float(frac[2])))
+	return 1.0
 
 
 ## A looping engine hum, synthesized once.

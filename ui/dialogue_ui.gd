@@ -227,6 +227,11 @@ func run(cid: String, npc: Node = null) -> void:
 	if not DialogueManager.has_convo(cid):
 		push_error("missing convo " + cid)
 		return
+	# Someone with work for you: the quest starts as they start talking.
+	if game != null and game.has_method("before_convo"):
+		await game.before_convo(cid)
+		if _open:
+			return
 	_open = true
 	_abort = false
 	_panel.visible = true
