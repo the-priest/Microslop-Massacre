@@ -547,6 +547,7 @@ func _fill_country() -> void:
 	var T := 200.0
 	var fc := landmark_far
 	var my_city: Rect2 = Regions.CITY.get(here, Rect2())
+	var far_water := MeshBatch.new()
 	for reg in Regions.SKY.keys():
 		var rs: Rect2 = Regions.SKY[reg]
 		var r2 := RandomNumberGenerator.new()
@@ -557,7 +558,7 @@ func _fill_country() -> void:
 			# Someone else's lake or ocean, seen from here.
 			var sv := sea_here.intersection(Rect2(Regions.to_local(here, Regions.to_world(str(reg), rs.position)), rs.size))
 			if sv.size.x > 0.0:
-				fc.props.flat(Vector3(sv.get_center().x, 0.004, sv.get_center().y), sv.size.x, sv.size.y, Color(0.08, 0.17, 0.25), 0.0, Vector2(1, 0))
+				far_water.flat(Vector3(sv.get_center().x, -0.4, sv.get_center().y), sv.size.x, sv.size.y, Color(0.08, 0.17, 0.25))
 		var gz := rs.position.y
 		while gz < rs.end.y - 1.0:
 			var gx := rs.position.x
@@ -605,6 +606,7 @@ func _fill_country() -> void:
 								fc.props.box(Vector3(c.x + r2.randf_range(-24.0, 24.0), 5.0, c.y + r2.randf_range(-24.0, 24.0)), Vector3(7.0, 10.0, 7.0), Color(0.12, 0.2, 0.09))
 				gx += T
 			gz += T
+	far_water.commit(_water_parent_holder(), Mats.water, 0.0, "FarWater")
 	# The interstate itself, seen from the cities: a ribbon of asphalt north
 	# to south through the country, so you can follow it from the air.
 	if here != "highway":
