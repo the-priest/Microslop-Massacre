@@ -39,6 +39,7 @@ const ACHIEVEMENTS := {
 	"airfields": ["FIVE FIELDS", "Land a plane at every airfield."],
 	"racer": ["LOCAL LEGEND", "Win a street race on every map."],
 	"taxi": ["YOU TALKIN' TO ME?", "Drive ten taxi fares."],
+	"aces": ["WHEELS DOWN", "Take gold in every air race."],
 }
 
 # ------------------------------------------------------------------ state

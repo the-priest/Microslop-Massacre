@@ -206,7 +206,7 @@ static func _build_proto(name: String, b: MeshBatch, g: MeshBatch) -> void:
 				_car(name, b, g)
 
 
-## car_<type>_<colorindex>. Types: sedan, taxi, police, van, suv, truck, hatch
+## car_<type>_<colorindex>. Types: sedan, taxi, police, van, suv, truck, hatch, ambulance
 static func _car(name: String, b: MeshBatch, g: MeshBatch) -> void:
 	var parts := name.split("_")
 	var typ := parts[1] if parts.size() > 1 else "sedan"
@@ -239,6 +239,12 @@ static func _car(name: String, b: MeshBatch, g: MeshBatch) -> void:
 			body_h = 1.9
 			cab_len = 0.0
 			col = Color(0.85, 0.85, 0.85) if ci % 2 == 0 else col
+		"ambulance":
+			L = 5.8
+			W = 2.1
+			body_h = 2.0
+			cab_len = 0.0
+			col = Color(0.94, 0.94, 0.92)
 		"truck":
 			L = 7.5
 			W = 2.3
@@ -295,6 +301,18 @@ static func _car(name: String, b: MeshBatch, g: MeshBatch) -> void:
 	g.box(Vector3(W * 0.35, 0.35 + body_h * 0.7, L * 0.5 + 0.02), Vector3(0.3, 0.14, 0.04), Color(1, 0.08, 0.05), 0.0, Vector2(K_NIGHT, 0))
 	if typ == "taxi":
 		g.box(Vector3(0, 0.35 + body_h + cab_h + 0.12, cab_off), Vector3(0.7, 0.22, 0.3), Color(1, 0.9, 0.5), 0.0, Vector2(K_ALWAYS, 0))
+	elif typ == "ambulance":
+		var red := Color(0.85, 0.1, 0.08)
+		b.box(Vector3(0, by - 0.25, 0), Vector3(W + 0.02, 0.22, L * 0.98), red)
+		for sx in [-1.0, 1.0]:
+			# A cross on each flank.
+			b.box(Vector3(sx * (W * 0.5 + 0.015), by + 0.4, 0.8), Vector3(0.02, 0.62, 0.2), red)
+			b.box(Vector3(sx * (W * 0.5 + 0.015), by + 0.4, 0.8), Vector3(0.02, 0.2, 0.62), red)
+		b.box(Vector3(0, 0.35 + body_h + 0.03, 0.8), Vector3(0.62, 0.02, 0.2), red)
+		b.box(Vector3(0, 0.35 + body_h + 0.03, 0.8), Vector3(0.2, 0.02, 0.62), red)
+		g.box(Vector3(-0.5, 0.35 + body_h + 0.1, -L * 0.5 + 0.4), Vector3(0.6, 0.16, 0.3), Color(1, 0.1, 0.1), 0.0, Vector2(K_BLINK, 0))
+		g.box(Vector3(0.5, 0.35 + body_h + 0.1, -L * 0.5 + 0.4), Vector3(0.6, 0.16, 0.3), Color(1, 1, 1), 0.0, Vector2(K_BLINK, 0.5))
+		g.box(Vector3(0, 0.35 + body_h + 0.1, L * 0.5 - 0.3), Vector3(1.0, 0.14, 0.2), Color(1, 0.1, 0.1), 0.0, Vector2(K_BLINK, 0.25))
 	elif typ == "police":
 		b.box(Vector3(0, by, 0), Vector3(W + 0.02, 0.18, L * 0.5), Color(0.1, 0.2, 0.55))
 		g.box(Vector3(-0.3, 0.35 + body_h + cab_h + 0.1, cab_off), Vector3(0.5, 0.14, 0.3), Color(1, 0.1, 0.1), 0.0, Vector2(K_BLINK, 0))

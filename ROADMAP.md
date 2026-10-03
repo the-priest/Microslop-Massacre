@@ -82,6 +82,13 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       with a line for every town and its big moments; taxi dispatch that finds fares
       near the cab on the big maps; the validator now checks world terminal actions
 
+- [x] **Pass 10 (sirens and air races):** six air races between the airfields, most of
+      them across a map border, with rings in shared world coordinates and the clock
+      carried across the handover, race boards on every apron, medals and WHEELS DOWN;
+      an ambulance outside every hospital and new clinics in the township, the port,
+      Gary and Chicago, with paramedic calls on every map; vigilante calls in any police
+      cruiser. `air_race_test`, `activities_test`
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

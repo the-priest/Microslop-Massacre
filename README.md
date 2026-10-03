@@ -62,7 +62,7 @@ and drops them into the New York of *Mr. Robot*, then lets you drive or fly out 
   caught you.
 - **53 quests** (20 main, 33 side) with several real outcomes each, and a story director
   that keeps every quest moving no matter what order you do things in.
-- **111 conversations, about 48,000 words of original dialogue**, and honest skill
+- **112 conversations, about 48,500 words of original dialogue**, and honest skill
   checks: a white `[SPEECH 40]` means you pass.
 - **Four companions** with their own skills, opinions, barks, heart-to-hearts and
   breaking points.
@@ -158,7 +158,7 @@ road, every airfield and you on it.
 - **Every building has a door, and thousands of them open:** apartments, bodegas,
   pawn shops, diners, dive bars, offices, warehouses, squats and gang hideouts. Each is
   generated from its address, so the same door always leads to the same rooms.
-- **76 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
+- **77 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
   tower, the Fun Society arcade, Steel Mountain, the Rose Garden, Floor 88 of the North
   Tower, Microslop's showcase on Floor 101, E Corp Midwest's data floor, a lighthouse,
   a cannery full of servers, and a sublevel under a power plant that isn't on any drawing.
@@ -350,6 +350,17 @@ Kearney Strip to Ramsey Field crosses two borders and the whole interstate. In a
 Skyhawk it's a few minutes; in the jet, less. Fly out over the ocean, the lake or the
 rivers and the plane banks you back toward land.
 
+**Air races.** Every airfield with a course out of it has a race board on the apron. Pay
+the fee and a loaner Skyhawk is waiting on the runway: fly every ring in order, then land
+and stop on the finish field, against the clock. Most courses cross a map border, so the
+next ring is waiting over the next town's airspace and the clock keeps running across
+the handover. Six courses: **The Commuter** (Bowery Bay to Kearney Strip along I-80),
+**I-80 Express** (Chicago to New York, low over Lennox), **The Hop** (Kearney Strip to
+Ramsey Field, round the lighthouse; twelve kilometres), **The Lakefront** (Gary to Chicago,
+high over the Loop), **The Ore Run** (Gary to the township's water tower and down Main
+Street) and the **Harbor Lap** round Port Ramsey. Gold, silver and bronze each pay once;
+take gold in all six for WHEELS DOWN.
+
 **Everything you park stays parked.** The cars and planes you drive stay exactly where
 you leave them, across saves. Your four most recent rides stay anywhere in the city;
 anything parked outside your building (cars) or at Bowery Bay (planes) stays there
@@ -385,6 +396,16 @@ a crime.
   water, the trucks that stopped on I-80, the radiators banging in the Bronx.
 - **Fifty hidden fsociety masks** zip-tied to street corners across all six maps, glowing
   red and green if you know where to look. Every one you find counts toward something.
+- **Paramedic calls:** every city and town has an ambulance parked outside its hospital or
+  clinic (Mercy General, Lakeside General, the Township Medical Clinic, Port Ramsey Urgent
+  Care, St. Margaret's in Gary, the urgent care in Lennox). Get in and dispatch sends you
+  to someone down on the sidewalk: pull up, stop, and race them to the ER before the clock
+  runs out. Each patient in a shift is a level; ten in a row pays a bonus.
+- **Vigilante calls:** sit in any police cruiser with no heat of your own (there's one
+  parked outside the 7th Precinct, the township sheriff's and Chicago's Federal Plaza, if
+  you can get it open) and dispatch calls in a fleeing car. Run it down and ram it until
+  the driver gives up. Let it get too far away and it's gone.
+- **The clinics** out of town patch you up at triage for $40 and sell what a pharmacy does.
 - **Taxi fares:** get behind the wheel of any taxi, on any map, and dispatch finds you
   a fare. Pull up beside whoever's waving and stop, then get them to the address they
   name before they lose patience and stop at the door. Fast pays a tip, a streak of
@@ -414,7 +435,7 @@ a crime.
 | Lockpicking and terminals | 8 minigames: lockpick, terminal exploit, network recon, brute force, signal tap, cascade, log hunt, and a playable Space Invaders cabinet |
 | The intro | A narrated cold open over the city that tells the world's story up to tonight |
 | The epilogue | Slides for every thread you pulled |
-| Achievements | 20, from FISH WHISPERER to MICROSLOP MASSACRE, FIFTY FACES and FIVE FIELDS |
+| Achievements | 21, from FISH WHISPERER to MICROSLOP MASSACRE, FIFTY FACES, FIVE FIELDS and WHEELS DOWN |
 
 ## Controls
 
@@ -498,7 +519,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.7.0-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.8.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
@@ -550,7 +571,8 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `vehicle_test`, `flight_test` | Stealing, driving, crashing, carjacking; taking off, turning, rings, landing, crashing |
 | `pad_test`, `menu_pad_test` | The whole game driven by a simulated controller: menus, phone, map, pause, minigames, level-up, dialogue, terminals, cars |
 | `companion_test` | Recruiting, following, riding along, heart-to-hearts, reactions, leaving |
-| `activities_test` | A taxi fare found, picked up, delivered and paid (and the shift ending when you get out), a respray that loses two stars and a repair, Rent Is Due and The Cloud played through, then on every map a street race won and a hidden mask found |
+| `activities_test` | A taxi fare found, picked up, delivered and paid (and the shift ending when you get out), a paramedic call delivered to Mercy General, a vigilante takedown and a suspect who got away, a respray that loses two stars and a repair, Rent Is Due and The Cloud played through, then on every map a street race won, a hidden mask found, and the town's ER visited (patched up, out the right door) |
+| `air_race_test` | The Harbor Lap started from Marisol's board, flown and landed for gold; The Lakefront from Gary across the border into Chicago with its clock and rings carried over; The Ore Run abandoned by climbing out |
 | `heat_test` | Stars rising with crimes, officers and cruisers responding, a cruiser routing along the streets to your car, a roadblock at four stars, the FBI at five, losing them outdoors and indoors, selling a stolen car to Rafi, and winning and losing a street race |
 | `dd_*`, `deepdebug`, `smoke`, `intro_test` | Interiors, exploits, death, the open world's doors, loot and pickups, the intro |
 | `shots`, `world_shots`, `air_shots` | Screenshots for eyeballing: streets at any hour, the connected world from the air, the airfield |

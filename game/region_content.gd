@@ -17,6 +17,7 @@ const LANDMARKS := {
 		"chi_motel": {"rect": [60, 620, 108, 650], "h": 8.0, "style": 1, "color": Color(0.5, 0.42, 0.32), "sign": "SKYWAY MOTEL", "sign_col": Color(0.4, 0.9, 1.0), "door": "d_chi_motel"},
 		"chi_fbi": {"rect": [130, -340, 220, -260], "h": 60.0, "style": 8, "color": Color(0.45, 0.43, 0.4), "sign": "FEDERAL PLAZA", "sign_col": Color(0.7, 0.8, 1.0), "door": "d_chi_fbi"},
 		"chi_hangar": {"rect": [560, 140, 610, 176], "h": 10.0, "style": 5, "color": Color(0.5, 0.52, 0.55), "sign": "MEIGS FIELD", "sign_col": Color(0.9, 0.9, 0.95), "door": "d_chi_hangar"},
+		"chi_clinic": {"rect": [160, 165, 240, 225], "h": 34.0, "style": 3, "color": Color(0.64, 0.62, 0.58), "sign": "LAKESIDE GENERAL · EMERGENCY", "sign_col": Color(1.0, 0.3, 0.3), "door": "d_chi_clinic"},
 	},
 	"township": {
 		"tw_diner": {"rect": [20, -40, 52, -8], "h": 7.0, "style": 2, "color": Color(0.76, 0.72, 0.62), "sign": "TOWNSHIP DINER", "sign_col": Color(1.0, 0.4, 0.3), "door": "d_tw_diner", "awning": Color(0.65, 0.1, 0.08)},
@@ -27,6 +28,7 @@ const LANDMARKS := {
 		"tw_plant": {"rect": [-120, -232, -40, -190], "h": 12.0, "style": 8, "color": Color(0.5, 0.52, 0.55), "sign": "E CORP · WASHINGTON TOWNSHIP ENERGY", "sign_col": Color(0.35, 0.55, 1.0), "door": "d_tw_plant"},
 		"tw_hangar": {"rect": [-492, 120, -462, 160], "h": 9.0, "style": 5, "color": Color(0.55, 0.57, 0.6), "sign": "KEARNEY STRIP · EST. 1961", "sign_col": Color(1.0, 0.8, 0.3), "door": "d_tw_hangar"},
 		"tw_moss": {"rect": [326, -40, 340, -16], "h": 6.0, "style": 2, "color": Color(0.7, 0.67, 0.6), "door": "d_tw_moss", "boarded": true, "gable": true},
+		"tw_clinic": {"rect": [40, 8, 90, 40], "h": 9.0, "style": 2, "color": Color(0.84, 0.84, 0.8), "sign": "TOWNSHIP MEDICAL CLINIC", "sign_col": Color(1.0, 0.3, 0.3), "awning": Color(0.7, 0.15, 0.12), "door": "d_tw_clinic"},
 	},
 	"port": {
 		"pt_bar": {"rect": [40, -40, 80, -8], "h": 8.0, "style": 1, "color": Color(0.33, 0.29, 0.27), "sign": "THE BARNACLE", "sign_col": Color(0.3, 0.8, 1.0), "door": "d_pt_bar", "awning": Color(0.1, 0.2, 0.35)},
@@ -36,6 +38,7 @@ const LANDMARKS := {
 		"pt_lighthouse": {"rect": [744, -574, 760, -558], "h": 28.0, "style": 2, "color": Color(0.92, 0.92, 0.9), "door": "d_pt_lighthouse", "lighthouse": true},
 		"pt_cannery": {"rect": [-300, 320, -200, 400], "h": 12.0, "style": 5, "color": Color(0.45, 0.4, 0.35), "sign": "OCEAN BRIGHT CANNERY", "sign_col": Color(0.9, 0.5, 0.3), "door": "d_pt_cannery", "flicker": true},
 		"pt_hangar": {"rect": [-680, -150, -652, -110], "h": 8.0, "style": 5, "color": Color(0.55, 0.57, 0.6), "sign": "RAMSEY FIELD", "sign_col": Color(0.9, 0.9, 0.95), "door": "d_pt_hangar"},
+		"pt_clinic": {"rect": [40, 8, 90, 40], "h": 9.0, "style": 2, "color": Color(0.86, 0.86, 0.84), "sign": "PORT RAMSEY URGENT CARE", "sign_col": Color(1.0, 0.3, 0.3), "awning": Color(0.2, 0.35, 0.6), "door": "d_pt_clinic"},
 	},
 	"gary": {
 		"gy_union": {"rect": [-120, 10, -80, 44], "h": 10.0, "style": 1, "color": Color(0.42, 0.24, 0.18), "sign": "USW LOCAL 1014", "sign_col": Color(1.0, 0.4, 0.3), "door": "d_gy_union"},
@@ -44,6 +47,7 @@ const LANDMARKS := {
 		"gy_millofc": {"rect": [-390, -60, -330, -20], "h": 12.0, "style": 1, "color": Color(0.36, 0.22, 0.16), "sign": "GARY WORKS · MAIN OFFICE", "sign_col": Color(0.9, 0.75, 0.4), "door": "d_gy_millofc", "boarded": true, "flicker": true},
 		"gy_cluster": {"rect": [-540, -220, -450, -150], "h": 14.0, "style": 7, "color": Color(0.14, 0.28, 0.2), "sign": "SLOPFORGE", "sign_col": Color(0.35, 1.0, 0.45), "door": "d_gy_cluster"},
 		"gy_hangar": {"rect": [650, -120, 686, -84], "h": 8.0, "style": 5, "color": Color(0.55, 0.57, 0.6), "sign": "GARY/CHICAGO AIRPORT", "sign_col": Color(1.0, 0.7, 0.2), "door": "d_gy_hangar"},
+		"gy_clinic": {"rect": [170, 8, 230, 44], "h": 16.0, "style": 3, "color": Color(0.6, 0.56, 0.5), "sign": "ST. MARGARET'S HOSPITAL", "sign_col": Color(1.0, 0.3, 0.3), "door": "d_gy_clinic"},
 	},
 }
 
@@ -60,6 +64,7 @@ const DOORS := {
 		"d_chi_safe": {"pos": [-540, -590], "face": "s", "interior": "chi_safe", "name": "Warehouse (fsociety safehouse)", "lock": 30, "unlock_when": "q.mq_chi1>=20"},
 		"d_chi_motel": {"pos": [84, 620], "face": "n", "interior": "chi_motel", "name": "Skyway Motel"},
 		"d_chi_fbi": {"pos": [175, -260], "face": "s", "interior": "chi_fbi", "name": "Federal Plaza"},
+		"d_chi_clinic": {"pos": [200, 165], "face": "n", "interior": "clinic_er", "name": "Lakeside General — Emergency"},
 		"d_chi_hangar": {"pos": [585, 176], "face": "s", "interior": "chi_hangar", "name": "Meigs Field Hangar"},
 	},
 	"township": {
@@ -67,6 +72,7 @@ const DOORS := {
 		"d_tw_law": {"pos": [75, -8], "face": "s", "interior": "tw_law", "name": "Law Office of Margaret Hale"},
 		"d_tw_bar": {"pos": [252, -8], "face": "s", "interior": "tw_bar", "name": "The Spillway"},
 		"d_tw_sheriff": {"pos": [-108, 8], "face": "n", "interior": "tw_sheriff", "name": "Township Sheriff"},
+		"d_tw_clinic": {"pos": [65, 8], "face": "n", "interior": "clinic_er", "name": "Township Medical Clinic"},
 		"d_tw_chapel": {"pos": [194, 10], "face": "n", "interior": "tw_chapel", "name": "St. Brigid's Church"},
 		"d_tw_plant": {"pos": [-80, -190], "face": "s", "interior": "tw_plant", "name": "E Corp Washington Township Energy"},
 		"d_tw_hangar": {"pos": [-462, 140], "face": "e", "interior": "tw_hangar", "name": "Kearney Strip Hangar"},
@@ -80,6 +86,7 @@ const DOORS := {
 		"d_pt_lighthouse": {"pos": [744, -566], "face": "w", "interior": "pt_lighthouse", "name": "Ramsey Point Light"},
 		"d_pt_cannery": {"pos": [-250, 400], "face": "s", "interior": "pt_cannery", "name": "Ocean Bright Cannery", "lock": 45, "unlock_when": "q.mq_pr1>=30"},
 		"d_pt_hangar": {"pos": [-652, -130], "face": "e", "interior": "pt_hangar", "name": "Ramsey Field Office"},
+		"d_pt_clinic": {"pos": [65, 8], "face": "n", "interior": "clinic_er", "name": "Port Ramsey Urgent Care"},
 	},
 	"gary": {
 		"d_gy_union": {"pos": [-100, 10], "face": "n", "interior": "gy_union", "name": "USW Local 1014 Union Hall"},
@@ -88,6 +95,7 @@ const DOORS := {
 		"d_gy_millofc": {"pos": [-360, -20], "face": "s", "interior": "gy_millofc", "name": "Gary Works Main Office", "lock": 30},
 		"d_gy_cluster": {"pos": [-495, -150], "face": "s", "interior": "gy_cluster", "name": "SlopForge Training Cluster", "lock": 50, "unlock_when": "q.sq_gy3>=10"},
 		"d_gy_hangar": {"pos": [686, -102], "face": "e", "interior": "gy_hangar", "name": "Gary/Chicago Airport Office"},
+		"d_gy_clinic": {"pos": [200, 8], "face": "n", "interior": "clinic_er", "name": "St. Margaret's Hospital"},
 	},
 }
 

@@ -1,0 +1,45 @@
+### Air races: a board on the apron of every airfield that has a course out
+### of it. Pick a route, pay the fee, and a loaner Skyhawk is waiting on the
+### runway. Fly every ring in order (most courses cross into the next map's
+### airspace) and land, stopped, on the finish field. See game/air_races.gd.
+
+=== air_board
+-- start
+> A whiteboard on two sawhorses at the edge of the apron. AIR RACES across the top in careful marker; under it, routes, record times, and a coffee can for entry fees. Somebody has drawn a very small plane next to every gold time.
+? at.township -> township
+? at.port -> port
+? at.gary -> gary
+? at.chicago -> chicago
+-> nyc
+-- nyc
+> Under the routes, in Gus's block capitals: THE COMMUTER. BOWERY BAY TO KEARNEY STRIP. NORTH, THEN WEST ALONG 80. FINISH ON MAIN STREET, LAND, STOP. NO BUZZING THE DINER (WALT).
+* [if cash>=100] "Fly The Commuter: New York to the township. ($100)" -> go ! airrace commuter
+* "Read the rules." -> rules
+* "Not today." -> END
+-- chicago
+> Somebody at the Chicago field has written I-80 EXPRESS in red and underlined it three times, and under that, in a different hand: CHICAGO TO NEW YORK. LOW OVER LENNOX. LAND AT BOWERY BAY. GUS HAS COFFEE.
+* [if cash>=100] "Fly the I-80 Express: Chicago to New York. ($100)" -> go ! airrace express
+* "Read the rules." -> rules
+* "Not today." -> END
+-- township
+> Walt's board is a sheet of plywood with THE HOP painted on it, and a hand-drawn map: Main Street, the plant, I-80 at Lennox, Port Ramsey's cranes and the light at Ramsey Point, a fat arrow into Ramsey Field. Under the map: MARISOL TIMES THE FINISH. BE NICE TO MARISOL.
+* [if cash>=100] "Fly The Hop: Kearney Strip to Ramsey Field. ($100)" -> go ! airrace hop
+* "Read the rules." -> rules
+* "Not today." -> END
+-- port
+> Marisol's board has one route on it, drawn in grease pencil around the harbor: up the coast, round the light, along the cranes, out over the water and home. HARBOR LAP. At the bottom: SILAS SAYS IF YOU HIT HIS LIGHTHOUSE HE'LL HIT YOU.
+* [if cash>=60] "Fly the Harbor Lap. ($60)" -> go ! airrace harbor
+* "Read the rules." -> rules
+* "Not today." -> END
+-- gary
+> Lena keeps two routes on her board, both in neat airline handwriting. THE LAKEFRONT: GARY TO CHICAGO, OVER THE LOOP, HIGH. THE ORE RUN: GARY TO THE TOWNSHIP, SOUTH ALONG THE SHORE. And under both: NO ONE HAS EVER BEATEN MY TIME. — L.
+* [if cash>=100] "Fly The Lakefront: Gary to Chicago. ($100)" -> go ! airrace lakefront
+* [if cash>=60] "Fly The Ore Run: Gary to the township. ($60)" -> go ! airrace ore_run
+* "Read the rules." -> rules
+* "Not today." -> END
+-- rules
+> RULES, in four different handwritings. Fly every ring in order; the next one glows, the one after it doesn't. Most routes cross into the next town's airspace, so keep flying: the rings are waiting on the other side. After the last ring, land on the finish field and STOP. The clock runs till your wheels do. Leave the plane and you're out. Gold, silver and bronze each pay once; fly it again for a tip and the satisfaction.
+-> start
+-- go
+> You drop the fee in the coffee can. Out on the runway a loaner Skyhawk is already turning its prop over, nobody in it, pointed at the far end.
+-> END

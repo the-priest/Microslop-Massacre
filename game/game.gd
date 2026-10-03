@@ -272,6 +272,14 @@ func _build_world() -> void:
 	taxi.name = "Taxi"
 	taxi.game = self
 	add_child(taxi)
+	air_races = AirRaces.new()
+	air_races.name = "AirRaces"
+	air_races.game = self
+	add_child(air_races)
+	emergency = Emergency.new()
+	emergency.name = "Emergency"
+	emergency.game = self
+	add_child(emergency)
 	jobs = Jobs.new()
 	jobs.name = "Jobs"
 	jobs.game = self
@@ -580,6 +588,8 @@ func _make_world_interactables() -> void:
 			smesh.box(bx3 + Vector3(0, 1.25, -0.21), Vector3(0.66, 0.86, 0.03), Color(0.46, 0.48, 0.5))
 			smesh.box(bx3 + Vector3(0.12, 1.5, -0.235), Vector3(0.22, 0.14, 0.01), Color(0.9, 0.75, 0.1))
 	smesh.commit(world_inter, Mats.lit, 160.0, "WorldSpotProps")
+	air_races.spawn_board(world_inter)
+	emergency.call_deferred("spawn_parked")
 
 
 func _spawn_pickup(parent: Node3D, pk: Dictionary, origin: Vector3) -> void:
@@ -1351,6 +1361,8 @@ func dlg_world_effect(cmd: String, args: Array) -> void:
 				n2.mode = "idle"
 		"race":
 			_pending.append(func() -> void: races.start(a0))
+		"airrace":
+			_pending.append(func() -> void: await air_races.start(a0))
 		"barter":
 			var shop := a0
 			if shop == "":
@@ -1622,7 +1634,7 @@ func compass_markers() -> Array:
 			var dv: Vector3 = (wp as Vector3) - pp
 			out.append({"dir": dv, "kind": "quest", "dist": Vector2(dv.x, dv.z).length()})
 	if bool(Settings.get_v("show_markers")):
-		for tp in taxi.marker_positions():
+		for tp in taxi.marker_positions() + air_races.marker_positions() + emergency.marker_positions():
 			var dvt: Vector3 = (tp as Vector3) - pp
 			out.append({"dir": dvt, "kind": "job", "dist": Vector2(dvt.x, dvt.z).length()})
 		for jp in jobs.marker_positions():
@@ -2497,6 +2509,8 @@ var planes: Dictionary = {} # airfield slot -> Aircraft
 var night_lights: NightLights
 var races: Races
 var taxi: Taxi
+var air_races: AirRaces
+var emergency: Emergency
 var airfield_slots: Array = [] # from CityBuilder.airfield_planes
 var _af_filled: Dictionary = {} # slot -> true once spawned this session
 var rings: Node3D = null

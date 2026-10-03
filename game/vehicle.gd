@@ -72,7 +72,7 @@ func setup(k: String, ci: int, pos: Vector3, yaw: float, g: Node) -> Vehicle:
 	add_child(_glow)
 	var cs := CollisionShape3D.new()
 	var bs := BoxShape3D.new()
-	var big := k in ["van", "truck"]
+	var big := k in ["van", "truck", "ambulance"]
 	bs.size = Vector3(1.95, 1.5, 4.5) if not big else Vector3(2.1, 2.2, 5.3)
 	cs.shape = bs
 	cs.position = Vector3(0, 0.85 if not big else 1.2, 0)
@@ -92,7 +92,9 @@ func setup(k: String, ci: int, pos: Vector3, yaw: float, g: Node) -> Vehicle:
 
 
 func display_name() -> String:
-	var n: String = {"sedan": "Sedan", "hatch": "Hatchback", "suv": "SUV", "van": "Van", "taxi": "Taxi", "police": "NYPD Cruiser", "truck": "Box Truck"}.get(kind, "Car")
+	var n: String = {"sedan": "Sedan", "hatch": "Hatchback", "suv": "SUV", "van": "Van", "taxi": "Taxi", "police": "NYPD Cruiser", "truck": "Box Truck", "ambulance": "Ambulance"}.get(kind, "Car")
+	if kind == "police" and WorldLayout.region != "nyc":
+		n = {"chicago": "CPD Cruiser", "township": "Sheriff's Cruiser", "highway": "State Trooper"}.get(WorldLayout.region, "Police Cruiser")
 	return n
 
 

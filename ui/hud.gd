@@ -282,10 +282,15 @@ func _process(delta: float) -> void:
 			var line1 := "%s   %d%%%s" % [ac.display_name().to_upper(), int(ac.hp / float(ac.spec["hp"]) * 100.0), "   ▲ STOLEN" if ac.stolen else ""]
 			var line2 := "%d KT    ALT %d FT    THR %d%%    HDG %03d" % [int(ac.speed * 1.944), int(maxf(0.0, ac.altitude if ac.airborne else 0.0) * 3.281), int(ac.throttle * 100.0), hdg]
 			_car_lbl.text = line1 + "\n" + line2 + ("\n▲ %s ▲" % ac.warn if ac.warn != "" else "")
+			var ars: String = game.air_races.status() if game.get("air_races") != null else ""
+			if ars != "":
+				_car_lbl.text += "\n" + ars
 			_car_lbl.add_theme_color_override("font_color", UI.RED if ac.warn != "" or ac.hp < 40.0 else UI.GREEN)
 		else:
 			_car_lbl.text = "%d km/h    %s %d%%%s" % [int(absf(car.speed) * 3.6), car.display_name().to_upper(), int(car.hp), "   ▲ STOLEN" if car.stolen else ""]
 			var ts: String = game.taxi.status() if game.get("taxi") != null else ""
+			if ts == "" and game.get("emergency") != null:
+				ts = game.emergency.status()
 			if ts != "":
 				_car_lbl.text += "\n" + ts
 			_car_lbl.add_theme_color_override("font_color", UI.RED if car.hp < 30.0 else (UI.AMBER if car.hp < 60.0 else UI.GREEN))

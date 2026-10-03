@@ -118,6 +118,12 @@ func _check_fx(fx: Array, where: String, items: Dictionary) -> void:
 			"trust":
 				if not ["darlene", "angela", "robot", "krista", "shayla", "leon", "tyrell", "trenton", "gideon", "whiterose", "dipierro", "walt", "bev", "hale", "brandt", "ruthie", "silas", "marcus", "lena", "alvarez"].has(a0):
 					_warn("trust: unknown '%s' in %s" % [a0, where])
+			"race":
+				if not Races.RACES.has(a0):
+					_err("race: unknown street race '%s' in %s" % [a0, where])
+			"airrace":
+				if not AirRaces.RACES.has(a0):
+					_err("airrace: unknown air race '%s' in %s" % [a0, where])
 			"ending":
 				if not EndingData.NAMES.has(a0):
 					_err("ending: unknown '%s' in %s" % [a0, where])
@@ -340,6 +346,9 @@ func _atom_ok(a: Dictionary, where: String) -> void:
 		"dead":
 			if not NPCData.NPCS.has(rest):
 				_warn("%s: dead.<npc> unknown npc '%s'" % [where, rest])
+		"at":
+			if not (rest == "nyc" or Regions.DEFS.has(rest)):
+				_err("%s: at.<map> unknown map '%s'" % [where, rest])
 		"trust", "perk", "trait", "companion", "seen", "disguise", "flag", "driving":
 			pass
 		_:

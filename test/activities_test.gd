@@ -1,6 +1,7 @@
 extends "res://test/towns_walk.gd"
 ## Repeatable activities: a taxi fare picked up and dropped off (and one
-## abandoned), a respray, hidden masks, the Bronx and Long Island City side
+## abandoned), a paramedic call delivered to Mercy General, a vigilante
+## takedown (and a suspect who gets away), a respray, hidden masks, the Bronx and Long Island City side
 ## stories (Rent Is Due, The Cloud), the news radio, then a street race won
 ## on every map that has one.
 
@@ -12,6 +13,8 @@ func _ready() -> void:
 	GameState.raise_skill("hacking", 50)
 	_day()
 	await _taxi()
+	await _paramedic()
+	await _vigilante()
 	await _respray()
 	await _masks()
 	await _rent_is_due()
@@ -20,6 +23,7 @@ func _ready() -> void:
 	for id in ["lakeshore", "interstate", "mainstreet", "quay", "broadway"]:
 		await _race(id)
 		await _masks()
+		await _clinic()
 	print("ACTIVITIES DONE fails=%d" % fails)
 	get_tree().quit()
 
@@ -63,6 +67,84 @@ func _taxi() -> void:
 	for i in 5:
 		await get_tree().create_timer(0.2).timeout
 	_ok("leaving the cab loses the fare", game.taxi.state == "" and game.taxi.streak == 0)
+
+
+func _paramedic() -> void:
+	print("PHASE paramedic")
+	await _enter_world_at(Vector3(-300, 0, 300))
+	var amb := Vehicle.new().setup("ambulance", 0, Vector3(-260.0, 0.4, 300.0), 0.0, game)
+	amb.locked = false
+	game.vehicles_root.add_child(amb)
+	await _settle()
+	game.enter_vehicle(amb)
+	for i in 40:
+		await get_tree().create_timer(0.2).timeout
+		if game.emergency.state == "pickup":
+			break
+	_ok("dispatch sends the ambulance to someone", game.emergency.mode == "medic" and game.emergency.state == "pickup")
+	_ok("the hud says paramedic", game.emergency.status().begins_with("PARAMEDIC"))
+	_ok("the patient has a marker", game.emergency.marker_positions().size() == 1)
+	amb.global_position = game.emergency.call_pos + Vector3(2.0, 0.4, 0)
+	amb.speed = 0.0
+	for i in 20:
+		await get_tree().create_timer(0.1).timeout
+		if game.emergency.state == "ride":
+			break
+	_ok("the patient's loaded", game.emergency.state == "ride")
+	var cash0 := GameState.cash
+	var h: Array = Emergency.HOSPITALS["nyc"]
+	amb.global_position = Vector3(float(h[1]), 0.4, float(h[2]) + 3.0)
+	amb.speed = 0.0
+	for i in 20:
+		await get_tree().create_timer(0.1).timeout
+		if game.emergency.state == "":
+			break
+	_ok("delivered to mercy general and paid", GameState.cash > cash0 and game.emergency.level == 1 and int(GameState.flags.get("medic_calls", 0)) == 1)
+	game.exit_vehicle(true)
+	for i in 5:
+		await get_tree().create_timer(0.2).timeout
+	_ok("getting out ends the shift", game.emergency.mode == "" and game.emergency.level == 0)
+
+
+func _vigilante() -> void:
+	print("PHASE vigilante")
+	GameState.clear_wanted()
+	await _enter_world_at(Vector3(-300, 0, 300))
+	var cop := Vehicle.new().setup("police", 0, Vector3(-260.0, 0.4, 300.0), 0.0, game)
+	cop.locked = false
+	game.vehicles_root.add_child(cop)
+	await _settle()
+	game.enter_vehicle(cop)
+	await _settle()
+	GameState.clear_wanted()
+	for i in 40:
+		await get_tree().create_timer(0.2).timeout
+		if game.emergency.state == "chase":
+			break
+	_ok("dispatch calls in a suspect", game.emergency.mode == "cop" and game.emergency.state == "chase" and is_instance_valid(game.emergency.suspect))
+	_ok("the suspect is running", game.emergency.suspect != null and game.emergency.suspect.ai_target != null)
+	var cash0 := GameState.cash
+	if game.emergency.suspect != null:
+		game.emergency.suspect.damage(70.0)
+	for i in 20:
+		await get_tree().create_timer(0.1).timeout
+		if game.emergency.state == "":
+			break
+	_ok("suspect down, paid", GameState.cash > cash0 and game.emergency.level == 1 and int(GameState.flags.get("suspects_down", 0)) == 1)
+	for i in 40:
+		await get_tree().create_timer(0.2).timeout
+		if game.emergency.state == "chase":
+			break
+	_ok("another call", game.emergency.state == "chase")
+	if is_instance_valid(game.emergency.suspect):
+		game.emergency.suspect.global_position = cop.global_position + Vector3(0, 0, 700.0)
+	for i in 20:
+		await get_tree().create_timer(0.1).timeout
+		if game.emergency.state == "":
+			break
+	_ok("a suspect who gets far enough away is gone", game.emergency.state == "" and game.emergency.level == 0)
+	game.exit_vehicle(true)
+	await _settle()
 
 
 func _respray() -> void:
@@ -208,6 +290,43 @@ func _race(id: String) -> void:
 	_ok(id + " won", not game.races.is_racing() and GameState.has_flag("race_won_" + id) and GameState.cash == 1000 + int(R["bet"]))
 	game.exit_vehicle(true)
 	await _settle()
+
+
+## The town's clinic: in, patched up at triage, and out the one door that
+## leads back onto this map's street.
+func _clinic() -> void:
+	var did := ""
+	for k in WorldLayout.DOORS.keys():
+		if str(k).ends_with("_clinic"):
+			did = str(k)
+	if did == "":
+		return
+	var amb := 0
+	for v in game.vehicles_root.get_children():
+		if v is Vehicle and (v as Vehicle).kind == "ambulance" and v.has_meta("service"):
+			amb += 1
+	_ok("an ambulance parked outside on " + WorldLayout.region, amb >= 1)
+	await _enter_door(did)
+	_ok("in the ER on " + WorldLayout.region, GameState.cell == "clinic_er")
+	GameState.hp = 20.0
+	GameState.cash = maxi(GameState.cash, 100)
+	var cash0 := GameState.cash
+	await _spot("er_triage", [])
+	_ok("patched up for $40", GameState.hp >= float(GameState.max_hp()) - 0.5 and GameState.cash == cash0 - 40)
+	var outs: Array = []
+	var stack: Array = [game]
+	while not stack.is_empty():
+		var nd: Node = stack.pop_back()
+		if nd is Interactable and (nd as Interactable).kind == "exit" and (nd as Node3D).is_visible_in_tree() and not (nd as Interactable).interact_info().is_empty():
+			outs.append(nd)
+		for c in nd.get_children():
+			stack.append(c)
+	_ok("one way out of the ER on " + WorldLayout.region, outs.size() == 1)
+	if outs.size() == 1:
+		await game.interact(outs[0])
+		await _settle()
+	var dw := WorldLayout.door_world(did)
+	_ok("back on the street outside " + did, GameState.cell == "world" and game.player.global_position.distance_to(dw["pos"] as Vector3) < 12.0)
 
 
 func _frames(n: int) -> void:

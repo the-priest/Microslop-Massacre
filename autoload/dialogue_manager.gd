@@ -19,7 +19,8 @@ extends Node
 ##   fame.f>=10, infamy.f, hostile.f, trust.who>=3, perk.id, trait.id,
 ##   companion.id, party>=2 (companions with you), dead.npc, seen.loc, equipped.item, disguise.f, mask, won,
 ##   night, day, rain, level>=5, stab<30, hp<50, hour>=20, daynum>=2, chance<30,
-##   driving.truck / driving.plane / driving.any (what you're at the wheel of)
+##   driving.truck / driving.plane / driving.any (what you're at the wheel of),
+##   at.<map> (which map you're on: nyc, highway, chicago, township, port, gary)
 
 signal convo_finished(convo_id: String)
 
@@ -28,7 +29,7 @@ const CHECK_SKILLS := {
 	"GUNS": "guns", "MELEE": "melee", "BARTER": "barter", "MEDICINE": "medicine",
 }
 const WORLD_EFFECTS := ["hostile", "barter", "minigame", "recruit", "dismiss", "travel", "ending",
-	"glitch", "sfx", "kill", "move", "sleep", "save", "blackout", "calm", "spawn", "fade", "levelup", "race"]
+	"glitch", "sfx", "kill", "move", "sleep", "save", "blackout", "calm", "spawn", "fade", "levelup", "race", "airrace"]
 const STATE_EFFECTS := ["set", "unset", "add", "quest", "track", "give", "take", "cash", "xp", "fame",
 	"infamy", "trust", "stab", "hp", "heal", "skill", "time", "check", "achieve", "discover",
 	"wanted", "hostile_faction", "note", "equip", "weather"]
@@ -351,6 +352,7 @@ func _atom_value(a: Dictionary) -> bool:
 		"disguise": return GS.disguise() == rest
 		"in": return GS.cell == rest or (rest == "subway" and GS.cell.begins_with("subway")) or (rest == "bld" and GS.cell.begins_with("bld:"))
 		"driving": return _driving(rest)
+		"at": return WorldLayout.region == rest
 		"flag": return _cmp(GS.flags.get(rest, false), op, val)
 	push_warning("unknown condition atom: " + key)
 	return false

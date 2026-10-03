@@ -732,6 +732,23 @@ const INTERIORS := {
 		]}],
 },
 # ================================================= LONG ISLAND CITY: THE CLOUD
+# The clinics and the small hospitals out of town share one waiting room.
+"clinic_er": {
+	"name": "Emergency Room", "amb": "office", "ambient": Color(0.42, 0.45, 0.47),
+	"rooms": [{"r": [0, 0, 14, 9], "h": 3.2, "wall": Color(0.76, 0.8, 0.78), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.92, 0.96, 1.0), "energy": 1.15, "lights": [[4, 2.9, 4.5], [10, 2.9, 4.5]]}],
+	"exits": [
+		{"pos": [7, 0], "face": "n", "to": "world:d_tw_clinic", "label": "Main Street", "when": "at.township"},
+		{"pos": [7, 0], "face": "n", "to": "world:d_pt_clinic", "label": "Water Street", "when": "at.port"},
+		{"pos": [7, 0], "face": "n", "to": "world:d_gy_clinic", "label": "Broadway", "when": "at.gary"},
+		{"pos": [7, 0], "face": "n", "to": "world:d_chi_clinic", "label": "Ambulance Bay", "when": "at.chicago"},
+	],
+	"furn": [["reception", 7.0, 6.6, 180, {"col": Color(0.82, 0.84, 0.86), "glow": Color(1.0, 0.3, 0.3)}], ["bench", 2.2, 2.4, 90, {"w": 3.0}], ["bench", 11.8, 2.4, -90, {"w": 3.0}],
+		["hospital_bed", 1.6, 7.2, 90], ["curtain", 3.2, 7.2, 0, {"w": 2.4}], ["vending", 13.3, 6.0, -90], ["water_cooler", 0.7, 4.6, 90], ["plant", 13.3, 0.8, 0], ["poster", 7.0, 8.85, 180, {"col": Color(0.8, 0.85, 0.9)}], ["clock", 10.0, 8.85, 180]],
+	"spots": [
+		{"id": "er_triage", "kind": "effects", "title": "Triage Nurse", "verb": "Get patched up ($40)", "pos": [7.0, 1.1, 5.8], "size": [3.0, 1.4, 1.0], "when": "cash>=40", "fx": "heal ; cash -40"},
+		{"id": "er_shop", "kind": "shop", "title": "Dispensary Window", "verb": "Buy", "pos": [12.2, 1.0, 7.4], "size": [1.6, 1.6, 1.0], "shop": "pharmacy"},
+	],
+},
 "court_tavern": {
 	"name": "Court Square Tavern", "amb": "jazz", "ambient": Color(0.32, 0.28, 0.26),
 	"rooms": [{"r": [0, 0, 12, 8], "h": 3.2, "wall": Color(0.3, 0.24, 0.2), "floor": F_WOOD, "light": Color(1.0, 0.75, 0.5), "energy": 0.9, "lights": [[3, 2.9, 4], [9, 2.9, 4]]}],
