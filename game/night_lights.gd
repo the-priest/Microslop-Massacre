@@ -64,7 +64,9 @@ func _process(delta: float) -> void:
 	var energy := night * lerpf(0.9, 2.4, bright)
 	var pos := PackedVector4Array()
 	var col := PackedVector4Array()
-	var n := mini(near.size(), MAX)
+	# The Low preset lights the nearest eight; everything else, sixteen.
+	var cap := 8 if int(Settings.get_v("detail")) == 0 else MAX
+	var n := mini(near.size(), cap)
 	for i in MAX:
 		if i < n:
 			var L: Array = near[i][1]

@@ -20,8 +20,12 @@ func solid(center: Vector3, size: Vector3, rot_y: float = 0.0, tag: String = "")
 	solids.append([center, size, rot_y, tag])
 
 
-func label(pos: Vector3, text: String, font_size: int, color: Color, rot_y: float, vis_range: float = 160.0, pixel: float = 0.02) -> void:
-	labels.append({"pos": pos, "text": text, "size": font_size, "color": color, "rot": rot_y, "range": vis_range, "pixel": pixel})
+## opts: outline (px), outline_col, tilt (radians, around the facing axis),
+## font ("graffiti" for spray-paint lettering).
+func label(pos: Vector3, text: String, font_size: int, color: Color, rot_y: float, vis_range: float = 160.0, pixel: float = 0.02, opts: Dictionary = {}) -> void:
+	var l := {"pos": pos, "text": text, "size": font_size, "color": color, "rot": rot_y, "range": vis_range, "pixel": pixel}
+	l.merge(opts)
+	labels.append(l)
 
 
 func commit(parent: Node3D, far: float, props_range: float = 260.0, collision: bool = true) -> void:
@@ -59,12 +63,15 @@ func commit(parent: Node3D, far: float, props_range: float = 260.0, collision: b
 		lb.font_size = int(l["size"])
 		lb.pixel_size = float(l["pixel"])
 		lb.modulate = l["color"]
-		lb.outline_size = 0
+		lb.outline_size = int(l.get("outline", 0))
+		if l.has("outline_col"):
+			lb.outline_modulate = l["outline_col"]
 		lb.position = l["pos"]
 		lb.rotation.y = float(l["rot"])
+		lb.rotation.z = float(l.get("tilt", 0.0))
 		lb.double_sided = false
 		lb.shaded = false
 		lb.visibility_range_end = float(l["range"])
-		lb.font = UI.font_sign()
+		lb.font = UI.font_graffiti() if str(l.get("font", "")) == "graffiti" else UI.font_sign()
 		lb.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		parent.add_child(lb)

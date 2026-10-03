@@ -111,6 +111,14 @@ static func slides(ending: String) -> Array:
 		out.append(_s("LOU'S RED HOTS", "'Include one allegation of rudeness to a child' became the most quoted line in Chicago food writing that year. The line at Lou's went around the block for a month, and never quite stopped. Five of the six restaurants that closed reopened. Lou catered the parties."))
 	elif GS.has_flag("ezeats_bombed"):
 		out.append(_s("LOU'S RED HOTS", "Lou's rating never really recovered, and neither did EZeats', which was the part Lou liked. He got a laminated sign made: NOT ON THE APP. COME IN. The neighborhood did."))
+	if GS.has_flag("kowal_flipped"):
+		out.append(_s("FEDERAL PLAZA", "The FBI's Chicago field office spent a year investigating E Corp Midwest for consumer fraud, on the strength of a case file nobody quite remembers writing. Agent Kowalczyk got a commendation. She hung it next to a grainy photo of a man in a hoodie, which is the only thing she kept from the original board."))
+	elif GS.has_flag("kowal_dropped"):
+		out.append(_s("FEDERAL PLAZA", "Case CHI-2291 was closed for lack of a definable crime. Agent Kowalczyk's son is fourteen now and wants to make games. Honest ones, he says. She doesn't know where he got that. She has a guess."))
+	if GS.has_flag("room9_back"):
+		out.append(_s("ROOM 9", "The Lennox Motor Inn's guest book filled up and went into a box, and the box went into the manager's attic. On its last page, two lines in the same handwriting: 'Keep driving. — E.' and, under it, steadier: 'Went back. — E.' The manager reads them sometimes. She doesn't know why they make her feel better."))
+	elif GS.has_flag("room9_kept"):
+		out.append(_s("ROOM 9", "You kept the page. It lives in your wallet behind your ID, folded so many times the ink is wearing through. Keep driving. Some days it's a warning. Some days it's permission. You haven't decided which it is. He hasn't either."))
 	if GS.has_flag("rig_freed"):
 		out.append(_s("FREIGHTOS", "Somewhere on I-80, a blue Peterbilt runs the only FreightOS license on Earth with the tier OWNER. Dolores has refused four buyout offers from E Corp's lawyers and one from a museum. When the CB asks who she is, she says 'a free woman,' and hangs up."))
 	elif GS.has_flag("rig_fuse"):

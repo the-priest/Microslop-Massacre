@@ -52,12 +52,12 @@ and drops them into the New York of *Mr. Robot*, then lets you drive or fly out 
   the horizon, and a plane flies straight from one into the next.
 - **14 endings**, from blowing up the world's debt with fsociety to walking away and
   going to therapy on Tuesdays. Some never touch the hack at all.
-- **82 epilogue slides** that remember what you did: who you saved, who you sold out,
+- **91 epilogue slides** that remember what you did: who you saved, who you sold out,
   whose debt you deleted, which game companies you broke and how, whether Lopez ever
   caught you.
-- **30 quests** (17 main, 13 side) with several real outcomes each, and a story director
+- **35 quests** (17 main, 18 side) with several real outcomes each, and a story director
   that keeps every quest moving no matter what order you do things in.
-- **72 conversations, about 27,000 words of original dialogue**, and honest skill
+- **80 conversations, about 30,000 words of original dialogue**, and honest skill
   checks: a white `[SPEECH 40]` means you pass.
 - **Four companions** with their own skills, opinions, barks, heart-to-hearts and
   breaking points.
@@ -110,12 +110,15 @@ the whole world in a corner, with the road between the cities and you on it.
   the pavement, the parked cars and the people walking under them; the city glow lifts
   the dark; your car's headlights come on after dusk; and there's a **Night brightness**
   setting if you want it moodier or easier.
+- **Graffiti.** Tags, slogans, drips and stencilled fsociety masks on the shopfronts
+  and down the alleys, different in every district and city, and the walls answer
+  what you've done: after Five/Nine, Rockstarved or Microslop, new slogans go up.
 - **A living street.** Pedestrians cross at the corners; traffic keeps to its lanes,
   waits at lights and honks at you.
 - **Every building has a door, and thousands of them open:** apartments, bodegas,
   pawn shops, diners, dive bars, offices, warehouses, squats and gang hideouts. Each is
   generated from its address, so the same door always leads to the same rooms.
-- **49 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
+- **50 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
   tower, the Fun Society arcade, Steel Mountain, the Rose Garden, Floor 88 of the North
   Tower, Microslop's showcase on Floor 101 and E Corp Midwest's data floor.
 - **Everything on the street is searchable:** dumpsters, newsboxes, mailboxes, food carts,
@@ -194,6 +197,11 @@ built the right bonds, kept the truth, and held your mind together.
 | **Small Disaster** | Krista's life | Krista's new boyfriend Lenny is lying to her. Decide which mercy is real. |
 | **Washington Township** | Allsafe | The memos that prove E Corp knew. Who gets to see them is up to you. |
 | **The Product** | Ron's Coffee | Ron's real product is stalkerware. Report him, expose his customers, or keep the list. |
+| **Final Notice** | Your building / Consumer Credit 0419 | Mrs. Ortiz in 2B is being hounded over her late husband's funeral loan. Win the collector over, play him his own voicemail, lean on him, or close the account from the branch PC. There may be a sweater in it. |
+| **Five Stars** | Chicago | Lou's Red Hots quit the EZeats app and got two hundred fake one-star reviews overnight. Trace them to a review farm in the Skyway Motel and decide what the farm writes next. |
+| **Last Load** | Interstate 80 | A trucker's rig is locked by a lapsed autopilot subscription, with a clinic's insulin in the trailer. Jailbreak it, pull the fuse, or race the cooler to the Lennox Pharmacy yourself. |
+| **Field Office** | Chicago | After E Corp Midwest, an FBI agent who used to partner with DiPierro has your photo on her board. Talk, call in a favour, or rewrite her case file. |
+| **Room 9** | Lennox Motor Inn | A line in the guest book in your handwriting: 'Keep driving. — E.' Come back after dark. |
 | **No Heat / Street Sermon / Lost / Dead Drops** | All over | A boiler held hostage by a subscription, a busker who needs a signal, a lost dog, packages nobody opens. |
 
 Every objective says where to go and how, and the compass points at it, even across
@@ -408,7 +416,8 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `validate` | Every quest, stage, marker, dialogue jump, effect, item, door (on every map), interior, shop and NPC reference resolves, every quest can be started, and every quest stage can actually be reached |
 | `compile_all` | Every script parses |
 | `story_walk`, `playthrough` | The main quest and the side stories played from the first line to an ending, the way a player does: follow the marker, walk through the door, talk to whoever is really there |
-| `respawn_walk` | The whole game war: Pixel, Kenny, Floor 88, the drive to Chicago, both hacks on the Midwest data floor, the drive home, Microslop's Floor 101, and the epilogue slides it earns |
+| `respawn_walk` | Final Notice, then the whole game war: Pixel, Kenny, Floor 88, the drive to Chicago, both hacks on the Midwest data floor, the drive home, Microslop's Floor 101, and the epilogue slides it earns |
+| `roads_walk` | The out-of-town side stories: Last Load and Room 9 on I-80, then Five Stars and Field Office in Chicago |
 | `region_test`, `ride_test` | Driving between maps through the highway gates with the same car; flying from Chicago across I-80 into New York in one plane, keeping height, speed and heading |
 | `ending_walk` | One ending per run (set the `ENDING` environment variable) through the dialogue that really offers it |
 | `dlgwalk`, `fuzz_dlg` | Walks every dialogue node in several game states and runs every conversation in the real UI |

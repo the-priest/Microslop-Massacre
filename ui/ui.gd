@@ -25,6 +25,20 @@ static func mono() -> Font:
 	return _mono
 
 
+## Spray-paint lettering for graffiti: the heaviest condensed face around.
+static var _graffiti: Font = null
+
+
+static func font_graffiti() -> Font:
+	if _graffiti == null:
+		var sf := SystemFont.new()
+		sf.font_names = PackedStringArray(["Impact", "Haettenschweiler", "DejaVu Sans Condensed", "Liberation Sans Narrow", "Arial Black", "sans-serif"])
+		sf.font_weight = 900
+		sf.font_italic = true
+		_graffiti = sf
+	return _graffiti
+
+
 static func font_sign() -> Font:
 	if _sign == null:
 		var sf := SystemFont.new()

@@ -154,6 +154,17 @@ Lou has sold red hots on the same South Side corner for thirty-one years. Three 
 40 It's done, one way or another. Tell Lou @npc:lou
 50 done
 
+=== sq_kowal | Field Office | side | 200 | road
+Somebody in Chicago noticed what happened on E Corp Midwest's data floor. Special Agent Teresa Kowalczyk, FBI Cyber, Chicago Field Office. She used to partner with Dominique DiPierro, and she has a grainy photo of a man in a hoodie pinned to her board.
+10 Agent Kowalczyk left a voicemail. Federal Plaza, downtown Chicago @npc:kowalczyk
+20 She has a case file with your photo in it. Talk her out of it, or get to her desk terminal at the back of the office @cell:chi_fbi:13,1.6
+30 done
+
+=== sq_room9 | Room 9 | side | 150 | road
+Lennox Motor Inn, Room 9. A guest book three hundred pages long, and on the last page, in your handwriting, a line you don't remember writing: 'Keep driving. — E.'
+10 Come back to Room 9 after dark and find out who wrote it @cell:hw_motel:3.5,3
+20 done
+
 === sq_rig | Last Load | side | 200 | road
 Dolores has driven I-80 for twenty-two years. This morning her rig's autopilot subscription lapsed in a dead zone, and FreightOS locked the truck on the shoulder. In the trailer: insulin for the clinic in Lennox, with six hours of cold left.
 10 Dolores is at the Big Rig Diner, out of options. Hear her out @npc:dolores
