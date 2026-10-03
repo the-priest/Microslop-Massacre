@@ -377,6 +377,8 @@ func _heli_move(delta: float) -> void:
 			# Settled onto something flat: a roof, a container, a truck.
 			_heli_land(impact)
 		elif impact > 9.0 and _crash_cool <= 0.0:
+			if game != null and game.get("collapse") != null and other is StaticBody3D:
+				game.collapse.plane_hit(self, col.get_position(), vel.length())
 			_crash(vel.length())
 			return
 		else:
@@ -428,6 +430,9 @@ func _move(delta: float) -> void:
 			speed *= 0.3 # nudged a hangar wall or a car while taxiing
 			damage(impact * 1.5)
 		elif impact > 3.0 and _crash_cool <= 0.0:
+			# Into a building fast enough, and it may come down with you.
+			if game != null and game.get("collapse") != null and other is StaticBody3D:
+				game.collapse.plane_hit(self, col.get_position(), vel.length())
 			_crash(vel.length())
 			return
 		else:

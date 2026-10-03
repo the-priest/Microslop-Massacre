@@ -302,6 +302,10 @@ func _build_world() -> void:
 	animals.name = "Animals"
 	animals.game = self
 	add_child(animals)
+	collapse = Collapse.new()
+	collapse.name = "Collapse"
+	collapse.game = self
+	add_child(collapse)
 	jobs = Jobs.new()
 	jobs.name = "Jobs"
 	jobs.game = self
@@ -323,6 +327,8 @@ func _index_city(cb: CityBuilder) -> void:
 	loot_index = LootIndex.new()
 	for e in cb.gen_doors:
 		var gd: Dictionary = e
+		if bool(gd.get("gone", false)):
+			continue # its building came down
 		gen_doors[str(gd["id"])] = gd
 		var p: Vector3 = gd["pos"]
 		var o: Vector3 = gd["out"]
@@ -2729,6 +2735,7 @@ var emergency: Emergency
 var stunts: StuntJumps
 var boats_ctl: Boats
 var animals: Animals
+var collapse: Collapse
 var airfield_slots: Array = [] # from CityBuilder.airfield_planes
 var _af_filled: Dictionary = {} # slot -> true once spawned this session
 var rings: Node3D = null
@@ -3602,7 +3609,12 @@ func _spray_tag(it: Interactable) -> void:
 		if o != null and not o.dead and o.faction in ["nypd", "police"] and o.global_position.distance_to(player.global_position) < 18.0 and o._los(o.head_pos(), player.eye_pos()):
 			crime_witnessed(player.global_position)
 			break
-	if all >= TAGS_TOTAL:
+	var lost := 0
+	for k in GameState.flags.keys():
+		if str(k).begins_with("lost_tag_"):
+			lost += 1
+	if all >= TAGS_TOTAL - lost:
+		GameState.flags["all_city_done"] = true
 		GameState.unlock("all_city")
 
 

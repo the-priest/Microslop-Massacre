@@ -2066,10 +2066,19 @@ func _fill_gaps(bi: int, bj: int, rect: Rect2, P: Dictionary, face: float, d: St
 ## Generic building: box with facade UVs, cornice, roof clutter, fire escape.
 func _building(r: Rect2, h: float, style: int, col: Color, shops: bool, face: float, d: String, roof_kind: String = "", with_door: bool = true) -> void:
 	var c := ctx_at(r.get_center().x, r.get_center().y)
+	# Brought down earlier in this playthrough (Collapse): everything still
+	# gets generated (so the rest of the city comes out the same), but into a
+	# scratch context, and a rubble pile stands where the building was.
+	var down := Collapse.is_down(WorldLayout.region, r)
+	if down:
+		rubble_for(c, r, h, hash(Vector2i(int(r.position.x), int(r.position.y))))
+		c = BuildCtx.new()
+	var nd0 := gen_doors.size()
 	var seed := rng.randf_range(1.0, 97.0)
 	_facade_box(c, r, 0.0, h, style, col, seed if shops else -seed)
 	c.solid(Vector3(r.get_center().x, h * 0.5, r.get_center().y), Vector3(r.size.x, h, r.size.y))
-	buildings.append([r.position.x, r.position.y, r.end.x, r.end.y, h, d])
+	var _bld_rec := [r.position.x, r.position.y, r.end.x, r.end.y, h, d, true] # true: can come down
+	buildings.append(_bld_rec)
 	stats["buildings"] = int(stats["buildings"]) + 1
 	# Cornice.
 	var trim := col.lightened(0.12)
@@ -2107,12 +2116,16 @@ func _building(r: Rect2, h: float, style: int, col: Color, shops: bool, face: fl
 	var nd := gen_doors.size()
 	if with_door:
 		_gen_door(r, face, style, shops, d, "", INF, awning_w)
+	if down:
+		for k in range(nd0, gen_doors.size()):
+			(gen_doors[k] as Dictionary)["gone"] = true
+		buildings.erase(_bld_rec)
 	if h < 70.0:
 		# Keep the paint off the door this building just got (if any).
 		var door_at := Vector3.INF
 		if gen_doors.size() > nd:
 			door_at = (gen_doors.back() as Dictionary)["pos"]
-		_paint_jobs.append([c, r, face, d, door_at, h])
+		_paint_jobs.append([c, r, face, d, door_at, h, down])
 	if shops and (style == 6 or (d in ["les", "hells", "chinatown", "coney"] and rng.randf() < 0.35)):
 		var sz2 := (r.position.y if face < 0.0 else r.end.y) + 0.06 * face
 		var sc: Color = [Color(1, 0.3, 0.3), Color(0.3, 1, 0.5), Color(0.3, 0.7, 1), Color(1, 0.8, 0.3), Color(1, 0.4, 0.9)][rng.randi() % 5]
@@ -2122,6 +2135,34 @@ func _building(r: Rect2, h: float, style: int, col: Color, shops: bool, face: fl
 			c.glow.box(Vector3(r.position.x + 1.0, 6.5, sz2 + 0.5 * face), Vector3(0.12, 3.5, 0.9), sc, 0.0, Vector2(Props.K_FLICKER if rng.randf() < 0.3 else Props.K_ALWAYS, rng.randf()))
 		else:
 			c.glow.box(Vector3(r.get_center().x, 3.75, sz2), Vector3(sw, 0.12, 0.06), sc, 0.0, Vector2(Props.K_ALWAYS, 0))
+
+
+## A collapsed building's rubble: a heap of broken slabs and beams across its
+## footprint, twisted rebar, a low collision mound you can climb.
+static func rubble_for(c: BuildCtx, r: Rect2, h: float, seed: int) -> void:
+	var g := RandomNumberGenerator.new()
+	g.seed = seed
+	var top := clampf(h * 0.12, 2.0, 7.0)
+	var area := r.size.x * r.size.y
+	var n := int(clampf(area / 6.0, 20.0, 140.0))
+	var cols := [Color(0.45, 0.42, 0.38), Color(0.36, 0.33, 0.3), Color(0.5, 0.36, 0.28), Color(0.28, 0.27, 0.26)]
+	for k in n:
+		var x := g.randf_range(r.position.x + 0.5, r.end.x - 0.5)
+		var z := g.randf_range(r.position.y + 0.5, r.end.y - 0.5)
+		# Higher in the middle.
+		var u := 1.0 - maxf(absf(x - r.get_center().x) / (r.size.x * 0.5), absf(z - r.get_center().y) / (r.size.y * 0.5))
+		var y := g.randf_range(0.0, top * (0.3 + 0.7 * u))
+		var s := Vector3(g.randf_range(0.6, 3.2), g.randf_range(0.3, 1.0), g.randf_range(0.6, 3.2))
+		c.props.box_xf(Transform3D(Basis.from_euler(Vector3(g.randf_range(-0.6, 0.6), g.randf() * TAU, g.randf_range(-0.6, 0.6))), Vector3(x, y, z)), s, cols[g.randi() % cols.size()])
+	for k in int(n / 6):
+		var a := Vector3(g.randf_range(r.position.x, r.end.x), g.randf_range(0.5, top), g.randf_range(r.position.y, r.end.y))
+		c.props.tube(a, a + Vector3(g.randf_range(-1.5, 1.5), g.randf_range(0.5, 2.5), g.randf_range(-1.5, 1.5)), 0.04, Color(0.35, 0.22, 0.15))
+	# A stump of the ground floor still standing at one corner.
+	var cx := r.position.x + 1.5 if g.randf() < 0.5 else r.end.x - 1.5
+	var cz := r.position.y + 1.5 if g.randf() < 0.5 else r.end.y - 1.5
+	c.props.box(Vector3(cx, top * 0.6, cz), Vector3(2.4, top * 1.2, 2.4), cols[0])
+	c.solid(Vector3(r.get_center().x, top * 0.25, r.get_center().y), Vector3(r.size.x * 0.85, top * 0.5, r.size.y * 0.85))
+	c.solid(Vector3(cx, top * 0.6, cz), Vector3(2.4, top * 1.2, 2.4))
 
 
 ## Graffiti: tags, slogans and stencils at street level and down the alley
@@ -2216,7 +2257,7 @@ func _finish_graffiti() -> void:
 		g.seed = hash(Vector2i(int(r.position.x * 7.0), int(r.position.y * 13.0))) + 911
 		for w in _paint_walls(r, float(j[2]), j[4], g):
 			if bool(w[3]) and float(w[2]) >= 3.6 and WorldLayout.in_bounds((w[0] as Vector3).x, (w[0] as Vector3).z):
-				cands.append([j[0], w])
+				cands.append([j[0], w, (j as Array).size() > 6 and bool(j[6])])
 	var want := int(TAGS_PER.get(WorldLayout.region, 0))
 	var pick := RandomNumberGenerator.new()
 	pick.seed = hash("tag_walls_" + WorldLayout.region)
@@ -2240,10 +2281,17 @@ func _finish_graffiti() -> void:
 		if near:
 			continue
 		var span := minf(float(w[2]), 6.0)
-		tag_spots.append({"id": "tag_%s_%d_%d" % [WorldLayout.region, int(round(p.x)), int(round(p.z))], "pos": p, "rot": float(w[1]), "span": span})
+		var tid := "tag_%s_%d_%d" % [WorldLayout.region, int(round(p.x)), int(round(p.z))]
 		taken.append(p)
+		if (cw as Array).size() > 2 and bool(cw[2]):
+			# This wall came down with its building.
+			GameState.flags["lost_" + tid] = true
+			continue
+		tag_spots.append({"id": tid, "pos": p, "rot": float(w[1]), "span": span})
 		_buffed_wall(cw[0] as BuildCtx, p, float(w[1]), span)
 	for j in _paint_jobs:
+		if (j as Array).size() > 6 and bool(j[6]):
+			continue # the building came down
 		_graffiti(j[0], j[1], float(j[2]), str(j[3]), j[4], taken)
 		_heaven_spot(j[0], j[1], float(j[2]), str(j[3]), float(j[5]))
 	_paint_jobs.clear()

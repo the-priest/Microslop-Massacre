@@ -28,9 +28,27 @@ vec3 hide_cars(vec3 v, mat4 model) {
 	return v;
 }
 vec3 lin(vec3 c) { return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c)); }
+// Buildings brought down this session (Game.collapse_building): everything
+// inside a box (center x, center z, half x, half z) and above the street
+// drops to the ground. Reloads leave them out of the city altogether.
+uniform vec4 collapse_box[8];
+uniform int collapse_n = 0;
+vec3 collapse_v(vec3 v, mat4 model) {
+	if (collapse_n <= 0) return v;
+	vec3 w = (model * vec4(v, 1.0)).xyz;
+	if (w.y < 0.35) return v;
+	for (int i = 0; i < 8; i++) {
+		if (i >= collapse_n) break;
+		vec4 b = collapse_box[i];
+		if (abs(w.x - b.x) < b.z && abs(w.z - b.y) < b.w) {
+			return (inverse(model) * vec4(w.x, -2.0, w.z, 1.0)).xyz;
+		}
+	}
+	return v;
+}
 void vertex() {
 	info = UV2;
-	VERTEX = hide_cars(VERTEX, MODEL_MATRIX);
+	VERTEX = collapse_v(hide_cars(VERTEX, MODEL_MATRIX), MODEL_MATRIX);
 	wpos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	wnrm = normalize(mat3(MODEL_MATRIX) * NORMAL);
 }

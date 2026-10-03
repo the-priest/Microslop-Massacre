@@ -52,6 +52,19 @@ static func set_hidden_cars(boxes: Array) -> void:
 		m.set_shader_parameter("hide_n", mini(boxes.size(), 32))
 
 
+## Boxes (Vector4: cx, cz, half x, half z) of buildings that came down this
+## session: the city's facades, props and lights inside them drop out of sight.
+static func set_collapsed(boxes: Array) -> void:
+	var arr := PackedVector4Array()
+	for b in boxes:
+		arr.append(b)
+	while arr.size() < 8:
+		arr.append(Vector4(0, 0, 0, 0))
+	for m in [facade, city_lit, city_glow]:
+		m.set_shader_parameter("collapse_box", arr)
+		m.set_shader_parameter("collapse_n", mini(boxes.size(), 8))
+
+
 ## Last value handed to the shaders (reading a global shader parameter back
 ## is editor-only).
 static var night: float = 0.0
