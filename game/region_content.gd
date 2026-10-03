@@ -130,6 +130,19 @@ const POIS := {
 }
 
 
+## Body shops: a painted bay on the street. Roll in with the heat on you and
+## stop, and they'll respray the car so the cops lose you; roll in banged up
+## and they'll fix it. Rafi's in Hunts Point also buys stolen cars.
+const BODY_SHOPS := {
+	"nyc": [{"pos": [1105, -1200], "name": "RAFI'S AUTO BODY", "rafi": true}, {"pos": [-455, 480], "name": "LES COLLISION"}],
+	"chicago": [{"pos": [-400, -415], "name": "WEST LOOP COLLISION"}],
+	"highway": [{"pos": [150, 300], "name": "ROADSIDE BODY & TOW"}],
+	"township": [{"pos": [375, 0], "name": "COYLE'S BODY SHOP"}],
+	"port": [{"pos": [400, 150], "name": "HARBOR AUTO & MARINE"}],
+	"gary": [{"pos": [70, 480], "name": "STEEL CITY COLLISION"}],
+}
+
+
 static func landmarks(region: String) -> Dictionary:
 	return LANDMARKS.get(region, {})
 

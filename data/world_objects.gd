@@ -196,4 +196,16 @@ const TRIGGERS := [
 	{"id": "sd_gy3_call", "cell": "*", "when": "q.mq_ms.done & q.sq_gy1.started & !q.sq_gy3.started", "fx": "quest sq_gy3 10", "bark": "Dude. DUDE. Microslop didn't kill SlopForge, they MOVED it. A training cluster in a glass box in the yard of a dead steel mill in Gary, Indiana. Every game from every studio they closed is in there getting chewed into sequels. Including mine. Please. — Kenny", "speaker": "KENNY (TEXT)"},
 	{"id": "sd_gy_cluster_in", "cell": "gy_cluster", "when": "q.sq_gy3==10", "fx": "quest sq_gy3 20", "bark": "Green light, cold air, the hum of a thousand GPUs learning to make games out of other people's games. The training console's at the far end.", "speaker": "ELLIOT (V.O.)"},
 
+	# ---- The Bronx: Rent Is Due.
+	{"id": "sd_rent_start", "cell": "world", "pos": [50, -1356], "r": 45.0, "when": "!q.sq_rent.started & day", "fx": "quest sq_rent 10", "bark": "A woman in a red coat outside 2290 Fordham, handing out flyers to people who are trying not to take them. RENTTRACK IS STEALING YOUR HEAT. She looks like she's been out here since dawn, and like she'll be out here tomorrow.", "speaker": "ELLIOT (V.O.)"},
+	# ---- Hidden masks and the road-trip achievements.
+	{"id": "sd_mask_first", "cell": "*", "when": "item.hidden_mask>=1", "fx": "xp 25", "bark": "A cheap fsociety mask zip-tied to a lamp post, and inside it a strip of paper: 1 OF 50. YOU FOUND ONE. Somebody's hidden fifty of these across every map. Of course they have.", "speaker": "ELLIOT (V.O.)"},
+	{"id": "sd_mask_10", "cell": "*", "when": "item.hidden_mask>=10", "fx": "cash 500 ; xp 100", "bark": "Ten masks. A text from an unknown number: 'Ten. Nice. Check your account.' Five hundred dollars, from nobody.", "speaker": "ELLIOT (V.O.)"},
+	{"id": "sd_mask_25", "cell": "*", "when": "item.hidden_mask>=25", "fx": "cash 1500 ; xp 250 ; give fsociety_mask 1", "bark": "Twenty-five. Another text: 'Halfway. You're good at looking. Have a real one.' There's a mask in my pocket I didn't put there. The real kind.", "speaker": "ELLIOT (V.O.)"},
+	{"id": "sd_mask_all", "cell": "*", "when": "item.hidden_mask>=50", "fx": "cash 5000 ; xp 600 ; achieve masks ; stab 5", "bark": "Fifty. The last text: 'All of them. Every corner of every map. Whoever you are, you see things other people walk past. Come work for us.' Signed with a single character. I think it's Darlene. I hope it's Darlene.", "speaker": "ELLIOT (V.O.)"},
+	{"id": "sd_road_trip", "cell": "*", "when": "flag.visited_highway & flag.visited_chicago & flag.visited_township & flag.visited_port & flag.visited_gary", "fx": "achieve road_trip ; xp 200"},
+	{"id": "sd_airfields", "cell": "*", "when": "flag.landed_nyc & flag.landed_chicago & flag.landed_township & flag.landed_port & flag.landed_gary", "fx": "achieve airfields ; xp 250"},
+	{"id": "sd_racer", "cell": "*", "when": "flag.race_won_hunts & flag.race_won_lakeshore & flag.race_won_interstate & flag.race_won_mainstreet & flag.race_won_quay & flag.race_won_broadway", "fx": "achieve racer ; xp 300 ; cash 1000"},
+	{"id": "sd_taxi", "cell": "*", "when": "flag.taxi_fares>=10", "fx": "achieve taxi ; xp 150"},
+
 ]

@@ -731,6 +731,42 @@ const INTERIORS := {
 			{"title": "Flip Phony's account authority: unlock every revoked library, lock out their admins", "result": "Every game Phony ever revoked unlocks at once, for everyone, worldwide. Then their own admin credentials stop working, replaced by a single read-only line on every screen in the building: YOU OWN WHAT YOU PAID FOR. They can't even log in to argue.", "fx": "set phony_freed ; quest mq_chi3 20 ; fame gamers 8 ; infamy ecorp 6 ; xp 200", "when": "q.mq_chi3>=10 & !flag.phony_freed"},
 		]}],
 },
+# ======================================================= THE BRONX: RENT IS DUE
+"fordham_lobby": {
+	"name": "2290 Fordham Road — Lobby", "amb": "interior", "ambient": Color(0.28, 0.26, 0.24),
+	"rooms": [{"r": [0, 0, 10, 8], "h": 3.0, "wall": Color(0.45, 0.4, 0.34), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.8, 0.82, 0.7), "energy": 0.7, "lights": [[5, 2.7, 4]]}],
+	"exits": [{"pos": [5, 0], "face": "n", "to": "world:d_fordham", "label": "Fordham Road"}],
+	"furn": [["mailbox", 9.4, 2.0, -90], ["mailbox", 9.4, 3.0, -90], ["radiator", 0.3, 3.0, 90], ["elevator", 5, 7.85, 180], ["stairs_up", 1.2, 6.8, 0], ["trash_pile", 8.6, 7.0, 0], ["poster", 0.15, 5.5, 90, {"col": Color(0.8, 0.75, 0.6)}]],
+	"spots": [
+		{"id": "fordham_notice", "kind": "text", "title": "Notice by the Elevator", "verb": "Read", "pos": [5.0, 1.6, 7.7], "size": [1.4, 1.0, 0.3], "text": "'ELEVATOR OUT OF SERVICE. MANAGEMENT IS AWARE.' Dated eleven weeks ago. Under it, a glossy RentTrack flyer: 'Pay rent, request repairs, and access premium amenities, all in one app! NEW: Amenity Fee ($49/mo) includes elevator access, hot water priority and lobby lighting.' The lobby light is one bulb."},
+		{"id": "fordham_radiator", "kind": "text", "title": "Radiator", "verb": "Touch", "pos": [0.4, 0.6, 3.0], "size": [0.4, 1.0, 1.2], "text": "Stone cold. Someone has taped a printout to it: 'HEAT IS A PREMIUM AMENITY — UPGRADE IN THE RENTTRACK APP.' Someone else has written underneath, in marker, a word that is not in the RentTrack app."},
+	],
+},
+"carbone_office": {
+	"name": "Carbone Realty", "amb": "office", "ambient": Color(0.42, 0.4, 0.36),
+	"rooms": [
+		{"r": [0, 0, 10, 8], "h": 3.0, "wall": Color(0.6, 0.55, 0.45), "floor": F_CARPET, "light": Color(1.0, 0.9, 0.72), "energy": 1.05, "lights": [[5, 2.7, 4]]},
+		{"r": [10, 0, 16, 8], "h": 3.0, "wall": Color(0.5, 0.4, 0.3), "floor": F_WOOD, "light": Color(1.0, 0.85, 0.62), "energy": 0.95, "lights": [[13, 2.7, 4]]},
+	],
+	"doors": [[10, 4, 1.2]],
+	"exits": [{"pos": [5, 0], "face": "n", "to": "world:d_carbone", "label": "Fordham Road"}],
+	"furn": [["counter", 5, 3.0, 0, {"w": 4.0}], ["chair", 2, 6.8, 0], ["chair", 3, 6.8, 0], ["plant", 0.6, 7.4, 0], ["poster", 0.15, 4, 90, {"col": Color(0.9, 0.7, 0.2)}],
+		["office_desk", 13, 6.6, 180], ["desk_pc", 15, 1.2, 0], ["filing_cabinet", 15.5, 4.0, -90], ["safe", 10.8, 7.2, 90], ["trophies", 13, 0.3, 0], ["window", 13, 7.85, 180, {"w": 1.6}]],
+	"containers": [{"id": "carbone_safe", "title": "Carbone's Safe", "pos": [10.8, 7.2], "y": 0.5, "size": [0.8, 1.0, 0.8], "items": {"watch": 1, "gold_chain": 1}, "cash": 400, "lock": 55, "owner": "locals"}],
+	"spots": [
+		{"id": "renttrack", "kind": "terminal", "title": "RentTrack Server", "verb": "Use", "pos": [15.0, 1.1, 1.2], "size": [1.4, 1.2, 0.9], "hack": 40, "header": "RENTTRACK PROPERTY OS // CARBONE REALTY // 41 BUILDINGS", "welcome": "Rent ledgers, maintenance tickets, 'amenity tiers' and a dashboard of tenant 'churn risk' with little red faces.",
+			"entries": [
+				{"title": "Amenity fees", "text": "Heat, hot water, elevator access and lobby lighting are 'premium amenities' at $49 a month per unit, across forty-one buildings. Units that don't pay have their thermostats capped at 58 degrees by the smart system. In January. Revenue last year: $1.9 million. Maintenance spend: $31,000."},
+				{"title": "Maintenance tickets", "text": "Eleven hundred open tickets, the oldest from 2019. Every one auto-closed after thirty days with the status RESOLVED (TENANT UNRESPONSIVE). A note in Carbone's own words on the dashboard: 'Never fix what the app can charge for.'"},
+				{"title": "Churn risk", "text": "Tenants scored by how likely they are to fight back. Organizers flagged in red. C. ALVAREZ, 2290 FORDHAM, 4F: 'HIGH RISK — ORGANIZER. Recommend non-renewal at lease end. Recommend heat cap.' Her lease ends in March."},
+			],
+			"actions": [
+				{"title": "Refund every amenity fee to every tenant in all forty-one buildings", "result": "$1.9 million goes back out the way it came in, to every card and every account, with a note in the RentTrack app: 'REFUND: AMENITIES WERE ALWAYS INCLUDED.' Carbone Realty's account hits zero by lunchtime. Tenants all over the Bronx open the app and think it's a scam, and then check their bank, and then start calling each other.", "fx": "set rent_refunded ; set rent_done ; quest sq_rent 30 ; fame locals 4 ; xp 140", "when": "q.sq_rent>=20 & !flag.rent_done"},
+				{"title": "Turn the heat and the elevators back on everywhere, and lock the thermostats at 70", "result": "Forty-one boilers fire at once. Elevators that haven't moved in months clunk awake. Every smart thermostat in Carbone's empire locks at seventy degrees with the admin password changed to something Carbone will never guess. In 2290 Fordham, the radiators start banging, and somebody in 4F starts crying.", "fx": "set rent_heat ; set rent_done ; quest sq_rent 30 ; fame locals 4 ; stab 2 ; xp 140", "when": "q.sq_rent>=20 & !flag.rent_done"},
+				{"title": "Flip the smart locks: every door opens for tenants, none for Carbone", "result": "Every lock in forty-one buildings re-keys at once: tenants' phones open everything, Carbone's open nothing, including the door of this office the next time he steps out for coffee. RentTrack's support line has never been so busy, and its support line is Carbone.", "fx": "set rent_locked ; set rent_done ; quest sq_rent 30 ; fame locals 3 ; xp 140", "when": "q.sq_rent>=20 & !flag.rent_done"},
+			]},
+	],
+},
 # ===================================================== WASHINGTON TOWNSHIP
 "tw_diner": {
 	"name": "Township Diner", "amb": "jazz", "ambient": Color(0.44, 0.38, 0.32),

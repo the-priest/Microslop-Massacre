@@ -153,6 +153,14 @@ static func slides(ending: String) -> Array:
 		out.append(_s("PORT RAMSEY", "The Miss Ruthie went out at four in the morning the day after the licenses came back, and every boat in Port Ramsey went with her. They came back at noon with fluke and sea bass and nothing to sell it to but each other, so they had a fish fry on the quay that went on until the terminal called the police, who stayed for seconds."))
 	if GS.has_flag("silas_lamp"):
 		out.append(_s("RAMSEY POINT", "Silas Pell turns the light on at dusk and off at dawn, by hand, with a brass switch that clicks. No ship has come into Port Ramsey dark since. The Coast Guard sent a letter about 'unauthorized modification of a smart navigational asset.' He used it to light the stove."))
+	if GS.has_flag("rent_heat"):
+		out.append(_s("2290 FORDHAM", "The radiators at 2290 Fordham have banged every winter since, loud enough to wake the dead. Nobody complains. Carmen Alvarez's tenants' association now covers forty-one buildings and has a lawyer on retainer and a group chat that Vince Carbone has nightmares about."))
+	elif GS.has_flag("rent_refunded"):
+		out.append(_s("2290 FORDHAM", "$1.9 million in 'amenity fees' went back to the people who paid them. Carbone Realty filed for bankruptcy the following spring, and the tenants of 2290 Fordham bought the building from the receiver, as a co-op, for one dollar and a promise to fix the elevator. They fixed the elevator."))
+	elif GS.has_flag("rent_locked"):
+		out.append(_s("2290 FORDHAM", "Vince Carbone spent a week trying to get back into his own buildings and a month trying to get back into his own office. The tenants changed nothing about the locks. They did, eventually, let him in to fix the boiler, under supervision."))
+	elif GS.has_flag("rent_fixed"):
+		out.append(_s("2290 FORDHAM", "Carbone fixed the heat, the elevator and the lobby light within the week, and never said why. Carmen Alvarez says it's the first time in twenty years a landlord's been scared of the right thing. She won't say what that is."))
 	if GS.has_flag("gy_strike"):
 		out.append(_s("GARY", "The one-hour software strike became a three-day real one. FreightOS settled: hourly pay, real breaks, no eye tracking, and the word 'driver' back on the job title. The trucks still drive themselves on the billboards. In the tower, the operators blink whenever they want."))
 	elif GS.has_flag("gy_names"):

@@ -70,6 +70,11 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       township, the port, Gary), each with its own host; races no longer forfeit you on
       long legs. `activities_test`
 
+- [x] **Pass 8 (more to find):** body shops on every map that respray you out of the
+      heat or fix the car; fifty hidden fsociety masks across all six maps with rewards
+      at 10, 25 and 50; five new achievements (FIFTY FACES, ROAD TRIP, FIVE FIELDS,
+      LOCAL LEGEND, YOU TALKIN' TO ME?); a new Bronx story, *Rent Is Due*
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

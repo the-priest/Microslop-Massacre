@@ -562,6 +562,7 @@ func _make_world_interactables() -> void:
 		if str((pk as Dictionary).get("region", "nyc")) != WorldLayout.region:
 			continue
 		_spawn_pickup(world_inter, pk, Vector3.ZERO)
+	_spawn_hidden_masks()
 	for sp in WorldObjects.SPOTS:
 		var sd: Dictionary = sp
 		if str(sd.get("region", "nyc")) != WorldLayout.region:
@@ -608,6 +609,15 @@ func _spawn_pickup(parent: Node3D, pk: Dictionary, origin: Vector3) -> void:
 			mb.box(Vector3(0.05, y0 + 0.08, 0.02), Vector3(0.18, 0.04, 0.09), col.darkened(0.15), 0.9, E)
 		"note":
 			mb.box(Vector3(0, y0 + 0.01, 0), Vector3(0.25, 0.01, 0.32), col, 0.3, E)
+		"collectible":
+			# An fsociety mask on a stake: white face, black hat, the grin.
+			mb.box(Vector3(0, y0 + 0.5, 0), Vector3(0.04, 1.0, 0.04), Color(0.3, 0.25, 0.2), 0.0, E)
+			mb.box(Vector3(0, y0 + 1.1, 0), Vector3(0.3, 0.36, 0.06), Color(0.92, 0.9, 0.86), 0.0, E)
+			mb.box(Vector3(0, y0 + 1.36, 0), Vector3(0.36, 0.06, 0.08), Color(0.08, 0.08, 0.08), 0.0, E)
+			mb.box(Vector3(0, y0 + 1.46, 0), Vector3(0.22, 0.16, 0.08), Color(0.08, 0.08, 0.08), 0.0, E)
+			for ex in [-0.07, 0.07]:
+				mb.box(Vector3(ex, y0 + 1.16, 0.035), Vector3(0.05, 0.03, 0.01), Color(0.05, 0.05, 0.05), 0.0, E)
+			mb.box(Vector3(0, y0 + 1.0, 0.035), Vector3(0.16, 0.025, 0.01), Color(0.1, 0.1, 0.1), 0.0, E)
 		_:
 			mb.box(Vector3(0, y0 + 0.07, 0), Vector3(0.28, 0.14, 0.2), col, 0.3, E)
 	# A soft glint above it so loot reads from a few meters away.
@@ -616,6 +626,13 @@ func _spawn_pickup(parent: Node3D, pk: Dictionary, origin: Vector3) -> void:
 	gb.box(Vector3(0, y0 + 0.45, 0), Vector3(0.03, 0.22, 0.03), gc)
 	gb.box(Vector3(0, y0 + 0.45, 0), Vector3(0.14, 0.03, 0.03), gc)
 	var far := 45.0 if not unique else 90.0
+	if itype == "collectible":
+		# Hidden masks glow red and green so a sharp eye catches them from a car.
+		gb.box(Vector3(0, y0 + 2.4, 0), Vector3(0.02, 2.0, 0.02), Color(0.9, 0.15, 0.15))
+		for k in 6:
+			var am := float(k) / 6.0 * TAU
+			gb.box(Vector3(cos(am) * 0.4, y0 + 0.01, sin(am) * 0.4), Vector3(0.2, 0.01, 0.03), Color(0.3, 1.0, 0.45), -am + PI * 0.5)
+		far = 90.0
 	if itype == "weapon":
 		# Weapons get a faint light column and a ground ring so they can be
 		# spotted from down the block.
@@ -1912,6 +1929,7 @@ func _slow_update() -> void:
 	_update_rides()
 	_update_gates()
 	_update_quest_rides()
+	_spray_tick()
 	_companion_tick()
 	# The Kingpin path: the corners pay every morning.
 	if GameState.has_flag("kingpin"):
@@ -2030,8 +2048,8 @@ func _chop_tick() -> void:
 	if not near:
 		_chop_asked = false
 		return
-	if _chop_asked or absf(v.speed) > 1.5:
-		return
+	if _chop_asked or absf(v.speed) > 1.5 or GameState.is_wanted():
+		return # with the heat on you, Rafi resprays first (_spray_tick)
 	_chop_asked = true
 	_chop_offer(v)
 
@@ -2669,6 +2687,8 @@ func _check_wings_landing() -> void:
 		return
 	if not WorldLayout.airfield_rect().has_point(Vector2(v.global_position.x, v.global_position.z)):
 		return
+	if not GameState.flags.has("landed_" + WorldLayout.region):
+		GameState.flags["landed_" + WorldLayout.region] = true
 	for L in LANDINGS:
 		var ld: Dictionary = L
 		if str(ld["region"]) == WorldLayout.region and GameState.quest_state(str(ld["quest"])) == "active" and GameState.quest_stage(str(ld["quest"])) == int(ld["stage"]):
@@ -3106,6 +3126,115 @@ func _atc_hello(from: String) -> void:
 	await get_tree().create_timer(2.5).timeout
 	if is_inside_tree():
 		hud.subtitle(str(l[0]), str(l[1]), 6.0)
+
+
+# ------------------------------------------------------------ hidden masks
+## Fifty fsociety masks, zip-tied to street corners across all six maps. Where
+## they go is fixed per map (a seeded walk over the intersections), so the
+## same mask is always on the same corner and saves remember which you took.
+const MASKS_PER := {"nyc": 15, "highway": 5, "chicago": 8, "township": 7, "port": 7, "gary": 8}
+const MASKS_TOTAL := 50
+
+
+func hidden_mask_spots(region: String) -> Array:
+	var out: Array = []
+	var n := int(MASKS_PER.get(region, 0))
+	var r := RandomNumberGenerator.new()
+	r.seed = hash("fsociety_masks_" + region)
+	var used := {}
+	var tries := 0
+	while out.size() < n and tries < 600:
+		tries += 1
+		var i := r.randi_range(0, WorldLayout.NA - 1)
+		var j := r.randi_range(0, WorldLayout.NS - 1)
+		var sx := 1.0 if r.randf() < 0.5 else -1.0
+		var sz := 1.0 if r.randf() < 0.5 else -1.0
+		if used.has(Vector2i(i, j)) or not WorldLayout.intersection_exists(i, j):
+			continue
+		var x := WorldLayout.ax(i) + sx * (WorldLayout.AVE_HW - 1.3)
+		var z := WorldLayout.sz(j) + sz * (WorldLayout.ST_HW - 1.3)
+		if not WorldLayout.in_bounds(x, z) or WorldLayout.district_at(x, z) in ["airfield", "park", "steel"]:
+			continue
+		used[Vector2i(i, j)] = true
+		out.append({"id": "mask_%s_%d" % [region, out.size()], "pos": Vector3(x, 0.3, z)})
+	return out
+
+
+func _spawn_hidden_masks() -> void:
+	for m in hidden_mask_spots(WorldLayout.region):
+		var md: Dictionary = m
+		spawn_dynamic_pickup(str(md["id"]), "hidden_mask", 1, md["pos"])
+
+
+# -------------------------------------------------------------- body shops
+## A body shop's painted bay: roll in with the heat on you and stop, and they
+## respray the car so the cops lose you; roll in banged up and they fix it.
+var _spray_asked := false
+
+
+func _spray_tick() -> void:
+	if GameState.cell != "world" or ui_open() or busy_transition:
+		return
+	var v: Vehicle = player.driving
+	if v == null or v is Aircraft or not is_instance_valid(v):
+		_spray_asked = false
+		return
+	var shop: Dictionary = {}
+	for b in RegionContent.BODY_SHOPS.get(WorldLayout.region, []):
+		var bp: Array = (b as Dictionary)["pos"]
+		if Vector2(v.global_position.x - float(bp[0]), v.global_position.z - float(bp[1])).length() < 9.0:
+			shop = b
+	if shop.is_empty():
+		_spray_asked = false
+		return
+	if _spray_asked or absf(v.speed) > 1.5:
+		return
+	var rafi := bool(shop.get("rafi", false))
+	if not GameState.is_wanted() and (rafi or v.hp >= 90.0):
+		return # Rafi's own offer handles the rest at his bay
+	_spray_asked = true
+	_spray_offer(v, shop)
+
+
+func _spray_offer(v: Vehicle, shop: Dictionary) -> void:
+	var wanted := GameState.is_wanted()
+	var cost := 100 + 50 * GameState.heat if wanted else 60
+	var who := "RAFI" if bool(shop.get("rafi", false)) else "MECHANIC"
+	var t := "=== _spray\n-- start\n> %s. A roll-up door rattles open and a man in paint-spattered coveralls looks at the car, then at you.\n" % str(shop["name"]).capitalize()
+	if wanted and _police_sees_player():
+		t += "%s: With the cops RIGHT THERE? Are you crazy? Lose them first, then come back.\n-> END\n" % who
+	elif wanted:
+		t += "%s: Hot, huh. I can hear the sirens from here. New color, new plates, five minutes. They'll be looking for a car that doesn't exist.\n" % who
+		t += "* [if cash>=%d] \"Do it. $%d.\" -> do\n" % [cost, cost]
+		t += "* \"Not today.\" -> END\n"
+		t += "-- do\n! set spray_pick\n%s: Pull in. Close your eyes. Don't breathe the fumes. ...There. Never seen this car in my life.\n-> END\n" % who
+	else:
+		t += "%s: You drove that here? Brave. Dents out, glass in, engine sorted. $%d.\n" % [who, cost]
+		t += "* [if cash>=%d] \"Fix it.\" -> do\n" % cost
+		t += "* \"It's fine.\" -> END\n"
+		t += "-- do\n! set spray_pick\n%s: Good as new. Better, honestly. Don't tell anyone.\n-> END\n" % who
+	DialogueManager.convos.erase("_spray")
+	DialogueManager.parse_text(t, "runtime:spray")
+	GameState.flags.erase("spray_pick")
+	await dialog.run("_spray", null)
+	if not GameState.flags.has("spray_pick") or player.driving != v:
+		return
+	GameState.flags.erase("spray_pick")
+	GameState.add_cash(-cost)
+	v.hp = 100.0
+	if wanted:
+		GameState.clear_wanted()
+		v.stolen = false
+		v.color_idx = (v.color_idx + 3) % Props.CAR_COLORS.size()
+		var mm: Array = Props.car_meshes("car_%s_%d" % [v.kind, v.color_idx])
+		var body: Variant = v.get("_mesh")
+		if body is MeshInstance3D:
+			(body as MeshInstance3D).mesh = mm[0]
+		hud.center("RESPRAYED  ·  THE HEAT IS OFF", 3.0)
+		GameState.stat_add("resprays")
+	else:
+		hud.center("REPAIRED", 2.0)
+	AudioManager.play_success()
 
 
 # ------------------------------------------------------------- quest rides

@@ -305,3 +305,85 @@ SGT. BRODY: Whoever you are. You did right bringing it here and not doing someth
 -- lopez
 SGT. BRODY: Homicide's through the back. She's the one who looks like she hasn't slept since the Clinton administration. Don't touch her coffee.
 -> END
+
+### Rent Is Due: Carmen Alvarez, Vince Carbone and RentTrack.
+
+=== alvarez
+-- start
+? q.sq_rent.done -> after
+? q.sq_rent>=30 -> news
+? q.sq_rent>=20 -> waiting
+> A small woman in a red coat with a clipboard and a stack of flyers, outside a brick building with a dead lobby light. She has the voice of someone who has testified at a lot of city council meetings.
+ALVAREZ: Flyer? It's about your heat. Everybody's heat. You don't live here? Doesn't matter. Somebody's charging somebody you love for something that used to be free. Take a flyer.
+* "What's RentTrack?" -> what
+* "No thanks." -> no
+-- no
+ALVAREZ: That's what they're counting on. Have a good day, mijo.
+-> END
+-- what
+ALVAREZ: An app. Carbone Realty made us all download it. Pay rent in the app, ask for repairs in the app. Then the app started selling us our own building. Heat is a 'premium amenity.' Hot water. The elevator. Forty-nine dollars a month or your thermostat stops at fifty-eight.
+ALVAREZ: Mrs. Okonkwo on six is eighty-one. She can't do the stairs and she can't do the forty-nine. She's been in her coat since November. Vince Carbone drives a car worth more than this building.
+* "Where's Carbone's office?" -> office
+* [HACKING 35] "An app that caps thermostats has a server that controls them. I can find it." -> office_hack | office
+-- office
+ALVAREZ: Two blocks east, on Fordham, with the gold sign. He sits in the back with his computer and his trophies for nothing. By day the door's open, he likes people to come in and beg. At night it's locked.
+! quest sq_rent 20
+-> END
+-- office_hack
+ALVAREZ: (She lowers the clipboard.) My nephew does computers. He says the app is held together with tape. If you can get into that thing, mijo, you turn our heat back on. And then you do whatever else you think is right. I trust a person who offers before I ask.
+! quest sq_rent 20 ; set alvarez_hacker
+-> END
+-- waiting
+ALVAREZ: Two blocks east, the gold sign. The server's in his back office, my nephew says. Be careful. Carbone has a cousin who is a cop, and a cousin who is not, and the second one is worse.
+-> END
+-- news
+? flag.rent_heat -> news_heat
+? flag.rent_refunded -> news_refund
+? flag.rent_locked -> news_locks
+ALVAREZ: Heat's on. Elevator's fixed. The lobby light is a real light. Carbone came here himself this morning, in person, with a wrench, sweating. He wouldn't look at me. Whatever you said to him, say it to every landlord in the Bronx.
+! quest sq_rent done ; fame locals 3 ; trust alvarez 3 ; xp 80
+-> END
+-- news_heat
+> Through the lobby doors behind her, a radiator is banging like someone is trapped inside it, and three old women in coats are standing around it holding their hands out like it's a campfire.
+ALVAREZ: Seventy degrees. Locked. In every building he owns. Mrs. Okonkwo took her coat off this morning for the first time since Thanksgiving and she cried, and then she made me eat. I'm so full. I'm so happy. I'm so full.
+! quest sq_rent done ; fame locals 4 ; trust alvarez 3 ; stab 2 ; xp 90
+-> END
+-- news_refund
+ALVAREZ: Every tenant in forty-one buildings got their money back this morning. All of it, back to the first fee. Mrs. Okonkwo thought it was a scam and called the bank and the bank said 'no, ma'am, it's real.' We're having a meeting tonight. Forty-one buildings. We've never had forty-one buildings in one room.
+! quest sq_rent done ; fame locals 4 ; trust alvarez 3 ; xp 90
+-> END
+-- news_locks
+ALVAREZ: Carbone is standing outside his own office right now, pulling on the door. Every lock in all his buildings opens for us and not for him. (She can't stop laughing.) I've wanted to see that face for twenty years.
+! quest sq_rent done ; fame locals 3 ; trust alvarez 3 ; xp 90
+-> END
+-- after
+ALVAREZ: Mijo! Come in, come in, it's warm, can you believe it? Warm. Take a flyer anyway, we're organizing the next street.
+-> END
+
+=== carbone
+-- start
+? flag.rent_done -> done
+> A heavy man in a good suit behind a desk with a bowl of mints and a row of golf trophies. He smiles with his whole face except his eyes.
+CARBONE: Vince Carbone. Carbone Realty. You looking to rent? Got a beautiful two-bedroom on Tremont, heat included. Premium heat. Premium tier.
+* [if q.sq_rent>=20] "Your tenants at 2290 Fordham are freezing." -> freezing
+* "Just looking." -> END
+-- freezing
+CARBONE: My tenants have every option. They can upgrade in the app, it's very simple. Everybody's got a phone. I'm not running a charity, I'm running a platform. That's the future, my friend. Everybody's renting everything.
+* [SPEECH 50] "Mrs. Okonkwo is eighty-one. When she dies of cold in your building, the platform is you, on the front page, with your golf trophies." -> fold | fail
+* [if mask | skill.melee>=45] (Pick up one of his trophies and weigh it in your hand.) -> scare
+* "Never mind." -> END
+-- fold
+> He looks at the trophies. He looks at the window. He takes a mint and doesn't eat it.
+CARBONE: ...Fine. FINE. The heat goes on. The elevator gets fixed. The lobby light. I'll take the amenity tier off 2290. Just 2290. Happy? Get out of my office.
+! set rent_fixed ; set rent_done ; quest sq_rent 30 ; xp 120
+-> END
+-- scare
+CARBONE: Whoa, whoa, okay, okay! Put that down, that's from the Westchester Invitational! Heat's on. Everybody's heat, all forty-one buildings. Elevators. Whatever you want. Put it DOWN.
+! set rent_fixed ; set rent_done ; quest sq_rent 30 ; infamy locals 1 ; xp 100
+-> END
+-- fail
+CARBONE: Front page. Ha. I own the building the newspaper's in. Get out before I call my cousin. Not that cousin. The other one.
+-> END
+-- done
+CARBONE: You. Whatever you want, the answer's yes, and then please leave.
+-> END

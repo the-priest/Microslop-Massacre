@@ -103,6 +103,7 @@ func build_all() -> void:
 	_coney()
 	_edges()
 	_chop_shop(Vector3(1105.0, 0.0, -1200.0))
+	_body_shops()
 	_fill_country()
 	_neighbour_skylines()
 
@@ -174,6 +175,7 @@ func _build_region() -> void:
 			_port_extras()
 		"gary":
 			_gary_extras()
+	_body_shops()
 	_landmarks()
 	_region_edges()
 
@@ -227,7 +229,40 @@ func _farm_block(bi: int, bj: int, r: Rect2, rest: bool) -> void:
 
 ## Keep Rafi's bay clear of the street's parked cars.
 func _in_chop_bay(x: float, z: float) -> bool:
-	return WorldLayout.region == "nyc" and absf(x - 1105.0) < 9.0 and absf(z + 1200.0) < 7.0
+	for b in RegionContent.BODY_SHOPS.get(WorldLayout.region, []):
+		var bp: Array = (b as Dictionary)["pos"]
+		if absf(x - float(bp[0])) < 9.0 and absf(z - float(bp[1])) < 7.0:
+			return true
+	return false
+
+
+## Every body shop on this map that isn't Rafi's: the same painted bay, a
+## pole sign, a work light (see RegionContent.BODY_SHOPS).
+func _body_shops() -> void:
+	for b in RegionContent.BODY_SHOPS.get(WorldLayout.region, []):
+		var bd: Dictionary = b
+		if bool(bd.get("rafi", false)):
+			continue
+		var bp: Array = bd["pos"]
+		_body_shop(Vector3(float(bp[0]), 0.0, float(bp[1])), str(bd["name"]))
+
+
+func _body_shop(p: Vector3, title: String) -> void:
+	var c := ctx_at(p.x, p.z)
+	var y := Color(0.3, 0.75, 1.0)
+	for e in [[Vector3(0, 0.03, -4.5), Vector3(9.0, 0.02, 0.25)], [Vector3(0, 0.03, 4.5), Vector3(9.0, 0.02, 0.25)], [Vector3(-4.5, 0.03, 0), Vector3(0.25, 0.02, 9.0)], [Vector3(4.5, 0.03, 0), Vector3(0.25, 0.02, 9.0)]]:
+		c.props.box(p + (e[0] as Vector3), e[1], y)
+	c.label(p + Vector3(0, 0.05, 0), "RESPRAY", 120, Color(0.3, 0.75, 1.0, 0.8), 0.0, 60.0, 0.02, {"pitch": -PI * 0.5})
+	var sp := p + Vector3(-6.0, 0, 6.6)
+	c.props.box(sp + Vector3(0, 2.5, 0), Vector3(0.2, 5.0, 0.2), Color(0.25, 0.25, 0.27))
+	c.props.box(sp + Vector3(0, 5.2, 0), Vector3(4.6, 1.4, 0.18), Color(0.1, 0.1, 0.12))
+	c.glow.box(sp + Vector3(0, 5.2, -0.1), Vector3(4.4, 1.2, 0.04), Color(0.2, 0.55, 0.9), 0.0, Vector2(Props.K_ALWAYS, 0))
+	c.glow.box(sp + Vector3(0, 5.2, 0.1), Vector3(4.4, 1.2, 0.04), Color(0.2, 0.55, 0.9), 0.0, Vector2(Props.K_ALWAYS, 0))
+	for f in [-1.0, 1.0]:
+		c.label(sp + Vector3(0, 5.35, 0.14 * f), title, 38, Color(1, 1, 1), 0.0 if f > 0 else PI, 160.0, 0.02)
+		c.label(sp + Vector3(0, 4.85, 0.14 * f), "RESPRAY · REPAIR · NO QUESTIONS", 22, Color(0.85, 0.95, 1.0), 0.0 if f > 0 else PI, 120.0, 0.02)
+	c.solid(sp + Vector3(0, 2.5, 0), Vector3(0.3, 5.0, 0.3))
+	Props.light_pool(c, p, 7.0, Color(0.85, 0.92, 1.0))
 
 
 ## Rafi's Auto Body, Hunts Point: a painted bay on the street, a pole sign

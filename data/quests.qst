@@ -372,6 +372,13 @@ Somebody is selling 'candy' on the Carver Houses corners in the Bronx: bright li
 40 It's over, one way or another. Go tell Mrs. Reyes at the candles in the Carver Houses courtyard @npc:mrs_reyes
 50 done
 
+=== sq_rent | Rent Is Due | side | 240 | bronx
+Carmen Alvarez has organized tenants at 2290 Fordham Road for twenty years. Now the landlord runs the building through an app called RentTrack, and heat, hot water and the elevator are 'premium amenities' at $49 a month. In January.
+10 Ms. Alvarez is handing out flyers outside 2290 Fordham Road in the Bronx, by day. Hear her out @npc:alvarez
+20 Carbone Realty runs RentTrack from an office two blocks east on Fordham Road. The server's in Vince Carbone's back office. Walk in by day, or pick the lock at night @cell:carbone_office:15,2.2
+30 Tell Ms. Alvarez @npc:alvarez
+40 done
+
 === sq_badco | Bad Company | side | 300 | bronx
 A boy at a Harlem youth shelter has a new online friend who buys him things and tells him to keep secrets. The counselor who noticed can't get anyone to listen. You're very good at listening.
 10 Ms. Okafor at the St. Nicholas Youth Shelter in Harlem is worried about Jaylen's online 'mentor'. Look at the phone he was given; it's on her office desk @cell:st_nicholas:20.6,1.1

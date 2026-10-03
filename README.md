@@ -57,12 +57,12 @@ and drops them into the New York of *Mr. Robot*, then lets you drive or fly out 
   land on its runway. Five airfields, one in every city and town.
 - **14 endings**, from blowing up the world's debt with fsociety to walking away and
   going to therapy on Tuesdays. Some never touch the hack at all.
-- **114 epilogue slides** that remember what you did: who you saved, who you sold out,
+- **118 epilogue slides** that remember what you did: who you saved, who you sold out,
   whose debt you deleted, which game companies you broke and how, whether Lopez ever
   caught you.
-- **51 quests** (20 main, 31 side) with several real outcomes each, and a story director
+- **52 quests** (20 main, 32 side) with several real outcomes each, and a story director
   that keeps every quest moving no matter what order you do things in.
-- **102 conversations, about 45,000 words of original dialogue**, and honest skill
+- **109 conversations, about 47,000 words of original dialogue**, and honest skill
   checks: a white `[SPEECH 40]` means you pass.
 - **Four companions** with their own skills, opinions, barks, heart-to-hearts and
   breaking points.
@@ -158,7 +158,7 @@ road, every airfield and you on it.
 - **Every building has a door, and thousands of them open:** apartments, bodegas,
   pawn shops, diners, dive bars, offices, warehouses, squats and gang hideouts. Each is
   generated from its address, so the same door always leads to the same rooms.
-- **72 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
+- **74 hand-made story interiors**, from Krista's office and Ron's Coffee to the E Corp
   tower, the Fun Society arcade, Steel Mountain, the Rose Garden, Floor 88 of the North
   Tower, Microslop's showcase on Floor 101, E Corp Midwest's data floor, a lighthouse,
   a cannery full of servers, and a sublevel under a power plant that isn't on any drawing.
@@ -266,6 +266,7 @@ built the right bonds, kept the truth, and held your mind together.
 | **The Box in the Closet** | The Moss house / New York | Angela's room is the way she left it at nine. Find the shoebox in her closet and carry it home to her. |
 | **Air Mail** | Kearney Strip to Ramsey Field | Walt's hands shake now. Fly the township's prescriptions east across I-80 to the coast and land at Ramsey Field. (Drive it if you must. Marisol will laugh at you.) |
 | **No Fishing** | Port Ramsey | E Corp built its terminal over the fishing berths and the harbormaster revoked every license, then went on a cruise. Talk him out of it, blackmail him, or reinstate all forty-four from his computer. |
+| **Rent Is Due** | The Bronx | A landlord's app sells his tenants their own heat as a "premium amenity." Help Carmen Alvarez: lean on Vince Carbone, or get into RentTrack and refund every fee, turn every boiler back on, or turn every smart lock against him. |
 | **Ghost Fleet** | Gary | FreightOS's "driverless" trucks are driven by laid-off steelworkers in a glass tower, paid by the mile and docked for blinking. Show them their own telemetry, paint their names and wages on their trucks, or pause the whole fleet for an hour. |
 | **The Banner** | Gary Works | Local 1014's 1919 strike banner is still in the mill office, the demolition crew comes Monday and the scrappers come every night. Bring it home. |
 | **Who's Driving?** | Gary/Chicago Airport | Tow fifty feet of FREIGHTOS — WHO'S DRIVING? past the control tower, over the mill and down Broadway, and land it. |
@@ -371,6 +372,11 @@ a crime.
   past the container ship in Port Ramsey, and Jamal's Broadway Drag in Gary. Each host
   lends you the car and bets you can't beat their driver; the big orange lights mark
   the corners you have to hit.
+- **Body shops** on every map (Rafi's and LES Collision in New York, one in each other
+  city and town): roll into the blue bay with the stars on you, stop, and they'll respray
+  the car and swap the plates so the cops lose you. Banged up and not wanted? They fix it.
+- **Fifty hidden fsociety masks** zip-tied to street corners across all six maps, glowing
+  red and green if you know where to look. Every one you find counts toward something.
 - **Taxi fares:** get behind the wheel of any taxi, on any map, and dispatch finds you
   a fare. Pull up beside whoever's waving and stop, then get them to the address they
   name before they lose patience and stop at the door. Fast pays a tip, a streak of
@@ -400,7 +406,7 @@ a crime.
 | Lockpicking and terminals | 8 minigames: lockpick, terminal exploit, network recon, brute force, signal tap, cascade, log hunt, and a playable Space Invaders cabinet |
 | The intro | A narrated cold open over the city that tells the world's story up to tonight |
 | The epilogue | Slides for every thread you pulled |
-| Achievements | 15, from FISH WHISPERER to MICROSLOP MASSACRE |
+| Achievements | 20, from FISH WHISPERER to MICROSLOP MASSACRE, FIFTY FACES and FIVE FIELDS |
 
 ## Controls
 
@@ -484,7 +490,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.5.0-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.6.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
@@ -536,7 +542,7 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `vehicle_test`, `flight_test` | Stealing, driving, crashing, carjacking; taking off, turning, rings, landing, crashing |
 | `pad_test`, `menu_pad_test` | The whole game driven by a simulated controller: menus, phone, map, pause, minigames, level-up, dialogue, terminals, cars |
 | `companion_test` | Recruiting, following, riding along, heart-to-hearts, reactions, leaving |
-| `activities_test` | A taxi fare found, picked up, delivered and paid (and the shift ending when you get out), then a street race won on every map outside New York |
+| `activities_test` | A taxi fare found, picked up, delivered and paid (and the shift ending when you get out), a respray that loses two stars and a repair, Rent Is Due played through, then on every map a street race won and a hidden mask found |
 | `heat_test` | Stars rising with crimes, officers and cruisers responding, a cruiser routing along the streets to your car, a roadblock at four stars, the FBI at five, losing them outdoors and indoors, selling a stolen car to Rafi, and winning and losing a street race |
 | `dd_*`, `deepdebug`, `smoke`, `intro_test` | Interiors, exploits, death, the open world's doors, loot and pickups, the intro |
 | `shots`, `world_shots`, `air_shots` | Screenshots for eyeballing: streets at any hour, the connected world from the air, the airfield |

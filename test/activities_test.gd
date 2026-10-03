@@ -7,10 +7,15 @@ func _ready() -> void:
 	GameState.region = "nyc"
 	await _load_game()
 	GameState.cash = 1000
+	GameState.raise_skill("hacking", 50)
 	_day()
 	await _taxi()
+	await _respray()
+	await _masks()
+	await _rent_is_due()
 	for id in ["lakeshore", "interstate", "mainstreet", "quay", "broadway"]:
 		await _race(id)
+		await _masks()
 	print("ACTIVITIES DONE fails=%d" % fails)
 	get_tree().quit()
 
@@ -54,6 +59,70 @@ func _taxi() -> void:
 	for i in 5:
 		await get_tree().create_timer(0.2).timeout
 	_ok("leaving the cab loses the fare", game.taxi.state == "" and game.taxi.streak == 0)
+
+
+func _respray() -> void:
+	print("PHASE respray")
+	var shop: Dictionary = RegionContent.BODY_SHOPS["nyc"][1]
+	var bp: Array = shop["pos"]
+	await _enter_world_at(Vector3(float(bp[0]) + 30.0, 0, float(bp[1])))
+	var car := Vehicle.new().setup("sedan", 2, Vector3(float(bp[0]) + 20.0, 0.4, float(bp[1])), PI * 0.5, game)
+	car.locked = false
+	game.vehicles_root.add_child(car)
+	await _settle()
+	game.enter_vehicle(car)
+	await _settle()
+	GameState.set_wanted(240.0)
+	GameState.heat = 2
+	GameState.cash = 1000
+	car.hp = 55.0
+	car.global_position = Vector3(float(bp[0]), 0.4, float(bp[1]))
+	car.speed = 0.0
+	prefs = ["Do it"]
+	game._spray_asked = false
+	await game._spray_offer(car, shop)
+	await _settle()
+	_ok("resprayed: the heat is off", not GameState.is_wanted() and GameState.heat == 0)
+	_ok("paid for the respray", GameState.cash == 1000 - (100 + 50 * 2))
+	_ok("car fixed too", car.hp >= 99.0)
+	car.hp = 40.0
+	prefs = ["Fix it"]
+	await game._spray_offer(car, shop)
+	await _settle()
+	_ok("repaired for $60", car.hp >= 99.0 and GameState.cash == 1000 - 200 - 60)
+	game.exit_vehicle(true)
+	await _settle()
+
+
+func _masks() -> void:
+	var spots: Array = game.hidden_mask_spots(WorldLayout.region)
+	_ok("%d hidden masks on %s" % [spots.size(), WorldLayout.region], spots.size() == int(game.MASKS_PER[WorldLayout.region]))
+	if spots.is_empty():
+		return
+	var md: Dictionary = spots[0]
+	await _enter_world_at((md["pos"] as Vector3) + Vector3(0, 0, -3.0))
+	var have := GameState.count("hidden_mask")
+	await _pickup(str(md["id"]))
+	_ok("picked up mask " + str(md["id"]), GameState.count("hidden_mask") == have + 1)
+
+
+func _rent_is_due() -> void:
+	print("PHASE rent is due")
+	_day()
+	await _enter_world_at(Vector3(50, 0, -1360))
+	_expect("sq_rent", 10)
+	GameState.tracked_quest = "sq_rent"
+	await _follow("sq_rent") # -> Ms. Alvarez on the sidewalk
+	await _talk("alvarez", ["What's RentTrack", "Where's Carbone's office"])
+	_expect("sq_rent", 20)
+	await _follow("sq_rent") # -> Carbone Realty's back office
+	await _talk("carbone", ["freezing", "Never mind"])
+	await _term("renttrack", ["Amenity fees", "Maintenance tickets", "Churn risk"], ["Turn the heat"])
+	_ok("heat back on", GameState.has_flag("rent_heat"))
+	_expect("sq_rent", 30)
+	await _follow("sq_rent") # -> Ms. Alvarez
+	await _talk("alvarez", [])
+	_ok("rent is due done", GameState.quest_state("sq_rent") == "done")
 
 
 func _race(id: String) -> void:
