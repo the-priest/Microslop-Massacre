@@ -2654,6 +2654,23 @@ func _arrive_with(carry: Dictionary, by_air: bool) -> void:
 		ac.speed = clampf(float(carry.get("speed", vmax * 0.7)), float(ac.spec.get("stall", 22.0)) * 1.3, vmax)
 		ac.throttle = float(carry.get("throttle", 0.7))
 	hud.center(Regions.region_name(WorldLayout.region).to_upper(), 3.0)
+	if nv is Aircraft and by_air:
+		_atc_hello(str(GameState.flags.get("region_from", "")))
+
+
+## The radio, when a plane crosses into the next map's airspace.
+func _atc_hello(from: String) -> void:
+	var lines := {
+		"chicago": ["CHICAGO APPROACH", "Aircraft inbound from the east, Chicago Approach. Meigs Field is on the lakeshore, runway runs north-south. Winds off the lake, fifteen gusting twenty-five. Welcome to Chicago."],
+		"highway": ["LENNOX TRAFFIC", "Lennox traffic, unidentified aircraft over the interstate... ah, nobody's listening on this frequency anyway. Follow I-80. " + ("Chicago's dead ahead." if from == "nyc" else "New York's dead ahead.")],
+		"nyc": ["NEW YORK APPROACH", "Aircraft over the Bronx, New York Approach. Bowery Bay is on the Queens waterfront, east of you. Mind the towers. Welcome home."],
+	}
+	var l: Array = lines.get(WorldLayout.region, [])
+	if l.is_empty():
+		return
+	await get_tree().create_timer(2.5).timeout
+	if is_inside_tree():
+		hud.subtitle(str(l[0]), str(l[1]), 6.0)
 
 
 # ------------------------------------------------------------------- rides
