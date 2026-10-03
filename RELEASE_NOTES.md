@@ -25,4 +25,4 @@ No installer and no account. Saves go in your user folder.
 ## Known issues (it's a beta)
 
 - Building collapses from plane crashes are in the code but switched off until they're finished.
-- Let us know what breaks: open an issue with what you were doing.
+- Let us know what breaks: open an issue saying what you were doing and on which map.
