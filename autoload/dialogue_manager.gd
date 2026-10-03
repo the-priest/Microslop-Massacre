@@ -27,7 +27,7 @@ const CHECK_SKILLS := {
 	"GUNS": "guns", "MELEE": "melee", "BARTER": "barter", "MEDICINE": "medicine",
 }
 const WORLD_EFFECTS := ["hostile", "barter", "minigame", "recruit", "dismiss", "travel", "ending",
-	"glitch", "sfx", "kill", "move", "sleep", "save", "blackout", "calm", "spawn", "fade", "levelup"]
+	"glitch", "sfx", "kill", "move", "sleep", "save", "blackout", "calm", "spawn", "fade", "levelup", "race"]
 const STATE_EFFECTS := ["set", "unset", "add", "quest", "track", "give", "take", "cash", "xp", "fame",
 	"infamy", "trust", "stab", "hp", "heal", "skill", "time", "check", "achieve", "discover",
 	"wanted", "hostile_faction", "note", "equip", "weather"]

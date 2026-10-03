@@ -113,10 +113,11 @@ func refresh(force: bool) -> void:
 			want[did] = {"def": d4, "cell": cell, "pos": gp, "yaw": deg_to_rad(float(sd.get("yaw", 0.0))), "wander": float(sd.get("wander", 0.0))}
 	# Despawn what shouldn't be here (not while fighting nearby).
 	for id in live.keys():
-		var n: NPC = live[id]
-		if not is_instance_valid(n):
+		var nv: Variant = live[id]
+		if not is_instance_valid(nv):
 			live.erase(id)
 			continue
+		var n: NPC = nv
 		if n.dead:
 			# Named corpses are re-created from saved state; generated
 			# interiors share one slot, so their corpses must go when you leave.

@@ -307,8 +307,19 @@ func _process(delta: float) -> void:
 	var bars := int(round(float(st) / 10.0))
 	_stab.text = "STABILITY " + "▮".repeat(bars) + "▯".repeat(10 - bars)
 	_stab.add_theme_color_override("font_color", UI.RED if st < 30 else (UI.AMBER if st < 55 else UI.GREEN_DIM))
-	if GameState.wanted_until > GameState.game_minutes:
-		_wanted.text = "▲ WANTED BY NYPD ▲"
+	if GameState.is_wanted():
+		var h := GameState.heat
+		var stars := "★".repeat(h) + "☆".repeat(5 - h)
+		var who := "FBI + POLICE" if h >= 5 else "POLICE"
+		var lost: float = game.unseen_t if game != null and game.get("unseen_t") != null else 0.0
+		if lost > 0.0:
+			# Out of sight: the stars flash while they search.
+			var on := int(Time.get_ticks_msec() / 400) % 2 == 0
+			_wanted.text = "%s  %s\nSEARCHING  —  stay out of sight" % [who, stars if on else "     "]
+			_wanted.add_theme_color_override("font_color", UI.AMBER)
+		else:
+			_wanted.text = "%s  %s" % [who, stars]
+			_wanted.add_theme_color_override("font_color", UI.RED)
 	else:
 		_wanted.text = ""
 	_lvl_hint.visible = GameState.pending_levels > 0

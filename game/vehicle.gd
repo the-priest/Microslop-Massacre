@@ -29,6 +29,19 @@ var _glow: MeshInstance3D
 var _smoke: MeshInstance3D
 var _engine: AudioStreamPlayer3D
 var _headlights: SpotLight3D
+## Police pursuit AI (Game spawns these when the heat is up). ai_target is
+## the player, or the car they're driving; on_arrive fires once when the car
+## pulls up next to a target on foot (the officers get out).
+var ai_target: Node3D = null
+var ai_on_arrive: Callable
+var ai_speed_mul: float = 0.92
+## Racing: the target is a checkpoint to drive through, not someone to stop beside.
+var ai_race: bool = false
+var _ai_stuck_t: float = 0.0
+var _ai_rev_t: float = 0.0
+var _ai_arrived: bool = false
+var _ai_last_pos := Vector3.ZERO
+var _ai_turn_at := Vector3.INF # the next corner it has to turn at, if routing
 var _hit_cool: float = 0.0
 var _burn_t: float = 0.0
 var _last_hit_ped: float = 0.0
@@ -162,7 +175,12 @@ func _physics_process(delta: float) -> void:
 	var throttle := 0.0
 	var steer_in := 0.0
 	var hb := false
-	if driving and not paused_ui:
+	if not driving and ai_target != null and not paused_ui:
+		var ai := _ai_drive(delta)
+		throttle = ai.x
+		steer_in = ai.y
+		hb = ai.z > 0.5
+	elif driving and not paused_ui:
 		throttle = Input.get_axis("move_back", "move_forward")
 		# Triggers are analog gas and brake on a pad.
 		if Pad.using_pad:
@@ -189,7 +207,7 @@ func _physics_process(delta: float) -> void:
 		speed = move_toward(speed, 0.0, 2.6 * delta)
 	if hb:
 		speed = move_toward(speed, 0.0, 13.0 * delta)
-	speed = clampf(speed, -MAX_REV, MAX_FWD * (0.55 if hp < 25.0 else 1.0))
+	speed = clampf(speed, -MAX_REV, MAX_FWD * (0.55 if hp < 25.0 else 1.0) * (ai_speed_mul if ai_target != null and not driving else 1.0))
 	# Steering: none at a standstill, sharp at city speed, a bit lazier flat out.
 	steer = move_toward(steer, steer_in, 3.5 * delta)
 	var sp := absf(speed)
@@ -205,6 +223,121 @@ func _physics_process(delta: float) -> void:
 	_smoke.visible = hp < 40.0
 	if hp < 40.0:
 		_smoke.position.y = 1.2 + sin(Time.get_ticks_msec() * 0.006) * 0.08
+
+
+## Where to steer for `tp`: straight at it when the way is clear, else the
+## next corner on an L-shaped route along the avenues and streets.
+func _ai_route(tp: Vector3) -> Vector3:
+	var space := get_world_3d().direct_space_state
+	var eye := global_position + Vector3(0, 1.0, 0)
+	var q := PhysicsRayQueryParameters3D.create(eye, tp + Vector3(0, 1.0, 0), Phys.WORLD)
+	q.exclude = [get_rid()]
+	_ai_turn_at = Vector3.INF
+	if space.intersect_ray(q).is_empty():
+		return tp
+	var p := global_position
+	var ic := clampi(roundi((p.x - WorldLayout.AX0) / WorldLayout.AXS), 0, WorldLayout.NA - 1)
+	var jc := clampi(roundi((p.z - WorldLayout.SZ0) / WorldLayout.SZS), 0, WorldLayout.NS - 1)
+	var it := clampi(roundi((tp.x - WorldLayout.AX0) / WorldLayout.AXS), 0, WorldLayout.NA - 1)
+	var jt := clampi(roundi((tp.z - WorldLayout.SZ0) / WorldLayout.SZS), 0, WorldLayout.NS - 1)
+	var on_ave := absf(p.x - WorldLayout.ax(ic)) < WorldLayout.AVE_HW + 2.0
+	var on_st := absf(p.z - WorldLayout.sz(jc)) < WorldLayout.ST_HW + 2.0
+	var corner := Vector3(WorldLayout.ax(ic), 0, WorldLayout.sz(jc))
+	if on_ave and on_st:
+		# In an intersection: turn onto whichever road closes the bigger gap.
+		if it != ic and (jt == jc or absf(tp.x - p.x) > absf(tp.z - p.z)):
+			return Vector3(WorldLayout.ax(it), 0, WorldLayout.sz(jc))
+		return Vector3(WorldLayout.ax(ic), 0, WorldLayout.sz(jt))
+	if on_ave:
+		# Down the avenue (a point ahead on its centre line, so the car keeps
+		# off the parked cars) to the target's street, or to this corner.
+		var gz := WorldLayout.sz(jt) if jt != jc else corner.z
+		_ai_turn_at = Vector3(corner.x, 0, gz)
+		return Vector3(WorldLayout.ax(ic), 0, p.z + clampf(gz - p.z, -13.0, 13.0))
+	if on_st:
+		var gx := WorldLayout.ax(it) if it != ic else corner.x
+		_ai_turn_at = Vector3(gx, 0, corner.z)
+		return Vector3(p.x + clampf(gx - p.x, -13.0, 13.0), 0, WorldLayout.sz(jc))
+	# Off the grid (a lot, a park): back to the nearest corner.
+	return corner
+
+
+## Pursuit driving: head for the target, look ahead for walls and steer to
+## the clearer side, back out when stuck, pull up beside a target on foot.
+## Returns (throttle, steer, handbrake).
+func _ai_drive(delta: float) -> Vector3:
+	if not is_instance_valid(ai_target):
+		ai_target = null
+		return Vector3.ZERO
+	var tp := ai_target.global_position
+	var to := tp - global_position
+	to.y = 0.0
+	var dist := to.length()
+	var on_foot := not (ai_target is Vehicle) and not ai_race
+	# No clear line to the target: follow the street grid instead (along this
+	# road to the target's avenue or street, then turn), like a real driver.
+	var aim := _ai_route(tp)
+	var to_aim := aim - global_position
+	to_aim.y = 0.0
+	if on_foot and dist < 13.0:
+		if not _ai_arrived and absf(speed) < 2.0:
+			_ai_arrived = true
+			if ai_on_arrive.is_valid():
+				ai_on_arrive.call(self)
+		return Vector3(0, 0, 1)
+	if dist > 30.0:
+		_ai_arrived = false
+	var want := atan2(-to_aim.x, -to_aim.z)
+	var diff := wrapf(want - rotation.y, -PI, PI)
+	var steer_v := clampf(diff * 2.2, -1.0, 1.0)
+	# Look ahead: a wall in front? steer to whichever side is open.
+	var fwd := -global_transform.basis.z
+	var space := get_world_3d().direct_space_state
+	var eye := global_position + Vector3(0, 0.8, 0)
+	var look := clampf(absf(speed) * 0.6, 6.0, 16.0)
+	var q := PhysicsRayQueryParameters3D.create(eye, eye + fwd * look, Phys.WORLD)
+	q.exclude = [get_rid()]
+	if not space.intersect_ray(q).is_empty():
+		var l := fwd.rotated(Vector3.UP, 0.7)
+		var r := fwd.rotated(Vector3.UP, -0.7)
+		var ql := PhysicsRayQueryParameters3D.create(eye, eye + l * look, Phys.WORLD)
+		ql.exclude = [get_rid()]
+		var qr := PhysicsRayQueryParameters3D.create(eye, eye + r * look, Phys.WORLD)
+		qr.exclude = [get_rid()]
+		var lfree := space.intersect_ray(ql).is_empty()
+		var rfree := space.intersect_ray(qr).is_empty()
+		if lfree and not rfree:
+			steer_v = 1.0
+		elif rfree and not lfree:
+			steer_v = -1.0
+	# Stuck against something: reverse a moment with the wheel the other way.
+	if _ai_rev_t > 0.0:
+		_ai_rev_t -= delta
+		return Vector3(-1.0, -steer_v, 0)
+	# Judge "stuck" by distance actually covered, not by the speedometer
+	# (pushing against a parked car reads as moving).
+	_ai_stuck_t += delta
+	if _ai_stuck_t > 1.5:
+		var moved := global_position.distance_to(_ai_last_pos)
+		_ai_last_pos = global_position
+		_ai_stuck_t = 0.0
+		if moved < 2.0 and dist > 14.0:
+			_ai_rev_t = 1.2
+	var thr := 1.0
+	if absf(diff) > 1.4:
+		thr = 0.35
+	elif absf(diff) > 0.5 and speed > 12.0:
+		thr = 0.0 # don't floor it mid-turn
+	# Brake for the corner: a 90-degree turn at full speed ends in a parked car.
+	if _ai_turn_at != Vector3.INF:
+		var cd := Vector2(_ai_turn_at.x - global_position.x, _ai_turn_at.z - global_position.z).length()
+		if cd < maxf(speed * 1.4, 10.0) and speed > 10.0:
+			thr = -1.0
+	if on_foot and dist < 30.0:
+		thr = clampf((dist - 10.0) / 20.0, 0.0, 1.0)
+		if speed > dist * 0.8:
+			thr = -1.0
+	return Vector3(thr, steer_v, 0)
 
 
 func _move(delta: float) -> void:

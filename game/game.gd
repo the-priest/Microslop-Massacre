@@ -89,6 +89,7 @@ func _ready() -> void:
 	_make_ui()
 	_make_world_interactables()
 	GameState.died.connect(_on_died)
+	GameState.heat_raised.connect(_on_heat_raised)
 	GameState.leveled_up.connect(func(l: int) -> void: robot_popup.level_up(l))
 	_loading.queue_free()
 	if not SaveManager.pending_load.is_empty():
@@ -251,6 +252,10 @@ func _build_world() -> void:
 	world_inter = Node3D.new()
 	world_inter.name = "WorldInteractables"
 	add_child(world_inter)
+	races = Races.new()
+	races.name = "Races"
+	races.game = self
+	add_child(races)
 	jobs = Jobs.new()
 	jobs.name = "Jobs"
 	jobs.game = self
@@ -1302,6 +1307,8 @@ func dlg_world_effect(cmd: String, args: Array) -> void:
 			var n2 := npcs.get_npc(who)
 			if n2 != null and n2.mode == "combat":
 				n2.mode = "idle"
+		"race":
+			_pending.append(func() -> void: races.start(a0))
 		"barter":
 			var shop := a0
 			if shop == "":
@@ -1476,6 +1483,7 @@ func crime_witnessed(pos: Vector3) -> void:
 		GameState.set_wanted(60.0 if not GameState.wearing_mask() else 25.0)
 		GameState.add_infamy("nypd", 2)
 		_cop_t = 8.0
+		_pursuit_t = 4.0
 
 
 func on_npc_died_signal(n: NPC) -> void:
@@ -1509,7 +1517,11 @@ func on_npc_died(n: NPC, by_player: bool) -> void:
 	encounters.on_npc_died(n, by_player)
 	if by_player and exploit_ui.executing and GameState.has_perk("adrenaline_loop"):
 		GameState.focus = GameState.max_focus()
-	if by_player and n.faction in ["nypd"]:
+	if by_player and n.faction in ["nypd", "fbi"] and (n.id.begins_with("cop_resp_") or n.id.begins_with("fbi_resp_") or GameState.is_wanted()):
+		# Killing police: two stars on top of whatever you had.
+		GameState.set_wanted(120.0)
+		GameState.add_heat(1)
+	elif by_player and n.faction == "nypd":
 		GameState.set_wanted(120.0)
 
 
@@ -1901,14 +1913,9 @@ func _slow_update() -> void:
 		if dist != _last_district:
 			_last_district = dist
 			hud.location(str(WorldLayout.DISTRICT_NAMES.get(dist, dist)).to_upper())
-	# Wanted: police response.
-	var wanted := GameState.wanted_until > GameState.game_minutes
-	AudioManager.siren(wanted and GameState.cell == "world")
-	if wanted and GameState.cell == "world":
-		_cop_t -= 1.0
-		if _cop_t <= 0.0:
-			_cop_t = 40.0
-			_spawn_cops()
+	# Wanted: police response, by heat.
+	_heat_tick()
+	_chop_tick()
 	# Mr. Robot whispers when you're fraying.
 	_whisper_t -= 1.0
 	if _whisper_t <= 0.0 and not ui_open():
@@ -1942,39 +1949,338 @@ func _update_high_mode() -> void:
 
 var _cop_count: int = 0
 
+# ---------------------------------------------------------------- the heat
+## Seconds since any officer last had eyes on you. Stay out of sight long
+## enough (longer the hotter it is) and they give up.
+var unseen_t: float = 0.0
+var last_seen := Vector3.ZERO
+var _seen_ride: int = 0
+var _search_mark: Node3D = null
+var pursuit: Array = [] # police cars chasing you
+var _roadblock_t: float = 0.0
+var _pursuit_t: float = 0.0
+const HEAT_FOOT := [0, 2, 3, 4, 5, 6] # officers on foot near you, per star
+const HEAT_CARS := [0, 0, 1, 2, 2, 3] # cruisers chasing, per star
+const SEARCH_AFTER := 5.0 # seconds unseen before it's a search, not a response
+const HEAT_EVERY := [40.0, 40.0, 25.0, 18.0, 14.0, 12.0] # seconds between waves
+
+
+# ------------------------------------------------------------ chop shop
+## Rafi's Auto Body, Hunts Point: roll a stolen car into the bay and stop.
+const CHOP_POS := Vector3(1105.0, 0.0, -1200.0)
+const CHOP_PRICE := {"sedan": 450, "hatch": 350, "suv": 700, "van": 550, "taxi": 500, "police": 1500, "truck": 800}
+const CHOP_PER_DAY := 3
+var _chop_asked := false
+
+
+## Today's wanted model: double money.
+static func chop_wanted_model() -> String:
+	var models := ["suv", "taxi", "van", "sedan", "truck", "hatch", "police"]
+	return models[GameState.day() % models.size()]
+
+
+func chop_price(v: Vehicle) -> int:
+	var base := int(CHOP_PRICE.get(v.kind, 400))
+	var p := float(base) * (0.35 + 0.65 * clampf(v.hp / 100.0, 0.0, 1.0))
+	if v.kind == chop_wanted_model():
+		p *= 2.0
+	return int(round(p / 10.0)) * 10
+
+
+func _chop_tick() -> void:
+	GameState.flags["chop_want"] = chop_wanted_model() # Rafi's list, for his dialogue
+	if WorldLayout.region != "nyc" or GameState.cell != "world" or ui_open() or busy_transition:
+		return
+	var v: Vehicle = player.driving
+	var near := v != null and not (v is Aircraft) and Vector2(v.global_position.x - CHOP_POS.x, v.global_position.z - CHOP_POS.z).length() < 9.0
+	if not near:
+		_chop_asked = false
+		return
+	if _chop_asked or absf(v.speed) > 1.5:
+		return
+	_chop_asked = true
+	_chop_offer(v)
+
+
+func _chop_offer(v: Vehicle) -> void:
+	var day_key := "chop_day_%d" % GameState.day()
+	var sold := int(GameState.flags.get(day_key, 0))
+	var t := "=== _chop\n-- start\n"
+	if v.has_meta("owned"):
+		t += "RAFI: That's yours, papi. Registered, insured, loved. I don't buy cars with feelings.\n-> END\n"
+	elif sold >= CHOP_PER_DAY:
+		t += "RAFI: Three's my limit. Four cars in one day and the insurance guys start drawing circles on maps. Come back tomorrow.\n-> END\n"
+	else:
+		var price := chop_price(v)
+		var wanted := v.kind == chop_wanted_model()
+		t += "> A roll-up door rattles open. A man in coveralls walks around the car once, slowly, like a doctor.\n"
+		t += "RAFI: %s. %s %s\n" % [v.display_name(), "Oh, that's on my list today. Double." if wanted else "Okay.", "Little banged up." if v.hp < 60.0 else "Clean."]
+		t += "* \"Sell it. $%d.\" -> sell\n" % price
+		t += "* \"Not today.\" -> END\n"
+		t += "-- sell\n! set chop_pick\nRAFI: Pleasure. Walk out the side, don't look back, and you never saw this car. Neither did I. Nobody ever has.\n-> END\n"
+	DialogueManager.convos.erase("_chop")
+	DialogueManager.parse_text(t, "runtime:chop")
+	GameState.flags.erase("chop_pick")
+	await dialog.run("_chop", null)
+	if not GameState.flags.has("chop_pick") or player.driving != v:
+		return
+	GameState.flags.erase("chop_pick")
+	var price2 := chop_price(v)
+	exit_vehicle(true)
+	var uid := int(v.get_meta("ride_uid", -1))
+	if uid >= 0:
+		GameState.rides.erase(_ride_rec(uid))
+	if player_car == v:
+		player_car = null
+	v.queue_free()
+	GameState.add_cash(price2)
+	GameState.flags[day_key] = sold + 1
+	GameState.stat_add("cars_chopped")
+	GameState.add_infamy("nypd", 1)
+	hud.notify("Sold to Rafi: +$%d" % price2, "")
+	AudioManager.play_success()
+
+
+## A fresh crime: they know exactly where you are, and they're coming.
+func _on_heat_raised() -> void:
+	unseen_t = 0.0
+	if player != null:
+		last_seen = player.global_position
+	_cop_t = minf(_cop_t, 3.0)
+	_pursuit_t = minf(_pursuit_t, 4.0)
+
+
+func heat_lose_time() -> float:
+	return 12.0 + 7.0 * float(GameState.heat)
+
+
+func _heat_tick() -> void:
+	var wanted := GameState.is_wanted()
+	if not wanted and GameState.heat > 0 and GameState.wanted_until <= GameState.game_minutes:
+		GameState.clear_wanted() # the clock ran out
+	AudioManager.siren(wanted and GameState.cell == "world")
+	if not wanted:
+		unseen_t = 0.0
+		if not pursuit.is_empty():
+			_end_pursuit()
+		return
+	# Are they looking at you right now?
+	if _police_sees_player():
+		unseen_t = 0.0
+		last_seen = player.global_position
+		_seen_ride = player.driving.get_instance_id() if player.driving != null else 0
+		GameState.wanted_until = maxf(GameState.wanted_until, GameState.game_minutes + 20.0)
+	else:
+		# Indoors, nobody follows you in; in a different car, they're
+		# looking for the wrong one. Either way it cools twice as fast.
+		var swapped := player.driving != null and player.driving.get_instance_id() != _seen_ride
+		unseen_t += 2.0 if GameState.cell != "world" or swapped else 1.0
+		if unseen_t >= heat_lose_time():
+			GameState.clear_wanted()
+			unseen_t = 0.0
+			_end_pursuit()
+			hud.notify("You lost them.", "")
+			AudioManager.play_success()
+			return
+	if GameState.cell != "world":
+		return
+	# Reinforcements only come while they can see you; once they've lost
+	# you, the units already out search where you were last seen.
+	var searching := unseen_t > SEARCH_AFTER
+	_cop_t -= 1.0
+	if _cop_t <= 0.0 and not searching:
+		_cop_t = HEAT_EVERY[GameState.heat]
+		_spawn_cops()
+	_pursuit_t -= 1.0
+	if _pursuit_t <= 0.0:
+		_pursuit_t = 8.0
+		_update_pursuit()
+	if GameState.heat >= 4 and player.driving != null and not (player.driving is Aircraft):
+		_roadblock_t -= 1.0
+		if _roadblock_t <= 0.0:
+			_roadblock_t = 28.0
+			_spawn_roadblock()
+
+
+func _police_sees_player() -> bool:
+	if GameState.cell != "world":
+		return false
+	var eye := player.global_position + Vector3(0, 1.5, 0)
+	for n in get_tree().get_nodes_in_group("npc"):
+		var o := n as NPC
+		if o == null or o.dead or not (o.faction in ["nypd", "fbi"]):
+			continue
+		var d := o.global_position.distance_to(player.global_position)
+		if d < 6.0 or (d < 70.0 and o._los(o.head_pos(), eye)):
+			return true
+	var space := get_world_3d().direct_space_state
+	for v in pursuit:
+		var pv := v as Vehicle
+		if not is_instance_valid(pv) or pv.dead:
+			continue
+		var d2 := pv.global_position.distance_to(player.global_position)
+		if d2 < 55.0:
+			var q := PhysicsRayQueryParameters3D.create(pv.global_position + Vector3(0, 1.4, 0), eye, Phys.WORLD)
+			q.exclude = [pv.get_rid()]
+			if player.driving != null:
+				q.exclude.append(player.driving.get_rid())
+			if space.intersect_ray(q).is_empty():
+				return true
+	return false
+
+
+## Keep the right number of cruisers on your tail, aimed at you or your car
+## (or, while they've lost you, at the spot you were last seen).
+func _update_pursuit() -> void:
+	var tgt: Node3D = player.driving if player.driving != null else player
+	if unseen_t > SEARCH_AFTER:
+		if _search_mark == null:
+			_search_mark = Node3D.new()
+			add_child(_search_mark)
+		_search_mark.global_position = last_seen
+		tgt = _search_mark
+	var alive: Array = []
+	for v in pursuit:
+		var pv := v as Vehicle
+		if not is_instance_valid(pv):
+			continue
+		if pv.dead or pv.driving or pv.global_position.distance_to(player.global_position) > 320.0:
+			if not pv.driving and pv.global_position.distance_to(player.global_position) > 320.0:
+				pv.queue_free()
+			continue
+		pv.ai_target = tgt
+		alive.append(pv)
+	pursuit = alive
+	var want: int = HEAT_CARS[GameState.heat]
+	if player.driving is Aircraft or unseen_t > SEARCH_AFTER:
+		want = 0 # cruisers don't fly, and nobody new joins a search
+	var tries := 0
+	while pursuit.size() < want and tries < 6:
+		tries += 1
+		var ang := randf() * TAU
+		var p := player.global_position + Vector3(cos(ang), 0, sin(ang)) * randf_range(70.0, 110.0)
+		# On the nearest road's centre line, clear of the parked cars.
+		var ic := clampi(roundi((p.x - WorldLayout.AX0) / WorldLayout.AXS), 0, WorldLayout.NA - 1)
+		var jc := clampi(roundi((p.z - WorldLayout.SZ0) / WorldLayout.SZS), 0, WorldLayout.NS - 1)
+		var on_ave := absf(p.x - WorldLayout.ax(ic)) < absf(p.z - WorldLayout.sz(jc))
+		if on_ave:
+			p.x = WorldLayout.ax(ic)
+		else:
+			p.z = WorldLayout.sz(jc)
+		if not _street_spot(p):
+			continue
+		var car := Vehicle.new().setup("police", 0, Vector3(p.x, 0.3, p.z), 0.0, self)
+		car.locked = true
+		car.lock_dc = 60
+		car.set_meta("pursuit", true)
+		car.ai_speed_mul = 0.92 if GameState.heat < 4 else 1.0
+		car.ai_on_arrive = _cruiser_unload
+		vehicles_root.add_child(car)
+		# Facing along the road, whichever way is toward you.
+		var to := player.global_position - car.global_position
+		if on_ave:
+			car.rotation.y = 0.0 if to.z < 0.0 else PI
+		else:
+			car.rotation.y = PI * 0.5 if to.x < 0.0 else -PI * 0.5
+		car.ai_target = tgt
+		pursuit.append(car)
+
+
+## A cruiser pulled up beside you: two officers out, guns up.
+func _cruiser_unload(car: Vehicle) -> void:
+	if car.has_meta("unloaded"):
+		return
+	car.set_meta("unloaded", true)
+	var side := car.global_transform.basis.x
+	for s in [-1.0, 1.0]:
+		_spawn_officer(car.global_position + side * (1.9 * float(s)) + Vector3(0, 0.05, 0))
+
+
+func _end_pursuit() -> void:
+	for v in pursuit:
+		var pv := v as Vehicle
+		if is_instance_valid(pv) and not pv.driving:
+			pv.ai_target = null
+			pv.speed = 0.0
+	pursuit = []
+
+
+## Open street at ground level (no roof over it, in the map).
+func _street_spot(p: Vector3) -> bool:
+	if not WorldLayout.in_bounds(p.x, p.z):
+		return false
+	var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, 60.0, p.z), Vector3(p.x, -1.0, p.z), Phys.WORLD)
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	return not hit.is_empty() and (hit["position"] as Vector3).y < 0.5
+
+
+## Four stars and you're in a car: two cruisers across the road ahead.
+func _spawn_roadblock() -> void:
+	var v: Vehicle = player.driving
+	var fwd := -v.global_transform.basis.z
+	fwd.y = 0.0
+	fwd = fwd.normalized()
+	var dist := clampf(absf(v.speed) * 3.0, 60.0, 110.0)
+	var c := v.global_position + fwd * dist
+	if not _street_spot(c):
+		return
+	var side := Vector3(-fwd.z, 0, fwd.x)
+	var yaw := atan2(-side.x, -side.z)
+	var placed := 0
+	for s in [-1.0, 1.0]:
+		var p: Vector3 = c + side * (2.8 * float(s))
+		if not _street_spot(p):
+			continue
+		var car := Vehicle.new().setup("police", 0, Vector3(p.x, 0.3, p.z), yaw + (0.25 * float(s)), self)
+		car.locked = true
+		car.lock_dc = 60
+		car.set_meta("roadblock", true)
+		vehicles_root.add_child(car)
+		_spawn_officer(p - fwd * 3.0)
+		placed += 1
+	if placed > 0:
+		hud.notify("Roadblock ahead.", "warn")
+
+
+func _spawn_officer(p: Vector3) -> void:
+	# Five stars: the Bureau shows up instead of the precinct.
+	var fbi := GameState.heat >= 5 and randf() < 0.6
+	var tmpl: Dictionary = NPCData.TEMPLATES["fbi_agent" if fbi else "cop"].duplicate(true)
+	if fbi:
+		tmpl["weapon"] = "smg"
+		tmpl["name"] = "FBI Tactical"
+		tmpl["hp"] = 110.0
+	elif GameState.heat >= 3 and randf() < 0.4:
+		tmpl["weapon"] = "shotgun"
+	var n2 := NPC.new()
+	_cop_count += 1
+	var cid := ("fbi_resp_%d" if fbi else "cop_resp_%d") % _cop_count
+	n2.setup(cid, tmpl, p, 0.0, "world", self)
+	npcs.add_child(n2)
+	n2.global_position = p
+	npcs.live[cid] = n2 # despawned with the rest when you leave
+	n2.call_deferred("alarm", player)
+
 
 func _spawn_cops() -> void:
 	var alive := 0
 	for n in get_tree().get_nodes_in_group("npc"):
 		var o := n as NPC
-		if o != null and not o.dead and o.faction == "nypd" and o.global_position.distance_to(player.global_position) < 120.0:
+		if o != null and not o.dead and (o.faction in ["nypd", "fbi"]) and o.global_position.distance_to(player.global_position) < 120.0:
 			alive += 1
-	if alive >= 3:
-		return
-	var tmpl: Dictionary = NPCData.TEMPLATES["cop"].duplicate(true)
-	var space := get_world_3d().direct_space_state
+	var room: int = HEAT_FOOT[GameState.heat] - alive
+	var wave := mini(room, 1 + (GameState.heat + 1) / 2)
 	var placed := 0
-	for attempt in 12:
-		if placed >= 2:
+	for attempt in 14:
+		if placed >= wave:
 			break
 		var ang := randf() * TAU
 		var p := player.global_position + Vector3(cos(ang), 0, sin(ang)) * randf_range(35.0, 50.0)
-		if not WorldLayout.in_bounds(p.x, p.z):
-			continue
 		# Street level only: nothing above the spot (not inside a building or under a roof).
-		var q := PhysicsRayQueryParameters3D.create(Vector3(p.x, 60.0, p.z), Vector3(p.x, -1.0, p.z), Phys.WORLD)
-		var hit := space.intersect_ray(q)
-		if hit.is_empty() or (hit["position"] as Vector3).y > 0.5:
+		if not _street_spot(p):
 			continue
-		p.y = (hit["position"] as Vector3).y + 0.05
-		var n2 := NPC.new()
-		_cop_count += 1
-		var cid := "cop_resp_%d" % _cop_count
-		n2.setup(cid, tmpl, p, 0.0, "world", self)
-		npcs.add_child(n2)
-		n2.global_position = p
-		npcs.live[cid] = n2 # despawned with the rest when you leave
-		n2.call_deferred("alarm", player)
+		p.y = 0.05
+		_spawn_officer(p)
 		placed += 1
 
 
@@ -2127,6 +2433,7 @@ func _hide_parked(id: String, e: Dictionary) -> void:
 # ---------------------------------------------------------------- aircraft
 var planes: Dictionary = {} # airfield slot -> Aircraft
 var night_lights: NightLights
+var races: Races
 var airfield_slots: Array = [] # from CityBuilder.airfield_planes
 var _af_filled: Dictionary = {} # slot -> true once spawned this session
 var rings: Node3D = null

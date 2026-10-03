@@ -86,11 +86,12 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
 - [x] Driving: arcade handling, handbrake, collisions, damage/smoke/explosion, running
       people over (crime), chase camera, engine sound, gamepad triggers
 - [ ] In-car radio, first-person camera, fleeing drivers as NPCs
-- [ ] Police chases: heat levels 1–5, patrol cars pursue, roadblocks at heat 4+,
+- [x] Police chases: heat levels 1–5, patrol cars pursue, roadblocks at heat 4+,
       FBI at 5; lose them by breaking line of sight, changing cars, masks, or laying low
-- [ ] Chop shop (Bronx): sell stolen cars; "wanted list" of models for bonus cash
+- [x] Chop shop (Hunts Point): sell stolen cars; "wanted list" of models for bonus cash
 - [ ] Garage: keep cars you like (your apartment's street, a rented garage)
-- [ ] Street races (Hunts Point, LIC), taxi fares as a job type
+- [x] Street races (Hunts Point)
+- [ ] More race loops (LIC, Chicago), taxi fares as a job type
 
 ## 4. Morality and the paths you can take
 

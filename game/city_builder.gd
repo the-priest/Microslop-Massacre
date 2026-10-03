@@ -78,6 +78,7 @@ func build_all() -> void:
 	_subways()
 	_coney()
 	_edges()
+	_chop_shop(Vector3(1105.0, 0.0, -1200.0))
 	_fill_country()
 	_neighbour_skylines()
 
@@ -175,6 +176,32 @@ func _farm_block(bi: int, bj: int, r: Rect2, rest: bool) -> void:
 		var ads := ["E CORP · OWN NOTHING · OWE EVERYTHING", "E COIN · THE FUTURE OF MONEY IS OURS", "LIVE SERVICE · NEVER FINISHED · NEVER YOURS", "ACCOUNT REQUIRED · FOR YOUR SAFETY", "SUBSCRIBE TO YOUR CAR'S HEATED SEATS", "JESUS SAVES · E CORP CHARGES INTEREST", "NOW WITH AI · YOU DIDN'T ASK"]
 		cbb.label(Vector3(bxx - 0.2, 8.5, by), ads[rng.randi() % ads.size()], 64, Color(0.12, 0.12, 0.14), -PI * 0.5, 260.0, 0.02)
 		cbb.solid(Vector3(bxx, 4.0, by), Vector3(0.4, 8.0, 0.4))
+
+
+## Keep Rafi's bay clear of the street's parked cars.
+func _in_chop_bay(x: float, z: float) -> bool:
+	return WorldLayout.region == "nyc" and absf(x - 1105.0) < 9.0 and absf(z + 1200.0) < 7.0
+
+
+## Rafi's Auto Body, Hunts Point: a painted bay on the street, a pole sign
+## and a work light. Drive a stolen car in and stop (Game._chop_tick).
+func _chop_shop(p: Vector3) -> void:
+	var c := ctx_at(p.x, p.z)
+	var y := Color(0.95, 0.75, 0.1)
+	for e in [[Vector3(0, 0.03, -4.5), Vector3(9.0, 0.02, 0.25)], [Vector3(0, 0.03, 4.5), Vector3(9.0, 0.02, 0.25)], [Vector3(-4.5, 0.03, 0), Vector3(0.25, 0.02, 9.0)], [Vector3(4.5, 0.03, 0), Vector3(0.25, 0.02, 9.0)]]:
+		c.props.box(p + (e[0] as Vector3), e[1], y)
+	c.label(p + Vector3(0, 0.05, 0), "CHOP", 160, Color(0.95, 0.75, 0.1, 0.8), 0.0, 60.0, 0.02, {"font": "graffiti", "pitch": -PI * 0.5})
+	var sp := p + Vector3(-6.0, 0, 6.6)
+	c.props.box(sp + Vector3(0, 2.5, 0), Vector3(0.2, 5.0, 0.2), Color(0.25, 0.25, 0.27))
+	c.props.box(sp + Vector3(0, 5.2, 0), Vector3(4.6, 1.4, 0.18), Color(0.1, 0.1, 0.12))
+	c.glow.box(sp + Vector3(0, 5.2, -0.1), Vector3(4.4, 1.2, 0.04), Color(0.9, 0.2, 0.15), 0.0, Vector2(Props.K_FLICKER, 0.3))
+	c.glow.box(sp + Vector3(0, 5.2, 0.1), Vector3(4.4, 1.2, 0.04), Color(0.9, 0.2, 0.15), 0.0, Vector2(Props.K_FLICKER, 0.3))
+	for f in [-1.0, 1.0]:
+		c.label(sp + Vector3(0, 5.35, 0.14 * f), "RAFI'S AUTO BODY", 42, Color(1, 1, 1), 0.0 if f > 0 else PI, 160.0, 0.02)
+		c.label(sp + Vector3(0, 4.85, 0.14 * f), "WE BUY CARS · NO QUESTIONS", 24, Color(1.0, 0.85, 0.3), 0.0 if f > 0 else PI, 120.0, 0.02)
+	c.glow.box(sp + Vector3(1.4, 3.4, -0.3), Vector3(0.6, 0.25, 0.25), Color(1.0, 0.95, 0.8), 0.0, Vector2(Props.K_NIGHT, 0))
+	c.solid(sp + Vector3(0, 2.5, 0), Vector3(0.3, 5.0, 0.3))
+	Props.light_pool(c, p, 7.0, Color(1.0, 0.85, 0.6))
 
 
 ## Dolores's blue Peterbilt, locked on the west shoulder with its hazards on
@@ -615,9 +642,10 @@ func _street_segment(z: float, x0: float, x1: float, i: int, j: int, asphalt: Co
 					var ci := rng.randi() % Props.CAR_COLORS.size()
 					var pz: float = z + side * 3.3
 					var cc := ctx_at(px, pz)
-					Props.place(cc, "car_%s_%d" % [typ, ci], Vector3(px, 0, pz), PI * 0.5 if side > 0 else -PI * 0.5)
-					cc.solid(Vector3(px, 0.8, pz), Vector3(4.6, 1.6, 1.9))
-					_lootable("taxi" if typ == "taxi" else "car", Vector3(px, 0.8, pz), Vector3(2.36, 0.86, 1.0), 0.0, {"car": typ, "ci": ci, "yaw": PI * 0.5 if side > 0 else -PI * 0.5})
+					if not _in_chop_bay(px, pz):
+						Props.place(cc, "car_%s_%d" % [typ, ci], Vector3(px, 0, pz), PI * 0.5 if side > 0 else -PI * 0.5)
+						cc.solid(Vector3(px, 0.8, pz), Vector3(4.6, 1.6, 1.9))
+						_lootable("taxi" if typ == "taxi" else "car", Vector3(px, 0.8, pz), Vector3(2.36, 0.86, 1.0), 0.0, {"car": typ, "ci": ci, "yaw": PI * 0.5 if side > 0 else -PI * 0.5})
 				px += 7.0 + rng.randf() * 7.0
 		# Chinatown: lanterns strung across the street.
 		if dist == "chinatown":

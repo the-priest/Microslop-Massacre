@@ -438,3 +438,90 @@ KOWALCZYK: Funny thing. Server ate one of my cases. Backups too. IT says that do
 -- after_flipped
 KOWALCZYK: My E Corp case turned into an E Corp case. The other kind. My boss loves it. I'm getting a commendation for an investigation I'm pretty sure I didn't write. If I ever find out who wrote it, I'm going to arrest them, and then I'm going to buy them a drink.
 -> END
+
+### ------------------------------------------------------------ CHOP SHOP
+### Rafi's Auto Body, Hunts Point. Selling is handled by Game._chop_offer.
+
+=== rafi
+-- start
+? flag.met_rafi -> again
+> A man in grease-dark coveralls on an upturned bucket, eating a sandwich with the patience of someone who's waiting for a car he hasn't been told about yet.
+RAFI: You look like a guy who's about to have a car he doesn't need. I'm Rafi. Auto body. Mostly body.
+! set met_rafi
+* "How does it work?" -> how
+* "What are you looking for today?" -> list
+* "Just passing." -> END
+-- how
+RAFI: You bring it in. You park it in the yellow box, right there, engine running, and you stop. I look at it. I make an offer. You walk away lighter and richer, and the car becomes a lot of very honest spare parts by morning.
+RAFI: Three a day, max. More than that and the insurance people start drawing circles on maps. And nothing registered to you, papi. I don't buy cars with feelings.
+-> list
+-- list
+RAFI: Every day I've got a list. A guy in Jersey needs a model, I need that model, it pays double. Today...
+? flag.chop_want=suv -> w_suv
+? flag.chop_want=taxi -> w_taxi
+? flag.chop_want=van -> w_van
+? flag.chop_want=sedan -> w_sedan
+? flag.chop_want=truck -> w_truck
+? flag.chop_want=hatch -> w_hatch
+? flag.chop_want=police -> w_police
+RAFI: Today, nothing special. Bring me anything clean.
+-> END
+-- w_suv
+RAFI: An SUV. Something a dentist would drive to a soccer game.
+-> END
+-- w_taxi
+RAFI: A taxi. Yellow. The Jersey guy runs a 'car service,' which is a sentence I'm not going to finish.
+-> END
+-- w_van
+RAFI: A van. Any van. Nobody ever looks twice at a van; that's the whole point of a van.
+-> END
+-- w_sedan
+RAFI: A sedan. The most forgettable car in New York. Which is the point.
+-> END
+-- w_truck
+RAFI: A box truck. Don't ask what for. I asked once. I regretted it for a year.
+-> END
+-- w_hatch
+RAFI: A hatchback. Small, cute, somebody's first car. I feel bad. I'll get over it.
+-> END
+-- w_police
+RAFI: A cop car. Today the Jersey guy wants a cop car. Don't ask me why. I didn't ask him. Pays like crazy. Costs like crazy.
+-> END
+-- again
+RAFI: Yellow box, engine running, foot off the gas. You know the drill.
+* "What's on the list today?" -> list
+* "Later, Rafi." -> END
+
+### ------------------------------------------------------------ STREET RACES
+### Dez runs the Hunts Point loop at night. The race itself is game/races.gd.
+
+=== dez
+-- start
+? flag.race_won_hunts -> champ
+? flag.met_dez -> again
+> A guy in a red racing jacket leaning on a hydrant, one earbud in, watching the avenue like it owes him a lap time. Two cars idle at the corner behind him, both pointed north.
+DEZ: You look lost, which is fine, or fast, which is better. Which?
+! set met_dez
+* "What's going on here?" -> what
+* "Fast." -> what
+* "Lost." -> END
+-- what
+DEZ: Hunts Point loop. Up the avenue, right on the top street, all the way east, down, back west, home. Twice. I've got a driver who's never lost on it. Two hundred says you can't beat her.
+DEZ: I'll lend you a car. A nice one. Don't fall in love with it.
+-> offer
+-- again
+DEZ: Back for another lap? Two hundred, same as always.
+-> offer
+-- champ
+DEZ: The one who beat my driver. She's still mad. She wants a rematch every night. Two hundred?
+-> offer
+-- offer
+* [if cash>=200] "I'm in. Two hundred." -> go
+* "Not tonight." -> no
+-- go
+DEZ: Car's on the left. Corners are marked: the big orange light. Miss one and it doesn't count. Don't hit the cop cars, they don't have a sense of humor about it.
+! race hunts
+-> END
+-- no
+DEZ: Night's young. So's the city. Come back.
+-> END

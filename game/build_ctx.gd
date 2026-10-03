@@ -21,6 +21,7 @@ func solid(center: Vector3, size: Vector3, rot_y: float = 0.0, tag: String = "")
 
 
 ## opts: outline (px), outline_col, tilt (radians, around the facing axis),
+## pitch (radians around x: -PI/2 lays it flat on the ground, facing up),
 ## font ("graffiti" for spray-paint lettering).
 func label(pos: Vector3, text: String, font_size: int, color: Color, rot_y: float, vis_range: float = 160.0, pixel: float = 0.02, opts: Dictionary = {}) -> void:
 	var l := {"pos": pos, "text": text, "size": font_size, "color": color, "rot": rot_y, "range": vis_range, "pixel": pixel}
@@ -69,6 +70,7 @@ func commit(parent: Node3D, far: float, props_range: float = 260.0, collision: b
 		lb.position = l["pos"]
 		lb.rotation.y = float(l["rot"])
 		lb.rotation.z = float(l.get("tilt", 0.0))
+		lb.rotation.x = float(l.get("pitch", 0.0))
 		lb.double_sided = false
 		lb.shaded = false
 		lb.visibility_range_end = float(l["range"])

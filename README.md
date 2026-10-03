@@ -238,6 +238,22 @@ fire, then it goes up). Running people over is a crime, and the Monster path is
 watching. Drive through the green I-80 sign at the edge of town and the car comes with
 you to the next map.
 
+**The heat.** Crimes the police see (or hear about) earn stars, and every new crime
+while they're after you adds one:
+
+- **★** a couple of officers on foot.
+- **★★** a cruiser comes after you, routing along the avenues and streets; it pulls up
+  beside you and two officers get out.
+- **★★★** more of everything, faster, and some of them carry shotguns.
+- **★★★★** roadblocks: two cruisers across the road ahead of your car.
+- **★★★★★** the FBI's tactical team shows up alongside the precinct.
+
+Lose them by getting out of sight: break line of sight and the stars start flashing
+while they search the last place they saw you. Nobody new joins a search, and if you
+stay hidden long enough (longer the hotter it is) they give up. Ducking indoors,
+or switching to a car they haven't seen, cools things twice as fast. Killing a cop adds
+two stars.
+
 **Planes.** Bowery Bay Airfield sits on the Queens waterfront in the north-east corner of
 New York: one runway, a control tower, two hangars, three Skyhawk trainers and E Corp's
 corporate jet. Chicago has Meigs Field on the lakeshore, with two more Skyhawks. Fly
@@ -269,6 +285,12 @@ a crime.
 - **ATMs:** hack the cash cassette, or cash out stolen cards.
 - **Pickpocketing:** crouch behind anyone and press E.
 - **Gloveboxes:** steal a car and whatever's in the glovebox comes with it.
+- **Street races** (Hunts Point, at night): Dez bets you $200 you can't beat his driver
+  over two laps of the loop. He lends you the car; the big orange lights mark the
+  corners you have to hit.
+- **Rafi's Auto Body** (Hunts Point): roll a stolen car into the yellow bay and stop.
+  Rafi pays by model and condition, double for the day's wanted model, three cars a
+  day, and never for a car that's registered to you.
 - **Barter:** hundreds of shops, each with its own stock and its own cash. Night dealers
   fence what the pawn shops won't touch.
 - **Street encounters:** muggings in progress (stop them, get paid), ambushes,
@@ -425,6 +447,7 @@ a real renderer: `xvfb-run -a godot --rendering-driver opengl3 --path . res://te
 | `vehicle_test`, `flight_test` | Stealing, driving, crashing, carjacking; taking off, turning, rings, landing, crashing |
 | `pad_test`, `menu_pad_test` | The whole game driven by a simulated controller: menus, phone, map, pause, minigames, level-up, dialogue, terminals, cars |
 | `companion_test` | Recruiting, following, riding along, heart-to-hearts, reactions, leaving |
+| `heat_test` | Stars rising with crimes, officers and cruisers responding, a cruiser routing along the streets to your car, a roadblock at four stars, the FBI at five, losing them outdoors and indoors, selling a stolen car to Rafi, and winning and losing a street race |
 | `dd_*`, `deepdebug`, `smoke`, `intro_test` | Interiors, exploits, death, the open world's doors, loot and pickups, the intro |
 | `shots`, `world_shots`, `air_shots` | Screenshots for eyeballing: streets at any hour, the connected world from the air, the airfield |
 

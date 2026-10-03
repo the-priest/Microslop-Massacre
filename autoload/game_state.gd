@@ -82,6 +82,11 @@ var last_innocent: Dictionary = {} # {day, hour, cell} of the latest civilian ki
 var achievements: Array = []
 var ending: String = ""
 var wanted_until: float = -1.0
+## Police heat, 0-5 stars. Each new crime while wanted raises it; breaking line
+## of sight long enough (Game) clears it.
+var heat: int = 0
+## A crime was just committed or the heat went up: the police know where you are.
+signal heat_raised
 var zero_day_day: int = -1
 var last_won: bool = false
 var cell: String = "world" # world or interior id
@@ -158,6 +163,7 @@ func new_game() -> void:
 	achievements = []
 	ending = ""
 	wanted_until = -1.0
+	heat = 0
 	zero_day_day = -1
 	last_won = false
 	cell = "world"
@@ -783,8 +789,36 @@ func get_trust(who: String) -> int:
 
 
 func set_wanted(minutes: float) -> void:
+	if minutes <= 0.0:
+		return
+	var was := is_wanted()
 	wanted_until = maxf(wanted_until, game_minutes + minutes)
-	emit_signal("notify", "NYPD is looking for you", "warn")
+	# Bigger crimes start hotter; a crime while they're already after you
+	# turns it up a star.
+	var base := 2 if minutes >= 120.0 else 1
+	add_heat(1 if was else base, false)
+	if not was:
+		emit_signal("notify", "The police are looking for you", "warn")
+
+
+func is_wanted() -> bool:
+	return wanted_until > game_minutes and heat > 0
+
+
+## Raise the police heat by `n` stars (max 5), and keep them looking.
+func add_heat(n: int, extend: bool = true) -> void:
+	var before := heat
+	heat = clampi(heat + n, 1, 5)
+	emit_signal("heat_raised")
+	if extend:
+		wanted_until = maxf(wanted_until, game_minutes + 30.0 + 20.0 * float(heat))
+	if heat > before and before > 0:
+		emit_signal("notify", "Heat: " + "★".repeat(heat) + "☆".repeat(5 - heat), "warn")
+
+
+func clear_wanted() -> void:
+	wanted_until = -1.0
+	heat = 0
 
 
 # ------------------------------------------------------------ world state
@@ -836,7 +870,7 @@ func to_dict() -> Dictionary:
 		"containers": containers, "picked": picked, "unlocked": unlocked, "discovered": discovered,
 		"game_minutes": game_minutes, "weather": weather, "weather_until": weather_until,
 		"buffs": buffs, "stats": stats, "last_innocent": last_innocent, "achievements": achievements, "ending": ending,
-		"wanted_until": wanted_until, "zero_day_day": zero_day_day, "cell": cell,
+		"wanted_until": wanted_until, "heat": heat, "zero_day_day": zero_day_day, "cell": cell,
 		"player_pos": [player_pos.x, player_pos.y, player_pos.z], "player_yaw": player_yaw,
 		"shop_stock": shop_stock, "npc_pos_override": npc_pos_override, "playtime": playtime,
 		"jobs_state": jobs_state, "dead_npc_pos": dead_npc_pos, "pos_local": pos_local, "rides": rides, "region": region,
@@ -918,6 +952,7 @@ func from_dict(d: Dictionary) -> void:
 	achievements = _arr(d, "achievements")
 	ending = str(d.get("ending", ""))
 	wanted_until = float(d.get("wanted_until", -1.0))
+	heat = int(d.get("heat", 1 if wanted_until > game_minutes else 0))
 	zero_day_day = int(d.get("zero_day_day", -1))
 	cell = str(d.get("cell", "world"))
 	var pp: Array = d.get("player_pos", [0, 0, 0])
