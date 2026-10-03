@@ -20,7 +20,7 @@ func _ready() -> void:
 	await _rent_is_due()
 	await _cloud()
 	await _radio()
-	for id in ["lakeshore", "interstate", "mainstreet", "quay", "broadway"]:
+	for id in ["lakeshore", "interstate", "mainstreet", "quay", "broadway", "campus"]:
 		await _race(id)
 		await _masks()
 		await _clinic()

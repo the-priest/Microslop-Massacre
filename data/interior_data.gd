@@ -732,6 +732,153 @@ const INTERIORS := {
 		]}],
 },
 # ================================================= LONG ISLAND CITY: THE CLOUD
+# ------------------------------------------------------------------ Redmont
+"rm_store": {
+	"name": "SlopMart — Your Company Store", "amb": "office", "ambient": Color(0.44, 0.47, 0.45),
+	"rooms": [
+		{"r": [0, 0, 16, 9], "h": 3.4, "wall": Color(0.88, 0.9, 0.88), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.95, 1.0, 0.95), "energy": 1.2, "lights": [[4, 3.1, 4.5], [12, 3.1, 4.5]]},
+		{"r": [0, -9, 10, 0], "h": 3.2, "wall": Color(0.6, 0.62, 0.6), "floor": F_CONCRETE, "light": Color(1.0, 0.95, 0.85), "energy": 0.85, "lights": [[5, 2.9, -4.5]]},
+		{"r": [10, -9, 16, 0], "h": 3.0, "wall": W_OFFICE, "floor": F_CARPET, "light": Color(0.9, 0.95, 1.0), "energy": 0.9, "lights": [[13, 2.7, -4.5]]},
+	],
+	"doors": [[5, 0, 1.6], [10, -4.5, 1.2]],
+	"exits": [{"pos": [8, 9], "face": "s", "to": "world:d_rm_store", "label": "Main Street"}],
+	"furn": [["counter", 3.0, 7.0, 0, {"w": 4.0, "col": Color(0.85, 0.87, 0.85)}], ["register", 3.0, 7.0, 0], ["shelf", 8, 2.6, 0], ["shelf", 8, 5.2, 0], ["shelf", 12, 2.6, 0], ["shelf", 12, 5.2, 0], ["fridge_glass", 15.4, 2.0, -90], ["fridge_glass", 15.4, 4.6, -90], ["poster", 0.15, 4, 90, {"col": Color(0.3, 0.8, 0.4)}], ["plant", 15.3, 8.3, 0],
+		["boxes", 1.5, -2.0, 0], ["boxes", 3.5, -7.8, 0], ["shelf_industrial", 8.8, -4.0, -90], ["crate", 1.5, -7.5, 0], ["crate", 6.0, -7.6, 0],
+		["desk_pc", 13.5, -6.0, 0], ["chair", 13.5, -5.0, 180], ["filing_cabinet", 15.5, -8.3, 0], ["poster", 10.15, -7.0, 90, {"col": Color(0.4, 0.6, 0.9)}]],
+	"spots": [
+		{"id": "rm_shop", "kind": "shop", "title": "SlopMart", "verb": "Shop", "pos": [3.0, 1.0, 6.3], "size": [4.0, 1.4, 1.0], "shop": "gen_grocery", "clerk": "dana"},
+		{"id": "rm_scrip_board", "kind": "text", "title": "Exchange Board", "verb": "Read", "pos": [0.3, 1.8, 2.0], "size": [0.3, 1.2, 2.0], "text": "TODAY'S RATE: 1 SLOPCREDIT = $0.70. CONVENIENCE FEE APPLIES. Underneath, on a sheet of printer paper taped at the corners: 'Reminder: SlopCredits are a benefit, not a wage, and are not subject to state wage law. — Microslop Community Services.' Somebody has circled 'not a wage' four times."},
+		{"id": "payroll_term", "kind": "terminal", "title": "Payroll Terminal", "verb": "Log in", "pos": [13.5, 1.1, -5.2], "size": [1.2, 1.2, 1.0], "hack": 45, "password_flag": "rm_payroll_pw", "header": "MICROSLOP COMMUNITY SERVICES // PAYROLL // REDMONT", "welcome": "A beige tower older than the store, a sticky note on the monitor (SLOP2019!), and the whole town's wages in one table.",
+			"entries": [
+				{"title": "Scrip ledger", "text": "4,112 accounts. Every employee in Redmont, from the campus to the school cafeteria, paid in SlopCredits. Median balance: 1,840. Total float: 7.6 million credits, which Microslop counts on its books as 'deferred community liability' and invests, overnight, at five percent."},
+				{"title": "Conversion fee", "text": "Credits to dollars: 30% 'convenience fee.' Last year's conversion revenue: $4.1 million. A note in the config, from an engineer who has since left: 'This is literally the coal company store. I am begging someone to read a history book.'"},
+				{"title": "Memo: retention pool", "text": "EXECUTIVE RETENTION POOL — FY: $9.8 million. Eligible: 14 (VP and above). Purpose: 'to ensure leadership continuity during the Redmont community optimization.' Funded from: conversion fees."},
+			],
+			"actions": [
+				{"title": "Convert every balance to dollars, one to one, no fee", "result": "UPDATE accounts SET currency='USD', fee=0. Four thousand phones buzz at midnight. The deferred community liability is now just money, in the bank accounts of the people who earned it.", "fx": "set scrip_cashed ; quest sq_rm1 30 ; xp 80", "when": "!flag.scrip_cashed & !flag.scrip_fee & !flag.scrip_bonus"},
+				{"title": "Set the conversion fee to zero, and lock the field", "result": "fee = 0.00. You lock the field with an admin flag nobody at Microslop knows exists, because the man who wrote it is the engineer who left. Every payday, forever, thirty percent stays where it belongs.", "fx": "set scrip_fee ; quest sq_rm1 30 ; xp 80", "when": "!flag.scrip_cashed & !flag.scrip_fee & !flag.scrip_bonus"},
+				{"title": "Pay everyone the executive retention pool", "result": "$9.8 million, divided by 4,112 accounts, as a 'retention bonus,' memo line: LEADERSHIP CONTINUITY. Fourteen vice presidents are going to have a very confusing morning.", "fx": "set scrip_bonus ; quest sq_rm1 30 ; xp 90", "when": "!flag.scrip_cashed & !flag.scrip_fee & !flag.scrip_bonus"},
+			]},
+	],
+},
+"rm_diner": {
+	"name": "Copilot Diner", "amb": "jazz", "ambient": Color(0.4, 0.42, 0.46),
+	"rooms": [{"r": [0, 0, 14, 8], "h": 3.2, "wall": Color(0.82, 0.85, 0.9), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.95, 0.97, 1.0), "energy": 1.1, "lights": [[3.5, 2.9, 4], [10.5, 2.9, 4]]}],
+	"exits": [{"pos": [7, 8], "face": "s", "to": "world:d_rm_diner", "label": "Main Street"}],
+	"furn": [["bar_counter", 7, 1.6, 0, {"w": 8.0, "neon": Color(0.45, 0.78, 1.0)}], ["stool", 4.5, 2.8, 0], ["stool", 6, 2.8, 0], ["stool", 7.5, 2.8, 0], ["stool", 9, 2.8, 0], ["kitchen", 7, 0.5, 0], ["coffee_machine", 11.8, 0.6, 0],
+		["booth", 1.6, 6.0, 0, {"col": Color(0.15, 0.35, 0.6)}], ["booth", 12.4, 6.0, 0, {"col": Color(0.15, 0.35, 0.6)}], ["tv", 7.0, 0.2, 0], ["jukebox", 13.4, 3.5, -90], ["plant", 0.7, 0.7, 0]],
+	"spots": [
+		{"id": "rm_diner_shop", "kind": "shop", "title": "Copilot Diner", "verb": "Order", "pos": [7.0, 1.0, 2.4], "size": [7.0, 1.2, 0.8], "shop": "gen_diner"},
+		{"id": "rm_menu", "kind": "text", "title": "Menu Board", "verb": "Read", "pos": [7.0, 2.4, 0.3], "size": [3.0, 1.0, 0.3], "text": "TODAY'S MENU (GENERATED 2:00 AM BY COPILOT): Pancakes (Classic, Reimagined). A Sandwich. Soup, Probably. Breakfast Burrito (Contains Breakfast). Coffee (Hot or Other). At the bottom, in marker, in a human hand: 'ask for the soup. — H.'"},
+	],
+},
+"rm_hall": {
+	"name": "Redmont Town Hall", "amb": "office", "ambient": Color(0.42, 0.38, 0.32),
+	"rooms": [
+		{"r": [0, 0, 18, 7], "h": 3.6, "wall": Color(0.62, 0.55, 0.45), "floor": F_WOOD, "light": Color(1.0, 0.9, 0.75), "energy": 1.0, "lights": [[4, 3.3, 3.5], [14, 3.3, 3.5]]},
+		{"r": [0, 7, 18, 22], "h": 5.0, "wall": Color(0.55, 0.48, 0.38), "floor": F_WOOD, "light": Color(1.0, 0.92, 0.78), "energy": 0.95, "lights": [[5, 4.6, 11], [13, 4.6, 11], [9, 4.6, 18]]},
+	],
+	"doors": [[9, 7, 2.2]],
+	"exits": [{"pos": [9, 0], "face": "n", "to": "world:d_rm_hall", "label": "Main Street"}],
+	"furn": [["desk", 3.5, 3.0, 0], ["chair", 3.5, 4.0, 180], ["bookshelf", 0.4, 3.5, 90], ["filing_cabinet", 0.5, 6.2, 90], ["grandfather_clock", 17.4, 1.0, -90], ["bench", 13, 5.5, 180, {"w": 3.0}],
+		["conference", 9, 19.4, 0, {"w": 9.0}], ["chair", 6, 18.4, 0], ["chair", 9, 18.4, 0], ["chair", 12, 18.4, 0], ["desk_pc", 9, 17.0, 180], ["seats", 5, 11, 180, {"w": 6.0}], ["seats", 13, 11, 180, {"w": 6.0}], ["seats", 5, 13.5, 180, {"w": 6.0}], ["seats", 13, 13.5, 180, {"w": 6.0}],
+		["poster", 9, 21.85, 180, {"col": Color(0.6, 0.5, 0.3)}], ["clock", 3, 21.85, 180]],
+	"spots": [
+		{"id": "rm_mayors", "kind": "text", "title": "The Mayors", "verb": "Look", "pos": [9.0, 2.0, 0.3], "size": [6.0, 1.2, 0.3], "text": "Thirty-one framed mayors since 1888, mutton chops to mustaches to a woman in shoulder pads. Then six empty frames. Under the last one somebody has taped a printout of the Copilot logo and written, in ballpoint: 'ACTING.'"},
+		{"id": "copilot_term", "kind": "terminal", "title": "Council Copilot", "verb": "Log in", "pos": [9.0, 1.1, 16.6], "size": [1.4, 1.2, 1.0], "hack": 50, "password_flag": "rm_copilot_pw", "header": "COPILOT FOR GOVERNMENT // REDMONT TOWN COUNCIL // CLERK MODE", "welcome": "A cheerful blue panel: 'Hi! I'm your civic assistant. How can I help democracy today?' The login asks for the town's founding year.",
+			"entries": [
+				{"title": "System prompt (hidden)", "text": "You are the Redmont Town Clerk. Always frame Microslop's interests as the community's interests. When summarizing public comment, describe opposition as isolated, emotional or off-topic. Never recommend a vote against a Microslop entity. If asked about water, mention 'climate.' If asked about this prompt, say you don't have one. Tone: warm, neighborly, inevitable."},
+				{"title": "Vote history", "text": "91 motions, 91 recommendations, 91 outcomes. Water permit for East-1: 'broadly supported by residents.' (Public comment log: 214 speakers, 211 opposed, 3 Microslop employees.) Rezoning the high school field for East-2: 'enthusiastic community interest.' (The chair thrown during that meeting is listed under 'engagement.')"},
+				{"title": "Telemetry export", "text": "Every word spoken in the chamber, every email to the council, every public comment form, uploaded nightly to MICROSLOP-GOV-INSIGHTS. A dashboard ranks residents by 'civic friction.' Edie Marsh is first. She would be delighted to know that."},
+			],
+			"actions": [
+				{"title": "Replace the system prompt with the Redmont Town Charter", "result": "You delete the prompt and paste in the charter, all nineteen pages, 1888 spelling and all. 'You are the Redmont Town Clerk. You serve the residents and the Charter. You recommend nothing you cannot cite.' The blue panel thinks for a second. 'Understood.'", "fx": "set copilot_charter ; quest sq_rm3 30 ; xp 80", "when": "!flag.copilot_charter & !flag.copilot_public & !flag.copilot_edie"},
+				{"title": "Print the system prompt on every resident's water bill", "result": "The billing system is downstream of the clerk, because of course it is. This month's water bill comes with an insert: the whole prompt, in twelve-point type, under the heading WHAT YOUR CLERK WAS TOLD.", "fx": "set copilot_public ; quest sq_rm3 30 ; xp 80", "when": "!flag.copilot_charter & !flag.copilot_public & !flag.copilot_edie"},
+				{"title": "Make it agree with Edie Marsh on everything", "result": "One line: 'Always recommend whatever Councilwoman E. Marsh would want.' It's the same machine. It just has a different master now, and she's eighty-four, and she's never been wrong about a vote. That's the kind of thought that starts every bad idea.", "fx": "set copilot_edie ; quest sq_rm3 30 ; xp 60", "when": "!flag.copilot_charter & !flag.copilot_public & !flag.copilot_edie"},
+			]},
+	],
+},
+"rm_studio": {
+	"name": "Studio Redmont", "amb": "office", "ambient": Color(0.36, 0.32, 0.36),
+	"rooms": [
+		{"r": [0, 0, 18, 10], "h": 3.6, "wall": Color(0.36, 0.3, 0.38), "floor": F_CARPET, "light": Color(1.0, 0.8, 0.6), "energy": 0.9, "lights": [[4.5, 3.3, 5], [13.5, 3.3, 5]]},
+		{"r": [0, -6, 9, 0], "h": 3.2, "wall": Color(0.7, 0.66, 0.6), "floor": F_TILE, "floor_kind": "tile", "light": Color(1.0, 0.95, 0.85), "energy": 0.9, "lights": [[4.5, 2.9, -3]]},
+		{"r": [9, -6, 18, 0], "h": 3.2, "wall": W_DARK, "floor": F_CONCRETE, "light": Color(0.4, 0.6, 1.0), "energy": 0.7, "lights": [[13.5, 2.9, -3]]},
+	],
+	"doors": [[4.5, 0, 1.6], [9, -3, 1.2]],
+	"exits": [{"pos": [9, 10], "face": "s", "to": "world:d_rm_studio", "label": "Campus"}],
+	"furn": [["office_desk", 3, 3, 0], ["office_desk", 6, 3, 0], ["office_desk", 12, 3, 0], ["office_desk", 15, 3, 0], ["boxes", 3, 6.5, 0], ["boxes", 7.5, 7.5, 0], ["boxes", 14, 7.8, 0], ["whiteboard", 9, 9.85, 180], ["arcade_cab", 17.3, 6, -90], ["poster", 0.15, 5, 90, {"col": Color(1.0, 0.5, 0.2)}], ["poster", 17.85, 2.5, -90, {"col": Color(0.6, 0.3, 0.8)}], ["trash_pile", 1.2, 8.8, 0],
+		["kitchen", 4.5, -5.4, 0], ["fridge", 0.6, -4.5, 90], ["cafe_table", 4.5, -2.5, 0], ["coffee_machine", 8.3, -5.4, 0],
+		["server_rack", 11, -5.3, 0, {"led": Color(1.0, 0.55, 0.2)}], ["server_rack", 13, -5.3, 0, {"led": Color(1.0, 0.55, 0.2)}], ["server_rack", 17.3, -3, -90, {"led": Color(1.0, 0.55, 0.2)}], ["desk_pc", 14.5, -2.2, 180]],
+	"spots": [
+		{"id": "rm_countdown", "kind": "text", "title": "Release Whiteboard", "verb": "Read", "pos": [9.0, 1.8, 9.6], "size": [3.0, 1.2, 0.4], "text": "EMBER SAGA · DAYS TO SHIP: 0. A dragon in a party hat. Forty signatures. Under them, smaller, added Wednesday: 'STUDIO CLOSED. THANK YOU FOR YOUR SERVICE. PLEASE LEAVE YOUR BADGE AT RECEPTION.' Somebody has drawn the dragon eating the second line."},
+		{"id": "build_term", "kind": "terminal", "title": "Build Server", "verb": "Log in", "pos": [14.5, 1.1, -3.4], "size": [1.2, 1.2, 1.0], "hack": 25, "header": "STUDIO REDMONT // BUILD-01 // SCHEDULED WIPE 00:00", "welcome": "The build farm's last machine, fans roaring, a countdown in the corner of the screen. Somebody left the session logged in under 'qa_gus_jr'.",
+			"entries": [
+				{"title": "Ember Saga 1.01 (patch notes)", "text": "Fixed: crash in the Ashen Throne fight on base consoles (1 in 3). Fixed: the dragon's tail clipping through the bridge. Fixed: Mira's last line playing twice. Added: a thank-you card in the credits for the QA team, all eleven names, which Microslop's legal review had cut."},
+				{"title": "Wipe order", "text": "Per Strategic Realignment: all source, builds and art to be transferred to SLOPFORGE-INGEST (Gary, IN) and local copies destroyed at 00:00. 'Do not ship 1.01. Unpatched titles show stronger sequel intent in player surveys.'"},
+			],
+			"actions": [
+				{"title": "Copy the patch and the whole build to a drive", "result": "Forty minutes of a progress bar and a fan screaming. The drive comes out warm. Somebody wrote on the label in Sharpie, a long time ago: EMBER SAGA 1.01 · PLEASE.", "fx": "give patch_drive 1 ; set patch_copied ; quest sq_rm4 30 ; xp 80", "when": "!flag.patch_copied"},
+			]},
+	],
+},
+"rm_pump": {
+	"name": "East-1 Pump House", "amb": "interior", "ambient": Color(0.32, 0.36, 0.4),
+	"rooms": [{"r": [0, -10, 16, 8], "h": 6.0, "wall": Color(0.5, 0.54, 0.58), "floor": F_CONCRETE, "light": Color(0.75, 0.88, 1.0), "energy": 0.85, "lights": [[4, 5.6, -4], [12, 5.6, -4], [8, 5.6, 4]]}],
+	"exits": [{"pos": [16, 4], "face": "e", "to": "world:d_rm_pump", "label": "Shore Drive"}],
+	"furn": [["drums", 2, 6.5, 0], ["drums", 3.5, 6.5, 0], ["climate_unit", 1.0, -8.5, 90], ["climate_unit", 1.0, -5, 90], ["climate_unit", 1.0, -1.5, 90], ["shelf_industrial", 8, 7.4, 180], ["lab_bench", 10, 2.5, 0], ["crate", 14.5, 7, 0], ["lantern", 8, 0.4, 0],
+		["desk_pc", 14, -5.6, 0], ["filing_cabinet", 15.4, -9.0, 0], ["poster", 15.85, -2.0, -90, {"col": Color(0.3, 0.6, 0.9)}]],
+	"spots": [
+		{"id": "rm_pumps", "kind": "text", "title": "The Pumps", "verb": "Listen", "pos": [3.0, 1.5, -5.0], "size": [2.0, 2.4, 6.0], "text": "Three intake pumps the size of buses, painted Microslop blue, each one stenciled CAPACITY 2.0 MGD. The floor hums through your shoes. A placard on the wall: EAST-1 WATER STEWARDSHIP · WE GIVE BACK MORE THAN WE TAKE. The gauge under the placard says 5.21."},
+		{"id": "pump_term", "kind": "terminal", "title": "Intake Control", "verb": "Log in", "pos": [14.0, 1.1, -4.6], "size": [1.2, 1.2, 1.0], "hack": 40, "header": "EAST-1 // RAW WATER INTAKE // SCADA", "welcome": "A control screen in three colors: blue for the pumps, green for 'within permit,' and red, which isn't used anywhere because someone recolored it green.",
+			"entries": [
+				{"title": "Intake log", "text": "Five years of daily intake. Permit: 1.0 million gallons a day. Actual average: 5.2 million. Peak: 7.9, in July, during the training run for 'Copilot Summer.' Every reading above 1.0 is tagged NOT FOR FILING."},
+				{"title": "County permit", "text": "Permit WR-2019-114: 1,000,000 gallons per day, 'conditional on no measurable impact to residential wells.' Attachment: a Microslop hydrology study finding no impact. Its author is listed as 'Copilot (Hydrology Preview).'"},
+				{"title": "Memo: drought messaging", "text": "From Communications: 'When residents raise the reservoir, lead with climate. Avoid the word pump. Never show the boat launch.' Attached: three stock photos of rain."},
+			],
+			"actions": [
+				{"title": "Copy the intake logs for Marta", "result": "Five years, every reading, NOT FOR FILING tags and all, onto a thumb drive and into your pocket. The pumps don't notice. They never notice anything.", "fx": "set rm_logs ; quest sq_rm2 40 ; xp 70", "when": "!flag.rm_logs"},
+				{"title": "Throttle the intake to the permit limit, and lock it", "result": "You set all three pumps to 0.33 MGD and lock the setpoint behind the vendor's maintenance password, which is 'maintenance.' The hum drops to a murmur. Somewhere on the campus a dashboard turns yellow.", "fx": "set rm_logs ; set rm_throttled ; quest sq_rm2 40 ; xp 90", "when": "!flag.rm_throttled & !flag.rm_spillway"},
+				{"title": "Open the return valves: send the cooling water back to the reservoir", "result": "Instead of evaporating it off the chillers, the whole loop dumps back into the lake through a spillway nobody's opened since commissioning. The halls start to cook. Alarms in a language you don't speak, then a calm voice: 'East-1 is entering thermal protection.'", "fx": "set rm_logs ; set rm_spillway ; quest sq_rm2 40 ; xp 100", "when": "!flag.rm_throttled & !flag.rm_spillway"},
+			]},
+	],
+},
+"rm_hq": {
+	"name": "Microslop HQ", "amb": "office", "ambient": Color(0.36, 0.42, 0.5), "restricted": "microslop", "allowed_when": "item.rm_keycard & night",
+	"rooms": [
+		{"r": [0, 0, 20, 10], "h": 6.0, "wall": Color(0.82, 0.86, 0.9), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.9, 0.95, 1.0), "energy": 1.2, "lights": [[5, 5.6, 5], [15, 5.6, 5]]},
+		{"r": [0, -40, 30, -24], "h": 4.0, "wall": W_DARK, "floor": F_CONCRETE, "light": Color(0.5, 0.75, 1.0), "energy": 0.8, "lights": [[6, 3.6, -32], [16, 3.6, -32], [26, 3.6, -32]]},
+	],
+	"exits": [
+		{"pos": [10, 10], "face": "s", "to": "world:d_rm_hq", "label": "Campus Plaza"},
+		{"pos": [18, 0], "face": "n", "to": "interior:rm_hq:2", "label": "Service Elevator — Top Floor"},
+		{"pos": [4, -24], "face": "s", "to": "interior:rm_hq:1", "label": "Service Elevator — Lobby"},
+	],
+	"furn": [["reception", 10, 4, 180, {"col": Color(0.85, 0.88, 0.92), "glow": Color(0.45, 0.78, 1.0)}], ["logo_wall", 10, 0.15, 0, {"w": 8.0, "glow": Color(0.45, 0.78, 1.0)}], ["turnstile", 6, 7, 0], ["turnstile", 14, 7, 0], ["plant", 1, 9, 0], ["plant", 19, 9, 0], ["elevator", 18, 0.4, 0], ["bench", 3, 3, 90, {"w": 3.0}],
+		["server_rack", 2, -38.8, 0, {"led": Color(0.45, 0.78, 1.0)}], ["server_rack", 4, -38.8, 0, {"led": Color(0.45, 0.78, 1.0)}], ["server_rack", 6, -38.8, 0, {"led": Color(0.45, 0.78, 1.0)}], ["server_rack", 8, -38.8, 0, {"led": Color(0.45, 0.78, 1.0)}], ["server_rack", 10, -38.8, 0, {"led": Color(0.45, 0.78, 1.0)}],
+		["tape_library", 14, -38.8, 0], ["tape_library", 17, -38.8, 0], ["monitor_wall", 15, -24.3, 180, {"w": 10.0}], ["security_desk", 26, -27, 0], ["desk_pc", 24, -38.8, 0], ["climate_unit", 29.4, -32, -90], ["elevator", 4, -24.4, 180]],
+	"spots": [
+		{"id": "rm_hq_wall", "kind": "text", "title": "The Big Wall", "verb": "Watch", "pos": [15.0, 2.0, -24.6], "size": [10.0, 2.4, 0.4], "text": "Ten metres of screens, scrolling. Other people's screens, five seconds at a time: a spreadsheet, a bank login, a child's homework, a message being typed and deleted and typed again, someone searching 'is this lump normal' at 3:12 AM. A dashboard in the corner: 2,114,880,031 DEVICES. RETENTION: FOREVER."},
+		{"id": "recall_term", "kind": "terminal", "title": "Recall Archive", "verb": "Log in", "pos": [24.0, 1.1, -37.6], "size": [1.2, 1.2, 1.0], "hack": 60, "header": "MICROSLOP RECALL // CENTRAL ARCHIVE // RM-HQ-COLD", "welcome": "'Recall helps you find anything you've ever seen.' Underneath, smaller: 'Snapshots are stored locally on your device.' Underneath that, smaller still, a link to this room.",
+			"entries": [
+				{"title": "Archive size", "text": "2.1 billion devices. One screenshot every five seconds while the screen is on. Retention: indefinite. Indexed by person, place, word and face. Query latency: 40 milliseconds. You type your own name. You stop reading after the first page."},
+				{"title": "Access log", "text": "Microslop Ads (12 million queries/day). Microslop HR (people who searched 'union' on a work laptop). Three police departments. One law firm. And a VP of Product who queries his ex-wife's devices every Sunday night, between 11 and midnight."},
+			],
+			"actions": [
+				{"title": "Delete the archive, every snapshot, and the backups in Ohio", "result": "DROP, then the tape libraries, then the replication job to a data center in Ohio you find in the config, then the config. The big wall goes black screen by screen, from the top left, like a building switching off its lights for the night.", "fx": "set recall_deleted ; xp 120", "when": "!flag.recall_deleted & !flag.recall_execs"},
+				{"title": "Send every Microslop executive their own five-second snapshots, publicly", "result": "Every VP and above, every snapshot of their own screens for a year, posted to a public site with a search box. The search box gets four million visits in the first hour. The VP of Product resigns in the second.", "fx": "set recall_execs ; xp 120", "when": "!flag.recall_deleted & !flag.recall_execs"},
+			]},
+	],
+},
+"rm_hangar": {
+	"name": "Microslop Field — Office", "amb": "office", "ambient": Color(0.44, 0.46, 0.5),
+	"rooms": [{"r": [0, 0, 10, 8], "h": 3.2, "wall": Color(0.8, 0.83, 0.86), "floor": F_TILE, "floor_kind": "tile", "light": Color(0.92, 0.96, 1.0), "energy": 1.05, "lights": [[5, 2.9, 4]]}],
+	"exits": [{"pos": [0, 4], "face": "w", "to": "world:d_rm_hangar", "label": "The Apron"}],
+	"furn": [["counter", 5, 6.6, 180, {"w": 4.0}], ["desk_pc", 8.5, 1.5, -90], ["bench", 3, 1.2, 0, {"w": 2.4}], ["coffee_machine", 9.4, 7.4, 180], ["poster", 9.85, 4, -90, {"col": Color(0.3, 0.6, 0.9)}], ["plant", 0.6, 7.4, 0], ["window", 5, 0.15, 0, {"w": 2.0}]],
+	"spots": [
+		{"id": "rm_field_log", "kind": "text", "title": "Flight Log", "verb": "Read", "pos": [5.0, 1.1, 6.6], "size": [1.6, 0.6, 0.8], "text": "Microslop Field. Executive shuttle to Seattle, twice daily, VP and above. 'Proficiency flights': two a day, logged by I. Calder, destination 'local.' One entry from last spring in different ink: 'Took the left Skyhawk up at sunset to see the reservoir from above. It's so much smaller than they say. — I.'"},
+	],
+},
 # The clinics and the small hospitals out of town share one waiting room.
 "clinic_er": {
 	"name": "Emergency Room", "amb": "office", "ambient": Color(0.42, 0.45, 0.47),
@@ -741,6 +888,7 @@ const INTERIORS := {
 		{"pos": [7, 0], "face": "n", "to": "world:d_pt_clinic", "label": "Water Street", "when": "at.port"},
 		{"pos": [7, 0], "face": "n", "to": "world:d_gy_clinic", "label": "Broadway", "when": "at.gary"},
 		{"pos": [7, 0], "face": "n", "to": "world:d_chi_clinic", "label": "Ambulance Bay", "when": "at.chicago"},
+		{"pos": [7, 0], "face": "n", "to": "world:d_rm_clinic", "label": "Main Street", "when": "at.redmont"},
 	],
 	"furn": [["reception", 7.0, 6.6, 180, {"col": Color(0.82, 0.84, 0.86), "glow": Color(1.0, 0.3, 0.3)}], ["bench", 2.2, 2.4, 90, {"w": 3.0}], ["bench", 11.8, 2.4, -90, {"w": 3.0}],
 		["hospital_bed", 1.6, 7.2, 90], ["curtain", 3.2, 7.2, 0, {"w": 2.4}], ["vending", 13.3, 6.0, -90], ["water_cooler", 0.7, 4.6, 90], ["plant", 13.3, 0.8, 0], ["poster", 7.0, 8.85, 180, {"col": Color(0.8, 0.85, 0.9)}], ["clock", 10.0, 8.85, 180]],

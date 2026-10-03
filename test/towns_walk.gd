@@ -235,6 +235,38 @@ func _fly_toward(target: String) -> void:
 	_ok("still flying in " + want, nv is Aircraft and (nv as Aircraft).airborne)
 
 
+## Fly from this map into a neighbouring one in any direction: put the plane
+## just past the shared border, inside the neighbour's airspace, heading on.
+func _fly_border(target: String) -> void:
+	var a: Aircraft = game.player.driving
+	var here := WorldLayout.region
+	var hs: Rect2 = Regions.SKY[here]
+	var ts: Rect2 = Regions.SKY[target]
+	var hw := Rect2(Regions.to_world(here, hs.position), hs.size)
+	var tw := Rect2(Regions.to_world(target, ts.position), ts.size)
+	var c := hw.get_center()
+	var p := Vector2(clampf(c.x, tw.position.x, tw.end.x), clampf(c.y, tw.position.y, tw.end.y))
+	var into := (tw.get_center() - p).normalized()
+	p += into * 40.0
+	var lp := Regions.to_local(here, p)
+	game.region_requested = ""
+	a.global_position = Vector3(lp.x, 160.0, lp.y)
+	a.heading = atan2(-into.x, -into.y)
+	a.airborne = true
+	a.speed = 50.0
+	for i in 3:
+		await get_tree().physics_frame
+	if game.region_requested == "":
+		game.airspace_exit(a)
+	_ok("airspace border hands over (%s -> %s)" % [here, target], game.region_requested == target)
+	if game.region_requested != target:
+		return
+	await _reload()
+	_ok("flew into " + target, WorldLayout.region == target)
+	var nv: Vehicle = game.player.driving
+	_ok("still flying over " + target, nv is Aircraft and (nv as Aircraft).airborne)
+
+
 func _air_mail() -> void:
 	print("PHASE air mail")
 	await _enter_door("d_tw_hangar")

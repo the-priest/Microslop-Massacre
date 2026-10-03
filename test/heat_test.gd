@@ -43,10 +43,12 @@ func _ready() -> void:
 	if not game.pursuit.is_empty():
 		var c: Vehicle = game.pursuit[0]
 		var d0: float = c.global_position.distance_to(v.global_position)
+		var d1 := d0
 		for i in 720:
 			await get_tree().physics_frame
-		var d1: float = c.global_position.distance_to(v.global_position)
-		print("  cruiser %.0f m -> %.0f m" % [d0, d1])
+			if is_instance_valid(c):
+				d1 = minf(d1, c.global_position.distance_to(v.global_position))
+		print("  cruiser %.0f m -> closest %.0f m" % [d0, d1])
 		_ok("the cruiser closes in along the streets", d1 < d0 - 25.0)
 		_ok("it's chasing your car", c.ai_target == v)
 

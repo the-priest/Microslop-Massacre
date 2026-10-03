@@ -27,6 +27,12 @@ const RACES := {
 	"ore_run": {"name": "The Ore Run", "from": "gary", "to": "township", "dir": "s", "host": "LENA", "fee": 60, "pay": [500, 280, 150], "medal": [110, 140, 190],
 		"go": "South along the shore, over the township's water tower and down Main Street to Kearney Strip. Short and sweet. Like my patience.",
 		"rings": [[-3930, 100, -5500], [-4690, 90, -5100], [-4800, 100, -4100], [-4310, 75, -3700], [-4340, 60, -3150]]},
+	"reservoir": {"name": "The Reservoir", "from": "port", "to": "redmont", "dir": "n", "host": "MARISOL", "fee": 60, "pay": [550, 300, 160], "medal": [110, 140, 190],
+		"go": "North up Route 9, over Redmont, low over the mud where the reservoir used to be, through the steam off the data center and right over Microslop's roof. Land at their field. Don't ask permission.",
+		"rings": [[2980, 90, -4100], [3300, 110, -4700], [3290, 120, -5600], [2900, 70, -5800], [3290, 150, -6250], [3780, 160, -6250]]},
+	"long_way": {"name": "The Long Way Down", "from": "redmont", "to": "nyc", "dir": "s", "host": "INES", "fee": 100, "pay": [900, 500, 250], "medal": [205, 260, 340],
+		"go": "Redmont to Bowery Bay. South over Port Ramsey's cranes, west along the coast, down I-80 past Lennox and into New York. Log it as proficiency. Everything's proficiency.",
+		"rings": [[4270, 120, -4835], [4392, 95, -3550], [3000, 100, -3000], [1300, 150, -3000], [-390, 80, -2700], [600, 180, -2150], [1570, 90, -2300]]},
 	"harbor": {"name": "Harbor Lap", "from": "port", "to": "port", "dir": "n", "host": "MARISOL", "fee": 60, "pay": [500, 280, 150], "medal": [115, 145, 195],
 		"go": "Up the coast, round Silas's light, along the cranes, out over the harbor and home. If you clip a crane, the union will want a word, and so will I.",
 		"rings": [[2980, 90, -4150], [3810, 100, -4050], [4462, 80, -3966], [4392, 95, -3550], [4310, 70, -3000], [3510, 80, -3050]]},
@@ -59,7 +65,7 @@ static func from_here(region: String) -> Array:
 
 
 static func field_name(region: String) -> String:
-	return str({"nyc": "Bowery Bay", "chicago": "the Chicago field", "township": "Kearney Strip", "port": "Ramsey Field", "gary": "Gary/Chicago Airport"}.get(region, "the airfield"))
+	return str({"nyc": "Bowery Bay", "chicago": "the Chicago field", "township": "Kearney Strip", "port": "Ramsey Field", "gary": "Gary/Chicago Airport", "redmont": "Microslop Field"}.get(region, "the airfield"))
 
 
 ## A ring's position on this map, or null when it's over another one.

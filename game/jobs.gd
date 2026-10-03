@@ -28,6 +28,7 @@ const AIRFIELDS := {
 	"township": ["Kearney Strip", Vector2(-548.0, 0.0)],
 	"port": ["Ramsey Field", Vector2(-730.0, -300.0)],
 	"gary": ["Gary/Chicago Airport", Vector2(560.0, -300.0)],
+	"redmont": ["Microslop Field", Vector2(560.0, 300.0)],
 }
 ## Out-of-town addresses for long hauls: door -> [map, where, interior].
 const HAUL_DOORS := {
@@ -37,6 +38,7 @@ const HAUL_DOORS := {
 	"d_pt_bar": ["port", "the Barnacle on Water Street, Port Ramsey", "pt_bar"],
 	"d_bodega": ["nyc", "the bodega on the Lower East Side", "bodega"],
 	"d_gy_diner": ["gary", "the Steel City Grill on Broadway in Gary", "gy_diner"],
+	"d_rm_diner": ["redmont", "the Copilot Diner on Main Street in Redmont", "rm_diner"],
 }
 const CARGO := ["engine parts for a crop duster", "lobster on ice", "a church organ's pipes, packed in straw", "server blades with no paperwork", "somebody's grandmother's piano bench",
 	"a case of insulin", "two hundred pounds of red-hot relish", "a used jet ski", "seed corn", "a wedding dress in a garment bag", "a box of vinyl that 'cannot get warm'"]

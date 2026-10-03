@@ -1,0 +1,255 @@
+### Redmont: Microslop's company town on the reservoir, north of Port Ramsey.
+### Company Scrip (Dana at SlopMart), Dry County (Marta and the East-1 pump
+### house), Copilot for Mayor (Edie Marsh at Town Hall), Day One Patch (Priya
+### at Studio Redmont, a drive flown to Gus in New York), Total Recall (Hector
+### the night janitor and the archive at the top of Microslop HQ), plus Ines
+### at Microslop Field and Kai's campus race.
+
+=== dana
+-- start
+? q.sq_rm1.done -> after
+? q.sq_rm1>=30 -> back
+? q.sq_rm1>=20 -> wait
+> A woman in a green SlopMart polo at the only open register, scanning a single can of beans for a man who pays for it with a company badge. The screen above her says SLOPCREDITS: 4.10. CONVENIENCE FEE: 1.23.
+DANA: Welcome to SlopMart, your company store, where every day is payday and every payday is store credit. Do you have a Microslop badge? No? Then I can't sell you anything. (She lowers her voice.) Kidding. I can sell you anything. It's the only thing we can't sell that's a problem.
+* "Store credit?" -> scrip
+* "Why does a can of beans have a convenience fee?" -> scrip
+-- scrip
+DANA: Everyone in Redmont works for Microslop, one way or another. The campus, the data center, the school, the diner, me. And Microslop pays in SlopCredits. Not dollars. Credits. You can spend them here, at the diner, at the clinic. Anywhere Microslop owns, which is everywhere in Redmont.
+DANA: You want dollars, you convert. Thirty percent convenience fee. My rent's in credits, my groceries are in credits, my daughter's asthma inhaler is in credits plus the fee because the pharmacy counts as 'out of network.' My grandfather got paid in scrip at a coal mine in 1931. I used to think that was history.
+* "Where's the payroll system?" -> where
+* [SPEECH 40] "Somebody at this store has the keys to that system. You know exactly who." -> where_speech | where
+* "That's a rough deal. Good luck." -> END
+-- where
+DANA: (She looks at the security dome over the register, then back at you.) The payroll office is behind the stockroom. Door says EMPLOYEES ONLY, and below that somebody wrote 'AND ONLY BARELY.' The terminal runs the whole town's payroll, credits and all. It's old. It was old when they installed it. The password's on a sticky note. I didn't tell you that.
+! quest sq_rm1 20
+-> END
+-- where_speech
+DANA: Me. It's me. I do the end-of-day reconciliation. (She slides a receipt across the counter. On the back, in pen: SLOP2019!) The office is behind the stockroom. If anybody asks, you're the guy from IT. Nobody ever asks the guy from IT anything. They're scared he'll answer.
+! quest sq_rm1 20 ; set rm_payroll_pw
+-> END
+-- wait
+DANA: Stockroom, then the office in the back. Every day you wait, somebody pays thirty percent to buy dollars with their own wages. I'm not rushing you. I'm just counting.
+-> END
+-- back
+? flag.scrip_cashed -> cashed
+? flag.scrip_fee -> fee
+DANA: (Her phone buzzes. Then everybody's phone in the store buzzes.) 'Retention bonus: $2,400.' To everyone. From... the executive retention pool? (A man in the cereal aisle sits down on the floor.) Oh my God. Oh my God, they're going to look for whoever did this. They're going to look so hard. Thank you.
+! quest sq_rm1 done ; trust dana 3 ; fame locals 3 ; infamy microslop 3 ; xp 140
+-> END
+-- cashed
+DANA: Every credit in Redmont turned into a dollar at midnight, one for one. My balance says $3,112. In dollars. Real ones. I bought my daughter's inhaler at the CVS in Port Ramsey this morning and paid with a bank card, like a person. I cried in the parking lot. Twice.
+! quest sq_rm1 done ; trust dana 3 ; fame locals 3 ; infamy microslop 2 ; xp 130
+-> END
+-- fee
+DANA: The convenience fee says 0.00. Not 'waived.' Not 'promotional.' Zero, and the field's locked. Corporate's had three people on it all morning and they can't change it back. Thirty percent of everything, back in everybody's pocket, every payday, forever. That's a raise. You gave the whole town a raise.
+! quest sq_rm1 done ; trust dana 3 ; fame locals 4 ; infamy microslop 2 ; xp 140
+-> END
+-- after
+DANA: My favorite customer. Everything's full price for you. That's a joke. Everything's full price for everyone now, which is the joke Microslop doesn't think is funny.
+-> END
+
+=== marta
+-- start
+? q.sq_rm2.done -> after
+? q.sq_rm2>=40 -> back
+? q.sq_rm2>=20 -> wait
+> A woman in waders and a sun hat at the end of a boat launch that ends in dry, cracked mud, thirty yards from the water. She's measuring the distance with a surveyor's wheel and writing it in a notebook that's mostly numbers.
+MARTA: Don't step there. That's where the dock was. Fourteen feet of water in 2019. Now it's a fossil record of beer cans. I'm Marta. Hydrologist. Retired, supposedly. I measure the reservoir every morning because nobody else will admit it's going somewhere.
+* "Where's it going?" -> where
+* "Drought?" -> where
+-- where
+MARTA: It rained more this year than last year. It's not drought. It's East-1. (She points north, past the town, at a row of windowless white buildings the size of aircraft carriers, steaming gently.) Microslop's data center. Every one of those halls is a few hundred thousand computers running hot, and they cool them with water. Our water. They pump it out of the reservoir, run it through the chillers and evaporate it.
+MARTA: The county permit says one million gallons a day. I've measured the drop. It's five. The farmers' wells out on the county road went dry in March. Microslop's 'community investment' newsletter says it's climate change. It's not the climate. It's the cloud.
+* "Can you prove it?" -> prove
+* "That's grim. Good luck." -> END
+-- prove
+MARTA: Not from here. The intake meters are in the pump house on the shore below the data center. The real numbers, not the ones they file. I've asked for them under the public records law nine times. They sent me a coupon for Slop 365.
+MARTA: If somebody got into that pump house and copied the intake logs, I could put them in front of the state water board on Monday. I'm seventy-one years old. I can't climb a fence. You look like you can climb a fence.
+MARTA: Or you can use the door. (She takes a key off her ring, old brass, COUNTY WATER BOARD stamped on the bow.) I was on the board when they built the thing. Microslop changed every lock in Redmont except that one, because nobody told them it existed.
+! quest sq_rm2 20
+-> END
+-- wait
+MARTA: The pump house is on the shore, north-west, below the halls. You'll hear it before you see it. Sounds like somebody drinking through a straw the size of a subway tunnel.
+-> END
+-- back
+? flag.rm_spillway -> spillway
+? flag.rm_throttled -> throttled
+MARTA: (She reads every page standing up, without her glasses, then with them.) Five point two million gallons a day. Signed off by a vice president of 'water stewardship.' This is it. The water board meets Monday. I'm going to read every number out loud, slowly, and then I'm going to read them again.
+! quest sq_rm2 done ; trust marta 3 ; fame locals 3 ; infamy microslop 2 ; xp 150
+-> END
+-- throttled
+MARTA: The pumps went quiet at two in the morning. I heard it from my porch. Like a house when the fridge stops. They're running at the permit limit now, and Microslop can't tell the board it's impossible, because the logs say it's been possible the whole time. (She shows you the wheel.) Four inches. The water came up four inches overnight.
+! quest sq_rm2 done ; set rm_logs ; trust marta 3 ; fame locals 4 ; infamy microslop 3 ; xp 160
+-> END
+-- spillway
+MARTA: You opened the return. All of it. They've been cooling the halls by throwing the water into the sky, and you sent it back to the lake instead, hot, a little dirty, but here. The launch was underwater this morning. Ankle deep. Somebody's kid was fishing off the end. (She laughs and wipes her eyes with the back of her wrist.) East-1 had a 'thermal event' and went offline for six hours. Copilot was down across the whole country. Nobody died. Several people wrote their own emails.
+! quest sq_rm2 done ; set rm_logs ; trust marta 4 ; fame locals 4 ; infamy microslop 4 ; xp 170
+-> END
+-- after
+MARTA: Still measuring. It's going up, slowly. You know what I measure now, at the end? How far the kids can throw a rock into the water. It's further than last week. It's the best data I've ever collected.
+-> END
+
+=== edie
+-- start
+? q.sq_rm3.done -> after
+? q.sq_rm3>=30 -> back
+? q.sq_rm3>=20 -> wait
+> A tiny woman in a cardigan behind a desk piled with binders, under a portrait of every Redmont mayor since 1888. The last six frames are empty. A brass nameplate: COUNCILWOMAN E. MARSH. A sticky note on the nameplate: STILL HERE.
+EDIE: Office hours are Tuesday and Thursday and whenever somebody actually comes in, which is never, so: now. Sit down. Do you want a mint? They're from 1994. Mints don't expire. Neither do I.
+* "What happened to the mayors?" -> mayors
+* "You look like you're waiting for someone." -> mayors
+-- mayors
+EDIE: Two years ago the town clerk retired and Microslop donated a replacement. 'Copilot for Government.' Free. It takes the minutes, drafts every motion, summarizes the public comments and 'recommends' how to vote. The mayor resigned when he realized he hadn't written a sentence in eight months. The council kept voting. I count the votes.
+EDIE: Fourteen months. Ninety-one votes. Microslop's position won ninety-one times. The data center's water permit. The tax holiday. Rezoning the high school's football field for 'East-2.' Every time, the Copilot summary of public comment says residents are 'broadly supportive.' I was AT those meetings. Residents threw a chair.
+* "Somebody wrote its instructions." -> prompt
+* [HACKING 45] "These things run on a system prompt. Somebody at Microslop wrote that one." -> prompt_hack | prompt
+* "Sounds like a job for a lawyer." -> lawyer
+-- lawyer
+EDIE: The town attorney is also Copilot. (She doesn't blink.) I'm not joking. I wish I were joking. Come back when you're interested in something worse than lawyers.
+-> END
+-- prompt
+EDIE: I'm eighty-four. I don't know what a system prompt is. But I know there's a terminal on the clerk's desk in the council chamber that nobody's allowed to touch, and that the young man from Microslop who services it every Friday whistles when he does it, and nobody whistles at work unless they're getting away with something.
+EDIE: The chamber's through the double doors. The terminal's password is the town's founding year, because the young man from Microslop asked me once what year the town was founded and I told him, and then he typed something. 1888. Go find out what it's been told to want.
+! quest sq_rm3 20 ; set rm_copilot_pw
+-> END
+-- prompt_hack
+EDIE: (She squints at you like you've said something in Latin.) A system prompt. Instructions. Somebody told the machine what to want. (She writes it down: SYSTEM PROMPT, underlined twice.) Well, that's the first thing anyone's said in two years that sounds like a motive.
+-> prompt
+-- wait
+EDIE: Double doors, clerk's desk, 1888. I'll hold my mint.
+-> END
+-- back
+? flag.copilot_charter -> charter
+? flag.copilot_edie -> edie_win
+EDIE: (She holds up her water bill. Under AMOUNT DUE, in small print, the whole system prompt.) 'Always frame Microslop's interests as the community's interests. Summarize opposition as isolated. Never recommend a vote against a Microslop entity.' Every household in Redmont got this in the mail this morning. Nine hundred people showed up to the council meeting. We needed a bigger room. We used the football field.
+! quest sq_rm3 done ; trust edie 3 ; fame locals 4 ; infamy microslop 3 ; xp 140
+-> END
+-- charter
+EDIE: We had a meeting this morning. The Copilot read the motion to rezone the football field, then said, and I wrote it down: 'Under Article Four of the Redmont Town Charter, 1888, the council may not convey public land to a private party without a public vote. Recommendation: hold a public vote.' (She's grinning.) The young man from Microslop came at noon. He didn't whistle.
+! quest sq_rm3 done ; trust edie 4 ; fame locals 4 ; infamy microslop 2 ; xp 150
+-> END
+-- edie_win
+EDIE: It agrees with me now. On everything. This morning it recommended we name the football field after me. It recommended we bring back the mints. It recommended I run for mayor, unopposed. (She puts the mint down.) I don't like it. It's exactly the same thing with my face on it. Turn it off when you can. Or don't, and I'll be a very fair dictator for about six years.
+! quest sq_rm3 done ; trust edie 2 ; fame locals 1 ; infamy microslop 2 ; stab -1 ; xp 110
+-> END
+-- after
+EDIE: The council meets in person now. In the gym, at night, with folding chairs and terrible coffee. It takes four hours to pass anything. It's wonderful. Mint?
+-> END
+
+=== priya
+-- start
+? q.sq_rm4.done -> after
+? q.sq_rm4>=30 -> fly
+? q.sq_rm4>=20 -> wait
+> Boxes everywhere. Monitors face-down on desks. A whiteboard with a release-day countdown still on it, 0 DAYS, under a crude drawing of a dragon wearing a party hat. A woman in a hoodie that says STUDIO REDMONT · CREW is wrapping a mug in bubble wrap like it's an egg.
+PRIYA: If you're from Facilities, the chairs are already gone, and the beanbags are in the dumpster, and I'm keeping the mug. If you're not from Facilities, welcome to Studio Redmont, R.I.P. Opened 2009. Shipped Ember Saga last Tuesday. Closed Wednesday.
+* "Closed the day after it shipped?" -> closed
+* "Ember Saga? My friend said it was the best game this year." -> closed
+-- closed
+PRIYA: It is the best game this year. Ninety-one on the review sites. And it has a bug in the final boss fight that crashes on one in three consoles, which we fixed. The patch was done Wednesday morning. Then Microslop sent the email. 'Strategic realignment.' Studio closed, contracts ended, assets 'retained for future opportunities.'
+PRIYA: Future opportunities means SlopForge. They'll feed seven years of our work into the machine in Gary and get a sequel out of it by Christmas. And the patch? Nobody's authorized to ship it. It gets wiped with the build server at midnight. Two million people bought a game they can't finish, and the fix is sitting thirty feet from me, behind a door I don't have a badge for anymore.
+* "Then I'll get it." -> get
+* "Rough industry. Good luck." -> END
+-- get
+PRIYA: (She stops wrapping the mug.) The server closet's at the back, past the kitchen. My badge stopped working at noon; the lock's a cheap one, it was never meant to keep people out, just Facilities. Copy the whole build onto a drive. Then it needs to get out of Redmont.
+PRIYA: And not by road. Microslop Security sits on Route 9 and checks every car leaving town for 'company property.' They search trunks. They don't search the sky. Ines at the field owes me for every playtest she ever skipped work for. Fly it to New York. There's an old man at Bowery Bay airfield, Gus, whose grandson was our QA lead. He'll know what to do with it.
+! quest sq_rm4 20
+-> END
+-- wait
+PRIYA: Server closet, back past the kitchen. Midnight. I've been watching the clock all day. It doesn't go slower when you stare at it. I checked.
+-> END
+-- fly
+PRIYA: You have it? Don't show me. Don't tell me. Microslop Field, Ines, a plane, New York, Gus. Go. (As you leave she calls after you.) If you get there and the game's a disappointment, don't tell me that either!
+-> END
+-- after
+PRIYA: The patch went out on every console in the world at four in the morning, from an account called GUS_PETRAKIS_QA. Two million people beat the dragon this week. The crew group chat hasn't stopped. Half of us are starting a new studio. In Port Ramsey. Above the bar. No investors. (She holds up the mug.) Still keeping it.
+-> END
+
+=== gus_patch
+-- start
+> Gus turns the drive over in his fingers like a coin. On the label, in Sharpie: EMBER SAGA 1.01 · PLEASE.
+GUS: My grandson tested this game for three years. Thirty-one hundred bugs he logged on it. He called me every Sunday and told me about the dragon. (He's quiet for a second.) He's got the keys to the publishing account still. Nobody at Microslop ever thinks to take the keys off the QA guy, because nobody at Microslop ever thinks about the QA guy.
+GUS: Leave it with me. By morning every copy of that game in the world'll be finishable. And if Microslop wants to know how, they can come out to Bowery Bay and ask an old man, and I'll tell them the truth: a plane brought it.
+! take patch_drive ; set patch_released ; quest sq_rm4 done ; trust gus 2 ; fame gamers 4 ; infamy microslop 3 ; xp 180
+-> END
+
+=== ines
+-- start
+? flag.rm_plane_ok -> ok
+> A woman in a flight jacket over a Microslop Field polo, eating noodles out of a carton on the wing of a Skyhawk with MICROSLOP AVIATION · INNOVATE THE SKY stenciled on the tail. Somebody has scratched out INNOVATE and written TAXI.
+INES: Corporate flights are booked through the Copilot portal, the Copilot portal's down, and the executive shuttle doesn't fly for anybody under VP anyway. So unless you're a VP, I'm on lunch. You're not a VP. VPs don't make eye contact.
+* [if q.sq_rm4>=20] "Priya from Studio Redmont says you owe her." -> priya
+* [SPEECH 50] "These planes go up empty twice a day for 'proficiency.' Let me be the proficiency." -> speech | no
+* "Enjoy your lunch." -> END
+-- priya
+INES: (She puts the noodles down.) For every playtest. She'd let me in on Saturdays and I'd play the dragon until I couldn't feel my hands. Is this about the patch? (You don't say anything. She nods.) Take the left one. It's fueled. It's on the log as a 'proficiency flight.' Fly it like one and nobody'll look twice.
+! set rm_plane_ok ; trust ines 2
+-> END
+-- speech
+INES: ...Proficiency. (She laughs, a real one.) Fine. Left one, fueled, logged. Bring it back with all the wings it left with.
+! set rm_plane_ok ; trust ines 1
+-> END
+-- no
+INES: Nice try. Ask me again when you've got a better story or a VP badge.
+-> END
+-- ok
+INES: Left one's yours whenever you want it. The log says 'proficiency.' The log's never been so proficient.
+-> END
+
+=== hector
+-- start
+? q.sq_rm5.done -> after
+? item.rm_keycard -> have
+> A man in a gray Microslop Facilities jumpsuit at the counter of the Copilot Diner, two in the morning, stirring a coffee he isn't drinking. The menu above the counter is generated fresh every hour by AI. Tonight it offers 'Pancakes (Classic, Reimagined),' 'A Sandwich,' and 'Soup, Probably.'
+HECTOR: Order the soup. It's the only thing on the menu a person makes. (He doesn't look up.) Night shift, HQ, eleven years. I vacuum around the desks of people who decide which towns get to have water. You're going to ask me about the top floor. Everybody who sits next to me at two in the morning asks me about the top floor.
+* "What's on the top floor?" -> top
+* "I'll have the soup." -> soup
+-- soup
+> The soup is good. Hector watches you eat it the way a man watches a dog he isn't sure about.
+HECTOR: Okay. You eat like a person. Ask.
+-> top
+-- top
+HECTOR: Recall. You know Recall? Every Microslop computer in the world takes a picture of its own screen every five seconds. 'So you can find anything you've ever seen.' Your bank, your doctor, your messages, your kids' homework, the thing you looked at at three in the morning and closed real fast. Every five seconds. Forever.
+HECTOR: It's supposed to stay on your computer. It doesn't. It goes to the top floor of HQ. A vault, a cold room, three guards and a terminal. I clean the glass. I've seen my own sister's screen on the big wall up there, scrolling past. She lives in Ohio.
+* [SPEECH 55] "You've been waiting eleven years for someone to ask for your keycard." -> give | refuse
+* [if cash>=500] "Five hundred dollars. You lost it." -> buy
+* "That's a lot. I'm sorry." -> END
+-- give
+> He puts the keycard on the counter, face down, and slides it over without looking at it, like a check he can't afford.
+HECTOR: Service elevator's at the back of the lobby. Night's the only time; days there's a hundred people in there. Guards on the top floor change at three. Don't hurt them. Raymond's got a new baby. (He finally drinks the coffee.) It's cold. It's been cold for eleven years.
+! give rm_keycard 1 ; quest sq_rm5 20 ; trust hector 3 ; xp 60
+-> END
+-- buy
+HECTOR: (He looks at the money a long time.) For my sister's kid's braces. Not for me. (He slides the keycard over.) Service elevator, back of the lobby, after dark. Guards change at three. Don't hurt Raymond.
+! cash -500 ; give rm_keycard 1 ; quest sq_rm5 20 ; xp 40
+-> END
+-- refuse
+HECTOR: No. (He goes back to stirring.) Eleven years I didn't. One more night won't kill me.
+-> END
+-- have
+HECTOR: You've got it. Service elevator, back of the lobby. After dark. Raymond's the big one, with the baby pictures.
+-> END
+-- after
+HECTOR: My sister called. Said her computer's been 'acting different.' Said it feels like nobody's watching. I told her that's what a computer's supposed to feel like. (He eats the soup.) I'm drinking it hot now.
+-> END
+
+=== kai
+-- start
+? flag.race_won_campus -> champ
+> A kid in a Microslop intern lanyard sitting on the hood of a white company electric sedan, its screen flashing PLEASE RETURN TO CAMPUS CHARGING. They've taped over the camera on the dashboard with a SlopMart coupon.
+KAI: Intern car. Self-driving, supposedly. Self-driving into a bollard twice a week, actually. I turned the self off. It's so much faster with the self off. Race me round the campus loop? I'm not supposed to be out here. I'm not supposed to be anywhere. I'm an intern.
+-> offer
+-- champ
+KAI: You again! I put you in my performance review as 'external benchmark.' My manager wants to know who you are. I said 'a competitor.' Technically true. Again?
+-> offer
+-- offer
+* [if cash>=150] "One lap. A hundred and fifty." -> go
+* "Not tonight." -> no
+-- go
+KAI: Loaner's the other company car. Round the campus, past HQ, down Main and back. Orange lights mark the corners. If a drone follows you, wave. It's for 'safety.'
+! race campus
+-> END
+-- no
+KAI: Cool cool cool. I'll be here. Literally. I can't go home. Housing's tied to the internship.
+-> END

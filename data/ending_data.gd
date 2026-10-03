@@ -167,6 +167,30 @@ static func slides(ending: String) -> Array:
 		out.append(_s("2290 FORDHAM", "Vince Carbone spent a week trying to get back into his own buildings and a month trying to get back into his own office. The tenants changed nothing about the locks. They did, eventually, let him in to fix the boiler, under supervision."))
 	elif GS.has_flag("rent_fixed"):
 		out.append(_s("2290 FORDHAM", "Carbone fixed the heat, the elevator and the lobby light within the week, and never said why. Carmen Alvarez says it's the first time in twenty years a landlord's been scared of the right thing. She won't say what that is."))
+	if GS.has_flag("scrip_cashed"):
+		out.append(_s("REDMONT", "Every SlopCredit in Redmont became a dollar one night, and Microslop never managed to turn them back. Dana Okafor bought her daughter's inhaler with a bank card. She still works the register. She smiles at the security dome now."))
+	elif GS.has_flag("scrip_fee"):
+		out.append(_s("REDMONT", "The convenience fee stayed at zero. Microslop's engineers tried for a year to unlock the field and gave up. Thirty percent of every paycheck in Redmont stayed home, which turned out to be enough to open a second diner, run by humans."))
+	elif GS.has_flag("scrip_bonus"):
+		out.append(_s("REDMONT", "Fourteen vice presidents woke up to find their retention pool had retained the town instead. The 'leadership continuity' bonus paid off four thousand credit card balances. Nobody at Microslop ever found out who did it. They did find out who they'd been underpaying."))
+	if GS.has_flag("rm_spillway"):
+		out.append(_s("THE RESERVOIR", "The boat launch stayed underwater all summer. East-1 ran at half power and Microslop moved its next data center somewhere it rains more. Marta Vey kept measuring. The last entry in her notebook is just a drawing of a kid with a fishing rod."))
+	elif GS.has_flag("rm_throttled"):
+		out.append(_s("THE RESERVOIR", "East-1's pumps ran at the permit limit and the state water board made it permanent. The reservoir came back a few inches a month. The farmers' wells came back in the spring."))
+	elif GS.has_flag("rm_logs"):
+		out.append(_s("THE RESERVOIR", "Marta Vey read five years of intake logs out loud to the state water board, slowly, twice. The permit was revoked in a single vote. Microslop called it 'regulatory uncertainty.' Marta called it Tuesday."))
+	if GS.has_flag("copilot_charter"):
+		out.append(_s("COPILOT FOR MAYOR", "Redmont's clerk still runs on Microslop's servers, and still cites the 1888 charter in every recommendation. The football field is still a football field. Edie Marsh still counts the votes."))
+	elif GS.has_flag("copilot_public"):
+		out.append(_s("COPILOT FOR MAYOR", "After the water bills, the council voted to unplug the clerk and hire a person. Nine hundred people applied. The job went to a retired librarian who takes minutes in shorthand and has never once described a resident as 'broadly supportive.'"))
+	elif GS.has_flag("copilot_edie"):
+		out.append(_s("COPILOT FOR MAYOR", "Edie Marsh was elected mayor of Redmont, unopposed, with the clerk's warm recommendation. She governed fairly and well for six years, then unplugged the clerk herself on her last day, and said it was the best vote she ever cast."))
+	if GS.has_flag("patch_released"):
+		out.append(_s("DAY ONE PATCH", "Two million people beat the dragon. Studio Redmont's crew opened a new studio above the Barnacle in Port Ramsey, no investors, no lanyards. Their next game is about a lighthouse. Gus's grandson is lead QA. Silas has a cameo."))
+	if GS.has_flag("recall_deleted"):
+		out.append(_s("TOTAL RECALL", "Two billion screens stopped being watched one night, and almost nobody noticed, which was the point. Hector Ruiz drinks his coffee hot now. Raymond named his baby's goldfish after you, sort of. He doesn't know your name."))
+	elif GS.has_flag("recall_execs"):
+		out.append(_s("TOTAL RECALL", "Microslop's executives found out what it was like to be seen every five seconds. Recall was 'paused indefinitely' within a week. The archive of their screens is still online. It is the most-visited museum in the world."))
 	if GS.has_flag("gy_strike"):
 		out.append(_s("GARY", "The one-hour software strike became a three-day real one. FreightOS settled: hourly pay, real breaks, no eye tracking, and the word 'driver' back on the job title. The trucks still drive themselves on the billboards. In the tower, the operators blink whenever they want."))
 	elif GS.has_flag("gy_names"):

@@ -3,6 +3,7 @@
 
 === gus
 -- start
+? q.sq_rm4==40 & item.patch_drive -> gus_patch
 ? q.sq_wings.done -> after
 ? q.sq_wings>=50 -> lien_hub
 ? q.sq_wings>=40 -> landed

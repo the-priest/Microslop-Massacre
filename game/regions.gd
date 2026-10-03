@@ -9,11 +9,13 @@ extends RefCounted
 ## the south, about three kilometres of Pennsylvania farmland on I-80, then
 ## Chicago in the north. Off the interstate, a county road runs west to
 ## Washington Township and another east to Port Ramsey on the coast; north of
-## the township, on the lake, Gary, Indiana, with I-90 east into Chicago. Every
+## the township, on the lake, Gary, Indiana, with I-90 east into Chicago; north
+## of Port Ramsey, up Route 9 on the reservoir, Microslop's company town of
+## Redmont. Every
 ## airspace touches its neighbours edge to edge, so a plane flies straight
 ## from one into the next with the same speed, height and heading.
 
-const NAMES := {"nyc": "New York", "highway": "Interstate 80", "chicago": "Chicago", "township": "Washington Township", "port": "Port Ramsey", "gary": "Gary, Indiana"}
+const NAMES := {"nyc": "New York", "highway": "Interstate 80", "chicago": "Chicago", "township": "Washington Township", "port": "Port Ramsey", "gary": "Gary, Indiana", "redmont": "Redmont"}
 
 ## Travel gates: drive into one and you're offered the road beyond it.
 ## to = [region, gate id on the other side]. "sign" is the green highway sign.
@@ -41,6 +43,10 @@ const GATES := {
 	},
 	"port": {
 		"pt_west": {"pos": [-880.0, 0.0], "r": 24.0, "to": ["highway", "hw_port"], "sign": "TO I-80  ·  NEW YORK  ·  CHICAGO", "yaw": PI * 0.5},
+		"pt_north": {"pos": [0.0, -700.0], "r": 24.0, "to": ["redmont", "rm_south"], "sign": "ROUTE 9 NORTH  ·  REDMONT", "yaw": 0.0},
+	},
+	"redmont": {
+		"rm_south": {"pos": [0.0, 680.0], "r": 24.0, "to": ["port", "pt_north"], "sign": "ROUTE 9 SOUTH  ·  PORT RAMSEY  ·  I-80", "yaw": PI},
 	},
 }
 
@@ -58,6 +64,8 @@ const ARRIVE := {
 	"tw_north": {"pos": [0.0, -528.0], "yaw": PI},
 	"gy_east": {"pos": [738.0, 0.0], "yaw": PI * 0.5},
 	"gy_south": {"pos": [0.0, 628.0], "yaw": 0.0},
+	"pt_north": {"pos": [0.0, -650.0], "yaw": PI},
+	"rm_south": {"pos": [0.0, 628.0], "yaw": 0.0},
 }
 
 ## Airspace per region (Rect2 x, z, w, d, local coordinates). In world
@@ -70,6 +78,7 @@ const SKY := {
 	"township": Rect2(-1700.0, -900.0, 3400.0, 1800.0),
 	"port": Rect2(-1700.0, -900.0, 3400.0, 1800.0),
 	"gary": Rect2(-1700.0, -1465.0, 3480.0, 3000.0),
+	"redmont": Rect2(-1820.0, -1465.0, 3520.0, 3000.0),
 }
 
 ## Where each map's origin sits in the shared world (x, z). The township and
@@ -81,6 +90,7 @@ const WORLD := {
 	"township": Vector2(-4490.0, -3400.0),
 	"port": Vector2(3710.0, -3400.0),
 	"gary": Vector2(-4490.0, -5835.0),
+	"redmont": Vector2(3710.0, -5835.0),
 }
 
 ## Silhouettes you see of a city from the other maps: its centre (local),
@@ -91,6 +101,7 @@ const SKYLINE := {
 	"township": {"c": Vector2(-330.0, -300.0), "spread": 160.0, "n": 8, "h": 48.0, "stacks": true},
 	"port": {"c": Vector2(450.0, -100.0), "spread": 260.0, "n": 12, "h": 40.0, "cranes": true},
 	"gary": {"c": Vector2(-200.0, -250.0), "spread": 320.0, "n": 12, "h": 46.0, "furnaces": true},
+	"redmont": {"c": Vector2(120.0, -380.0), "spread": 260.0, "n": 12, "h": 40.0, "campus": true},
 }
 
 ## Landing approach per region when you fly in: [x, altitude, z, heading].
@@ -101,6 +112,7 @@ const FLY_IN := {
 	"township": [-545.0, 140.0, 800.0, 0.0],
 	"port": [-720.0, 140.0, 500.0, 0.0],
 	"gary": [560.0, 140.0, 450.0, 0.0],
+	"redmont": [560.0, 140.0, 1000.0, 0.0],
 }
 
 ## Grid and geography for each non-NYC region (overrides WorldLayout).
@@ -133,7 +145,7 @@ const DEFS := {
 	# and a lighthouse on the Atlantic.
 	"port": {
 		"SEED": 4242, "BJ0": 0, "AX0": -800.0, "AXS": 160.0, "NA": 10, "SZ0": -600.0, "SZS": 150.0, "NS": 9,
-		"NBI": 9, "NBJ": 8, "WORLD_X": 920.0, "WORLD_XE": 820.0, "WORLD_ZN": -640.0, "BEACH_Z1": 640.0,
+		"NBI": 9, "NBJ": 8, "WORLD_X": 920.0, "WORLD_XE": 820.0, "WORLD_ZN": -760.0, "BEACH_Z1": 640.0,
 		"START_POS": Vector3(-828, 0, 0), "START_YAW": -PI * 0.5,
 		"AIRFIELD": {"bi0": 0, "bi1": 0, "bj0": 0, "bj1": 3}, "RUNWAY_X": -730.0, "RUNWAY_HW": 15.0, "RUNWAY_Z0": -575.0, "RUNWAY_Z1": -25.0,
 		"DISTRICT_NAMES": {"pt_town": "Old Port", "pt_homes": "Cape Row", "pt_ind": "Cannery Row", "pt_docks": "Ramsey Container Terminal", "airfield": "Ramsey Field"},
@@ -147,6 +159,17 @@ const DEFS := {
 		"START_POS": Vector3(738, 0, 0), "START_YAW": PI * 0.5,
 		"AIRFIELD": {"bi0": 8, "bi1": 9, "bj0": 0, "bj1": 4}, "RUNWAY_X": 560.0, "RUNWAY_HW": 16.0, "RUNWAY_Z0": -570.0, "RUNWAY_Z1": -30.0,
 		"DISTRICT_NAMES": {"gy_mill": "Gary Works", "gy_depot": "FreightOS Depot", "gy_town": "Broadway", "gy_homes": "Emerson", "airfield": "Gary/Chicago Airport"},
+	},
+	# Microslop's company town on the reservoir: the East-1 data center on
+	# the north-west shore drinking it, the campus and HQ tower to the north-
+	# east, the Commons (Main Street, the company store, Town Hall) in the
+	# middle, employee housing south, and Microslop Field on the east side.
+	"redmont": {
+		"SEED": 2031, "BJ0": 0, "AX0": -700.0, "AXS": 140.0, "NA": 11, "SZ0": -600.0, "SZS": 120.0, "NS": 11,
+		"NBI": 10, "NBJ": 10, "WORLD_X": 740.0, "WORLD_XE": 830.0, "WORLD_ZN": -640.0, "BEACH_Z1": 720.0,
+		"START_POS": Vector3(0, 0, 628), "START_YAW": 0.0,
+		"AIRFIELD": {"bi0": 8, "bi1": 9, "bj0": 5, "bj1": 9}, "RUNWAY_X": 560.0, "RUNWAY_HW": 16.0, "RUNWAY_Z0": 30.0, "RUNWAY_Z1": 580.0,
+		"DISTRICT_NAMES": {"rm_dc": "East-1 Data Center", "rm_campus": "Microslop Campus", "rm_town": "The Commons", "rm_shore": "Reservoir Shore", "rm_homes": "Employee Housing", "airfield": "Microslop Field"},
 	},
 }
 
@@ -192,6 +215,16 @@ static func district(region: String, bi: int, bj: int) -> String:
 			if bi >= 7 or bj >= 8:
 				return "gy_homes"
 			return "gy_town"
+		"redmont":
+			if bj <= 3 and bi <= 3:
+				return "rm_dc"
+			if bj <= 3:
+				return "rm_campus"
+			if bi <= 1:
+				return "rm_shore"
+			if bj <= 5 and bi <= 6:
+				return "rm_town"
+			return "rm_homes"
 		"port":
 			if bi >= 7:
 				return "pt_docks"
@@ -219,14 +252,16 @@ const CITY := {
 	"township": Rect2(-610.0, -510.0, 1220.0, 1020.0),
 	"port": Rect2(-810.0, -610.0, 1510.0, 1220.0),
 	"gary": Rect2(-710.0, -610.0, 1420.0, 1220.0),
+	"redmont": Rect2(-750.0, -610.0, 1460.0, 1220.0),
 }
 
-## Open water inside an airspace (local): Lake Michigan off Chicago and the
-## Atlantic off Port Ramsey. No farmland is laid over it, from any map.
+## Open water inside an airspace (local): Lake Michigan off Chicago and Gary,
+## the Atlantic off Port Ramsey, and Redmont's shrinking reservoir. No farmland is laid over it, from any map.
 const SEA := {
 	"chicago": Rect2(860.0, -1500.0, 1440.0, 3000.0),
 	"port": Rect2(700.0, -900.0, 1000.0, 1800.0),
 	"gary": Rect2(-1700.0, -1465.0, 3480.0, 825.0),
+	"redmont": Rect2(-1820.0, -1465.0, 920.0, 3000.0),
 }
 
 
@@ -245,6 +280,8 @@ static func is_country(region: String, p: Vector2) -> bool:
 			return p.x < 700.0
 		"gary":
 			return p.y > -640.0
+		"redmont":
+			return p.x > -740.0 # west of town: the dry reservoir bed, then the water
 	return true
 
 

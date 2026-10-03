@@ -49,6 +49,16 @@ const LANDMARKS := {
 		"gy_hangar": {"rect": [650, -120, 686, -84], "h": 8.0, "style": 5, "color": Color(0.55, 0.57, 0.6), "sign": "GARY/CHICAGO AIRPORT", "sign_col": Color(1.0, 0.7, 0.2), "door": "d_gy_hangar"},
 		"gy_clinic": {"rect": [170, 8, 230, 44], "h": 16.0, "style": 3, "color": Color(0.6, 0.56, 0.5), "sign": "ST. MARGARET'S HOSPITAL", "sign_col": Color(1.0, 0.3, 0.3), "door": "d_gy_clinic"},
 	},
+	"redmont": {
+		"rm_hq": {"rect": [30, -450, 110, -376], "h": 96.0, "style": 7, "color": Color(0.2, 0.26, 0.32), "sign": "MICROSLOP · HEADQUARTERS", "sign_col": Color(0.45, 0.78, 1.0), "door": "d_rm_hq"},
+		"rm_store": {"rect": [-250, -60, -170, -8], "h": 9.0, "style": 2, "color": Color(0.85, 0.86, 0.84), "sign": "SLOPMART · YOUR COMPANY STORE", "sign_col": Color(0.4, 0.9, 0.4), "door": "d_rm_store", "awning": Color(0.2, 0.55, 0.25)},
+		"rm_diner": {"rect": [-110, -40, -70, -8], "h": 7.0, "style": 2, "color": Color(0.8, 0.82, 0.86), "sign": "COPILOT DINER", "sign_col": Color(0.45, 0.78, 1.0), "door": "d_rm_diner", "awning": Color(0.15, 0.4, 0.75)},
+		"rm_hall": {"rect": [-250, 8, -175, 60], "h": 14.0, "style": 8, "color": Color(0.62, 0.58, 0.5), "sign": "REDMONT TOWN HALL · 1888", "sign_col": Color(1.0, 0.9, 0.6), "door": "d_rm_hall", "stoop": true},
+		"rm_studio": {"rect": [300, -330, 380, -256], "h": 16.0, "style": 7, "color": Color(0.3, 0.22, 0.3), "sign": "STUDIO REDMONT", "sign_col": Color(1.0, 0.55, 0.2), "door": "d_rm_studio"},
+		"rm_pump": {"rect": [-660, -330, -600, -280], "h": 10.0, "style": 5, "color": Color(0.6, 0.62, 0.64), "sign": "EAST-1 · PUMP HOUSE", "sign_col": Color(0.45, 0.78, 1.0), "door": "d_rm_pump"},
+		"rm_clinic": {"rect": [30, 8, 90, 44], "h": 10.0, "style": 2, "color": Color(0.86, 0.88, 0.9), "sign": "REDMONT EMPLOYEE HEALTH", "sign_col": Color(1.0, 0.3, 0.3), "door": "d_rm_clinic", "awning": Color(0.1, 0.45, 0.85)},
+		"rm_hangar": {"rect": [650, 140, 686, 176], "h": 8.0, "style": 5, "color": Color(0.82, 0.84, 0.86), "sign": "MICROSLOP FIELD", "sign_col": Color(0.45, 0.78, 1.0), "door": "d_rm_hangar"},
+	},
 }
 
 const DOORS := {
@@ -97,6 +107,16 @@ const DOORS := {
 		"d_gy_hangar": {"pos": [686, -102], "face": "e", "interior": "gy_hangar", "name": "Gary/Chicago Airport Office"},
 		"d_gy_clinic": {"pos": [200, 8], "face": "n", "interior": "clinic_er", "name": "St. Margaret's Hospital"},
 	},
+	"redmont": {
+		"d_rm_hq": {"pos": [70, -376], "face": "s", "interior": "rm_hq", "name": "Microslop HQ", "lock": 80, "key": "rm_keycard"},
+		"d_rm_store": {"pos": [-210, -8], "face": "s", "interior": "rm_store", "name": "SlopMart"},
+		"d_rm_diner": {"pos": [-90, -8], "face": "s", "interior": "rm_diner", "name": "Copilot Diner"},
+		"d_rm_hall": {"pos": [-212, 8], "face": "n", "interior": "rm_hall", "name": "Redmont Town Hall"},
+		"d_rm_studio": {"pos": [340, -256], "face": "s", "interior": "rm_studio", "name": "Studio Redmont"},
+		"d_rm_pump": {"pos": [-600, -305], "face": "e", "interior": "rm_pump", "name": "East-1 Pump House", "lock": 60, "unlock_when": "q.sq_rm2>=20"},
+		"d_rm_clinic": {"pos": [60, 8], "face": "n", "interior": "clinic_er", "name": "Redmont Employee Health"},
+		"d_rm_hangar": {"pos": [650, 158], "face": "w", "interior": "rm_hangar", "name": "Microslop Field Office"},
+	},
 }
 
 const POIS := {
@@ -135,6 +155,14 @@ const POIS := {
 		"poi_gy_airport": {"pos": [560, -300], "name": "Gary/Chicago Airport", "r": 140.0},
 		"poi_gy_lake": {"pos": [-200, -660], "name": "Lake Michigan shore", "r": 80.0},
 	},
+	"redmont": {
+		"poi_rm_campus": {"pos": [210, -420], "name": "Microslop Campus", "r": 160.0},
+		"poi_rm_dc": {"pos": [-420, -360], "name": "East-1 Data Center", "r": 160.0},
+		"poi_rm_commons": {"pos": [-140, 0], "name": "The Commons", "r": 120.0},
+		"poi_rm_launch": {"pos": [-720, 300], "name": "Reservoir Boat Launch", "r": 30.0},
+		"poi_rm_field": {"pos": [560, 300], "name": "Microslop Field", "r": 140.0},
+		"poi_rm_checkpoint": {"pos": [-11, 662], "name": "Route 9 Checkpoint", "r": 25.0},
+	},
 }
 
 
@@ -148,6 +176,7 @@ const BODY_SHOPS := {
 	"township": [{"pos": [375, 0], "name": "COYLE'S BODY SHOP"}],
 	"port": [{"pos": [400, 150], "name": "HARBOR AUTO & MARINE"}],
 	"gary": [{"pos": [70, 480], "name": "STEEL CITY COLLISION"}],
+	"redmont": [{"pos": [210, 360], "name": "CAMPUS AUTO CARE"}],
 }
 
 
@@ -173,16 +202,25 @@ static func region_of_interior(cell: String) -> String:
 	return "nyc"
 
 
-## The gate id in `from` that leads toward region `to` (empty if none direct).
-## One hop only; the quest text tells the player the chain.
+## The gate id in `from` that leads toward region `to`: the first gate on
+## the shortest road there (Redmont to New York is three maps away).
 static func gate_toward(from: String, to: String) -> String:
+	if from == to:
+		return ""
+	var first := {} # region -> the gate out of `from` that reached it
+	var queue: Array = []
 	for gid in Regions.GATES.get(from, {}).keys():
-		if str(Regions.GATES[from][gid]["to"][0]) == to:
-			return str(gid)
-	# Two hops via the highway (NYC <-> Chicago, or any town off I-80).
-	for gid in Regions.GATES.get(from, {}).keys():
-		var mid := str(Regions.GATES[from][gid]["to"][0])
-		for gid2 in Regions.GATES.get(mid, {}).keys():
-			if str(Regions.GATES[mid][gid2]["to"][0]) == to:
-				return str(gid)
+		var r := str(Regions.GATES[from][gid]["to"][0])
+		if not first.has(r):
+			first[r] = str(gid)
+			queue.append(r)
+	while not queue.is_empty():
+		var cur := str(queue.pop_front())
+		if cur == to:
+			return str(first[cur])
+		for gid2 in Regions.GATES.get(cur, {}).keys():
+			var nxt := str(Regions.GATES[cur][gid2]["to"][0])
+			if nxt != from and not first.has(nxt):
+				first[nxt] = first[cur]
+				queue.append(nxt)
 	return ""

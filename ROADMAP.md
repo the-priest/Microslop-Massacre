@@ -89,6 +89,15 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       Gary and Chicago, with paramedic calls on every map; vigilante calls in any police
       cruiser. `air_race_test`, `activities_test`
 
+- [x] **Pass 11 (Redmont):** a seventh map, Microslop's company town on a shrinking
+      reservoir, up Route 9 north of Port Ramsey and across the water from Chicago: the
+      campus and HQ tower, the East-1 data center, the Commons, employee housing,
+      Microslop Field, a security checkpoint on the road out. Five stories (*Company
+      Scrip, Dry County, Copilot for Mayor, Day One Patch* with a three-border flight to
+      New York, and *Total Recall*), a street race, two more air races, a clinic and an
+      ambulance, radio, epilogue slides, companion lines. Gate routing now finds the
+      shortest road across any number of maps. `redmont_walk`
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

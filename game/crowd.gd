@@ -47,7 +47,7 @@ func _ready() -> void:
 	target_count = Settings.crowd_count() if not _blocks.is_empty() else 0
 	if WorldLayout.region == "highway":
 		target_count = mini(target_count, 6)
-	elif WorldLayout.region in ["township", "port", "gary"]:
+	elif WorldLayout.region in ["township", "port", "gary", "redmont"]:
 		target_count = mini(target_count, maxi(8, int(target_count * 0.6))) # small towns, quieter streets
 	Settings.applied.connect(func() -> void: target_count = Settings.crowd_count())
 

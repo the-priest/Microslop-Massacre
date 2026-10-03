@@ -20,6 +20,7 @@ const HOSPITALS := {
 	"port": ["Port Ramsey Urgent Care", 65.0, 4.0],
 	"gary": ["St. Margaret's", 200.0, 4.0],
 	"highway": ["Lennox Pharmacy Urgent Care", 18.0, 654.0],
+	"redmont": ["Redmont Employee Health", 60.0, 4.0],
 }
 ## Service vehicles parked outside: [kind, x, z, yaw]. Ambulances are left
 ## open; cruisers are locked.
@@ -30,6 +31,7 @@ const PARKED := {
 	"port": [["ambulance", 76.0, 3.3, PI * 0.5]],
 	"gary": [["ambulance", 211.0, 3.3, PI * 0.5]],
 	"highway": [["ambulance", 5.2, 640.0, 0.0]],
+	"redmont": [["ambulance", 71.0, 3.3, PI * 0.5]],
 }
 const MED_IN := ["(A groan.) Is it bad? Don't tell me if it's bad.", "I'm fine. I'm totally fine. Why is the sky spinning.", "Do you take E Corp Health? Please say you take E Corp Health.",
 	"Tell my landlord I died. It's the only way he'll fix the radiator.", "Is this an ambulance or a very fast van? Either way, thank you."]

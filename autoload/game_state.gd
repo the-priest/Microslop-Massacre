@@ -36,7 +36,7 @@ const ACHIEVEMENTS := {
 	"microslop": ["MICROSLOP MASSACRE", "Find the switch on Floor 101."],
 	"masks": ["FIFTY FACES", "Find all fifty hidden fsociety masks."],
 	"road_trip": ["ROAD TRIP", "Visit every city and town on the map."],
-	"airfields": ["FIVE FIELDS", "Land a plane at every airfield."],
+	"airfields": ["SIX FIELDS", "Land a plane at every airfield."],
 	"racer": ["LOCAL LEGEND", "Win a street race on every map."],
 	"taxi": ["YOU TALKIN' TO ME?", "Drive ten taxi fares."],
 	"aces": ["WHEELS DOWN", "Take gold in every air race."],

@@ -10,6 +10,7 @@
 ? at.port -> port
 ? at.gary -> gary
 ? at.chicago -> chicago
+? at.redmont -> redmont
 -> nyc
 -- nyc
 > Under the routes, in Gus's block capitals: THE COMMUTER. BOWERY BAY TO KEARNEY STRIP. NORTH, THEN WEST ALONG 80. FINISH ON MAIN STREET, LAND, STOP. NO BUZZING THE DINER (WALT).
@@ -27,14 +28,20 @@
 * "Read the rules." -> rules
 * "Not today." -> END
 -- port
-> Marisol's board has one route on it, drawn in grease pencil around the harbor: up the coast, round the light, along the cranes, out over the water and home. HARBOR LAP. At the bottom: SILAS SAYS IF YOU HIT HIS LIGHTHOUSE HE'LL HIT YOU.
+> Marisol's board has two routes in grease pencil: one around the harbor (up the coast, round the light, along the cranes, out over the water and home: HARBOR LAP), and one with an arrow off the top of the board: THE RESERVOIR, ROUTE 9 TO REDMONT. At the bottom: SILAS SAYS IF YOU HIT HIS LIGHTHOUSE HE'LL HIT YOU.
 * [if cash>=60] "Fly the Harbor Lap. ($60)" -> go ! airrace harbor
+* [if cash>=60] "Fly The Reservoir: up Route 9 to Redmont. ($60)" -> go ! airrace reservoir
 * "Read the rules." -> rules
 * "Not today." -> END
 -- gary
 > Lena keeps two routes on her board, both in neat airline handwriting. THE LAKEFRONT: GARY TO CHICAGO, OVER THE LOOP, HIGH. THE ORE RUN: GARY TO THE TOWNSHIP, SOUTH ALONG THE SHORE. And under both: NO ONE HAS EVER BEATEN MY TIME. — L.
 * [if cash>=100] "Fly The Lakefront: Gary to Chicago. ($100)" -> go ! airrace lakefront
 * [if cash>=60] "Fly The Ore Run: Gary to the township. ($60)" -> go ! airrace ore_run
+* "Read the rules." -> rules
+* "Not today." -> END
+-- redmont
+> Somebody has hung a whiteboard on the Microslop Field fence, under a sign that says NO UNAUTHORIZED SIGNAGE. One route, in Ines's handwriting: THE LONG WAY DOWN. REDMONT TO BOWERY BAY. SOUTH OVER THE CRANES, DOWN 80, LAND IN NEW YORK. Under it: (LOG IT AS PROFICIENCY.)
+* [if cash>=100] "Fly The Long Way Down: Redmont to New York. ($100)" -> go ! airrace long_way
 * "Read the rules." -> rules
 * "Not today." -> END
 -- rules

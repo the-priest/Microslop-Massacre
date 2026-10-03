@@ -35,6 +35,7 @@ const C := {
 			"township": "...This is it, isn't it. The township. Dad used to drive us past the plant on the way to the lake and tell us not to look. I always looked.",
 			"port": "A lighthouse. An actual lighthouse. If you push me into the ocean I'm haunting you specifically.",
 			"gary": "Look at those furnaces. Somebody built all of that, and somebody else paused it like a video. That's the whole country right there.",
+			"redmont": "A company town. Microslop paid my mom's insurance company to deny her claims and they paid Microslop to process the denials. It's all one company if you squint. Here they stopped squinting.",
 		},
 		"cells": {
 			"arcade": "Home sweet broken home. Mind the wiring, it bites.",
@@ -76,6 +77,7 @@ const C := {
 			"township": "Small towns, man. Everybody knows everybody. Everybody knows everybody's business. Everybody's business is the plant.",
 			"port": "I spent a summer on a boat once. Long story. Ends with me knowing how to gut a fish and never wanting to.",
 			"gary": "Steel town. My uncle worked a mill like this in Bangkok. Different mill. Same tired faces at the end of a shift.",
+			"redmont": "Every car is the same white car. Every house is the same beige house. My man, this is where personality comes to get a badge.",
 		},
 		"cells": {
 			"arcade": "This place smells like ozone and ambition. And nachos. Somebody's got nachos.",
@@ -115,6 +117,7 @@ const C := {
 			"township": "The memorial has twenty-six names. I looked up the settlement. Eleven thousand dollars each. I'm not going to say anything else, because I'll start yelling.",
 			"port": "Container ships carry ninety percent of everything. Nobody inspects most of it. That's not a fact, that's an invitation.",
 			"gary": "FreightOS remote operators are classified as 'mobility supervisors' so they don't count as drivers. Somebody got a bonus for that sentence.",
+			"redmont": "Recall, Copilot, Slop 365. I read the Recall white paper. Page forty says 'local storage.' Page forty-one says 'except.' Nobody reads page forty-one.",
 		},
 		"cells": {
 			"arcade": "Home. Watch the third step, it's soft. Mobley says it's 'character'.",
@@ -152,6 +155,7 @@ const C := {
 			"township": "It's so quiet. I don't trust it. Places this quiet are always holding their breath about something.",
 			"port": "Fish market! Bars with names like the Barnacle! Old men in raincoats! I love it here. I'm moving here. I'm not moving here.",
 			"gary": "This place looks like it got dumped and is pretending it's fine. I know that look. Hi, Gary. Same.",
+			"redmont": "They pay you in store credit here? I've been paid in store credit. By a guy named Vera. That's the company you're keeping, Microslop.",
 		},
 		"cells": {
 			"elliot_apt": "Your place is so clean it's creepy. Like nobody lives here. Like you're a ghost who pays rent.",

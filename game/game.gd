@@ -157,6 +157,8 @@ func _crossing_line(from: String, to: String) -> String:
 			return "Port Ramsey. Half fishing town, half E Corp freight terminal, and the freight half is winning. A lighthouse at the end of a jetty, and a ship the size of a street at berth 2."
 		"gary":
 			return "Gary, Indiana. Cold blast furnaces on the lakeshore, a depot of trucks with nobody in them, and a union hall on Broadway with its lights still on."
+		"redmont":
+			return "Redmont. Microslop's town: the glass campus on the hill, the company store on Main Street, and the East-1 data center on the shore, drinking the reservoir one chiller at a time."
 	return _loading_tip()
 
 
@@ -2536,6 +2538,7 @@ const LANDINGS := [
 	{"quest": "sq_tw3", "stage": 30, "region": "township", "flag": "paper_landed"},
 	{"quest": "sq_airmail", "stage": 20, "region": "port", "flag": "airmail_landed"},
 	{"quest": "sq_gy4", "stage": 30, "region": "gary", "flag": "banner_landed"},
+	{"quest": "sq_rm4", "stage": 30, "region": "nyc", "flag": "patch_landed"},
 ]
 
 
@@ -2559,6 +2562,8 @@ func _update_airfield() -> void:
 				a.locked = false # Walt said yes
 			if a.owner_tag == "lena" and a.locked and GameState.flags.has("gy_plane_ok") and not a.driving:
 				a.locked = false # Lena said yes
+			if a.owner_tag == "ines" and a.locked and GameState.flags.has("rm_plane_ok") and not a.driving:
+				a.locked = false # Ines said yes
 			var dist := a.global_position.distance_to(pp)
 			if not a.driving and (dist > 1800.0 or (a.dead and dist > 300.0)):
 				a.queue_free()
@@ -2597,6 +2602,11 @@ func _spawn_plane(sid: String, m: String, pos: Vector3, yaw: float) -> Aircraft:
 		a.owner_tag = "lena"
 		a.lock_dc = 35
 		a.locked = not GameState.flags.has("gy_plane_ok")
+	elif sid.begins_with("redmont_"):
+		# Microslop Field: Ines logs every flight as 'proficiency.'
+		a.owner_tag = "ines"
+		a.lock_dc = 40
+		a.locked = not GameState.flags.has("rm_plane_ok")
 	elif sid.begins_with("port_"):
 		# Ramsey Field: Marisol's one plane, and the answer is no.
 		a.owner_tag = "marisol"
@@ -3043,9 +3053,11 @@ func _airspace_hint() -> String:
 		"township":
 			return "Nothing out that way but fields to the horizon. I-80 is east; follow the county road."
 		"port":
-			return "Open Atlantic. Turn back west: I-80 is past the county road."
+			return "Open Atlantic. Turn back west for I-80, or north up Route 9 for Redmont."
 		"gary":
 			return "Lake Michigan and nothing else. Chicago is east, Washington Township south."
+		"redmont":
+			return "Woods and hills, all the way to the horizon, all of it Microslop's. Port Ramsey is south, down Route 9; Chicago is west, across the water."
 	return "Nothing out that way. Turn back."
 
 
@@ -3148,6 +3160,7 @@ func _atc_hello(from: String) -> void:
 		"nyc": ["NEW YORK APPROACH", "Aircraft over the Bronx, New York Approach. Bowery Bay is on the Queens waterfront, east of you. Mind the towers. Welcome home."],
 		"township": ["KEARNEY UNICOM", "Kearney traffic, this is Kearney Strip, which is me, Walt. Strip's on the west edge of town, runway north-south, nine hundred metres of it. Water tower's your landmark. Don't land on Main Street, we're having a festival."],
 		"gary": ["GARY TOWER", "Aircraft over the lakeshore, Gary Tower, which is a very grand name for one woman with a radio. Runway's on the east side of town, north-south, past the truck depot. The furnaces are taller than they look. Welcome to Gary."],
+		"redmont": ["MICROSLOP FIELD", "Aircraft over the reservoir, Microslop Field Unicom. Runway's on the east side of town, north-south, past the campus. Corporate traffic has priority. You are not corporate traffic. Welcome to Redmont, where your future is saved."],
 		"port": ["RAMSEY UNICOM", "Aircraft over the county road, Ramsey Field. Runway's on the west side of town, north-south, wind off the water at ten. The cranes are tall and the lighthouse is taller. Welcome to Port Ramsey."],
 	}
 	var l: Array = lines.get(WorldLayout.region, [])
@@ -3162,7 +3175,7 @@ func _atc_hello(from: String) -> void:
 ## Fifty fsociety masks, zip-tied to street corners across all six maps. Where
 ## they go is fixed per map (a seeded walk over the intersections), so the
 ## same mask is always on the same corner and saves remember which you took.
-const MASKS_PER := {"nyc": 15, "highway": 5, "chicago": 8, "township": 7, "port": 7, "gary": 8}
+const MASKS_PER := {"nyc": 10, "highway": 5, "chicago": 8, "township": 7, "port": 7, "gary": 8, "redmont": 5}
 const MASKS_TOTAL := 50
 
 

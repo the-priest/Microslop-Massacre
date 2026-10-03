@@ -23,6 +23,8 @@ const HEADLINES := [
 	{"region": "township", "text": "WTWP community bulletin: the fall festival is Saturday on Main Street, sponsored by E Corp. Free hot dogs. Bring your own water."},
 	{"region": "township", "text": "Township traffic: State Road 912 north to Gary is clear. Somebody's crop duster is buzzing Main Street again."},
 	{"region": "port", "text": "Port Ramsey marine forecast: ten knots off the water, seas two feet, and the light at Ramsey Point is working, which is news."},
+	{"region": "redmont", "text": "Microslop Community Radio for Redmont: Route 9 south is clear, vehicle inspections at the town line are 'quick and friendly,' and the reservoir is at a healthy, normal level, says the reservoir dashboard."},
+	{"region": "redmont", "text": "Redmont weather by Copilot: partly cloudy, with a chance of cloud. East-1 thanks residents for their patience with the steam."},
 	{"region": "gary", "text": "Gary traffic: I-90 east to Chicago is clear, the FreightOS depot exit is jammed with trucks that have nobody in them, and the lake is choppy."},
 	# The story, as the news tells it.
 	{"when": "flag.five_nine_done", "text": "Day three after the Five/Nine hack: ATMs are dark, the markets are closed, and E Corp's Phillip Price says a new currency will 'restore confidence.'"},
@@ -57,5 +59,12 @@ const HEADLINES := [
 	{"when": "flag.cloud_told", "text": "A billion E Corp account holders woke up to an email listing every file they ever deleted, and confirming E Corp kept all of it. E Corp calls the message 'unauthorized but technically accurate.'"},
 	{"when": "flag.cloud_wiped", "text": "E Corp Cloud's Long Island City data center reports a 'storage optimization event' that freed four hundred petabytes overnight. The company insists no customer data was lost. That, it turns out, is the problem."},
 	{"when": "flag.cloud_sold", "text": "E Corp Cloud says it has 'resolved a security matter' at its Long Island City facility through its bug bounty program. The program did not exist until this morning."},
+	{"when": "flag.scrip_cashed | flag.scrip_fee | flag.scrip_bonus", "text": "Workers in Redmont, a Microslop company town, say their 'SlopCredits' were converted to dollars overnight. Microslop calls the incident 'a payroll anomaly.' Labor historians call it 1931, with an app."},
+	{"when": "flag.rm_throttled | flag.rm_spillway", "text": "Redmont's reservoir rose four inches overnight after Microslop's East-1 data center cut its water intake 'for maintenance.' Copilot was unavailable nationwide for six hours. Several offices report people talking to each other."},
+	{"when": "flag.rm_logs & !flag.rm_throttled & !flag.rm_spillway", "text": "A retired hydrologist has asked the state water board to revoke the permit for Microslop's East-1 data center, presenting five years of intake logs the company had marked 'not for filing.'"},
+	{"when": "flag.copilot_public | flag.copilot_charter", "text": "Redmont residents packed the high school football field for a town council meeting after the hidden instructions of the town's AI clerk were printed on their water bills. Attendance: nine hundred. Previous record: four."},
+	{"when": "flag.patch_released", "text": "Ember Saga players report the game's notorious final-boss crash is fixed, thanks to a patch uploaded at 4 AM by an account belonging to a QA tester at a studio Microslop closed last week. Microslop says the patch is 'unauthorized.' Two million players say thank you."},
+	{"when": "flag.recall_deleted", "text": "Microslop says its Recall screenshot archive suffered 'a complete data loss event.' The company had previously said there was no archive. Privacy groups are asking which statement was the lie. Microslop says both."},
+	{"when": "flag.recall_execs", "text": "A searchable archive of every Microslop executive's own computer screens, captured every five seconds by the company's Recall feature, has been viewed sixty million times. Microslop's VP of Product has resigned. His ex-wife has released a statement. It is one word long."},
 	{"when": "flag.township_public", "text": "Terry Colby's 1993 emails on the Washington Township leak continue to dominate headlines. 'Proceed with the cleanup. Do not disclose.' Mr. Colby's lawyers say he does not recall writing them."},
 ]

@@ -23,6 +23,7 @@
 +++ project | The Project
 +++ port | Port Ramsey
 +++ gary | Gary, Indiana
++++ redmont | Redmont
 
 === mq_hello | Hello, Friend | main | 150 | fsociety
 Elliot Alderson. Cybersecurity engineer by day. By night, he reads people. Something was on his computer this morning that he doesn't remember putting there.
@@ -325,6 +326,43 @@ After Floor 101, Microslop moved SlopForge's training cluster somewhere cheap an
 10 The SlopForge cluster is the new glass building in the Gary Works yard, inside the mill on the lake side of town. Get in @d_gy_cluster
 20 The training console is at the far end of the cluster @cell:gy_cluster:22,1.8
 30 Tell Kenny what you did. He's at The Rabbit Hole in New York @npc:kenny
+40 done
+
+=== sq_rm1 | Company Scrip | side | 240 | redmont
+Microslop owns everything in Redmont, so it pays everyone in SlopCredits: store credit, good at the company store, the diner and the clinic. Dollars cost a thirty percent 'convenience fee.' Dana Okafor's grandfather was paid in scrip at a coal mine in 1931.
+10 Dana Okafor works the register at SlopMart, the company store on Main Street @npc:dana
+20 The payroll terminal runs the whole town. It's in the office behind SlopMart's stockroom @cell:rm_store:13.5,-5.2
+30 Tell Dana what you did @npc:dana
+40 done
+
+=== sq_rm2 | Dry County | side | 260 | redmont
+Redmont's reservoir has dropped fourteen feet in five years, and the farmers' wells on the county road went dry in March. Microslop's newsletter blames the climate. A retired hydrologist blames East-1, the data center on the north shore.
+10 Marta Vey measures the reservoir every morning from the dry boat launch on the west shore @npc:marta
+20 East-1's pump house sits on the shore below the data center halls, north-west of town. Get inside @d_rm_pump
+30 The intake control panel is at the back of the pump house @cell:rm_pump:14,-4.6
+40 Take what you found to Marta @npc:marta
+50 done
+
+=== sq_rm3 | Copilot for Mayor | side | 240 | redmont
+Two years ago Redmont's town clerk retired, and Microslop donated a replacement: Copilot for Government. It writes the motions, summarizes public comment and recommends how to vote. Microslop has won ninety-one votes in a row.
+10 Councilwoman Edie Marsh still keeps office hours at Redmont Town Hall on Main Street @npc:edie
+20 The council's Copilot terminal sits on the clerk's desk in the chamber @cell:rm_hall:9,16.6
+30 Tell Edie what it was told to want @npc:edie
+40 done
+
+=== sq_rm4 | Day One Patch | side | 320 | redmont
+Studio Redmont shipped Ember Saga on Tuesday and Microslop closed it on Wednesday. The game has a crash in the final boss fight that the studio already fixed. The fix gets wiped with the build server at midnight.
+10 Priya Lund is packing up Studio Redmont, on the campus @npc:priya
+20 Copy the patch off the build server in the studio's server closet, past the kitchen @cell:rm_studio:14.5,-3.4
+30 Microslop Security searches cars leaving Redmont. Not planes. Fly the drive to Bowery Bay in New York (Ines at Microslop Field will lend you a plane), land and stop @poi_airfield
+40 Give the drive to Gus in the flight office at Bowery Bay @npc:gus
+50 done
+
+=== sq_rm5 | Total Recall | side | 320 | microslop
+Every Microslop computer in the world takes a picture of its own screen every five seconds. Microslop says the pictures never leave your machine. They go to a cold room on the top floor of Microslop HQ in Redmont.
+10 The night janitor at Microslop HQ drinks coffee at the Copilot Diner on Main Street after midnight. Hector. He has keys @npc:hector
+20 Get into Microslop HQ after dark. The service elevator's at the back of the lobby @d_rm_hq
+30 The Recall archive terminal is in the cold room on the top floor @cell:rm_hq:24,-37.6
 40 done
 
 === sq_cat | Lost | side | 60 | odd

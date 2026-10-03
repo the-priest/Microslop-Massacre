@@ -20,6 +20,7 @@ const REGION_AVENUES := {
 	"township": ["KEARNEY RD", "PLANT RD", "1ST AVE", "2ND AVE", "3RD AVE", "4TH AVE", "MAPLE AVE", "RIDGE AVE", "COUNTY RTE 9"],
 	"port": ["AIRPORT RD", "CAPE RD", "WHALER AVE", "MARKET ST", "ANCHOR AVE", "SCHOONER AVE", "DOCK ST", "TERMINAL AVE", "QUAY ST", "PIER RD"],
 	"gary": ["CLARK RD", "CHASE ST", "MADISON ST", "TAFT ST", "BROADWAY", "MASSACHUSETTS ST", "VIRGINIA ST", "GRANT ST", "MLK DR", "AIRPORT RD", "CLINE AVE"],
+	"redmont": ["SHORE DR", "INTAKE RD", "CHILLER WAY", "COMMONS AVE", "COPILOT WAY", "ROUTE 9", "SYNERGY AVE", "TEAMS AVE", "OFFICE LN", "FIELD RD", "EDGE ST"],
 }
 const REGION_STREETS := {
 	"highway": ["FARM RD 1", "FARM RD 2", "FARM RD 3", "COUNTY RTE 41", "FARM RD 5", "LENNOX RD", "MAIN ST"],
@@ -27,6 +28,7 @@ const REGION_STREETS := {
 	"township": ["QUARRY RD", "MILL ST", "CHURCH ST", "ELM ST", "MAIN ST", "WALNUT ST", "SCHOOL ST", "FARM RD", "CREEK RD"],
 	"port": ["LIGHTHOUSE RD", "NORTH ST", "CANNERY ST", "SALT ST", "WATER ST", "FRONT ST", "HARBOR ST", "MARSH RD", "SOUTH ST"],
 	"gary": ["DUNES HWY", "5TH AVE", "7TH AVE", "9TH AVE", "11TH AVE", "15TH AVE", "19TH AVE", "21ST AVE", "25TH AVE", "35TH AVE", "RIDGE RD"],
+	"redmont": ["CAMPUS NORTH", "INNOVATION DR", "SYNERGY ST", "CLOUD ST", "1ST ST", "MAIN ST", "2ND ST", "3RD ST", "4TH ST", "5TH ST", "RESERVOIR RD"],
 }
 ## Washington Township's plant stacks and Port Ramsey's cranes and lighthouse
 ## (local), drawn up close by their own map and from far away by the others.
@@ -34,6 +36,9 @@ const TW_STACKS := [Vector2(-262.0, -330.0), Vector2(-218.0, -330.0)]
 const PT_CRANES := [Vector2(682.0, -290.0), Vector2(682.0, -170.0), Vector2(682.0, -50.0)]
 const PT_LIGHTHOUSE := Vector2(752.0, -566.0)
 const GY_FURNACES := [Vector2(-600.0, -540.0), Vector2(-470.0, -540.0), Vector2(-340.0, -540.0)]
+## Microslop HQ in Redmont (centre of its tower, local) and the logo on the lawn.
+const RM_HQ := Vector2(70.0, -413.0)
+const RM_LOGO := Vector2(210.0, -420.0)
 
 var chunks: Dictionary = {} # Vector2i -> BuildCtx
 var rng := RandomNumberGenerator.new()
@@ -72,6 +77,7 @@ const STORE_KINDS := {
 	"tw_main": ["diner", "hardware", "grocery", "bar", "pawnshop", "liquor", "clothing", "diner"],
 	"pt_town": ["bar", "bar", "diner", "grocery", "hardware", "liquor", "pawnshop", "restaurant"],
 	"gy_town": ["liquor", "pawnshop", "diner", "bar", "grocery", "hardware", "pawnshop", "clothing"],
+	"rm_town": ["diner", "grocery", "electronics", "bar", "clothing", "electronics", "hardware", "liquor"],
 }
 
 
@@ -159,8 +165,12 @@ func _build_region() -> void:
 					_mill_block(bi, bj, r)
 				"gy_depot":
 					_depot_block(bi, bj, r)
-				"gy_homes":
+				"gy_homes", "rm_homes", "rm_shore":
 					_houses_block(bi, bj, r, d)
+				"rm_dc":
+					_datacenter_block(bi, bj, r)
+				"rm_campus":
+					_campus_block(bi, bj, r)
 				_:
 					_street_wall_block(bi, bj, r, d)
 	if WorldLayout.AIRFIELD["bi0"] <= WorldLayout.AIRFIELD["bi1"]:
@@ -175,6 +185,8 @@ func _build_region() -> void:
 			_port_extras()
 		"gary":
 			_gary_extras()
+		"redmont":
+			_redmont_extras()
 	_body_shops()
 	_landmarks()
 	_region_edges()
@@ -406,6 +418,19 @@ func _region_edges() -> void:
 		"port":
 			var sea: Rect2 = Regions.SEA["port"]
 			wb.flat(Vector3(sea.position.x + 1500.0, -0.4, 0.0), 3000.0, 6000.0, Color(0.09, 0.19, 0.28))
+		"redmont":
+			# The reservoir to the west, past a strip of cracked mud where the
+			# water used to be.
+			var res: Rect2 = Regions.SEA["redmont"]
+			wb.flat(Vector3(res.end.x - 1500.0, -0.4, 0.0), 3000.0, 6000.0, Color(0.1, 0.2, 0.27))
+			var mud_w := res.end.x - x0
+			landmark_far.props.flat(Vector3(x0 + mud_w * 0.5, 0.006, (z0 + z1) * 0.5), absf(mud_w), z1 - z0 + 200.0, Color(0.4, 0.34, 0.25), 0.0, Vector2(1, 0))
+			var mr := RandomNumberGenerator.new()
+			mr.seed = 77
+			for k in 60:
+				var mx := mr.randf_range(res.end.x + 4.0, x0 - 4.0)
+				var mz := mr.randf_range(z0, z1)
+				landmark_far.props.flat(Vector3(mx, 0.01, mz), mr.randf_range(0.2, 0.5), mr.randf_range(6.0, 24.0), Color(0.3, 0.25, 0.18), mr.randf() * PI, Vector2(1, 0))
 		"gary":
 			# Lake Michigan along the north shore, out past the furnaces.
 			var lake: Rect2 = Regions.SEA["gary"]
@@ -431,6 +456,8 @@ func _region_edges() -> void:
 				skip = cos(a) > 0.2 or cos(a) < -0.5 # ocean east, I-80 west
 			"gary":
 				skip = cos(a) > -0.4 or sin(a) < -0.3 # Chicago east, the lake north, the township south
+			"redmont":
+				skip = cos(a) < -0.3 or sin(a) > 0.4 # the reservoir west, Port Ramsey south
 		if skip:
 			a += 0.08
 			continue
@@ -670,6 +697,10 @@ func _neighbour_skylines() -> void:
 			for fu in GY_FURNACES:
 				var fp := Regions.to_local(WorldLayout.region, Regions.to_world(str(reg), fu))
 				_blast_furnace(landmark_far, Vector3(fp.x, 0, fp.y))
+		if bool(S.get("campus", false)):
+			var hp := Regions.to_local(WorldLayout.region, Regions.to_world(str(reg), RM_HQ))
+			_facade_box(landmark_far, Rect2(hp.x - 40.0, hp.y - 37.0, 80.0, 74.0), 0.0, 96.0, 7, Color(0.2, 0.26, 0.32), 17.0)
+			_hq_crown(landmark_far, Vector3(hp.x, 96.0, hp.y))
 
 
 
@@ -779,6 +810,12 @@ func _houses_block(bi: int, bj: int, r: Rect2, d: String) -> void:
 	var siding := [Color(0.85, 0.84, 0.78), Color(0.8, 0.74, 0.55), Color(0.55, 0.65, 0.72), Color(0.6, 0.66, 0.55), Color(0.62, 0.6, 0.58), Color(0.7, 0.6, 0.48), Color(0.72, 0.5, 0.42)]
 	if d == "pt_homes":
 		siding = [Color(0.5, 0.5, 0.5), Color(0.62, 0.6, 0.56), Color(0.4, 0.45, 0.5), Color(0.85, 0.84, 0.8), Color(0.35, 0.42, 0.5), Color(0.55, 0.3, 0.25)]
+	elif d == "rm_homes":
+		# Employee housing: one floor plan, one colour, one hundred times.
+		siding = [Color(0.78, 0.76, 0.7), Color(0.78, 0.76, 0.7), Color(0.75, 0.74, 0.7)]
+		lawn = Color(0.24, 0.32, 0.15)
+	elif d == "rm_shore":
+		siding = [Color(0.55, 0.6, 0.62), Color(0.72, 0.7, 0.64), Color(0.45, 0.38, 0.32), Color(0.62, 0.58, 0.5)]
 	elif d == "gy_homes":
 		# Brick bungalows, some of them long empty.
 		siding = [Color(0.45, 0.22, 0.16), Color(0.5, 0.3, 0.22), Color(0.38, 0.2, 0.15), Color(0.55, 0.42, 0.32), Color(0.62, 0.6, 0.55), Color(0.42, 0.36, 0.3)]
@@ -1183,6 +1220,157 @@ func _gary_extras() -> void:
 	fc.label(fb + Vector3(0, 10.9, 0.2), "THE ROAD DRIVES ITSELF", 44, Color(0.2, 0.2, 0.22), 0.0, 300.0, 0.02)
 	fc.glow.box(fb + Vector3(0, 13.8, 0.3), Vector3(15.0, 0.2, 0.2), Color(1.0, 0.95, 0.85), 0.0, Vector2(Props.K_NIGHT, 0))
 
+# ------------------------------------------------------------- redmont
+## East-1: windowless halls the size of aircraft carriers, rows of chillers
+## on the roofs breathing steam, a substation, floodlights and a fence.
+func _datacenter_block(bi: int, bj: int, r: Rect2) -> void:
+	var c := ctx_at(r.get_center().x, r.get_center().y)
+	c.ground.flat(Vector3(r.get_center().x, 0.012, r.get_center().y), r.size.x, r.size.y, Color(0.3, 0.3, 0.31), 0.0, Vector2(1, 0))
+	var halls := 2 if r.size.y > 80.0 else 1
+	var hd := (r.size.y - 14.0 - 10.0 * float(halls - 1)) / float(halls)
+	for k in halls:
+		var hr := Rect2(r.position.x + 8.0, r.position.y + 7.0 + float(k) * (hd + 10.0), r.size.x - 16.0, hd)
+		if not _is_free(bi, bj, hr.grow(1.0)):
+			hr = Rect2(hr.position.x, hr.position.y, hr.size.x * 0.5, hr.size.y)
+			if not _is_free(bi, bj, hr.grow(1.0)):
+				continue
+		var H := 14.0
+		var hc := Vector3(hr.get_center().x, 0, hr.get_center().y)
+		landmark_far.props.box(hc + Vector3(0, H * 0.5, 0), Vector3(hr.size.x, H, hr.size.y), Color(0.82, 0.83, 0.84))
+		landmark_far.props.box(hc + Vector3(0, H + 0.2, 0), Vector3(hr.size.x + 0.4, 0.4, hr.size.y + 0.4), Color(0.5, 0.52, 0.55))
+		c.solid(hc + Vector3(0, H * 0.5, 0), Vector3(hr.size.x, H, hr.size.y))
+		buildings.append([hr.position.x, hr.position.y, hr.end.x, hr.end.y, H, "rm_dc"])
+		# A blue stripe and the hall number, both ends.
+		for sz in [-1.0, 1.0]:
+			c.props.box(hc + Vector3(0, H - 2.0, sz * (hr.size.y * 0.5 + 0.03)), Vector3(hr.size.x, 0.6, 0.04), Color(0.1, 0.45, 0.85))
+			c.label(hc + Vector3(-hr.size.x * 0.5 + 12.0, H - 4.0, sz * (hr.size.y * 0.5 + 0.08)), "EAST-1 · HALL %d" % (bi * 4 + bj * 2 + k + 1), 90, Color(0.15, 0.2, 0.3), 0.0 if sz > 0.0 else PI, 200.0, 0.02)
+		# Chillers on the roof, fans turning, steam over the lot of them.
+		var fx := hr.position.x + 6.0
+		while fx < hr.end.x - 6.0:
+			for fz in [hr.position.y + hr.size.y * 0.3, hr.position.y + hr.size.y * 0.7]:
+				landmark_far.props.box(Vector3(fx, H + 1.4, fz), Vector3(5.0, 2.4, 5.0), Color(0.6, 0.62, 0.64))
+				c.props.cyl(Vector3(fx, H + 2.7, fz), 1.9, 1.9, 0.2, Color(0.15, 0.15, 0.16), 10)
+				if rng.randf() < 0.35:
+					landmark_far.props.sphere(Vector3(fx, H + 6.0 + rng.randf() * 3.0, fz), 2.6 + rng.randf() * 1.6, Color(0.85, 0.86, 0.88), 6, 3, Vector2.ZERO, 0.55)
+			fx += 9.0
+		landmark_far.glow.box(hc + Vector3(hr.size.x * 0.5 - 1.0, H + 0.6, 0), Vector3(0.4, 0.4, 0.4), Color(1.0, 0.15, 0.1), 0.0, Vector2(Props.K_BLINK, rng.randf()))
+	for k2 in 2:
+		var lp := Vector3(r.position.x + 4.0 + float(k2) * (r.size.x - 8.0), 0, r.get_center().y)
+		if _is_free(bi, bj, Rect2(lp.x - 1.0, lp.z - 1.0, 2.0, 2.0)):
+			c.props.box(lp + Vector3(0, 7.0, 0), Vector3(0.3, 14.0, 0.3), Color(0.45, 0.46, 0.48))
+			c.glow.box(lp + Vector3(0, 14.2, 0), Vector3(1.8, 0.3, 0.6), Color(0.9, 0.95, 1.0), 0.0, Vector2(Props.K_NIGHT, 0))
+			c.solid(lp + Vector3(0, 7.0, 0), Vector3(0.5, 14.0, 0.5))
+			Props.light_pool(c, lp, 15.0, Color(0.9, 0.95, 1.0))
+	Props.fence_line(c, Vector3(r.position.x, 0, r.end.y), Vector3(r.get_center().x - 7.0, 0, r.end.y), 3.2, Color(0.55, 0.57, 0.6))
+	Props.fence_line(c, Vector3(r.get_center().x + 7.0, 0, r.end.y), Vector3(r.end.x, 0, r.end.y), 3.2, Color(0.55, 0.57, 0.6))
+
+
+## The Microslop campus: mown lawn, white paths, glass pavilions three or
+## four floors high with their team names on them, benches nobody sits on.
+func _campus_block(bi: int, bj: int, r: Rect2) -> void:
+	if r.has_point(RM_LOGO):
+		_reserve(bi, bj, Rect2(RM_LOGO.x - 10.0, RM_LOGO.y - 4.0, 20.0, 12.0))
+	var c := ctx_at(r.get_center().x, r.get_center().y)
+	c.ground.flat(Vector3(r.get_center().x, 0.011, r.get_center().y), r.size.x, r.size.y, Color(0.2, 0.36, 0.14), 0.0, Vector2(1, 0))
+	c.ground.flat(Vector3(r.get_center().x, 0.016, r.get_center().y), 4.0, r.size.y, Color(0.75, 0.75, 0.72), 0.0, Vector2(1, 0))
+	c.ground.flat(Vector3(r.get_center().x, 0.016, r.get_center().y), r.size.x, 4.0, Color(0.75, 0.75, 0.72), 0.0, Vector2(1, 0))
+	var teams := ["COPILOT", "AZURE-ISH", "TEAMS (NEW)", "EDGE", "SLOP 365", "RECALL", "GAME PASS AWAY", "BING (STILL)", "CLIPPY LEGACY", "STRATEGIC REALIGNMENT"]
+	for qx in [0, 1]:
+		for qz in [0, 1]:
+			var w := r.size.x * 0.5 - 12.0
+			var d := r.size.y * 0.5 - 12.0
+			if w < 14.0 or d < 14.0:
+				continue
+			var pr := Rect2(r.position.x + 6.0 + float(qx) * (r.size.x * 0.5 + 2.0), r.position.y + 6.0 + float(qz) * (r.size.y * 0.5 + 2.0), w * rng.randf_range(0.75, 1.0), d * rng.randf_range(0.7, 1.0))
+			if not _is_free(bi, bj, pr.grow(2.0)):
+				continue
+			var h := rng.randf_range(11.0, 16.0)
+			_facade_box(c, pr, 0.0, h, 7, Color(0.22, 0.32, 0.38).lerp(Color(0.6, 0.66, 0.7), rng.randf() * 0.4), rng.randf_range(1, 90))
+			c.solid(Vector3(pr.get_center().x, h * 0.5, pr.get_center().y), Vector3(pr.size.x, h, pr.size.y))
+			buildings.append([pr.position.x, pr.position.y, pr.end.x, pr.end.y, h, "rm_campus"])
+			var face := 1.0 if qz == 0 else -1.0
+			var fz := pr.end.y + 0.06 if face > 0.0 else pr.position.y - 0.06
+			c.label(Vector3(pr.get_center().x, h - 1.6, fz), str(teams[rng.randi() % teams.size()]), 64, Color(0.95, 0.97, 1.0), 0.0 if face > 0.0 else PI, 160.0, 0.02)
+			c.glow.box(Vector3(pr.get_center().x, h + 0.3, pr.get_center().y), Vector3(pr.size.x * 0.6, 0.15, 0.3), Color(0.6, 0.85, 1.0), 0.0, Vector2(Props.K_NIGHT, 0))
+	for k in 4:
+		var bp := Vector3(r.get_center().x + rng.randf_range(-r.size.x * 0.3, r.size.x * 0.3), 0, r.get_center().y + (6.0 if k % 2 == 0 else -6.0))
+		if _is_free(bi, bj, Rect2(bp.x - 1.5, bp.z - 1.0, 3.0, 2.0)):
+			Furniture.build(c, "bench", bp, 0.0 if k % 2 == 0 else PI)
+	Props.light_pool(c, Vector3(r.get_center().x, 0, r.get_center().y), 10.0, Color(0.85, 0.92, 1.0))
+
+
+## Microslop's crown: the four squares, lit, and a beacon on the mast.
+func _hq_crown(c: BuildCtx, top: Vector3) -> void:
+	var cols := [Color(0.95, 0.3, 0.15), Color(0.45, 0.8, 0.2), Color(0.1, 0.65, 0.95), Color(1.0, 0.75, 0.1)]
+	for k in 4:
+		var off := Vector3(-3.3 + float(k % 2) * 6.6, 7.0 - float(k >> 1) * 6.6, 0)
+		c.glow.box(top + off + Vector3(0, 0, 0), Vector3(6.0, 6.0, 1.0), cols[k], 0.0, Vector2(Props.K_ALWAYS, 0))
+	c.props.box(top + Vector3(0, 4.0, 0), Vector3(14.0, 8.0, 0.6), Color(0.12, 0.12, 0.14))
+	c.props.box(top + Vector3(0, 14.0, 0), Vector3(0.4, 12.0, 0.4), Color(0.3, 0.3, 0.32))
+	c.glow.sphere(top + Vector3(0, 20.4, 0), 0.6, Color(1.0, 0.12, 0.1), 6, 3, Vector2(Props.K_BLINK, 0))
+
+
+## Things only Redmont has: the HQ's crown and the logo on the lawn, the
+## welcome sign, Microslop Security's checkpoint and Copilot's billboard on
+## Route 9, and the boat launch that ends in mud.
+func _redmont_extras() -> void:
+	var lf := landmark_far
+	_hq_crown(lf, Vector3(RM_HQ.x, 96.0, RM_HQ.y + 37.2))
+	# The logo, fourteen metres high, the four squares running a little at
+	# the bottom like they've been left out in the rain.
+	var lg := Vector3(RM_LOGO.x, 0, RM_LOGO.y)
+	var cl := ctx_at(lg.x, lg.z)
+	var cols := [Color(0.95, 0.3, 0.15), Color(0.45, 0.8, 0.2), Color(0.1, 0.65, 0.95), Color(1.0, 0.75, 0.1)]
+	lf.props.box(lg + Vector3(0, 0.6, 0), Vector3(16.0, 1.2, 4.0), Color(0.75, 0.75, 0.72))
+	cl.solid(lg + Vector3(0, 7.0, 0), Vector3(14.0, 14.0, 2.0))
+	for k in 4:
+		var off := Vector3(-3.4 + float(k % 2) * 6.8, 10.2 - float(k >> 1) * 6.8, 0)
+		lf.props.box(lg + off, Vector3(6.2, 6.2, 1.2), cols[k])
+		for dk in 3:
+			lf.props.box(lg + off + Vector3(-2.0 + float(dk) * 2.0, -3.6 - float(dk % 2) * 0.8, 0.0), Vector3(0.5, 1.4 + float(dk % 2) * 1.6, 1.0), cols[k])
+	cl.label(lg + Vector3(0, 1.8, 2.05), "MICROSLOP", 160, Color(0.2, 0.2, 0.22), 0.0, 300.0, 0.02)
+	cl.label(lg + Vector3(0, 1.8, -2.05), "MICROSLOP", 160, Color(0.2, 0.2, 0.22), PI, 300.0, 0.02)
+	Props.light_pool(cl, lg + Vector3(0, 0, 5.0), 9.0, Color(0.9, 0.95, 1.0))
+	# Welcome sign on the Route 9 stub.
+	var ws := Vector3(14.0, 0, 646.0)
+	var cw := ctx_at(ws.x, ws.z)
+	cw.props.box(ws + Vector3(0, 1.2, 0), Vector3(9.0, 2.4, 0.6), Color(0.3, 0.3, 0.32))
+	cw.props.box(ws + Vector3(0, 2.6, 0), Vector3(8.4, 2.4, 0.3), Color(0.1, 0.45, 0.85))
+	cw.label(ws + Vector3(0, 3.2, 0.2), "REDMONT", 44, Color(1, 1, 1), 0.0, 80.0, 0.01)
+	cw.label(ws + Vector3(0, 2.6, 0.2), "A MICROSLOP COMMUNITY · WHERE YOUR FUTURE IS SAVED", 18, Color(0.9, 0.95, 1.0), 0.0, 60.0, 0.01)
+	cw.label(ws + Vector3(0.3, 1.9, 0.22), "GIVE US BACK THE WATER", 40, Color(1.0, 0.3, 0.3, 0.9), 0.0, 80.0, 0.01, {"font": "graffiti", "tilt": -0.05})
+	cw.solid(ws + Vector3(0, 1.8, 0), Vector3(9.0, 3.6, 0.8))
+	# Microslop Security's checkpoint: a booth, a barrier arm (up), a sign.
+	var cp := Vector3(-11.5, 0, 662.0)
+	var cc := ctx_at(cp.x, cp.z)
+	cc.props.box(cp + Vector3(0, 1.4, 0), Vector3(3.0, 2.8, 3.0), Color(0.85, 0.86, 0.88))
+	cc.props.box(cp + Vector3(0, 2.95, 0), Vector3(3.4, 0.3, 3.4), Color(0.1, 0.45, 0.85))
+	cc.glow.box(cp + Vector3(1.52, 1.8, 0), Vector3(0.05, 1.0, 2.2), Color(0.8, 0.9, 1.0), 0.0, Vector2(Props.K_ALWAYS, 0))
+	cc.solid(cp + Vector3(0, 1.4, 0), Vector3(3.0, 2.8, 3.0))
+	cc.props.box(cp + Vector3(2.0, 3.6, 0), Vector3(0.25, 7.0, 0.25), Color(0.9, 0.2, 0.15), 0.0)
+	cc.label(cp + Vector3(0, 3.4, 1.72), "MICROSLOP SECURITY · VEHICLE INSPECTION", 22, Color(1, 1, 1), 0.0, 50.0, 0.01)
+	Props.light_pool(cc, cp + Vector3(4.0, 0, 0), 7.0, Color(0.9, 0.95, 1.0))
+	# The boat launch, on the west shore, that ends in mud.
+	var bl := Vector3(-720.0, 0, 300.0)
+	var cb := ctx_at(bl.x, bl.z)
+	cb.ground.flat(bl + Vector3(0, 0.02, 0), 30.0, 10.0, Color(0.48, 0.47, 0.44), 0.0, Vector2(1, 0))
+	cb.props.box(bl + Vector3(8.0, 1.2, -6.5), Vector3(0.2, 2.4, 0.2), Color(0.35, 0.3, 0.25))
+	cb.props.box(bl + Vector3(8.0, 2.4, -6.5), Vector3(3.6, 1.2, 0.1), Color(0.95, 0.95, 0.92))
+	cb.label(bl + Vector3(8.0, 2.4, -6.42), "BOAT LAUNCH · CLOSED", 22, Color(0.7, 0.1, 0.1), 0.0, 40.0, 0.01)
+	for k2 in 3:
+		cb.props.sphere(bl + Vector3(-6.0 + float(k2) * 3.5, 0.35, 5.0 + float(k2 % 2)), 0.35, Color(0.95, 0.5, 0.1), 6, 3)
+	# Copilot's billboard on Route 9, for everyone driving in.
+	var fb := Vector3(-30.0, 0, 632.0)
+	var fc := ctx_at(fb.x, fb.z)
+	for sx in [-6.0, 6.0]:
+		fc.props.box(fb + Vector3(sx, 5.0, 0), Vector3(0.4, 10.0, 0.4), Color(0.3, 0.3, 0.32))
+		fc.solid(fb + Vector3(sx, 5.0, 0), Vector3(0.5, 10.0, 0.5))
+	fc.props.box(fb + Vector3(0, 11.5, 0), Vector3(16.0, 4.0, 0.3), Color(0.95, 0.97, 1.0))
+	fc.label(fb + Vector3(0, 12.2, 0.2), "COPILOT FOR GOVERNMENT", 70, Color(0.1, 0.45, 0.85), 0.0, 400.0, 0.02)
+	fc.label(fb + Vector3(0, 10.9, 0.2), "91 VOTES. 0 COMPLAINTS.", 44, Color(0.2, 0.2, 0.22), 0.0, 300.0, 0.02)
+	fc.glow.box(fb + Vector3(0, 13.8, 0.3), Vector3(15.0, 0.2, 0.2), Color(1.0, 0.95, 0.85), 0.0, Vector2(Props.K_NIGHT, 0))
+
+
 # ------------------------------------------------------------ reservations
 func _reserve(bi: int, bj: int, r: Rect2) -> void:
 	var key := "%d,%d" % [bi, bj]
@@ -1484,6 +1672,7 @@ const DIST_PARAMS := {
 	# The small towns off the interstate.
 	"tw_main": {"lot": [8.0, 14.0], "depth": [16.0, 22.0], "h": [6.0, 11.0], "styles": [1, 2, 1], "fe": 0.1, "shops": 0.9, "tall": 0.0, "tall_h": [12.0, 14.0], "alley": 0.45, "cols": "brick"},
 	"pt_town": {"lot": [7.0, 12.0], "depth": [16.0, 24.0], "h": [6.0, 12.0], "styles": [1, 2, 6], "fe": 0.15, "shops": 0.6, "tall": 0.04, "tall_h": [15.0, 20.0], "alley": 0.5, "cols": "mixed"},
+	"rm_town": {"lot": [10.0, 16.0], "depth": [16.0, 24.0], "h": [7.0, 12.0], "styles": [2, 2, 8], "fe": 0.0, "shops": 0.85, "tall": 0.0, "tall_h": [12.0, 14.0], "alley": 0.3, "cols": "stone"},
 	"gy_town": {"lot": [9.0, 16.0], "depth": [18.0, 26.0], "h": [7.0, 16.0], "styles": [1, 1, 2, 8], "fe": 0.3, "shops": 0.55, "tall": 0.06, "tall_h": [24.0, 40.0], "alley": 0.4, "cols": "brick"},
 }
 
@@ -1534,7 +1723,7 @@ func _block(bi: int, bj: int) -> void:
 func _street_wall_block(bi: int, bj: int, r: Rect2, d: String) -> void:
 	var P: Dictionary = DIST_PARAMS.get(d, DIST_PARAMS["les"])
 	var alley := rng.randf() < float(P["alley"])
-	var small_town := d in ["tw_main", "pt_town", "gy_town"]
+	var small_town := d in ["tw_main", "pt_town", "gy_town", "rm_town"]
 	if small_town:
 		alley = false # deep small-town blocks get a parking lot out back instead
 	var depth_n := rng.randf_range(float(P["depth"][0]), float(P["depth"][1]))
@@ -1747,6 +1936,7 @@ const TAGS_CHI := ["LOU 4EVER", "WINDY CITY HACKS", "NOT ON THE APP", "PHONY STO
 const TAGS_ROAD := ["JESUS SAVES", "KEEP DRIVING", "TRUCKERS AGAINST FREIGHTOS", "TURN BACK", "E.A. WAS HERE", "LENNOX PA"]
 const TAGS_TOWNSHIP := ["E CORP KILLED US", "26", "WHAT'S IN THE POND", "REMEMBER 1993", "THE STACKS RUN AT NIGHT", "WALT WAS RIGHT", "WTWP", "WE STILL DRINK THIS WATER"]
 const TAGS_PORT := ["ASK TEDDY GRIECO", "NO FISH NO PEACE", "DARK SHIPS", "BERTH 2 KNOWS", "RAMSEY POINT", "WE FISHED HERE FIRST", "E CORP LOGISTICS = PIRATES"]
+const TAGS_REDMONT := ["GIVE US BACK THE WATER", "SCRIP IS THEFT", "COPILOT DIDN'T VOTE FOR THIS", "UNINSTALL", "CTRL+ALT+DEL THEM", "RECALL THIS", "WE ARE NOT USERS", "EAST-1 DRINKS", "EMBER SAGA DESERVED BETTER"]
 const TAGS_GARY := ["LOCAL 1014", "WE BUILT THIS", "WHO'S DRIVING?", "GARY 4 LIFE", "CITY OF THE CENTURY", "AN INJURY TO ONE", "THE MILL WILL RISE", "STEEL CITY", "BLINK"]
 const SPRAY := [Color(1.0, 0.22, 0.25), Color(0.2, 0.95, 0.4), Color(0.25, 0.7, 1.0), Color(1.0, 0.85, 0.2), Color(1.0, 0.4, 0.95), Color(0.95, 0.95, 0.95), Color(1.0, 0.55, 0.15), Color(0.6, 0.4, 1.0)]
 
@@ -1767,6 +1957,8 @@ func _graffiti_pool(d: String) -> Array:
 		"gary":
 			pool.append_array(TAGS_GARY)
 			pool.append_array(TAGS_CREW.slice(0, 5))
+		"redmont":
+			pool.append_array(TAGS_REDMONT)
 		_:
 			pool.append_array(TAGS_NYC)
 			pool.append_array(TAGS_CREW)

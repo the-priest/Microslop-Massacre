@@ -1,6 +1,7 @@
 extends "res://test/towns_walk.gd"
 ## Air races: the Harbor Lap started from Marisol's board, flown and landed for
-## gold; The Lakefront from Gary across the airspace border into Chicago, its
+## gold; The Reservoir from Port Ramsey up across the border into Redmont,
+## over the data center and Microslop's roof; The Lakefront from Gary across the airspace border into Chicago, its
 ## clock and rings carried over the handover, landed at the Chicago field;
 ## then The Ore Run abandoned by climbing out of the plane.
 
@@ -11,6 +12,7 @@ func _ready() -> void:
 	GameState.cash = 2000
 	_day()
 	await _harbor()
+	await _reservoir()
 	await _lakefront()
 	await _bail()
 	print("AIR RACE TEST DONE fails=%d" % fails)
@@ -34,6 +36,31 @@ func _harbor() -> void:
 	await _touch_down(a)
 	_ok("harbor lap gold", int(GameState.flags.get("ar_medal_harbor", 0)) == 3 and not game.air_races.is_racing() and GameState.cash == 2000 - 60 + 500)
 	_ok("best time kept", float(GameState.flags.get("ar_best_harbor", 0.0)) > 0.0)
+
+
+func _reservoir() -> void:
+	print("PHASE the reservoir")
+	if game.player.driving != null:
+		game.exit_vehicle(true)
+	await _enter_world_at(AirRaces.board_pos() + Vector3(0, 0, -6.0))
+	var cash0 := GameState.cash
+	await _spot("air_board", ["The Reservoir"])
+	await _frames(10)
+	_ok("reservoir started", game.air_races.active() == "reservoir" and GameState.cash == cash0 - 60)
+	await _wait_countdown()
+	var a: Aircraft = game.player.driving
+	await _fly_rings(a)
+	_ok("port's ring flown", int(GameState.flags.get("ar_ring", 0)) == 1)
+	await _fly_border("redmont")
+	_ok("still racing over redmont", game.air_races.active() == "reservoir")
+	a = game.player.driving
+	await _fly_rings(a)
+	_ok("every reservoir ring", int(GameState.flags.get("ar_ring", 0)) == (AirRaces.RACES["reservoir"]["rings"] as Array).size())
+	await _touch_down(a)
+	_ok("reservoir gold at microslop field", int(GameState.flags.get("ar_medal_reservoir", 0)) == 3 and not game.air_races.is_racing())
+	game.exit_vehicle(true)
+	await _settle()
+	_ok("redmont has a race board too", _find_it("air_board") != null)
 
 
 func _lakefront() -> void:

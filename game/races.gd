@@ -55,6 +55,14 @@ const RACES := {
 		"win": "First time all week anybody beat me at anything. Feels kind of good, honestly. Here.",
 		"lose": "Jamal crosses the line with both hands off the wheel, laughing. Sixteen hours of remote driving, and he can still really drive.",
 	},
+	"campus": {
+		"name": "Campus Loop", "region": "redmont", "host": "KAI", "laps": 2, "bet": 150, "xp": 80,
+		"points": [[0, -360], [280, -360], [280, 120], [0, 120], [0, 90]],
+		"start": [0, 105], "yaw": 0.0,
+		"go": "Up Route 9 past HQ, right on Synergy, down Synergy Ave past the studio, back on Second. Twice. The drones are for 'safety.' Wave.",
+		"win": "You beat the intern car with the self turned off! I'm putting this in my review. 'Lost to an external benchmark, learned a lot.' Here.",
+		"lose": "Kai takes the last corner with the self turned off and the screen flashing PLEASE RETURN TO CAMPUS, screaming the whole way.",
+	},
 }
 const CP_RADIUS := 14.0
 
