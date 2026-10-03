@@ -43,13 +43,6 @@ func _ready() -> void:
 	_ok("the jet hit it", a.dead)
 	var down := Collapse.down_in("nyc")
 	_ok("the building came down (%d)" % down.size(), down.size() == 1)
-	var qd := PhysicsRayQueryParameters3D.create(roof, mid, Phys.WORLD)
-	var hd := game.get_world_3d().direct_space_state.intersect_ray(qd)
-	if not hd.is_empty():
-		var col: CollisionObject3D = hd["collider"]
-		var own: Object = col.shape_owner_get_owner(col.shape_find_owner(int(hd["shape"])))
-		print("  dbg hit ", hd["position"], " ", col.name, " ", (own as Node3D).position if own is Node3D else "?", " ", ((own as CollisionShape3D).shape as BoxShape3D).size if own is CollisionShape3D else "", " disabled=", (own as CollisionShape3D).disabled if own is CollisionShape3D else "")
-	print("  dbg target ", target, " down ", Collapse.down_in("nyc"))
 	_ok("and nothing's left standing there", not _blocked(roof, mid))
 	_ok("a rubble pile where it stood", game.city_extras.get_node_or_null("Rubble") != null)
 	for i in 60:
