@@ -11,12 +11,14 @@ func _ready() -> void:
 	GameState.raise_skill("hacking", 50)
 	GameState.game_minutes = GameState.day() * 1440.0 + 13 * 60.0
 	await _last_load()
+	await _room9()
 	await _travel("chicago", "chi_south")
 	await _five_stars()
+	await _field_office()
 	var titles: Array = []
 	for s in EndingData.slides("quiet"):
 		titles.append(str((s as Dictionary)["title"]))
-	for want in ["LOU'S RED HOTS", "LENNOX"]:
+	for want in ["LOU'S RED HOTS", "LENNOX", "ROOM 9", "FEDERAL PLAZA"]:
 		_ok("epilogue has " + want, titles.has(want))
 	print("ROADS WALK DONE fails=%d" % fails)
 	get_tree().quit()
@@ -69,6 +71,20 @@ func _last_load() -> void:
 	_ok("last load done", GameState.quest_state("sq_rig") == "done")
 
 
+func _room9() -> void:
+	print("PHASE room 9")
+	await _enter_door("d_hw_motel")
+	await _spot("hw_motel_guest", [])
+	await _wait_rules()
+	_expect("sq_room9", 10)
+	GameState.game_minutes = GameState.day() * 1440.0 + 23 * 60.0
+	await _enter_world_at(Vector3(0, 0, 615))
+	await _enter_door("d_hw_motel")
+	await _talk("robot_r9", ["When was I here", "Why did we stop", "Went back"])
+	_ok("room 9 done", GameState.quest_state("sq_room9") == "done" and GameState.has_flag("room9_back"))
+	GameState.game_minutes = GameState.day() * 1440.0 + 13 * 60.0
+
+
 func _five_stars() -> void:
 	print("PHASE five stars")
 	await _enter_door("d_chi_diner")
@@ -87,3 +103,18 @@ func _five_stars() -> void:
 	await _follow("sq_lou") # -> Lou
 	await _talk("lou", [])
 	_ok("five stars done", GameState.quest_state("sq_lou") == "done")
+
+
+func _field_office() -> void:
+	print("PHASE field office")
+	GameState.set_flag("earse_exposed") # the Midwest data floor is respawn_walk's job
+	await _enter_world_at(Vector3(0, 0, 400))
+	await _wait_rules()
+	_expect("sq_kowal", 10)
+	GameState.tracked_quest = "sq_kowal"
+	await _follow("sq_kowal") # -> Federal Plaza
+	await _talk("kowalczyk", ["I don't know what you're talking about"])
+	_expect("sq_kowal", 20)
+	await _spot("kowal_board", [])
+	await _term("kowal_pc", ["CHI-2291", "Personal note"], ["Rewrite the file"])
+	_ok("field office done", GameState.quest_state("sq_kowal") == "done" and GameState.has_flag("kowal_flipped"))

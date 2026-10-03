@@ -81,4 +81,6 @@ func play(ending_id: String) -> void:
 	cfg.set_value("endings", ending_id, true)
 	cfg.save("user://endings.cfg")
 	close_modal()
+	if game != null and bool(game.get("test_mode")):
+		return # automated tests keep the scene; a player goes back to the menu
 	SceneRouter.goto_menu()

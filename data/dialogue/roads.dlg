@@ -333,3 +333,108 @@ GARY: Are you... are you threatening me? Security! Ha ha, just kidding, we don't
 -- after
 GARY: Oh. You. Hi. I'm working on a new script. It has fewer threats in it. Corporate hates it. Have a... have a nice day. Just nice.
 -> END
+
+### ------------------------------------------------------------ ROOM 9
+### Lennox Motor Inn, after dark (sq_room9).
+
+=== room9
+-- start
+? q.sq_room9.done -> gone
+> He's sitting on the end of the bed with the jacket folded beside him, which you have never seen him do. The TV is on with the sound off, showing nothing: snow, the old kind, the kind TVs don't make anymore.
+MR. ROBOT: You read it. I wondered if you'd read it before or after you forgot writing it.
+* "I didn't write it." -> wrote
+* "When was I here?" -> when
+-- wrote
+MR. ROBOT: You held the pen. I just knew what to say. That's been our arrangement for a long time, kid. You just don't usually get the receipt.
+-> when
+-- when
+MR. ROBOT: A Tuesday. The week after Steel Mountain, maybe, or before; you'd have to ask the part of you that keeps the calendar, and he doesn't talk to me. You got in a car at three in the morning and drove west until the city ran out.
+MR. ROBOT: You were going to keep going. Past Chicago, past the lake. You had the whole speech ready. New name. A job in a server room in some town where nobody had ever heard of E Corp, which, kid, doesn't exist, but you were very confident.
+MR. ROBOT: And then we stopped here. Room 9. You wrote that line in the book and lay down on this bed, and in the morning you drove back to New York, and you didn't remember any of it.
+* "Why did we stop?" -> why
+* "Maybe I should have kept going." -> going
+* "Who decided? You or me?" -> who
+-- why
+MR. ROBOT: Darlene. You called her from the payphone outside, at four in the morning, and didn't say anything, and she said 'Elliot?' and you hung up. That's what turned the car around. Not me. I want that on the record. For once it wasn't me.
+! trust darlene 1 ; stab 2
+-> choice
+-- going
+MR. ROBOT: Then go. I mean it. The car's outside. The road keeps going. You're allowed to want to stop, kid. Wanting to quit isn't the same as quitting. Most nights it's the only thing that gets you to morning.
+-> choice
+-- who
+MR. ROBOT: Tonight? You. That's the joke, isn't it. I've spent your whole life deciding, and the one night it mattered, you did it in your sleep.
+! trust robot 1
+-> choice
+-- choice
+ELLIOT (V.O.): The book is on the dresser. The pen's still in it. The page after mine is blank.
+* (Write under it: 'Went back. — E.') -> back
+* (Tear out the page.) -> tear
+* (Leave it. Some things should stay in Pennsylvania.) -> leave
+-- back
+> You write it under the old line, same handwriting, steadier. When you look up, the bed is just a bed. The TV shows the weather. The lamp, you notice, is off.
+ELLIOT (V.O.): Went back. I did. I always do. Somebody should write that down more often.
+! set room9_back ; quest sq_room9 done ; stab 6 ; xp 80
+-> END
+-- tear
+> The page comes out clean. You fold it twice and put it in your pocket. When you look up, he's gone, and so is the jacket, and the bed has no dent where he was.
+ELLIOT (V.O.): Evidence. Of what, I don't know yet. That's how most evidence starts.
+! set room9_kept ; quest sq_room9 done ; stab 2 ; trust robot 1 ; xp 80
+-> END
+-- leave
+> You close the book. 'Keep driving. — E.' stays on the last page for whoever stops here next. When you look up, the room is empty and the TV is off and you are very tired.
+ELLIOT (V.O.): Let someone else find it. Maybe it'll mean something to them. Maybe it'll keep them going.
+! set room9_left ; quest sq_room9 done ; stab 4 ; xp 80
+-> END
+-- gone
+> Just a motel room. The TV's off. The lamp's off. The book's on the dresser.
+-> END
+
+### ----------------------------------------------------------- FEDERAL PLAZA
+### Agent Kowalczyk, FBI Chicago (sq_kowal).
+
+=== kowalczyk
+-- start
+? q.sq_kowal.done -> after
+? q.sq_kowal>=20 -> again
+> A woman in a navy jacket with a coffee in each hand, one of which she holds out to you before you've said anything.
+KOWALCZYK: Black, no sugar. You look like a black-no-sugar person. Teresa Kowalczyk, FBI. Sit, or don't. Most people don't.
+KOWALCZYK: I've got a lobby camera, a gas station receipt from Lennox, Pennsylvania, and a very loud forum of people who think you're Jesus with a laptop. I don't have a name. I'd like one.
+! quest sq_kowal 20
+* "I don't know what you're talking about." -> deny
+* "You used to work with DiPierro." -> dom
+* [SPEECH 50] "You've got a grainy photo and a hunch. You also have a kid who read the odds off a loot box last week." -> kid | deny
+* [if flag.fbi_informant] "Call Dom. She'll tell you I'm on her side of the table." -> informant
+-- deny
+KOWALCZYK: Sure. Nobody ever knows what I'm talking about. It's my special talent. Finish the coffee. Don't leave town. Well. You will, you're from New York. Don't leave town quickly.
+-> END
+-- dom
+KOWALCZYK: Dom and I did four years in Pittsburgh. She's the smartest person I've ever worked with, and she has never once let something go. ...If you know her, you know I'm the nice one. Think about that.
+-> END
+-- kid
+> She puts her coffee down. She looks at you for a long time, the way she probably looks at the board.
+KOWALCZYK: How do you know about my son. ...Never mind. I know how. Everybody knows everything now; that's the whole problem.
+KOWALCZYK: He's twelve. He read the odds out loud at dinner, one in nine thousand two hundred and fourteen, and laughed, and deleted the game. First time he's ever stopped doing something because it was bad for him. I've been trying to make that happen for three years.
+KOWALCZYK: I can't close a federal case because my kid laughed at dinner. ...But E Corp won't tell me what was taken, which means I can't tell anybody what the crime was. A case with no crime is just a photo. Get out of my office before I remember I'm good at this.
+! set kowal_done ; set kowal_dropped ; quest sq_kowal 30 ; fame fbi 2 ; xp 130
+-> END
+-- informant
+KOWALCZYK: ...Huh. Give me a minute.
+> She steps into the hall with her phone. You hear 'Dom' and then a lot of silence and then a short laugh that isn't happy.
+KOWALCZYK: She says you're hers. She says hands off. She says, and I'm quoting, 'he's more useful to me free than to you in a cell.' I hate that. I'm closing it. Tell Dom she owes me a dinner, and not in Pittsburgh.
+! set kowal_done ; set kowal_dom ; quest sq_kowal 30 ; xp 100
+-> END
+-- again
+? flag.kowal_done -> after
+KOWALCZYK: Still here? The coffee's not that good. If you came back for the board, it's still got your hood on it.
+-> END
+-- after
+? flag.kowal_flipped -> after_flipped
+? flag.kowal_deleted -> after_deleted
+KOWALCZYK: Go home, New York. And next time you visit, buy your gas with cash.
+-> END
+-- after_deleted
+KOWALCZYK: Funny thing. Server ate one of my cases. Backups too. IT says that doesn't happen. I said I know it doesn't. ...Go home, New York.
+-> END
+-- after_flipped
+KOWALCZYK: My E Corp case turned into an E Corp case. The other kind. My boss loves it. I'm getting a commendation for an investigation I'm pretty sure I didn't write. If I ever find out who wrote it, I'm going to arrest them, and then I'm going to buy them a drink.
+-> END

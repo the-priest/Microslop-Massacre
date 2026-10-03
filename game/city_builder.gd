@@ -893,8 +893,15 @@ func _building(r: Rect2, h: float, style: int, col: Color, shops: bool, face: fl
 		var acol: Color = [Color(0.45, 0.08, 0.06), Color(0.08, 0.3, 0.12), Color(0.1, 0.16, 0.4), Color(0.4, 0.3, 0.05), Color(0.2, 0.2, 0.22)][rng.randi() % 5]
 		Props.awning(c, r.get_center().x, az, face, aw, acol)
 		awning_w = aw
+	var nd := gen_doors.size()
 	if with_door:
 		_gen_door(r, face, style, shops, d, "", INF, awning_w)
+	if h < 70.0:
+		# Keep the paint off the door this building just got (if any).
+		var door_at := Vector3.INF
+		if gen_doors.size() > nd:
+			door_at = (gen_doors.back() as Dictionary)["pos"]
+		_graffiti(c, r, face, d, door_at)
 	if shops and (style == 6 or (d in ["les", "hells", "chinatown", "coney"] and rng.randf() < 0.35)):
 		var sz2 := (r.position.y if face < 0.0 else r.end.y) + 0.06 * face
 		var sc: Color = [Color(1, 0.3, 0.3), Color(0.3, 1, 0.5), Color(0.3, 0.7, 1), Color(1, 0.8, 0.3), Color(1, 0.4, 0.9)][rng.randi() % 5]
@@ -904,6 +911,127 @@ func _building(r: Rect2, h: float, style: int, col: Color, shops: bool, face: fl
 			c.glow.box(Vector3(r.position.x + 1.0, 6.5, sz2 + 0.5 * face), Vector3(0.12, 3.5, 0.9), sc, 0.0, Vector2(Props.K_FLICKER if rng.randf() < 0.3 else Props.K_ALWAYS, rng.randf()))
 		else:
 			c.glow.box(Vector3(r.get_center().x, 3.75, sz2), Vector3(sw, 0.12, 0.06), sc, 0.0, Vector2(Props.K_ALWAYS, 0))
+
+
+## Graffiti: tags, slogans and stencils at street level and down the alley
+## walls, with their own RNG (seeded from the lot) so the city's layout is
+## untouched. Some of it answers what you've done: the walls are on your side.
+const TAGS_NYC := ["FSOCIETY", "HELLO FRIEND", "WAKE UP", "E CORP OWNS YOU", "DEBT IS A LIE", "OWN NOTHING?", "WHO IS MR. ROBOT", "NO GODS NO MASTERS NO E CORP", "THEY KNOW", "LOG OFF", "WE ARE FSOCIETY", "YOUR CREDIT SCORE IS NOT YOU", "E COIN = E CHAINS", "RESPAWN", "PRESS START", "LOOT BOXES = GAMBLING", "QUIT THE APP", "NOBODY OWNS ME", "ROOT", "0WN3D", "ARE YOU A 1 OR A 0", "REAL NEW YORK", "RENT IS THEFT", "STAY WOKE STAY LOGGED OUT"]
+const TAGS_CREW := ["RICO", "C.H.", "VERA'S", "LES KINGS", "DUTCH WAS HERE", "KAOS", "SPYDA", "M3KA", "ZEPH", "TOXIK", "SKIP", "NOVA", "ROACH"]
+const TAGS_CHI := ["LOU 4EVER", "WINDY CITY HACKS", "NOT ON THE APP", "PHONY STOLE MY GAMES", "PRINT THE ODDS", "SOUTH SIDE", "CHI-TOWN", "RESPAWN CHI", "YOU OWN WHAT YOU PAID FOR"]
+const TAGS_ROAD := ["JESUS SAVES", "KEEP DRIVING", "TRUCKERS AGAINST FREIGHTOS", "TURN BACK", "E.A. WAS HERE", "LENNOX PA"]
+const SPRAY := [Color(1.0, 0.22, 0.25), Color(0.2, 0.95, 0.4), Color(0.25, 0.7, 1.0), Color(1.0, 0.85, 0.2), Color(1.0, 0.4, 0.95), Color(0.95, 0.95, 0.95), Color(1.0, 0.55, 0.15), Color(0.6, 0.4, 1.0)]
+
+
+func _graffiti_pool(d: String) -> Array:
+	var pool: Array = []
+	match WorldLayout.region:
+		"chicago":
+			pool.append_array(TAGS_CHI)
+			pool.append_array(TAGS_CREW.slice(5))
+		"highway":
+			pool.append_array(TAGS_ROAD)
+		_:
+			pool.append_array(TAGS_NYC)
+			pool.append_array(TAGS_CREW)
+			if d in ["bronx", "hunts", "harlem"]:
+				pool.append_array(["CANDY KILLS", "DANNY R.I.P.", "BRONX 4 LIFE", "WE MISS YOU DANNY"])
+	# The walls remember.
+	if GameState.has_flag("five_nine_done"):
+		pool.append_array(["5/9", "5/9 NEVER FORGET", "THE DEBT IS GONE", "THANK YOU FSOCIETY"])
+	if GameState.has_flag("rs_done"):
+		pool.append_array(["#KENNYQA", "THE PLAYER IS A FUNNEL", "SHARK CARDS R.I.P."])
+	if GameState.has_flag("ms_done"):
+		pool.append_array(["GAME PASS AWAY? NO.", "MICROSLOP MASSACRE", "WE OWN OUR GAMES"])
+	if GameState.has_flag("heat_on"):
+		pool.append("THE HEAT IS ON")
+	return pool
+
+
+func _graffiti(c: BuildCtx, r: Rect2, face: float, d: String, door_at: Vector3 = Vector3.INF) -> void:
+	var g := RandomNumberGenerator.new()
+	g.seed = hash(Vector2i(int(r.position.x * 7.0), int(r.position.y * 13.0))) + 911
+	var rough := d in ["les", "bronx", "hunts", "harlem", "chinatown", "hells", "west", "south", "inwood", "coney"] or WorldLayout.region != "nyc"
+	var chance := 0.34 if rough else 0.1
+	if g.randf() > chance:
+		return
+	var pool := _graffiti_pool(d)
+	# Candidate walls: the street face either side of the door, and the two
+	# side walls (alleys and avenue corners). One piece per wall, never two.
+	var walls: Array = [] # [base pos on the wall, rot, usable width]
+	var zf := (r.end.y if face > 0.0 else r.position.y) + 0.04 * face
+	var rf := 0.0 if face > 0.0 else PI
+	var dx := door_at.x if door_at != Vector3.INF and absf(door_at.z - zf) < 1.5 else INF
+	if dx == INF:
+		walls.append([Vector3(r.get_center().x, 0, zf), rf, r.size.x - 1.5])
+	else:
+		var lw := dx - 1.4 - r.position.x
+		var rw := r.end.x - (dx + 1.4)
+		if lw > 2.2:
+			walls.append([Vector3(r.position.x + lw * 0.5 + 0.3, 0, zf), rf, lw - 0.6])
+		if rw > 2.2:
+			walls.append([Vector3(r.end.x - rw * 0.5 - 0.3, 0, zf), rf, rw - 0.6])
+	if r.size.y > 6.0:
+		for sxv in [-1.0, 1.0]:
+			var sx: float = sxv
+			var x2: float = (r.position.x if sx < 0.0 else r.end.x) + 0.04 * sx
+			var dside: bool = door_at != Vector3.INF and absf(door_at.x - x2) < 1.5
+			if not dside:
+				walls.append([Vector3(x2, 0, r.get_center().y + g.randf_range(-r.size.y * 0.15, r.size.y * 0.15)), PI * 0.5 * sx, minf(r.size.y * 0.55, 7.0)])
+	if walls.is_empty():
+		return
+	var n := mini(walls.size(), 1 + (1 if g.randf() < 0.35 else 0))
+	for k in n:
+		var wi := g.randi() % walls.size()
+		var w: Array = walls[wi]
+		walls.remove_at(wi)
+		var pos: Vector3 = w[0]
+		var rot: float = w[1]
+		var span: float = w[2]
+		if span < 1.4:
+			continue
+		var col: Color = SPRAY[g.randi() % SPRAY.size()]
+		if g.randf() < 0.2:
+			_mask_stencil(c, pos + Vector3(0, g.randf_range(1.4, 2.0), 0), rot, minf(g.randf_range(0.8, 1.2), span * 0.8))
+			continue
+		var txt: String = pool[g.randi() % pool.size()]
+		# Letters about 0.6 of the font size wide: fit the text to the wall.
+		var px := 0.012
+		var fs := int(clampf(span / (float(txt.length()) * 0.62 * px), 40.0, 110.0))
+		var tw := float(txt.length()) * 0.62 * px * float(fs)
+		if tw > span:
+			continue
+		var y := g.randf_range(1.2, 2.2)
+		c.label(pos + Vector3(0, y, 0), txt, fs, col, rot, 45.0, px, {"outline": 10, "outline_col": col.darkened(0.75), "tilt": g.randf_range(-0.08, 0.08), "font": "graffiti"})
+		# Drips under the paint.
+		var fwd := Vector3(sin(rot), 0, cos(rot))
+		var right := Vector3(cos(rot), 0, -sin(rot))
+		for dr in g.randi_range(1, 4):
+			var off := right * g.randf_range(-tw * 0.45, tw * 0.45)
+			var dl := g.randf_range(0.15, 0.55)
+			c.props.box(pos + off + fwd * 0.01 + Vector3(0, y - float(fs) * px * 0.42 - dl * 0.5, 0), Vector3(0.035, dl, 0.01), col.darkened(0.15), rot)
+
+
+## A spray-stencilled fsociety mask: white face, black brows, eyes, the moustache
+## and the grin, flat on the wall.
+func _mask_stencil(c: BuildCtx, p: Vector3, rot: float, s: float) -> void:
+	var b := Basis(Vector3.UP, rot)
+	var fwd := b * Vector3(0, 0, 1)
+	var put := func(off: Vector2, size: Vector2, col: Color, depth: float) -> void:
+		c.props.box(p + b * Vector3(off.x * s, off.y * s, 0) + fwd * depth, Vector3(size.x * s, size.y * s, 0.01), col, rot)
+	var white := Color(0.92, 0.92, 0.88)
+	var black := Color(0.04, 0.04, 0.05)
+	put.call(Vector2(0, 0), Vector2(0.72, 0.96), white, 0.01)
+	put.call(Vector2(0, -0.36), Vector2(0.5, 0.26), white, 0.01)
+	put.call(Vector2(-0.17, 0.16), Vector2(0.18, 0.05), black, 0.02)
+	put.call(Vector2(0.17, 0.16), Vector2(0.18, 0.05), black, 0.02)
+	put.call(Vector2(-0.17, 0.27), Vector2(0.2, 0.04), black, 0.02)
+	put.call(Vector2(0.17, 0.27), Vector2(0.2, 0.04), black, 0.02)
+	put.call(Vector2(0, -0.12), Vector2(0.44, 0.06), black, 0.02)
+	put.call(Vector2(-0.2, -0.17), Vector2(0.06, 0.1), black, 0.02)
+	put.call(Vector2(0.2, -0.17), Vector2(0.06, 0.1), black, 0.02)
+	put.call(Vector2(0, -0.28), Vector2(0.34, 0.035), black, 0.02)
+	put.call(Vector2(0, -0.42), Vector2(0.08, 0.1), black, 0.02)
 
 
 ## Put an enterable door on a generic building's street face and register it.

@@ -180,13 +180,13 @@ func _process(delta: float) -> void:
 	var sun_col := Color(0.55, 0.65, 1.0).lerp(Color(1.0, 0.94, 0.84), dayf).lerp(Color(1.0, 0.55, 0.3), golden * 0.6)
 	sky_mat.set_shader_parameter("sun_col", Vector3(sun_col.r, sun_col.g, sun_col.b) * (1.0 - gloom * 0.8))
 	sun.light_color = sun_col
-	sun.light_energy = lerpf(0.2 + 0.3 * nb, 1.35, dayf) * (1.0 - gloom * 0.6)
+	sun.light_energy = lerpf(0.2 + 0.3 * nb, 1.0, dayf) * (1.0 - gloom * 0.6)
 	sun.look_at_from_position(Vector3.ZERO, -sun_dir, Vector3.UP if absf(sun_dir.y) < 0.99 else Vector3.FORWARD)
 	# Ambient + fog.
 	var amb_n := Color(0.3, 0.34, 0.5).lerp(Color(0.4, 0.43, 0.56), nb)
-	var amb_d := Color(0.58, 0.62, 0.7)
+	var amb_d := Color(0.62, 0.66, 0.74)
 	env.ambient_light_color = amb_n.lerp(amb_d, dayf).lerp(Color(0.4, 0.42, 0.45), gloom * 0.5)
-	env.ambient_light_energy = lerpf(1.55 + 0.9 * nb, 1.0, dayf)
+	env.ambient_light_energy = lerpf(1.55 + 0.9 * nb, 3.6, dayf)
 	env.tonemap_exposure = 1.0 + nightf * (0.06 + 0.22 * nb)
 	# City sky glow: night fog is lit sodium-orange from below, never pure black.
 	var fog_n := Color(0.07, 0.07, 0.095).lerp(Color(0.13, 0.12, 0.15), nb)
