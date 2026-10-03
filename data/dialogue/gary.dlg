@@ -49,7 +49,7 @@ MARCUS: Every driverless truck on I-80 now has a name painted on the trailer in 
 -- after_fleet
 MARCUS: One more thing, since you're the kind who goes places. Our banner. The Local's banner from the 1919 strike, hand-stitched. It was hanging in the Gary Works main office when E Corp chained the gates. Demolition crew's due Monday, and scrappers strip that place every night. I'd like it back on this wall before it's copper wire and landfill.
 MARCUS: And if you fly, and I think you're the type: I had a new one printed this morning. Fifty feet of vinyl. Lena Park out at the airport has a banner-tow rig and a dad who was Local 1014. Tell her I sent you.
-! quest sq_gy2 10 ; quest sq_gy4 10
+! quest sq_gy2 10
 -> END
 -- banner_back
 > You unroll it on his folding table: red wool gone the color of brick, gold letters, LOCAL 1014 — 1919 — AN INJURY TO ONE. One corner scorched. He touches the scorch mark with two fingers like it's a wound.
@@ -83,7 +83,7 @@ LENA: Every day's quiet. I talk to the pigeons. Two of them have names. If you'r
 LENA: Marcus. (She smiles, a little.) My dad was Local 1014. Rolling mill, thirty-two years. Okay. What's the banner say?
 ELLIOT (V.O.): Marcus had it printed this morning. Fifty feet of vinyl, red on white: FREIGHTOS — WHO'S DRIVING?
 LENA: (She laughs out loud.) Oh, I love that. I LOVE that. Take the yellow Skyhawk on the apron. Banner's already hooked on, it picks up off the poles when you take off. Fly it over the depot, low and slow over the mill, then right down Broadway so the whole city sees it. Then land on my runway and stop, nicely, because that's my plane.
-! quest sq_gy4 20 ; set gy_plane_ok ; xp 40
+! quest sq_gy4 10 ; quest sq_gy4 20 ; set gy_plane_ok ; xp 40
 -> END
 -- go
 LENA: The yellow one, on the apron. Rings will show you the route. Depot, mill, Broadway. Don't wrap my banner around a smokestack.

@@ -231,6 +231,8 @@ func _snd(name: String) -> AudioStreamWAV:
 		"horn": st = _sweep(392.0, 392.0, 0.4, 0.18, "square")
 		"phone": st = _sweep(180.0, 180.0, 0.3, 0.2, "square", 0.0)
 		"typing": st = _noise_burst(0.025, 0.18, 0.5, 160.0)
+		"spray": st = _noise_burst(1.1, 0.2, 0.85, 1.6)
+		"rattle": st = _noise_burst(0.05, 0.28, 0.65, 70.0, 900.0, 0.25)
 		"heal": st = _pluck([523.25, 783.99], 0.3, 0.2, 0.05, 7.0)
 		"coin": st = _pluck([1318.5, 1760.0], 0.18, 0.18, 0.04, 12.0)
 		"siren": st = _siren_sound()

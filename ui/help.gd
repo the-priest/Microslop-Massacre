@@ -21,7 +21,7 @@ const CONTROLS := """[b]MOVEMENT[/b]
 [b]MENUS[/b]
   TAB               phone: STATS  (level-up when pending)
   I                 phone: ITEMS
-  J                 phone: DATA (quests, radio)
+  J                 journal: quests and unanswered messages
   M                 phone: MAP (fast travel)
   T                 wait
   F5 / F9           quicksave / quickload
@@ -34,6 +34,10 @@ const CONTROLS := """[b]MOVEMENT[/b]
   Backspace         remove last shot
   E / Enter         execute
   V / Esc           cancel
+
+[b]WORK[/b]
+  A gold [color=#ffd040]![/color] over someone means they have work for you: talk to them.
+  Calls and texts offer jobs one at a time; answer them in your journal (J).
 
 [b]DIALOGUE[/b]
   Space / click     continue

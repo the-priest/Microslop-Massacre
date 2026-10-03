@@ -358,7 +358,7 @@ func _atom_value(a: Dictionary) -> bool:
 	return false
 
 
-## driving.truck, driving.plane, driving.any: what you're at the wheel of.
+## driving.truck, driving.plane, driving.boat, driving.any: what you're at the wheel of.
 func _driving(what: String) -> bool:
 	if game == null:
 		return false
@@ -372,6 +372,8 @@ func _driving(what: String) -> bool:
 		return true
 	if dv is Aircraft:
 		return what == "plane" or (dv as Aircraft).model == what
+	if dv is Boat:
+		return what == "boat" or (dv as Boat).model == what
 	return (dv as Vehicle).kind == what
 
 

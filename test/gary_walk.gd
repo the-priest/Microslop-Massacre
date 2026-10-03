@@ -33,11 +33,10 @@ func _ghost_fleet() -> void:
 	print("PHASE ghost fleet")
 	_ok("in gary", WorldLayout.region == "gary")
 	await _enter_world_at(Vector3(730, 0, 0))
-	_expect("sq_gy1", 10)
-	GameState.tracked_quest = "sq_gy1"
-	await _follow("sq_gy1") # -> Marcus at the union hall
-	await _talk("marcus", ["What's Local 1014", "Show me"])
+	_ok("arriving in town hands out nothing", GameState.quest_state("sq_gy1") == "")
+	await _meet("marcus", ["What's Local 1014", "Show me"]) # -> the union hall
 	_expect("sq_gy1", 20)
+	GameState.tracked_quest = "sq_gy1"
 	await _follow("sq_gy1") # -> the control tower
 	_expect("sq_gy1", 30)
 	await _spot("gy_ops_board", [])
@@ -49,7 +48,7 @@ func _ghost_fleet() -> void:
 	await _talk("marcus", [])
 	_ok("ghost fleet done", GameState.quest_state("sq_gy1") == "done")
 	_expect("sq_gy2", 10)
-	_expect("sq_gy4", 10)
+	_ok("one job per conversation: the banner tow waits for Lena", GameState.quest_state("sq_gy4") == "")
 
 
 func _the_banner() -> void:
@@ -68,10 +67,10 @@ func _the_banner() -> void:
 
 func _whos_driving() -> void:
 	print("PHASE who's driving")
-	GameState.tracked_quest = "sq_gy4"
-	await _follow("sq_gy4") # -> Lena at the airport
+	await _go("npc:lena", "lena") # -> Lena at the airport
 	await _talk("lena", ["Marcus at the union hall"])
 	_expect("sq_gy4", 20)
+	GameState.tracked_quest = "sq_gy4"
 	await _enter_world_at(Vector3(606, 0, -300))
 	var a := await _board_plane(Vector3(590, 0.5, -200))
 	a.airborne = true

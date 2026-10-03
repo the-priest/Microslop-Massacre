@@ -35,6 +35,7 @@ const ACHIEVEMENTS := {
 	"ghost": ["GHOST", "Get through Steel Mountain without being detected."],
 	"microslop": ["MICROSLOP MASSACRE", "Find the switch on Floor 101."],
 	"masks": ["FIFTY FACES", "Find all fifty hidden fsociety masks."],
+	"all_city": ["ALL CITY", "Paint every buffed wall on every map."],
 	"road_trip": ["ROAD TRIP", "Visit every city and town on the map."],
 	"airfields": ["SIX FIELDS", "Land a plane at every airfield."],
 	"racer": ["LOCAL LEGEND", "Win a street race on every map."],

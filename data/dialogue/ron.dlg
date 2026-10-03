@@ -15,7 +15,7 @@ RON: One coffee. On the house for a regular. You are a regular now. I decide tha
 -- fish
 RON: ...I don't know what you mean. It's a coffee shop. Beans, milk, a card reader. That's the whole business.
 ELLIOT (V.O.): He blinked twice on 'the whole business.' There's a back room. There's always a back room.
-! set found_ron_code ; set ron_backroom_hint
+! set found_ron_code ; set ron_backroom_hint ; quest sq_ron 10
 -> END
 -- looking
 RON: Look all you want. Buy something eventually.

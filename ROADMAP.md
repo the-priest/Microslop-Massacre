@@ -123,6 +123,26 @@ Legend: `[x]` done · `[~]` in progress · `[ ]` to do
       itself is blue-green with wind streaks, ripples and sun glints up close, and no
       aliasing far away.
 
+### Pass 16: feel, pacing, water and blood
+- [x] Cars, planes, boats and the on-foot camera drawn between physics steps: no judder
+      at high or uneven frame rates; chase cameras ignore thin poles and ease back out;
+      cars lean and squat
+- [x] Planes counted apart from cars when old rides are towed; parked planes appear from
+      1.5 km so they never pop in
+- [x] Quests come from people: a gold ! over anyone with work, calls and texts you answer
+      (or save for later in the journal, J), one at a time and spaced out; nothing starts
+      because you walked into a room or a town; at most two main chapters open at once
+- [x] The Inside Man walks you through the lobby step by step (conditional objectives)
+- [x] Graffiti: real handstyle fonts (Sedgwick Ave Display, Permanent Marker), tags,
+      throw-ups, pieces, rooftop spots, tag clusters; 72 buffed walls to paint (ALL CITY)
+- [x] Boats: speedboats, skiffs, the harbor patrol and Price's tender at eight docks;
+      Chicago's lake into Redmont's reservoir, Port Ramsey out to Price Island
+- [x] Interaction aim assist: doors, subway stairs, terminals, people from any angle
+- [x] Ragdoll deaths and dismemberment (Bloody Mess perk)
+- [x] Scope view for scoped rifles: reticle, rangefinder, breath, zoom steps
+- [x] Wildlife: pigeons, gulls, strays, deer, cows
+- [x] Police stand down when the heat clears
+
 ## 1. World and exploration
 
 - [x] **Map expansion ~2.1x:** 10 rows north (Inwood, Harlem, the Bronx), 7 avenues

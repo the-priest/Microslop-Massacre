@@ -14,7 +14,9 @@ func _ready() -> void:
 	await _until(func() -> bool: return game.player != null and not game.busy_transition and not game.dialog.is_open() and GameState.quests.has("mq_hello"), 6000)
 	game.minigames.auto_result = 1
 	GameState.cash = 2000
-	for q in ["mq_hello", "mq_rootkit", "mq_fsociety", "mq_steel"]:
+	# The chapters that come before it (main-story messages arrive one at a
+	# time, and only between chapters).
+	for q in ["mq_hello", "mq_rootkit", "mq_fsociety", "mq_steel", "mq_darkarmy", "mq_ecorp", "mq_fbi", "mq_robot"]:
 		GameState.complete_quest(q)
 	GameState.set_flag("joined_fsociety")
 	GameState.raise_skill("hacking", 70)
@@ -46,6 +48,7 @@ func _final_notice() -> void:
 func _respawn() -> void:
 	print("PHASE respawn")
 	await _enter_world_at(Vector3(-470, 0, 338))
+	await _wait_rules() # Darlene's text about the forum, answered
 	_expect("mq_respawn", 10)
 	GameState.tracked_quest = "mq_respawn"
 	await _follow("mq_respawn") # -> the arcade's back terminal

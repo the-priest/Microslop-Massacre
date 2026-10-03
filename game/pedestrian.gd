@@ -93,6 +93,13 @@ func interact_info() -> Dictionary:
 	return {"verb": "Talk", "name": display_name}
 
 
+var _last_hit: Dictionary = {}
+
+
+func note_hit(pos: Vector3, dir: Vector3, dmg: float, model: String) -> void:
+	_last_hit = {"pos": pos, "dir": dir, "dmg": dmg, "model": model, "t": Time.get_ticks_msec()}
+
+
 func take_hit(dmg: float, attacker: Node, _head: bool, _crit: bool, stun: float) -> void:
 	if dead:
 		return
@@ -111,9 +118,31 @@ func die(attacker: Node) -> void:
 	dead = true
 	collision_layer = Phys.INTERACT
 	_mesh.set_instance_shader_parameter("amt", 0.0)
-	var tw := create_tween()
-	tw.tween_property(_mesh, "rotation:x", -PI * 0.5, 0.5)
-	tw.parallel().tween_property(_mesh, "position:y", 0.2, 0.5)
+	# A ragdoll, shoved by whatever did it (see Ragdoll); maybe in pieces.
+	var fresh := not _last_hit.is_empty() and Time.get_ticks_msec() - int(_last_hit["t"]) < 1500
+	var dir := Vector3(randf_range(-1, 1), 0, randf_range(-1, 1)).normalized()
+	var dmg := 20.0
+	var model := ""
+	var limb := 0
+	if fresh:
+		dir = _last_hit["dir"]
+		dmg = float(_last_hit["dmg"])
+		model = str(_last_hit["model"])
+		limb = Ragdoll.limb_near(_mesh.mesh, _mesh.global_transform.affine_inverse() * (_last_hit["pos"] as Vector3))
+	elif attacker is Node3D:
+		dir = (global_position - (attacker as Node3D).global_position).normalized()
+	var dist := (attacker as Node3D).global_position.distance_to(global_position) if attacker is Node3D else 10.0
+	var cut := Ragdoll.cuts_for(limb, dmg, model, dist)
+	var rd := Ragdoll.spawn(get_parent(), _mesh.mesh, _mesh.global_transform, Ragdoll.push_for(dir, dmg, model), limb, cut, self)
+	if rd != null:
+		_mesh.visible = false
+		tree_exiting.connect(rd.queue_free)
+		if not cut.is_empty():
+			GameState.stat_add("limbs")
+	else:
+		var tw := create_tween()
+		tw.tween_property(_mesh, "rotation:x", -PI * 0.5, 0.5)
+		tw.parallel().tween_property(_mesh, "position:y", 0.2, 0.5)
 	AudioManager.play_3d("death", global_position, -3.0)
 	if attacker != null and attacker.is_in_group("player"):
 		GameState.stat_add("kills")

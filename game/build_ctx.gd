@@ -74,6 +74,12 @@ func commit(parent: Node3D, far: float, props_range: float = 260.0, collision: b
 		lb.double_sided = false
 		lb.shaded = false
 		lb.visibility_range_end = float(l["range"])
-		lb.font = UI.font_graffiti() if str(l.get("font", "")) == "graffiti" else UI.font_sign()
+		match str(l.get("font", "")):
+			"graffiti":
+				lb.font = UI.font_graffiti()
+			"marker":
+				lb.font = UI.font_marker()
+			_:
+				lb.font = UI.font_sign()
 		lb.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		parent.add_child(lb)

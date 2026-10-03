@@ -27,16 +27,32 @@ static func mono() -> Font:
 
 ## Spray-paint lettering for graffiti: the heaviest condensed face around.
 static var _graffiti: Font = null
+static var _marker: Font = null
 
 
+## Sedgwick Ave Display (a Bronx handstyle, SIL OFL; see ui/fonts) for
+## graffiti, falling back to a heavy system face if it's missing.
 static func font_graffiti() -> Font:
 	if _graffiti == null:
-		var sf := SystemFont.new()
-		sf.font_names = PackedStringArray(["Impact", "Haettenschweiler", "DejaVu Sans Condensed", "Liberation Sans Narrow", "Arial Black", "sans-serif"])
-		sf.font_weight = 900
-		sf.font_italic = true
-		_graffiti = sf
+		if ResourceLoader.exists("res://ui/fonts/SedgwickAveDisplay.woff2"):
+			_graffiti = load("res://ui/fonts/SedgwickAveDisplay.woff2") as Font
+		if _graffiti == null:
+			var sf := SystemFont.new()
+			sf.font_names = PackedStringArray(["Impact", "Haettenschweiler", "DejaVu Sans Condensed", "Liberation Sans Narrow", "Arial Black", "sans-serif"])
+			sf.font_weight = 900
+			sf.font_italic = true
+			_graffiti = sf
 	return _graffiti
+
+
+## Permanent Marker (Apache 2.0; see ui/fonts): quick marker tags and scrawls.
+static func font_marker() -> Font:
+	if _marker == null:
+		if ResourceLoader.exists("res://ui/fonts/PermanentMarker.woff2"):
+			_marker = load("res://ui/fonts/PermanentMarker.woff2") as Font
+		if _marker == null:
+			_marker = font_graffiti()
+	return _marker
 
 
 static func font_sign() -> Font:

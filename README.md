@@ -15,8 +15,9 @@ interstate to the town where your father died and the port where something is co
 in at night with its lights off. Decide how the biggest company on Earth falls, how its
 game empire falls with it, and who you become while it does.
 
-**Free. Original. No assets downloaded, nothing licensed, nothing ripped: every street,
-character, sound and song is built in code when the game starts.** Every game company in
+**Free. Original. Nothing licensed, nothing ripped: every street, character, sound and
+song is built in code when the game starts** (the only outside files are two open-licensed
+fonts for the graffiti). Every game company in
 it is a parody (Rockstarved, Electronic Arse, Phony Interactive, Microslop); every
 grievance is one real players already have, and every crime is invented.
 
@@ -62,14 +63,19 @@ and drops them into the New York of *Mr. Robot*, then lets you drive or fly out 
 - **139 epilogue slides** that remember what you did: who you saved, who you sold out,
   whose debt you deleted, which game companies you broke and how, whether Lopez ever
   caught you.
-- **60 quests** (20 main, 40 side) with several real outcomes each, and a story director
-  that keeps every quest moving no matter what order you do things in.
+- **60 quests** (20 main, 40 side) with several real outcomes each, handed to you one at
+  a time by people: talk to someone with a gold **!** over their head, or answer a call
+  or a text when you're ready. Nothing piles up in your journal just because you walked
+  into a room.
 - **123 conversations, about 54,500 words of original dialogue**, and honest skill
   checks: a white `[SPEECH 40]` means you pass.
 - **Four companions** with their own skills, opinions, barks, heart-to-hearts and
   breaking points.
 - **Every parked car can be stolen. There are seven airfields. The planes fly, all the
-  way to the next city or town, and you can land at every one of them.**
+  way to the next city or town, and you can land at every one of them.** Boats too:
+  speedboats, skiffs and a harbor patrol boat at eight docks, and Chicago's lakefront
+  runs straight into Redmont's reservoir while Port Ramsey's harbour opens onto the
+  Atlantic and Price Island.
 
 It's a fan project: an original story that runs alongside the show rather than
 retelling it. No scripts from the series are reproduced.
@@ -176,9 +182,15 @@ road, every airfield and you on it.
   the pavement, the parked cars and the people walking under them; the city glow lifts
   the dark; your car's headlights come on after dusk; and there's a **Night brightness**
   setting if you want it moodier or easier.
-- **Graffiti.** Tags, slogans, drips and stencilled fsociety masks on the shopfronts
-  and down the alleys, different in every district and city, and the walls answer
-  what you've done: after Five/Nine, Rockstarved or Microslop, new slogans go up.
+- **Graffiti everywhere.** Marker tags, fat throw-ups and full pieces with backdrops and
+  drop shadows in a real Bronx handstyle, on shopfronts, down the alleys and right up
+  under the rooflines, different in every district and city; the walls answer what
+  you've done (after Five/Nine, Rockstarved or Microslop, new slogans go up).
+- **Paint the city yourself.** E Corp "Community Care" buffs walls grey all over every
+  map: 72 of them. Walk up, press **E**, and spray an fsociety piece that stays for good.
+  Cash and texts at 10 and 36, and ALL CITY for every wall (careful in front of cops).
+- **Wildlife.** Pigeons on the sidewalks that burst into the air at a gunshot, gulls
+  over the water, stray dogs, deer in the fields and woods, cows on the township farms.
 - **A living street.** Pedestrians cross at the corners; traffic keeps to its lanes,
   waits at lights and honks at you.
 - **Every building has a door, and thousands of them open:** apartments, bodegas,
@@ -408,11 +420,29 @@ HQ's roof) and **The Long Way Down** (Redmont to New York, ten kilometres across
 borders) and **The Crossing** (Port Ramsey out over open water to Price Island's strip). Gold,
 silver and bronze each pay once; take gold in all nine for WHEELS DOWN.
 
+**Boats.** Eight docks: Coney Island Pier, Pier 76 on the Hudson, the East River Landing
+(with the NYPD Harbor Unit's patrol boat, if you want the heat), Monroe Harbor in Chicago,
+Buffington Harbor in Gary, Ramsey Harbor, the long pier out over Redmont's dried-up
+reservoir bed, and Price's own dock on the island. Walk up to a dock and press **E** to
+board; **W/S** throttle, **A/D** steer (she slides, and leans into the turn), **SPACE**
+to slow, **G** the horn; ease up alongside any dock and press **E** to tie up and get off
+(you can't step off in open water). Boats only go where there's water: they run aground
+on beaches and quays. Like planes, they carry on across a map border when there's water
+on the other side: sail out of Chicago's lakefront east and you're on Redmont's reservoir
+with the town on the far shore; head east out of Port Ramsey's harbour and Price Island
+comes up out of the Atlantic.
+
 **Everything you park stays parked.** The cars and planes you drive stay exactly where
 you leave them, across saves. Your four most recent rides stay anywhere in the city;
 anything parked outside your building (cars) or at Bowery Bay (planes) stays there
-for good. Your rides are always unlocked for you, and taking your own car back is never
-a crime.
+for good. Planes and boats are counted separately from cars, so the plane you left on
+some runway is still there however many cars you steal afterwards. Your rides are always
+unlocked for you, and taking your own car back is never a crime.
+
+**Smooth at any frame rate.** Cars, planes, boats and your own eyes are drawn between
+physics steps, so nothing judders on a 144 Hz screen or when the frame rate dips; the
+chase camera glides behind the car, ignores the lamp posts it passes (only real walls
+pull it in) and eases back out; cars lean into turns and squat when you floor it.
 
 - Full throttle down the runway; pull back once she's light.
 - Bank to turn. Don't get slow: below stall speed the wing quits and the nose drops.
@@ -469,7 +499,14 @@ a crime.
 - **Street encounters:** muggings in progress (stop them, get paid), ambushes,
   shakedowns, dropped wallets.
 - **46 weapons**, including 8 hidden uniques: White Hat, Zero Day, Kernel Panic,
-  Patch Tuesday, The Daemon, Honeypot, Root Kit and Dead Man's Switch.
+  Patch Tuesday, The Daemon, Honeypot, Root Kit and Dead Man's Switch. Scoped rifles
+  (hunting, marksman, sniper, The Daemon) give you a real scope view: a duplex reticle
+  with mil dots, a rangefinder, a slow breathing sway you can steady by holding **SHIFT**
+  until your lungs give out, and a second zoom step on the mouse wheel.
+- **Bodies fall like bodies.** The dead go down as jointed ragdolls (torso, head, arms,
+  legs), shoved the way the shot went; a shotgun blast up close, a heavy rifle round or a
+  machete can take an arm, a leg or a head clean off. The **Bloody Mess** perk makes it
+  happen more often.
 
 ## Fallout: New Vegas, translated
 
@@ -477,7 +514,7 @@ a crime.
 |---|---|
 | S.P.E.C.I.A.L. and skills | 8 skills: HACKING, SPEECH, SNEAK, LOCKPICK, GUNS, MELEE, BARTER, MEDICINE, tagged at character creation |
 | Traits | 8 optional traits (Insomniac, Paranoid, Loner, Mr. Robot's Kid...) |
-| Perks | 26 perks, one every other level, all with real mechanical effects |
+| Perks | 27 perks, one every other level, all with real mechanical effects (yes, including Bloody Mess) |
 | V.A.T.S. | **EXPLOIT mode:** time stops, queue shots on head or torso, pay in FOCUS |
 | Karma | **Stability**, your grip on reality. Low stability and the world starts to glitch. |
 | Factions | fsociety, E Corp, the Dark Army, the FBI, the NYPD, the locals, Respawn, Microslop and more, each with separate fame and infamy |
@@ -486,7 +523,7 @@ a crime.
 | Lockpicking and terminals | 8 minigames: lockpick, terminal exploit, network recon, brute force, signal tap, cascade, log hunt, and a playable Space Invaders cabinet |
 | The intro | A narrated cold open over the city that tells the world's story up to tonight |
 | The epilogue | Slides for every thread you pulled |
-| Achievements | 22, from FISH WHISPERER to MICROSLOP MASSACRE, FIFTY FACES, SIX FIELDS, WHEELS DOWN and AIR TIME |
+| Achievements | 23, from FISH WHISPERER to MICROSLOP MASSACRE, FIFTY FACES, SIX FIELDS, WHEELS DOWN, AIR TIME and ALL CITY |
 
 ## Controls
 
@@ -497,7 +534,7 @@ Ctrl or C         sneak (toggle)           R              reload
 Space             jump                     V or Q         EXPLOIT mode
 F                 flashlight               H              quick-heal
 1 - 8             hotkeyed weapons / aid   Mouse wheel    switch weapon
-TAB               phone (stats / level up) I / J / M      phone: items / data / map
+TAB               phone (stats / level up) I / J / M      phone: items / journal / map
 T                 wait / sleep             F5 / F9        quicksave / quickload
 ESC               pause, save, load, settings
 
@@ -506,7 +543,14 @@ In a plane        W/S throttle, A/D bank, mouse back (or ↓) climbs, mouse forw
                   mouse left/right rudder, Space wheel brakes, E get out once stopped
 In a helicopter   W climbs, S descends, hands off holds height, A/D (or mouse left/right) turn,
                   mouse forward (or ↑) noses down to fly forward, back (or ↓) to slow, Space brakes
+In a boat         W/S throttle, A/D steer, Space slows, G horn, E get off (alongside a dock)
+Scoped rifle      right mouse looks through the scope, mouse wheel zooms, hold Shift to steady
 ```
+
+**E** picks up whatever you're roughly facing close by (a door, the subway stairs, a
+terminal, a person) from any side; you don't have to line the crosshair up exactly.
+A gold **!** over someone means they have work for you, and **J** opens your journal,
+with any calls and texts you haven't answered yet.
 
 Every key is listed in-game under **Controls** in the main and pause menus.
 
@@ -572,7 +616,7 @@ defaults (controls and audio are kept).
 ## Playing it
 
 Grab the latest build from **Releases**, or straight from the repo's `build/` folder
-(`MICROSLOP-MASSACRE-v2.13.1-windows.zip` / `-linux.zip`):
+(`MICROSLOP-MASSACRE-v2.14.0-windows.zip` / `-linux.zip`):
 
 - **Windows:** unzip and run `MicroslopMassacre.exe`. SmartScreen may warn about an
   unsigned indie executable: click *More info → Run anyway*.
@@ -704,6 +748,10 @@ affiliated with, endorsed by, or sponsored by any of them. It is free, it will a
 free, and it contains no material from the show or from either game: the story, dialogue,
 world, art, sound and music are all original.
 
-Built with [Godot Engine](https://godotengine.org) (MIT license).
+Built with [Godot Engine](https://godotengine.org) (MIT license). The graffiti is
+lettered in two open fonts, bundled in `ui/fonts` with their licenses:
+[Sedgwick Ave Display](https://github.com/googlefonts/sedgwickave) (SIL Open Font
+License 1.1) and [Permanent Marker](https://fonts.google.com/specimen/Permanent+Marker)
+(Apache License 2.0).
 
 *Hello, friend.*

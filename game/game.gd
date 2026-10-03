@@ -195,6 +195,7 @@ func _build_world() -> void:
 	city_buildings = cb.buildings
 	_index_city(cb)
 	airfield_slots = cb.airfield_planes
+	tag_spots = cb.tag_spots
 	_loading_lbl.text = "> uploading geometry ..."
 	await get_tree().process_frame
 	city_root = Node3D.new()
@@ -293,6 +294,14 @@ func _build_world() -> void:
 	stunts.name = "StuntJumps"
 	stunts.game = self
 	add_child(stunts)
+	boats_ctl = Boats.new()
+	boats_ctl.name = "Boats"
+	boats_ctl.game = self
+	add_child(boats_ctl)
+	animals = Animals.new()
+	animals.name = "Animals"
+	animals.game = self
+	add_child(animals)
 	jobs = Jobs.new()
 	jobs.name = "Jobs"
 	jobs.game = self
@@ -345,6 +354,23 @@ func loot_pick(from: Vector3, dir: Vector3, max_t: float) -> Interactable:
 		return null
 	var e := loot_index.pick(from, dir, max_t)
 	if e.is_empty():
+		return null
+	return _virtual_for(e)
+
+
+## The forgiving version: a door or prop you're roughly facing, close by,
+## and not through a wall.
+func loot_assist(from: Vector3, look: Vector3) -> Interactable:
+	if GameState.cell != "world" or loot_index == null:
+		return null
+	var e := loot_index.pick_cone(from, look, 3.0, 0.62)
+	if e.is_empty():
+		return null
+	var tp: Vector3 = e["p"]
+	var q := PhysicsRayQueryParameters3D.create(from, tp, Phys.WORLD)
+	q.exclude = [player.get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(q)
+	if not hit.is_empty() and from.distance_to(hit["position"]) < from.distance_to(tp) - 0.8:
 		return null
 	return _virtual_for(e)
 
@@ -497,6 +523,7 @@ func _make_ui() -> void:
 	dialog = DialogueUI.new()
 	dialog.game = self
 	dialog.auto_advance = test_mode
+	lead_pacing = not test_mode
 	add_child(dialog)
 	phone = Phone.new()
 	phone.game = self
@@ -584,6 +611,7 @@ func _make_world_interactables() -> void:
 			continue
 		_spawn_pickup(world_inter, pk, Vector3.ZERO)
 	_spawn_hidden_masks()
+	_spawn_tag_spots()
 	var smesh := MeshBatch.new()
 	for sp in WorldObjects.SPOTS:
 		var sd: Dictionary = sp
@@ -603,6 +631,7 @@ func _make_world_interactables() -> void:
 	smesh.commit(world_inter, Mats.lit, 160.0, "WorldSpotProps")
 	air_races.spawn_board(world_inter)
 	stunts.build(world_inter)
+	boats_ctl.spawn_docks(world_inter)
 	emergency.call_deferred("spawn_parked")
 
 
@@ -965,7 +994,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			if GameState.pending_levels > 0 and k == KEY_TAB:
 				levelup_ui.open()
 			else:
-				phone.open("stats" if k == KEY_TAB else ("items" if k == KEY_I else "data"))
+				# J is the journal: straight to your quests and messages.
+				phone.open("stats" if k == KEY_TAB else ("items" if k == KEY_I else "quests"))
 		KEY_M:
 			phone.open("map")
 		KEY_V, KEY_Q:
@@ -1010,7 +1040,7 @@ func save_blocked() -> String:
 func _in_combat() -> bool:
 	for n in get_tree().get_nodes_in_group("npc"):
 		var o := n as NPC
-		if o != null and not o.dead and o.mode == "combat" and o.is_hostile_to_player() and o.global_position.distance_to(player.global_position) < 60.0:
+		if o != null and not o.dead and o.mode == "combat" and o.cell == GameState.cell and o.is_hostile_to_player() and o.global_position.distance_to(player.global_position) < 60.0:
 			return true
 	return false
 
@@ -1131,6 +1161,10 @@ func interact(obj: Object) -> void:
 				await DialogueManager.run_effects(DialogueManager.parse_effects(str(it.data["fx"]), it.ident))
 		"effects":
 			await DialogueManager.run_effects(DialogueManager.parse_effects(str(it.data.get("fx", "")), it.ident))
+		"tag":
+			await _spray_tag(it)
+		"dock":
+			await boats_ctl.board(str(it.data.get("dock", "")))
 
 
 func _exit_index_for_door(d: Dictionary, door_id: String) -> int:
@@ -1508,6 +1542,8 @@ func noise(pos: Vector3, radius: float, loud: bool) -> void:
 			o.noise_heard(pos, loud)
 	if loud and GameState.cell == "world":
 		crowd.scatter(pos, radius * 0.7)
+		if animals != null:
+			animals.startle(pos, radius)
 
 
 func impact(p: Vector3, n: Vector3) -> void:
@@ -1986,25 +2022,33 @@ func _fire_trigger(td: Dictionary) -> void:
 ## the quest starts, or leave it for later; it waits in your phone, and the
 ## person will still give it to you face to face. Messages are spaced out: one
 ## at a time, never right on top of another one or of a finished job, and the
-## main story never offers its next chapter while you're in the middle of one.
+## main story never piles chapters up: two open at most, one message at a time.
 const LEAD_GAP := 90.0 # game minutes between two messages (about 4.5 real minutes)
 const LEAD_AFTER_DONE := 30.0 # game minutes after you finish something
 
 
+var lead_pacing := true # the test harness turns the waiting off (not the order)
+
+
 func _lead_ready(td: Dictionary) -> bool:
 	var now := GameState.game_minutes
-	if now - float(GameState.flags.get("lead_last", -9999.0)) < LEAD_GAP:
+	if lead_pacing and now - float(GameState.flags.get("lead_last", -9999.0)) < LEAD_GAP:
 		return false
-	if now - float(GameState.flags.get("quest_done_t", -9999.0)) < LEAD_AFTER_DONE:
+	if lead_pacing and now - float(GameState.flags.get("quest_done_t", -9999.0)) < LEAD_AFTER_DONE:
 		return false
 	if _in_combat() or GameState.is_wanted() or player.driving is Aircraft and (player.driving as Aircraft).airborne:
 		return false
 	var qid := str(td["lead"])
 	var pend := pending_leads()
 	if str(DB.QUESTS.get(qid, {}).get("kind", "side")) == "main":
+		# At most two chapters open at once (one you're in, one waiting on a
+		# decision), and never two unanswered.
+		var open := 0
 		for q in GameState.quests.keys():
 			if str(DB.QUESTS.get(q, {}).get("kind", "side")) == "main" and GameState.quest_state(str(q)) == "active":
-				return false
+				open += 1
+		if open >= 2:
+			return false
 		for l in pend:
 			if str(DB.QUESTS.get(str((l as Dictionary)["quest"]), {}).get("kind", "side")) == "main":
 				return false
@@ -2029,7 +2073,8 @@ func pending_leads() -> Array:
 func _lead_message(td: Dictionary) -> void:
 	GameState.flags["lead_last"] = GameState.game_minutes
 	AudioManager.play_key()
-	hud.notify("NEW MESSAGE  ·  " + str(td.get("speaker", "")), "")
+	var who := str(td.get("speaker", ""))
+	hud.notify("NEW LEAD" if who.begins_with("ELLIOT") else "NEW MESSAGE  ·  " + who, "")
 	await reply_lead(str(td["id"]))
 
 
@@ -2076,6 +2121,18 @@ func _giver_open(td: Dictionary) -> bool:
 	return DialogueManager.eval_cond(_trig_conds[cw])
 
 
+## The gold "!" over everyone nearby who has work for you.
+func _update_job_markers() -> void:
+	var gc := giver_convos()
+	for n in get_tree().get_nodes_in_group("npc"):
+		var o := n as NPC
+		if o == null:
+			continue
+		var on := not o.dead and o.cell == GameState.cell and gc.has(str(o.def.get("convo", "")))
+		if on or o.get("_job") != null:
+			o.set_job_marker(on)
+
+
 ## Conversations that would start a quest right now (people with work).
 func giver_convos() -> Dictionary:
 	var out := {}
@@ -2088,6 +2145,7 @@ func giver_convos() -> Dictionary:
 
 func _slow_update() -> void:
 	var pp := player.global_position
+	_update_job_markers()
 	_update_parked()
 	_update_airfield()
 	_update_rides()
@@ -2280,6 +2338,7 @@ func _heat_tick() -> void:
 		unseen_t = 0.0
 		if not pursuit.is_empty():
 			_end_pursuit()
+		_cops_stand_down()
 		return
 	# Are they looking at you right now?
 	if _police_sees_player():
@@ -2411,6 +2470,19 @@ func _cruiser_unload(car: Vehicle) -> void:
 	var side := car.global_transform.basis.x
 	for s in [-1.0, 1.0]:
 		_spawn_officer(car.global_position + side * (1.9 * float(s)) + Vector3(0, 0.05, 0))
+
+
+## Heat's off: the officers who came for you holster up and go back to
+## walking the beat instead of carrying on the fight.
+func _cops_stand_down() -> void:
+	for n in get_tree().get_nodes_in_group("npc"):
+		var o := n as NPC
+		if o == null or o.dead or not (o.id.begins_with("cop_resp_") or o.id.begins_with("fbi_resp_")):
+			continue
+		if o.mode == "combat" or GameState.hostile.has(o.id):
+			GameState.hostile.erase(o.id)
+			o.target = null
+			o.mode = "idle"
 
 
 func _end_pursuit() -> void:
@@ -2655,6 +2727,8 @@ var taxi: Taxi
 var air_races: AirRaces
 var emergency: Emergency
 var stunts: StuntJumps
+var boats_ctl: Boats
+var animals: Animals
 var airfield_slots: Array = [] # from CityBuilder.airfield_planes
 var _af_filled: Dictionary = {} # slot -> true once spawned this session
 var rings: Node3D = null
@@ -3062,6 +3136,9 @@ func exit_vehicle(forced: bool = false) -> void:
 	if not forced and absf(v.speed) > 6.0:
 		hud.notify("Slow down first.", "warn")
 		return
+	if v is Boat:
+		_exit_boat(v as Boat, forced)
+		return
 	# Step out on the driver's side if there's room, else the other side, else behind.
 	var basis := v.global_transform.basis
 	var spots := [v.global_position - basis.x * 2.0, v.global_position + basis.x * 2.0, v.global_position + basis.z * 3.4, v.global_position - basis.z * 3.4]
@@ -3101,6 +3178,27 @@ func exit_vehicle(forced: bool = false) -> void:
 	player.cam.make_current()
 	AudioManager.sfx("door")
 	_remember_ride(v)
+
+
+## Off a boat: onto the nearest dock if you're alongside one. Forced (the
+## boat sank under you): you swim for the nearest dock on this map.
+func _exit_boat(b: Boat, forced: bool) -> void:
+	var out: Variant = boats_ctl.exit_point(b, forced)
+	if out == null:
+		hud.notify("Tie up at a dock to get off (⚓ on your map). Ease up alongside it and press E.", "warn")
+		return
+	player.driving = null
+	b.end_drive()
+	player.collision_layer = Phys.PLAYER
+	player.collision_mask = Phys.WORLD | Phys.NPC | Phys.CAR
+	player.teleport(out as Vector3)
+	player.velocity = Vector3.ZERO
+	player.set_look(b.rotation.y, 0.0)
+	player.cam.make_current()
+	AudioManager.sfx("door")
+	if forced and Boats.nearest_dock(WorldLayout.region, b.global_position, 32.0) == "":
+		hud.notify("You swim for it, and drag yourself up onto the dock.", "warn")
+	_remember_ride(b)
 
 
 ## Pull a driver out of a stopped car in traffic.
@@ -3214,6 +3312,60 @@ func _airspace_hint() -> String:
 	return "Nothing out that way. Turn back."
 
 
+## A boat that has sailed out of this map's waters: carry on into the next
+## map's (true) if it has water on the other side of the line, otherwise the
+## boat stops at the line (false).
+func seaspace_exit(b: Boat) -> bool:
+	if busy_transition or ui_depth > 0 or player.driving != b:
+		return busy_transition
+	# A few metres ahead: the boat itself is still just this side of the line.
+	var fwd := Vector2(-sin(b.rotation.y), -cos(b.rotation.y))
+	var w := Regions.to_world(WorldLayout.region, Vector2(b.global_position.x, b.global_position.z) + fwd * 8.0)
+	var nb := Regions.region_at(w, WorldLayout.region)
+	var lp := Regions.to_local(nb, w) + fwd * 30.0 if nb != "" else Vector2.ZERO
+	if nb == "" or not Boats.is_water(nb, lp):
+		var now := Time.get_ticks_msec() / 1000.0
+		if now - _air_warn_t > 6.0:
+			_air_warn_t = now
+			hud.notify(_sea_hint(), "warn")
+		return false
+	_air_arrive = Vector3(lp.x, 0.2, lp.y)
+	_air_heading = b.rotation.y
+	_air_throttle = 0.0
+	go_region(nb, "", true)
+	return true
+
+
+func _sea_hint() -> String:
+	match WorldLayout.region:
+		"chicago":
+			return "Open lake. Keep east along the water and it becomes Redmont's reservoir; Microslop's town is on the far shore."
+		"redmont":
+			return "The reservoir runs west into Lake Michigan. Chicago is on the other side."
+		"port":
+			return "Open Atlantic. Price Island is due east, if you've got the nerve."
+		"island":
+			return "Open Atlantic. Port Ramsey is back west."
+		"gary":
+			return "Nothing out there but lake. The water doesn't reach Chicago from here; take the road."
+	return "Nothing out that way but open water. Turn back."
+
+
+## The radio, coming into the next map's waters.
+func _sea_hello() -> void:
+	var l: Array = {
+		"redmont": ["MICROSLOP RESERVOIR", "Attention vessel: you are entering a Microslop water resource. No wake, no fishing, no swimming, no drinking. Thank you for choosing Redmont."],
+		"chicago": ["CHICAGO HARBOR", "Inbound boat, Chicago Harbor. Monroe Harbor is just off the Loop. Mind the breakwater. Welcome to Chicago."],
+		"island": ["PRICE ISLAND", "Unidentified vessel, these are private waters belonging to E Corp. The dock is on the east side and you are not welcome at it."],
+		"port": ["RAMSEY HARBOR", "Boat inbound from the east, Ramsey Harbor. The slips are south of the big ship, past the cranes. Stay clear of berth 2."],
+	}.get(WorldLayout.region, [])
+	if l.is_empty():
+		return
+	await get_tree().create_timer(2.0).timeout
+	if is_inside_tree():
+		hud.subtitle(str(l[0]), str(l[1]), 6.0)
+
+
 ## Fly into a neighbouring map at a precise spot (see airspace_exit).
 var _air_arrive := Vector3.INF
 var _air_heading := 0.0
@@ -3236,7 +3388,7 @@ func go_region(region: String, gate: String, by_air: bool) -> void:
 	var v: Vehicle = player.driving
 	var carry := {}
 	if v != null and is_instance_valid(v):
-		carry = {"kind": "plane" if v is Aircraft else "car", "model": (v as Aircraft).model if v is Aircraft else v.kind, "ci": v.color_idx, "hp": v.hp, "owned": v.has_meta("owned") or bool(GameState.flags.get("jet_owned", false)) and v is Aircraft and (v as Aircraft).model == "citation", "speed": v.speed}
+		carry = {"kind": "plane" if v is Aircraft else ("boat" if v is Boat else "car"), "model": (v as Aircraft).model if v is Aircraft else ((v as Boat).model if v is Boat else v.kind), "ci": v.color_idx, "hp": v.hp, "owned": v.has_meta("owned") or bool(GameState.flags.get("jet_owned", false)) and v is Aircraft and (v as Aircraft).model == "citation", "speed": v.speed}
 		# It comes with you, so it's no longer parked here.
 		var uid := int(v.get_meta("ride_uid", -1))
 		if uid >= 0:
@@ -3282,6 +3434,8 @@ func _arrive_with(carry: Dictionary, by_air: bool) -> void:
 		var a := Aircraft.new().setup_plane(str(carry.get("model", "skyhawk")), pos, yaw, self)
 		a.owner_tag = "player"
 		nv = a
+	elif str(carry.get("kind", "car")) == "boat":
+		nv = Boat.new().setup_boat(str(carry.get("model", "speedboat")), pos, float(carry.get("heading", yaw)), self)
 	else:
 		nv = Vehicle.new().setup(str(carry.get("model", "sedan")), int(carry.get("ci", 0)), pos, yaw, self)
 	nv.locked = false
@@ -3300,9 +3454,14 @@ func _arrive_with(carry: Dictionary, by_air: bool) -> void:
 		var vmax := float(ac.spec.get("vmax", 66.0))
 		ac.speed = clampf(float(carry.get("speed", vmax * 0.7)), float(ac.spec.get("stall", 22.0)) * 1.3, vmax)
 		ac.throttle = float(carry.get("throttle", 0.7))
+	if nv is Boat:
+		nv.speed = clampf(float(carry.get("speed", 10.0)), 0.0, 30.0)
+		(nv as Boat)._vel = Vector2(-sin(nv.rotation.y), -cos(nv.rotation.y)) * nv.speed
 	hud.center(Regions.region_name(WorldLayout.region).to_upper(), 3.0)
 	if nv is Aircraft and by_air:
 		_atc_hello(str(GameState.flags.get("region_from", "")))
+	elif nv is Boat:
+		_sea_hello()
 
 
 ## The radio, when a plane crosses into the next map's airspace.
@@ -3361,6 +3520,90 @@ func _spawn_hidden_masks() -> void:
 	for m in hidden_mask_spots(WorldLayout.region):
 		var md: Dictionary = m
 		spawn_dynamic_pickup(str(md["id"]), "hidden_mask", 1, md["pos"])
+
+
+# ------------------------------------------------------------- tag walls
+## E Corp's "Community Care" buffs walls grey all over every map. Each buffed
+## patch is a canvas: walk up, spray an fsociety piece on it, and it stays.
+## Where they are comes from the city builder (CityBuilder.tag_spots).
+var tag_spots: Array = []
+const TAGS_TOTAL := 72 # every map's buffed walls together (CityBuilder.TAGS_PER)
+const TAG_WORDS := ["FSOCIETY", "HELLO FRIEND", "WE ARE FSOCIETY", "WAKE UP", "DEBT IS A LIE", "E CORP OWNS NOTHING", "LOG OFF", "NOBODY OWNS ME", "5/9", "OWN YOUR GAMES", "CTRL+ALT+DEL", "ARE YOU A 1 OR A 0"]
+
+
+func _spawn_tag_spots() -> void:
+	for t in tag_spots:
+		var td: Dictionary = t
+		if GameState.flags.has(str(td["id"])):
+			_paint_player_tag(td)
+			continue
+		var rot := float(td["rot"])
+		var fwd := Vector3(sin(rot), 0, cos(rot))
+		var it := Interactable.new().setup("tag", str(td["id"]), "Buffed Wall", "Spray a piece", (td["pos"] as Vector3) + fwd * 0.6 + Vector3(0, 1.5, 0), Vector3(float(td["span"]), 2.2, 1.0), td)
+		it.rotation.y = rot
+		world_inter.add_child(it)
+
+
+func _paint_player_tag(td: Dictionary) -> void:
+	var g := RandomNumberGenerator.new()
+	g.seed = hash(str(td["id"]))
+	var c := BuildCtx.new()
+	var span := float(td["span"])
+	var rot := float(td["rot"])
+	var p: Vector3 = td["pos"]
+	var right := Vector3(cos(rot), 0, -sin(rot))
+	var fwd := Vector3(sin(rot), 0, cos(rot))
+	CityBuilder._mask_stencil(c, p + fwd * 0.02 + right * (span * 0.5 - 0.55) + Vector3(0, 1.9, 0), rot, 0.85)
+	var words: Array = TAG_WORDS.duplicate()
+	var txt := str(words[g.randi() % words.size()])
+	CityBuilder.paint_tag(c, p - right * 0.5, rot, span - 1.3, txt, CityBuilder.SPRAY[g.randi() % CityBuilder.SPRAY.size()], g, 2)
+	var n := Node3D.new()
+	n.name = "Tag_" + str(td["id"])
+	world_inter.add_child(n)
+	c.commit(n, 160.0, 160.0, false)
+
+
+func tags_painted(region: String = "") -> int:
+	var n := 0
+	for k in GameState.flags.keys():
+		var ks := str(k)
+		if ks.begins_with("tag_") and (region == "" or ks.begins_with("tag_%s_" % region)):
+			n += 1
+	return n
+
+
+func _spray_tag(it: Interactable) -> void:
+	var td: Dictionary = it.data
+	var tid := str(td["id"])
+	if GameState.flags.has(tid):
+		return
+	player.frozen = true
+	AudioManager.play_3d("rattle", player.global_position, 0.0)
+	await get_tree().create_timer(0.25).timeout
+	AudioManager.play_3d("rattle", player.global_position, 0.0, 1.1)
+	await get_tree().create_timer(0.25).timeout
+	AudioManager.play_3d("spray", player.global_position, -2.0)
+	hud.center("SPRAYING ...", 1.2)
+	await get_tree().create_timer(1.2).timeout
+	player.frozen = false
+	GameState.flags[tid] = true
+	GameState.add_flag("tags_sprayed", 1)
+	it.queue_free()
+	_paint_player_tag(td)
+	GameState.add_xp(25)
+	GameState.add_fame("fsociety", 1)
+	var here := tags_painted(WorldLayout.region)
+	var all := tags_painted()
+	hud.notify("PIECE %d / %d HERE  ·  %d / %d EVERYWHERE" % [here, tag_spots.size(), all, TAGS_TOTAL], "")
+	AudioManager.play_success()
+	# Spraying in front of a cop is still vandalism.
+	for n in get_tree().get_nodes_in_group("npc"):
+		var o := n as NPC
+		if o != null and not o.dead and o.faction in ["nypd", "police"] and o.global_position.distance_to(player.global_position) < 18.0 and o._los(o.head_pos(), player.eye_pos()):
+			crime_witnessed(player.global_position)
+			break
+	if all >= TAGS_TOTAL:
+		GameState.unlock("all_city")
 
 
 # ------------------------------------------------------------- talk radio
@@ -3535,6 +3778,7 @@ func _remember_ride(v: Vehicle) -> void:
 		GameState.flags["ride_uid_next"] = uid + 1
 		v.set_meta("ride_uid", uid)
 	var plane := v is Aircraft
+	var boat := v is Boat
 	var rec := _ride_rec(uid)
 	var fresh := rec.is_empty()
 	if fresh:
@@ -3542,8 +3786,8 @@ func _remember_ride(v: Vehicle) -> void:
 		GameState.rides.append(rec)
 	var p := v.global_position
 	rec["region"] = WorldLayout.region
-	rec["kind"] = "plane" if plane else "car"
-	rec["model"] = (v as Aircraft).model if plane else v.kind
+	rec["kind"] = "plane" if plane else ("boat" if boat else "car")
+	rec["model"] = (v as Aircraft).model if plane else ((v as Boat).model if boat else v.kind)
 	rec["ci"] = v.color_idx
 	rec["pos"] = [p.x, p.y, p.z]
 	rec["yaw"] = v.rotation.y
@@ -3555,6 +3799,12 @@ func _remember_ride(v: Vehicle) -> void:
 			rec["slot"] = a.slot
 			planes.erase(a.slot)
 			a.slot = ""
+	if boat:
+		var bt := v as Boat
+		if bt.slot != "":
+			rec["slot"] = bt.slot
+			boats_ctl.boats.erase(bt.slot)
+			bt.slot = ""
 	var was_home := bool(rec.get("home", false))
 	rec["home"] = false
 	for h in HOMES:
@@ -3630,6 +3880,8 @@ func _update_rides() -> void:
 			var a := Aircraft.new().setup_plane(str(rec.get("model", "skyhawk")), pos, float(rec.get("yaw", 0.0)), self)
 			a.owner_tag = "player"
 			nv = a
+		elif str(rec.get("kind", "car")) == "boat":
+			nv = Boat.new().setup_boat(str(rec.get("model", "speedboat")), pos, float(rec.get("yaw", 0.0)), self)
 		else:
 			nv = Vehicle.new().setup(str(rec.get("model", "sedan")), int(rec.get("ci", 0)), pos + Vector3(0, 0.15, 0), float(rec.get("yaw", 0.0)), self)
 		nv.locked = false

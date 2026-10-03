@@ -69,8 +69,9 @@ MR. ROBOT: See? Conscience. Every good crew needs one. Now. Yes or no?
 -> decide
 -- yes
 MR. ROBOT: That's my kid. Welcome home. Three threads. The mountain: Mobley's device cooks the tapes. The army: someone with real reach, the Dark Army in Chinatown, or the Feds looking the wrong way, and you will meet both whether you like it or not. And the door: a way inside E Corp itself. It's all on the board.
-! quest mq_steel 10 ; quest mq_darkarmy 10 ; quest mq_ecorp 10 ; quest mq_finale 10
-MR. ROBOT: Any order you like. Every choice you make out there changes what this night looks like. When it's all in place, you come back here and we press the key. Together.
+MR. ROBOT: But one thing at a time. The mountain first. Without it, nothing else matters. Mobley's device is in the stash.
+! quest mq_steel 10
+MR. ROBOT: The other threads will find you, or you can go find them; they're up on the board whenever you want to read them. Every choice you make out there changes what this night looks like. When it's all in place, you come back here and we press the key. Together.
 -> END
 -- think
 MR. ROBOT: Think. Sure. You'll think, and you'll come back, because thinking is just the noise you make on your way to the thing you were always going to do. Door's open.

@@ -144,7 +144,7 @@ func _check_quests() -> void:
 				started = true
 				break
 		for t in WorldObjects.TRIGGERS:
-			if str(t.get("fx", "")).contains("quest " + str(qid) + " "):
+			if (str(t.get("fx", "")) + " " + str(t.get("accept_fx", ""))).contains("quest " + str(qid) + " "):
 				started = true
 		if not started and _data_fx_mentions("quest " + str(qid) + " "):
 			started = true
@@ -254,6 +254,21 @@ func _check_world() -> void:
 		var td: Dictionary = t
 		if td.has("convo") and not DialogueManager.has_convo(str(td["convo"])):
 			_err("trigger %s: missing convo %s" % [td.get("id", "?"), td["convo"]])
+		# People who hand out work, and the messages that offer it.
+		if td.has("giver"):
+			if not DialogueManager.has_convo(str(td["giver"])):
+				_err("trigger %s: giver convo %s missing" % [td.get("id", "?"), td["giver"]])
+			if not str(td.get("fx", "")).contains("quest "):
+				_err("trigger %s: a giver must start a quest" % td.get("id", "?"))
+		if td.has("lead"):
+			if not DB.QUESTS.has(str(td["lead"])):
+				_err("trigger %s: lead for unknown quest %s" % [td.get("id", "?"), td["lead"]])
+			if str(td.get("bark", "")) == "" or str(td.get("speaker", "")) == "":
+				_err("trigger %s: a lead needs a message and who sent it" % td.get("id", "?"))
+			if not str(td.get("when", "")).contains("!q.%s.started" % str(td["lead"])):
+				_err("trigger %s: a lead must stop once its quest has started" % td.get("id", "?"))
+		if td.has("fx") and td.has("lead"):
+			_err("trigger %s: a lead starts its quest only when you answer (accept_fx), not fx" % td.get("id", "?"))
 
 
 func _check_markers() -> void:
@@ -414,6 +429,7 @@ func _check_story() -> void:
 		var w2 := "trigger " + str(td.get("id", "?"))
 		_cond_str(str(td.get("when", "")), w2)
 		_fx_str(str(td.get("fx", "")), w2)
+		_fx_str(str(td.get("accept_fx", "")), w2 + " (answer)")
 		if not _cells().has(str(td.get("cell", "world"))):
 			_err("%s: unknown cell %s" % [w2, td.get("cell")])
 	for id in NPCData.NPCS.keys():

@@ -66,7 +66,7 @@ WALT: It was your father's. ...Fine. I'm on the bench most afternoons, or at the
 -- yes
 WALT: Good man. And listen. Emily Moss's house is still up on Elm by Maple Ave, boarded. Nobody'd buy it. Angela's room's the way she left it, the realtor told me, like nobody wanted to be the one to put her things in a bag. If you're talking to that girl, she might want something out of there.
 ELLIOT (V.O.): Angela's room. Purple walls. A shoebox in the closet she wouldn't let me touch. I'd forgotten that. I'd forgotten I'd forgotten it.
-! quest sq_tw1 done ; quest sq_tw2 10 ; quest sq_moss 10 ; set walt_met ; xp 40
+! quest sq_tw1 done ; quest sq_tw2 10 ; set walt_met ; set walt_moss_hint ; xp 40
 -> END
 -- hangar
 WALT: Back again. Pond's still warm, if you were wondering. Coffee's in the pot. It's terrible.
@@ -124,7 +124,12 @@ WALT: The stacks ran all night and the lights in town flickered at two. Every cl
 * [if q.sq_airmail>=10 & !q.sq_airmail.done] "About the prescription run..." -> airmail_wait
 * [if flag.walt_plane_ok & !flag.walt_lesson] "Teach me something about flying." -> lesson
 * [if q.mq_pr2>=20 & !flag.walt_project] "Walt, what do you know about the trucks from the coast?" -> project
+* [if flag.walt_moss_hint & !q.sq_moss.started & q.sq_tw2.done] "You said Angela's room is still the way she left it." -> moss
 * "I'll see you around." -> END
+-- moss
+WALT: Purple walls. The realtor told me. Nobody wanted to be the one to put a little girl's things in a bag, so nobody did. The Moss house is on Elm by Maple Ave, boarded up. Back door's never locked; the lock rusted through in '02. If there's something in there she ought to have, you'd be the one to bring it to her.
+! quest sq_moss 10
+-> END
 -- airmail
 WALT: As a matter of fact. Port Ramsey's pharmacy closed in March, and the nearest one after that is Lennox, which is forty minutes the wrong way down I-80. So every Tuesday I fly the township's spare prescriptions over to Ramsey Field and Marisol hands them out. Insulin, blood pressure, the heart pills.
 WALT: Except my hands have started doing this. (He holds one up. It shakes.) I missed the last three Tuesdays. You fly. Crate's by the door. Plane's on the apron. Straight east over I-80, the coast's right there past it. Land on the runway, not the ocean.

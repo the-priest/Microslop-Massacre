@@ -71,8 +71,9 @@ func _main_line() -> void:
 	await _follow("mq_rootkit") # -> Ron's
 	await _wait_rules()
 	_expect("mq_rootkit", 20)
-	_ok("sq_ron started", GameState.quest_state("sq_ron") != "")
+	_ok("walking into Ron's starts nothing extra", GameState.quest_state("sq_ron") == "")
 	await _talk("ron", ["Brave", "Just coffee"]) # SPEECH 20 -> password hint
+	_ok("Ron's slip about the back room starts The Product", GameState.quest_state("sq_ron") != "")
 	await _term("ron_server", ["customers", "README"], ["Copy the customer"])
 	await _wait_rules()
 	_expect("mq_rootkit", 30)
@@ -94,8 +95,13 @@ func _main_line() -> void:
 	await _talk("robot_n", ["I'm in"])
 	_ok("joined fsociety", GameState.has_flag("joined_fsociety"))
 	await _wait_rules()
-	for q in ["mq_steel", "mq_darkarmy", "mq_ecorp", "mq_finale"]:
-		_expect(q, 10)
+	_expect("mq_steel", 10)
+	for q in ["mq_darkarmy", "mq_ecorp", "mq_finale", "mq_fbi"]:
+		_ok("one thing at a time: %s not handed out yet" % q, GameState.quest_state(q) == "")
+	# The plan board: read one thread, take one thread.
+	await _spot("arcade_plan", ["faction thread"])
+	_expect("mq_darkarmy", 10)
+	_ok("the board gave one thread, not all of them", GameState.quest_state("mq_ecorp") == "")
 
 	print("PHASE steel")
 	await _talk("mobley", ["Where's the device"])
@@ -116,8 +122,12 @@ func _main_line() -> void:
 	_ok("steel done", GameState.quest_state("mq_steel") == "done")
 
 	print("PHASE fbi")
+	# Messages wait until you're out of the fight and the heat's off.
+	await _enter_world_at(Vector3(-470, 0, 300))
+	GameState.clear_wanted()
 	await _wait_rules()
-	_expect("mq_fbi", 10)
+	_expect("mq_ecorp", 10) # Tyrell's assistant leaves a voicemail; answered
+	_ok("one new chapter at a time: DiPierro waits", GameState.quest_state("mq_fbi") == "")
 	print("PHASE darkarmy")
 	GameState.tracked_quest = "mq_darkarmy"
 	await _follow("mq_darkarmy") # -> Rose Garden
@@ -154,6 +164,8 @@ func _main_line() -> void:
 
 
 	print("PHASE dipierro")
+	await _wait_rules()
+	_expect("mq_fbi", 10)
 	GameState.tracked_quest = "mq_fbi"
 	await _follow("mq_fbi")
 	await _talk("dipierro", ["It was him", "closer than fsociety"])
@@ -434,12 +446,25 @@ func _objective_marker(qid: String) -> String:
 	return ""
 
 
+## Go and see somebody with work for you (the gold "!"), the way a player
+## would, and talk to them: that's what starts their quest.
+func _meet(npc: String, p: Array) -> void:
+	var cv := str((NPCData.NPCS.get(npc, {}) as Dictionary).get("convo", ""))
+	_ok("%s has work for you" % npc, game.giver_convos().has(cv))
+	await _go("npc:" + npc, npc)
+	await _talk(npc, p)
+
+
 ## Go where the quest marker says, the way a player would: through the door.
 func _follow(qid: String) -> void:
 	var m := _objective_marker(qid)
 	if m == "":
 		_ok("%s stage %d has a marker" % [qid, GameState.quest_stage(qid)], false)
 		return
+	await _go(m, qid)
+
+
+func _go(m: String, qid: String) -> void:
 	_ok("%s marker '%s' points somewhere from %s" % [qid, m, GameState.cell], game.marker_pos(m) != null)
 	var t: Dictionary = game._marker_target(m)
 	if t.is_empty():

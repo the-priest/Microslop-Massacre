@@ -60,6 +60,29 @@ func pick(from: Vector3, dir: Vector3, max_t: float) -> Dictionary:
 	return best
 
 
+## The entry you're roughly facing (within cos_min of `look`, weighing the
+## horizontal most), within r of `from`: the forgiving pick.
+func pick_cone(from: Vector3, look: Vector3, r: float, cos_min: float) -> Dictionary:
+	var fl := Vector3(look.x, look.y * 0.35, look.z).normalized()
+	var best: Dictionary = {}
+	var best_s := -INF
+	for e in near(from, r + 1.0):
+		if (e as Dictionary).has("gone"):
+			continue
+		var d: Vector3 = ((e as Dictionary)["p"] as Vector3) - from
+		var dist := d.length()
+		if dist < 0.01:
+			continue
+		var f := Vector3(d.x, d.y * 0.35, d.z).normalized().dot(fl)
+		if f < cos_min:
+			continue
+		var sc := f * 2.0 - dist * 0.35
+		if sc > best_s:
+			best_s = sc
+			best = e
+	return best
+
+
 ## Entries within radius r of p (for markers and debugging).
 func near(p: Vector3, r: float) -> Array:
 	var out: Array = []

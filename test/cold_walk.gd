@@ -14,10 +14,11 @@ func _ready() -> void:
 	await _enter_world_at(Vector3(10, 0, 654))
 	await _enter_door("d_hw_pharmacy")
 	await _wait_rules()
-	_expect("sq_cold", 10)
-	GameState.tracked_quest = "sq_cold"
+	_ok("walking in starts nothing", GameState.quest_state("sq_cold") == "")
+	_ok("anita has work for you", game.giver_convos().has("anita"))
 	await _talk("anita", ["What happened to the insulin", "How long do your patients have"])
 	_expect("sq_cold", 20)
+	GameState.tracked_quest = "sq_cold"
 	print("PHASE berth 2")
 	await _travel("port", "pt_west")
 	await _enter_world_at(Vector3(690, 0, -153))

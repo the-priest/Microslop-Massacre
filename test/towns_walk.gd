@@ -85,6 +85,13 @@ func _going_home() -> void:
 	print("PHASE going home")
 	_ok("in washington township", WorldLayout.region == "township")
 	await _enter_world_at(Vector3(620, 0, 0))
+	_ok("arriving in town hands out nothing", GameState.quest_state("sq_tw1") == "")
+	# Angela's text (after the Colby business): answered, so Going Home starts.
+	GameState.set_flag("township_resolved")
+	if GameState.day() < 1:
+		GameState.game_minutes += 1440.0
+	await _wait_rules()
+	await _wait_rules()
 	_expect("sq_tw1", 20)
 	GameState.tracked_quest = "sq_tw1"
 	await _follow("sq_tw1") # -> the memorial
@@ -94,7 +101,7 @@ func _going_home() -> void:
 	await _talk("walt", ["You knew my dad", "trucks come at night", "I'll go tonight"])
 	_ok("going home done", GameState.quest_state("sq_tw1") == "done")
 	_expect("sq_tw2", 10)
-	_expect("sq_moss", 10)
+	_ok("one job per conversation: the Moss house waits", GameState.quest_state("sq_moss") == "")
 
 
 func _night_shift() -> void:
@@ -172,6 +179,9 @@ func _sheriff() -> void:
 
 func _moss_house() -> void:
 	print("PHASE the box in the closet")
+	await _go("npc:walt", "walt") # -> Walt's hangar
+	await _talk("walt", ["Angela's room is still"])
+	_expect("sq_moss", 10)
 	GameState.tracked_quest = "sq_moss"
 	await _follow("sq_moss") # -> the Moss house
 	_expect("sq_moss", 20)
@@ -346,6 +356,8 @@ func _air_freight_job() -> void:
 func _project() -> void:
 	print("PHASE bill of lading")
 	_day()
+	# Leon calls between chapters of the main story, never in the middle of one.
+	GameState.complete_quest("mq_hello")
 	GameState.complete_quest("mq_darkarmy")
 	GameState.game_minutes += 3 * 1440.0
 	await _enter_world_at(Vector3(0, 0, -60))

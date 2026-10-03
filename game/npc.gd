@@ -161,7 +161,37 @@ func interact_info() -> Dictionary:
 		return {}
 	if generic and can_pickpocket() and game != null and game.player != null and game.player.crouching:
 		return {"verb": "Pickpocket", "name": display_name, "locked": true}
+	if _job != null and _job.visible:
+		return {"verb": "Talk", "name": display_name + "  ·  has work for you"}
 	return {"verb": "Talk", "name": display_name}
+
+
+## A gold "!" over someone who has work for you (Game.giver_convos).
+var _job: Label3D = null
+
+
+func set_job_marker(on: bool) -> void:
+	if not on:
+		if _job != null:
+			_job.visible = false
+		return
+	if _job == null:
+		_job = Label3D.new()
+		_job.text = "!"
+		_job.font_size = 96
+		_job.pixel_size = 0.006
+		_job.outline_size = 18
+		_job.modulate = Color(1.0, 0.82, 0.2)
+		_job.outline_modulate = Color(0.15, 0.08, 0.0)
+		_job.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		_job.fixed_size = false
+		_job.no_depth_test = true
+		_job.visibility_range_end = 70.0
+		_job.font = UI.font_sign()
+		_job.position = Vector3(0, 2.35, 0)
+		add_child(_job)
+	_job.visible = not dead and mode != "combat"
+	_job.position.y = 2.35 + sin(Time.get_ticks_msec() * 0.004) * 0.06
 
 
 func can_pickpocket() -> bool:
@@ -590,6 +620,15 @@ func _melee_hit(t: Node3D, w: Dictionary) -> void:
 
 
 # ------------------------------------------------------------------- damage
+## The last blow, for the body (Ragdoll): where it landed, which way, how
+## hard, and with what.
+var _last_hit: Dictionary = {}
+
+
+func note_hit(pos: Vector3, dir: Vector3, dmg: float, model: String) -> void:
+	_last_hit = {"pos": pos, "dir": dir, "dmg": dmg, "model": model, "t": Time.get_ticks_msec()}
+
+
 func take_hit(dmg: float, attacker: Node, head: bool, crit: bool, stun: float) -> void:
 	if dead:
 		return
@@ -685,9 +724,7 @@ func die(attacker: Node = null, restoring: bool = false) -> void:
 	_mesh.set_instance_shader_parameter("amt", 0.0)
 	_mesh.set_instance_shader_parameter("pose", 0.0)
 	_mesh.set_instance_shader_parameter("flash", 0.0)
-	var tw := create_tween()
-	tw.tween_property(_mesh, "rotation:x", -PI * 0.5, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tw.parallel().tween_property(_mesh, "position:y", 0.2, 0.5)
+	_throw_body(attacker)
 	var by_player := attacker != null and attacker.is_in_group("player")
 	# A companion's kill counts as yours for XP and for clearing places (FNV rules).
 	var by_comp := attacker is NPC and GameState.companions.has((attacker as NPC).id)
@@ -709,6 +746,42 @@ func die(attacker: Node = null, restoring: bool = false) -> void:
 	emit_signal("died", self)
 	if game != null:
 		game.on_npc_died(self, by_player or by_comp)
+
+
+## The body goes down as a ragdoll, shoved by the blow; maybe in pieces.
+func _throw_body(attacker: Node) -> void:
+	var fresh := not _last_hit.is_empty() and Time.get_ticks_msec() - int(_last_hit["t"]) < 1500
+	var dir := Vector3.ZERO
+	var dmg := 20.0
+	var model := ""
+	var limb := 0
+	var dist := 10.0
+	if fresh:
+		dir = _last_hit["dir"]
+		dmg = float(_last_hit["dmg"])
+		model = str(_last_hit["model"])
+		limb = Ragdoll.limb_near(_mesh.mesh, _mesh.global_transform.affine_inverse() * (_last_hit["pos"] as Vector3))
+		if attacker is Node3D:
+			dist = (attacker as Node3D).global_position.distance_to(global_position)
+	elif attacker is Node3D:
+		dir = (global_position - (attacker as Node3D).global_position).normalized()
+	else:
+		dir = Vector3(randf_range(-1, 1), 0, randf_range(-1, 1)).normalized()
+	var cut := Ragdoll.cuts_for(limb, dmg, model, dist)
+	var rd := Ragdoll.spawn(get_parent(), _mesh.mesh, _mesh.global_transform, Ragdoll.push_for(dir, dmg, model) + velocity * 0.5, limb, cut, self)
+	if rd == null:
+		var tw := create_tween()
+		tw.tween_property(_mesh, "rotation:x", -PI * 0.5, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.parallel().tween_property(_mesh, "position:y", 0.2, 0.5)
+		return
+	_mesh.visible = false
+	_gun_flash.visible = false
+	tree_exiting.connect(rd.queue_free)
+	if not cut.is_empty() and game != null:
+		AudioManager.play_3d("punch", global_position, 2.0, 0.6)
+		for k in 3:
+			game.blood(global_position + Vector3(randf_range(-0.3, 0.3), 0.9 + float(k) * 0.3, randf_range(-0.3, 0.3)))
+		GameState.stat_add("limbs")
 
 
 func _generate_loot() -> void:

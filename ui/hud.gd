@@ -11,6 +11,7 @@ var _focus_bar: ProgressBar
 var _ammo_lbl: Label
 var _weapon_lbl: Label
 var _cross: Control
+var _scope: Control
 var _prompt: Label
 var _prompt_name: Label
 var _notes: VBoxContainer
@@ -78,6 +79,13 @@ func _ready() -> void:
 	_crt.material = cm
 	_crt.visible = bool(Settings.get_v("crt"))
 	_root.add_child(_crt)
+	# The view through a rifle scope (Player.scoped).
+	_scope = Control.new()
+	_scope.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_scope.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_scope.visible = false
+	_scope.draw.connect(_draw_scope)
+	_root.add_child(_scope)
 	# Crosshair.
 	_cross = Control.new()
 	_cross.set_anchors_preset(Control.PRESET_CENTER)
@@ -310,6 +318,10 @@ func _process(delta: float) -> void:
 		_quest_lbl.text = t.strip_edges()
 	else:
 		_quest_lbl.text = ""
+		# Nothing on: point at the messages waiting for an answer.
+		var nl: int = game.pending_leads().size() if game != null and game.has_method("pending_leads") else 0
+		if nl > 0:
+			_quest_lbl.text = "✉ %d unanswered message%s\n▸ Press J to read and answer" % [nl, "" if nl == 1 else "s"]
 	_clock.text = "%s  ·  %s" % [GameState.clock_text(), GameState.date_text()]
 	var st := GameState.stability
 	var bars := int(round(float(st) / 10.0))
@@ -377,8 +389,11 @@ func _process(delta: float) -> void:
 		_xp_lbl.text = ""
 		_xp_acc = 0
 	_hit_t = maxf(0.0, _hit_t - delta)
-	_cross.visible = not p.frozen and not hidden_all
+	_cross.visible = not p.frozen and not hidden_all and not p.scoped
 	_cross.queue_redraw()
+	_scope.visible = p.scoped and not p.frozen and not hidden_all
+	if _scope.visible:
+		_scope.queue_redraw()
 	for c in _notes.get_children():
 		var lbl := c as Label
 		var t2 := float(lbl.get_meta("t", 0.0)) - delta
@@ -397,6 +412,43 @@ func _process(delta: float) -> void:
 	gi = maxf(gi, _glitch_t)
 	_glitch_rect.visible = gi > 0.02
 	_glitch_mat.set_shader_parameter("intensity", gi)
+
+
+func _draw_scope() -> void:
+	if game == null or game.player == null:
+		return
+	var p: Player = game.player
+	var sz := _scope.size
+	var c := sz * 0.5
+	var r := minf(sz.x, sz.y) * 0.46
+	var ink := Color(0.0, 0.0, 0.0)
+	# Black everywhere outside the glass: one very thick ring.
+	var big := sz.length()
+	_scope.draw_arc(c, r + big * 0.5, 0.0, TAU, 96, ink, big, true)
+	_scope.draw_arc(c, r, 0.0, TAU, 96, Color(0.05, 0.05, 0.05), 6.0, true)
+	# Duplex reticle: heavy posts, thin centre, mil dots.
+	var thin := Color(0.02, 0.02, 0.02, 0.95)
+	for dvec in [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1)]:
+		var dv: Vector2 = dvec
+		_scope.draw_line(c + dv * r * 0.28, c + dv * r, thin, 5.0)
+		_scope.draw_line(c, c + dv * r * 0.28, thin, 1.5)
+		for k in range(1, 5):
+			_scope.draw_circle(c + dv * r * 0.06 * float(k), 2.2, thin)
+	_scope.draw_circle(c, 1.6, Color(0.9, 0.1, 0.1))
+	# Range to whatever's under the crosshair, and your breath.
+	var at: Variant = p.aim_point() if p.has_method("aim_point") else null
+	var txt := "---"
+	if at != null:
+		txt = "%d m" % int(p.cam.global_position.distance_to(at as Vector3))
+	var f := UI.font_sign()
+	_scope.draw_string(f, c + Vector2(r * 0.35, r * 0.62), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color(0.85, 0.85, 0.8))
+	_scope.draw_string(f, c + Vector2(-r * 0.75, r * 0.62), "x%d" % int(round(float(p.weapon().get("zoom", 3.0)) * (2.0 if p.scope_level == 1 else 1.0))), HORIZONTAL_ALIGNMENT_LEFT, -1, 18, Color(0.85, 0.85, 0.8))
+	var bw := r * 0.5
+	var bp := c + Vector2(-bw * 0.5, r * 0.78)
+	_scope.draw_rect(Rect2(bp, Vector2(bw, 6.0)), Color(0.2, 0.2, 0.2, 0.8))
+	_scope.draw_rect(Rect2(bp, Vector2(bw * p.breath, 6.0)), Color(0.75, 0.85, 0.9) if p.breath > 0.25 else UI.RED)
+	if p.breath > 0.0 and not p.holding_breath:
+		_scope.draw_string(f, bp + Vector2(0, 26.0), "SHIFT  hold breath   ·   WHEEL  zoom", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, Color(0.7, 0.7, 0.65))
 
 
 func _draw_cross() -> void:

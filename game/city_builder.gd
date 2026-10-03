@@ -96,6 +96,7 @@ func build_all() -> void:
 		_build_region()
 		_fill_country()
 		_neighbour_skylines()
+		_finish_graffiti()
 		return
 	_reserve_landmarks()
 	_roads()
@@ -114,6 +115,7 @@ func build_all() -> void:
 	_body_shops()
 	_fill_country()
 	_neighbour_skylines()
+	_finish_graffiti()
 
 
 ## Every light pool on the map (street lamps, floodlights), for NightLights.
@@ -403,6 +405,67 @@ func _region_airfield() -> void:
 	ac.label(Vector3(ax - side * 19.5, 0.04, az), str(WorldLayout.DISTRICT_NAMES.get("airfield", "AIRFIELD")).to_upper(), 120, Color(0.95, 0.85, 0.3), face, 200.0, 0.02, {"pitch": -PI * 0.5})
 
 
+## An edge-of-map wall (tag "bounds"), with gaps wherever a pier crosses it.
+func _bounds_wall(c: BuildCtx, center: Vector3, size: Vector3, gaps: Array) -> void:
+	var pieces: Array = [Rect2(center.x - size.x * 0.5, center.z - size.z * 0.5, size.x, size.z)]
+	for g in gaps:
+		var gr: Rect2 = g
+		var nxt: Array = []
+		for pc in pieces:
+			var pr: Rect2 = pc
+			if not pr.intersects(gr):
+				nxt.append(pr)
+			elif pr.size.x < pr.size.y: # runs along z
+				if gr.position.y > pr.position.y:
+					nxt.append(Rect2(pr.position.x, pr.position.y, pr.size.x, gr.position.y - pr.position.y))
+				if gr.end.y < pr.end.y:
+					nxt.append(Rect2(pr.position.x, gr.end.y, pr.size.x, pr.end.y - gr.end.y))
+			else: # runs along x
+				if gr.position.x > pr.position.x:
+					nxt.append(Rect2(pr.position.x, pr.position.y, gr.position.x - pr.position.x, pr.size.y))
+				if gr.end.x < pr.end.x:
+					nxt.append(Rect2(gr.end.x, pr.position.y, pr.end.x - gr.end.x, pr.size.y))
+		pieces = nxt
+	for pc in pieces:
+		var pr2: Rect2 = pc
+		c.solid(Vector3(pr2.get_center().x, center.y, pr2.get_center().y), Vector3(pr2.size.x, size.y, pr2.size.y), 0.0, "bounds")
+
+
+## A plank pier over the mud or the sand and out over the water, with
+## railings down both sides and across the far end (the near end is open).
+func _walk_pier(r: Rect2, reg: String) -> void:
+	var along_x := r.size.x >= r.size.y
+	var c := ctx_at(r.get_center().x, r.get_center().y)
+	var wood := Color(0.42, 0.33, 0.23)
+	# On the island the old dock already covers the seaward part.
+	var vis_r := r
+	if reg == "island":
+		vis_r = Rect2(r.position.x, r.position.y, 24.0, r.size.y)
+	c.props.box(Vector3(vis_r.get_center().x, -0.05, vis_r.get_center().y), Vector3(vis_r.size.x, 0.3, vis_r.size.y), wood, 0.0, Vector2.ZERO, 61)
+	c.solid(Vector3(r.get_center().x, -0.2, r.get_center().y), Vector3(r.size.x, 0.6, r.size.y))
+	var L := r.size.x if along_x else r.size.y
+	var far_x := r.position.x if reg == "redmont" else r.end.x # which end is out at sea
+	for sd in [-1.0, 1.0]:
+		var off := float(sd) * ((r.size.y if along_x else r.size.x) * 0.5)
+		if along_x:
+			c.solid(Vector3(r.get_center().x, 1.2, r.get_center().y + off), Vector3(L, 2.4, 0.3))
+			c.props.box(Vector3(r.get_center().x, 1.0, r.get_center().y + off), Vector3(L, 0.08, 0.08), Color(0.3, 0.26, 0.2))
+			var k := 0.0
+			while k < L:
+				c.props.box(Vector3(r.position.x + k, 0.5, r.get_center().y + off), Vector3(0.12, 1.0, 0.12), Color(0.3, 0.26, 0.2))
+				k += 4.0
+	c.solid(Vector3(far_x, 1.2, r.get_center().y), Vector3(0.3, 2.4, r.size.y))
+	c.props.box(Vector3(far_x, 1.0, r.get_center().y), Vector3(0.08, 0.08, r.size.y), Color(0.3, 0.26, 0.2))
+	for k2 in int(L / 10.0):
+		Props.light_pool(c, Vector3(r.position.x + 5.0 + float(k2) * 10.0, 0.1, r.get_center().y), 4.0, Color(1.0, 0.85, 0.6))
+	if reg == "redmont":
+		# The pier keeps getting longer, because the water keeps leaving.
+		var sp := Vector3(r.end.x - 4.0, 0, r.position.y - 0.3)
+		c.props.box(sp + Vector3(0, 1.3, 0), Vector3(2.6, 1.2, 0.08), Color(0.95, 0.95, 0.92))
+		c.label(sp + Vector3(0, 1.45, -0.05), "RESERVOIR PIER", 30, Color(0.1, 0.3, 0.6), PI, 40.0, 0.01)
+		c.label(sp + Vector3(0, 1.15, -0.05), "EXTENDED 2026 · 2027 · 2028 · 2029", 16, Color(0.25, 0.25, 0.27), PI, 30.0, 0.01)
+
+
 ## Edge of a non-NYC map: walls, water (Chicago's lake, the Atlantic off
 ## Port Ramsey), hills or suburbs on whichever horizons no other map fills,
 ## and the travel gates with their highway signs.
@@ -413,10 +476,14 @@ func _region_edges() -> void:
 	var z0 := WorldLayout.WORLD_ZN
 	var z1 := WorldLayout.BEACH_Z1
 	var root_c := ctx_at(0, 0)
-	root_c.solid(Vector3(x0 - 1.0, 10.0, (z0 + z1) * 0.5), Vector3(2.0, 40.0, z1 - z0 + 20.0), 0.0, "bounds")
-	root_c.solid(Vector3(x1 + 1.0, 10.0, (z0 + z1) * 0.5), Vector3(2.0, 40.0, z1 - z0 + 20.0), 0.0, "bounds")
-	root_c.solid(Vector3((x0 + x1) * 0.5, 10.0, z0 - 1.0), Vector3(x1 - x0 + 20.0, 40.0, 2.0), 0.0, "bounds")
-	root_c.solid(Vector3((x0 + x1) * 0.5, 10.0, z1 + 1.0), Vector3(x1 - x0 + 20.0, 40.0, 2.0), 0.0, "bounds")
+	# Walkable piers out to the water get a gap in the wall (Boats.PIERS).
+	var gaps: Array = Boats.PIERS.get(reg, [])
+	_bounds_wall(root_c, Vector3(x0 - 1.0, 10.0, (z0 + z1) * 0.5), Vector3(2.0, 40.0, z1 - z0 + 20.0), gaps)
+	_bounds_wall(root_c, Vector3(x1 + 1.0, 10.0, (z0 + z1) * 0.5), Vector3(2.0, 40.0, z1 - z0 + 20.0), gaps)
+	_bounds_wall(root_c, Vector3((x0 + x1) * 0.5, 10.0, z0 - 1.0), Vector3(x1 - x0 + 20.0, 40.0, 2.0), gaps)
+	_bounds_wall(root_c, Vector3((x0 + x1) * 0.5, 10.0, z1 + 1.0), Vector3(x1 - x0 + 20.0, 40.0, 2.0), gaps)
+	for pr in gaps:
+		_walk_pier(pr as Rect2, reg)
 	var grass := Color(0.26, 0.26, 0.27) if reg == "chicago" else Color(0.2, 0.26, 0.13)
 	var wb := MeshBatch.new()
 	match reg:
@@ -1218,6 +1285,7 @@ func _gary_extras() -> void:
 	lf.props.box(bp + Vector3(84.0, 20.0, 4.0), Vector3(2.0, 6.0, 2.0), Color(0.1, 0.1, 0.12))
 	lf.glow.sphere(bp + Vector3(84.0, 24.0, 0), 0.4, Color(1.0, 0.15, 0.1), 6, 3, Vector2(Props.K_BLINK, 0))
 	ctx_at(bp.x, bp.z).label(bp + Vector3(0, 5.0, 11.1), "EDMUND J. KOWALSKI · GARY", 140, Color(0.95, 0.95, 0.9), 0.0, 500.0, 0.03)
+	ctx_at(bp.x, bp.z).solid(bp + Vector3(0, 3.0, 0), Vector3(190.0, 9.0, 22.0))
 	# The mill's gate on Broadway and Dunes Highway.
 	var gp := Vector3(-140.0, 0, -40.0)
 	var gc := ctx_at(gp.x, gp.z)
@@ -1472,7 +1540,7 @@ func _island_extras() -> void:
 	# The dock on the east shore and the yacht, LEVERAGE, moored to it.
 	var dk := Vector3(380.0, 0, 40.0)
 	var cd := ctx_at(dk.x, dk.z)
-	lf.props.box(dk + Vector3(0.0, 0.3, 0), Vector3(60.0, 0.4, 5.0), Color(0.45, 0.34, 0.22))
+	lf.props.box(dk + Vector3(0.0, -0.05, 0), Vector3(60.0, 0.3, 5.0), Color(0.45, 0.34, 0.22))
 	for k in 6:
 		lf.props.box(dk + Vector3(-8.0 + float(k) * 7.0, -0.6, 2.4), Vector3(0.4, 2.0, 0.4), Color(0.3, 0.24, 0.16))
 		lf.props.box(dk + Vector3(-8.0 + float(k) * 7.0, -0.6, -2.4), Vector3(0.4, 2.0, 0.4), Color(0.3, 0.24, 0.16))
@@ -1483,6 +1551,7 @@ func _island_extras() -> void:
 	lf.props.box(yb + Vector3(-2.0, 4.6, 0), Vector3(20.2, 1.0, 6.5), Color(0.1, 0.12, 0.16))
 	lf.props.box(yb + Vector3(0, -0.2, 0), Vector3(36.2, 0.8, 8.2), Color(0.12, 0.14, 0.2))
 	cd.label(yb + Vector3(16.0, 2.2, 4.05), "LEVERAGE", 120, Color(0.12, 0.14, 0.2), 0.0, 300.0, 0.02)
+	cd.solid(yb + Vector3(0, 1.5, 0), Vector3(36.0, 4.0, 8.0))
 	# The helicopter's pad on the lawn.
 	var hp := Vector3(230.0, 0, -60.0)
 	_helipad(ctx_at(hp.x, hp.z), hp)
@@ -2043,7 +2112,7 @@ func _building(r: Rect2, h: float, style: int, col: Color, shops: bool, face: fl
 		var door_at := Vector3.INF
 		if gen_doors.size() > nd:
 			door_at = (gen_doors.back() as Dictionary)["pos"]
-		_graffiti(c, r, face, d, door_at)
+		_paint_jobs.append([c, r, face, d, door_at, h])
 	if shops and (style == 6 or (d in ["les", "hells", "chinatown", "coney"] and rng.randf() < 0.35)):
 		var sz2 := (r.position.y if face < 0.0 else r.end.y) + 0.06 * face
 		var sc: Color = [Color(1, 0.3, 0.3), Color(0.3, 1, 0.5), Color(0.3, 0.7, 1), Color(1, 0.8, 0.3), Color(1, 0.4, 0.9)][rng.randi() % 5]
@@ -2104,39 +2173,134 @@ func _graffiti_pool(d: String) -> Array:
 	return pool
 
 
-func _graffiti(c: BuildCtx, r: Rect2, face: float, d: String, door_at: Vector3 = Vector3.INF) -> void:
-	var g := RandomNumberGenerator.new()
-	g.seed = hash(Vector2i(int(r.position.x * 7.0), int(r.position.y * 13.0))) + 911
-	var rough := d in ["les", "bronx", "hunts", "harlem", "chinatown", "hells", "west", "south", "inwood", "coney"] or WorldLayout.region != "nyc"
-	var chance := 0.34 if rough else 0.1
-	if g.randf() > chance:
-		return
-	var pool := _graffiti_pool(d)
-	# Candidate walls: the street face either side of the door, and the two
-	# side walls (alleys and avenue corners). One piece per wall, never two.
-	var walls: Array = [] # [base pos on the wall, rot, usable width]
+## Painting waits until the whole map is built (see _finish_graffiti), so
+## the walls you can tag yourself are picked first and left clean for you.
+var _paint_jobs: Array = [] # [ctx, lot rect, face, district, door position]
+## Buffed walls the player can paint: [{id, pos, rot, span}] (see Game).
+var tag_spots: Array = []
+const TAGS_PER := {"nyc": 24, "chicago": 12, "township": 8, "port": 8, "gary": 8, "redmont": 8, "highway": 4, "island": 0}
+
+
+## The walls of a lot worth painting: the street face either side of the
+## door, and the two side walls (alleys and avenue corners).
+func _paint_walls(r: Rect2, face: float, door_at: Vector3, g: RandomNumberGenerator) -> Array:
+	var walls: Array = [] # [base pos on the wall, rot, usable width, street face?]
 	var zf := (r.end.y if face > 0.0 else r.position.y) + 0.04 * face
 	var rf := 0.0 if face > 0.0 else PI
 	var dx := door_at.x if door_at != Vector3.INF and absf(door_at.z - zf) < 1.5 else INF
 	if dx == INF:
-		walls.append([Vector3(r.get_center().x, 0, zf), rf, r.size.x - 1.5])
+		walls.append([Vector3(r.get_center().x, 0, zf), rf, r.size.x - 1.5, true])
 	else:
 		var lw := dx - 1.4 - r.position.x
 		var rw := r.end.x - (dx + 1.4)
 		if lw > 2.2:
-			walls.append([Vector3(r.position.x + lw * 0.5 + 0.3, 0, zf), rf, lw - 0.6])
+			walls.append([Vector3(r.position.x + lw * 0.5 + 0.3, 0, zf), rf, lw - 0.6, true])
 		if rw > 2.2:
-			walls.append([Vector3(r.end.x - rw * 0.5 - 0.3, 0, zf), rf, rw - 0.6])
+			walls.append([Vector3(r.end.x - rw * 0.5 - 0.3, 0, zf), rf, rw - 0.6, true])
 	if r.size.y > 6.0:
 		for sxv in [-1.0, 1.0]:
 			var sx: float = sxv
 			var x2: float = (r.position.x if sx < 0.0 else r.end.x) + 0.04 * sx
 			var dside: bool = door_at != Vector3.INF and absf(door_at.x - x2) < 1.5
 			if not dside:
-				walls.append([Vector3(x2, 0, r.get_center().y + g.randf_range(-r.size.y * 0.15, r.size.y * 0.15)), PI * 0.5 * sx, minf(r.size.y * 0.55, 7.0)])
+				walls.append([Vector3(x2, 0, r.get_center().y + g.randf_range(-r.size.y * 0.15, r.size.y * 0.15)), PI * 0.5 * sx, minf(r.size.y * 0.55, 7.0), false])
+	return walls
+
+
+func _finish_graffiti() -> void:
+	# Pick the buffed walls first: street faces, wide enough, spread out.
+	var cands: Array = []
+	for j in _paint_jobs:
+		var r: Rect2 = j[1]
+		var g := RandomNumberGenerator.new()
+		g.seed = hash(Vector2i(int(r.position.x * 7.0), int(r.position.y * 13.0))) + 911
+		for w in _paint_walls(r, float(j[2]), j[4], g):
+			if bool(w[3]) and float(w[2]) >= 3.6 and WorldLayout.in_bounds((w[0] as Vector3).x, (w[0] as Vector3).z):
+				cands.append([j[0], w])
+	var want := int(TAGS_PER.get(WorldLayout.region, 0))
+	var pick := RandomNumberGenerator.new()
+	pick.seed = hash("tag_walls_" + WorldLayout.region)
+	var gap := 110.0 if WorldLayout.region == "nyc" else 60.0
+	var taken: Array = []
+	var tries := 0
+	while tag_spots.size() < want and not cands.is_empty() and tries < 4000:
+		tries += 1
+		var k := pick.randi() % cands.size()
+		var cw: Array = cands[k]
+		cands.remove_at(k)
+		var w: Array = cw[1]
+		var p: Vector3 = w[0]
+		if WorldLayout.district_at(p.x, p.z) in ["airfield", "park", "steel"]:
+			continue
+		var near := false
+		for t in tag_spots:
+			if ((t as Dictionary)["pos"] as Vector3).distance_to(p) < gap:
+				near = true
+				break
+		if near:
+			continue
+		var span := minf(float(w[2]), 6.0)
+		tag_spots.append({"id": "tag_%s_%d_%d" % [WorldLayout.region, int(round(p.x)), int(round(p.z))], "pos": p, "rot": float(w[1]), "span": span})
+		taken.append(p)
+		_buffed_wall(cw[0] as BuildCtx, p, float(w[1]), span)
+	for j in _paint_jobs:
+		_graffiti(j[0], j[1], float(j[2]), str(j[3]), j[4], taken)
+		_heaven_spot(j[0], j[1], float(j[2]), str(j[3]), float(j[5]))
+	_paint_jobs.clear()
+
+
+## Now and then, a piece right up under the roofline where nobody could
+## possibly have reached: the ones you see from three blocks away.
+func _heaven_spot(c: BuildCtx, r: Rect2, face: float, d: String, h: float) -> void:
+	if h < 10.0 or h > 48.0 or r.size.x < 9.0:
+		return
+	var g := RandomNumberGenerator.new()
+	g.seed = hash(Vector2i(int(r.position.x * 3.0), int(r.position.y * 5.0))) + 4242
+	var rough := d in ["les", "bronx", "hunts", "harlem", "chinatown", "hells", "west", "south", "inwood", "coney"] or WorldLayout.region in ["gary", "port", "township", "chicago"]
+	if g.randf() > (0.16 if rough else 0.04):
+		return
+	var pool := _graffiti_pool(d)
+	var txt: String = pool[g.randi() % pool.size()]
+	var zf := (r.end.y if face > 0.0 else r.position.y) + 0.05 * face
+	var rot := 0.0 if face > 0.0 else PI
+	var span := r.size.x - 2.0
+	var px := 0.02
+	var fs := int(clampf(span / (float(txt.length()) * 0.6 * px), 60.0, 170.0))
+	if float(txt.length()) * 0.6 * px * float(fs) > span:
+		return
+	var col: Color = SPRAY[g.randi() % SPRAY.size()]
+	c.label(Vector3(r.get_center().x, h - 1.3, zf), txt, fs, col, rot, 320.0, px, {"outline": 16, "outline_col": Color(0.03, 0.03, 0.04), "tilt": g.randf_range(-0.05, 0.05), "font": "graffiti"})
+
+
+## A freshly buffed patch of wall: flat grey primer over the old paint, a
+## little E Corp notice, and somebody's abandoned spray cans at the foot of it.
+func _buffed_wall(c: BuildCtx, p: Vector3, rot: float, span: float) -> void:
+	var fwd := Vector3(sin(rot), 0, cos(rot))
+	var right := Vector3(cos(rot), 0, -sin(rot))
+	c.props.box(p + fwd * 0.012 + Vector3(0, 1.75, 0), Vector3(span, 2.3, 0.012), Color(0.6, 0.6, 0.58), rot)
+	c.label(p + fwd * 0.03 + right * (span * 0.5 - 0.6) + Vector3(0, 0.75, 0), "SURFACE PROTECTED BY\nE CORP COMMUNITY CARE", 18, Color(0.15, 0.25, 0.5), rot, 18.0, 0.006)
+	for k in 2:
+		var cp := p + fwd * 0.3 + right * (-span * 0.3 + float(k) * 0.25)
+		c.props.cyl(cp, 0.035, 0.035, 0.2, [Color(0.9, 0.15, 0.15), Color(0.15, 0.6, 0.95)][k], 6)
+
+
+func _graffiti(c: BuildCtx, r: Rect2, face: float, d: String, door_at: Vector3 = Vector3.INF, keep_clean: Array = []) -> void:
+	var g := RandomNumberGenerator.new()
+	g.seed = hash(Vector2i(int(r.position.x * 7.0), int(r.position.y * 13.0))) + 911
+	var walls := _paint_walls(r, face, door_at, g)
+	var rough := d in ["les", "bronx", "hunts", "harlem", "chinatown", "hells", "west", "south", "inwood", "coney"] or WorldLayout.region != "nyc"
+	var chance := 0.85 if rough else 0.4
+	if g.randf() > chance:
+		return
+	var pool := _graffiti_pool(d)
+	for wi2 in range(walls.size() - 1, -1, -1):
+		for kp in keep_clean:
+			if ((walls[wi2] as Array)[0] as Vector3).distance_to(kp) < 1.0:
+				walls.remove_at(wi2)
+				break
 	if walls.is_empty():
 		return
-	var n := mini(walls.size(), 1 + (1 if g.randf() < 0.35 else 0))
+	var n := mini(walls.size(), 1 + (1 if g.randf() < 0.6 else 0) + (1 if rough and g.randf() < 0.45 else 0))
 	for k in n:
 		var wi := g.randi() % walls.size()
 		var w: Array = walls[wi]
@@ -2147,30 +2311,68 @@ func _graffiti(c: BuildCtx, r: Rect2, face: float, d: String, door_at: Vector3 =
 		if span < 1.4:
 			continue
 		var col: Color = SPRAY[g.randi() % SPRAY.size()]
-		if g.randf() < 0.2:
+		if g.randf() < 0.18:
 			_mask_stencil(c, pos + Vector3(0, g.randf_range(1.4, 2.0), 0), rot, minf(g.randf_range(0.8, 1.2), span * 0.8))
 			continue
 		var txt: String = pool[g.randi() % pool.size()]
-		# Letters about 0.6 of the font size wide: fit the text to the wall.
-		var px := 0.012
-		var fs := int(clampf(span / (float(txt.length()) * 0.62 * px), 40.0, 110.0))
-		var tw := float(txt.length()) * 0.62 * px * float(fs)
-		if tw > span:
-			continue
-		var y := g.randf_range(1.2, 2.2)
-		c.label(pos + Vector3(0, y, 0), txt, fs, col, rot, 45.0, px, {"outline": 10, "outline_col": col.darkened(0.75), "tilt": g.randf_range(-0.08, 0.08), "font": "graffiti"})
-		# Drips under the paint.
-		var fwd := Vector3(sin(rot), 0, cos(rot))
-		var right := Vector3(cos(rot), 0, -sin(rot))
-		for dr in g.randi_range(1, 4):
-			var off := right * g.randf_range(-tw * 0.45, tw * 0.45)
-			var dl := g.randf_range(0.15, 0.55)
-			c.props.box(pos + off + fwd * 0.01 + Vector3(0, y - float(fs) * px * 0.42 - dl * 0.5, 0), Vector3(0.035, dl, 0.01), col.darkened(0.15), rot)
+		# Tags (a quick marker scrawl), throw-ups (fat bubble letters, fill and
+		# a heavy outline) and, on a wide wall, a proper piece with a backdrop.
+		var style := 0 if g.randf() < 0.4 else 1
+		if span > 4.5 and g.randf() < 0.45:
+			style = 2
+		paint_tag(c, pos, rot, span, txt, col, g, style)
+		# Writers hit the same wall: a few small marker tags around it.
+		if rough and g.randf() < 0.45:
+			var right := Vector3(cos(rot), 0, -sin(rot))
+			for t in g.randi_range(1, 2):
+				var tt: String = TAGS_CREW[g.randi() % TAGS_CREW.size()] if g.randf() < 0.6 else pool[g.randi() % pool.size()]
+				var tp := pos + right * g.randf_range(-span * 0.45, span * 0.45)
+				var tc: Color = SPRAY[g.randi() % SPRAY.size()]
+				var tfs := g.randi_range(36, 60)
+				c.label(tp + Vector3(0, g.randf_range(0.5, 2.8), 0) + Vector3(sin(rot), 0, cos(rot)) * 0.005, tt, tfs, tc, rot, 45.0, 0.008, {"outline": 3, "outline_col": tc.darkened(0.6), "tilt": g.randf_range(-0.15, 0.15), "font": "marker"})
 
 
-## A spray-stencilled fsociety mask: white face, black brows, eyes, the moustache
-## and the grin, flat on the wall.
-func _mask_stencil(c: BuildCtx, p: Vector3, rot: float, s: float) -> void:
+## Letters (and drips; for a piece, a backdrop and a shadow) on a wall at
+## `pos` facing `rot`. style 0 tag, 1 throw-up, 2 piece. Also used by Game for
+## the walls you paint yourself.
+static func paint_tag(c: BuildCtx, pos: Vector3, rot: float, span: float, txt: String, col: Color, g: RandomNumberGenerator, style: int) -> void:
+	var piece := style == 2
+	# Letters about 0.6 of the font size wide: fit the text to the wall.
+	var px: float = 0.009 if style == 0 else 0.014
+	var fs_max: float = [90.0, 130.0, 150.0][style]
+	var fs := int(clampf(span / (float(txt.length()) * 0.6 * px), 40.0, fs_max))
+	var tw := float(txt.length()) * 0.6 * px * float(fs)
+	if tw > span:
+		return
+	var y := g.randf_range(1.3, 2.0) if piece else g.randf_range(0.9, 2.5)
+	var fwd := Vector3(sin(rot), 0, cos(rot))
+	var right := Vector3(cos(rot), 0, -sin(rot))
+	var tilt := g.randf_range(-0.1, 0.1)
+	if piece:
+		var bg: Color = SPRAY[g.randi() % SPRAY.size()].darkened(0.45)
+		var bh := float(fs) * px * 1.25
+		c.props.box(pos + fwd * 0.012 + Vector3(0, y, 0), Vector3(tw + 0.6, bh, 0.01), bg, rot)
+		c.props.box(pos + fwd * 0.014 + Vector3(0, y - bh * 0.32, 0), Vector3(tw + 0.9, bh * 0.36, 0.01), bg.lightened(0.25), rot)
+		for b in 6:
+			var bp := pos + fwd * 0.013 + right * g.randf_range(-tw * 0.55, tw * 0.55) + Vector3(0, y + g.randf_range(-bh * 0.6, bh * 0.6), 0)
+			c.props.box(bp, Vector3(g.randf_range(0.2, 0.5), g.randf_range(0.2, 0.5), 0.01), SPRAY[g.randi() % SPRAY.size()], rot)
+		c.label(pos + fwd * 0.02 + right * 0.07 + Vector3(0, y - 0.07, 0), txt, fs, Color(0.04, 0.04, 0.05, 0.9), rot, 110.0, px, {"tilt": tilt, "font": "graffiti", "outline": 16, "outline_col": Color(0.04, 0.04, 0.05, 0.9)})
+	match style:
+		0:
+			c.label(pos + Vector3(0, y, 0), txt, fs, col, rot, 70.0, px, {"outline": 4, "outline_col": col.darkened(0.6), "tilt": tilt, "font": "marker"})
+		1:
+			var line: Color = Color(0.03, 0.03, 0.04) if g.randf() < 0.6 else Color(0.97, 0.97, 0.94)
+			c.label(pos + Vector3(0, y, 0), txt, fs, col, rot, 110.0, px, {"outline": 18, "outline_col": line, "tilt": tilt, "font": "graffiti"})
+		_:
+			c.label(pos + fwd * 0.03 + Vector3(0, y, 0), txt, fs, col, rot, 110.0, px, {"outline": 14, "outline_col": Color(0.98, 0.98, 0.95), "tilt": tilt, "font": "graffiti"})
+	# Drips under the paint.
+	for dr in g.randi_range(1, 4):
+		var off := right * g.randf_range(-tw * 0.45, tw * 0.45)
+		var dl := g.randf_range(0.15, 0.55)
+		c.props.box(pos + off + fwd * 0.01 + Vector3(0, y - float(fs) * px * 0.42 - dl * 0.5, 0), Vector3(0.035, dl, 0.01), col.darkened(0.15), rot)
+
+
+static func _mask_stencil(c: BuildCtx, p: Vector3, rot: float, s: float) -> void:
 	var b := Basis(Vector3.UP, rot)
 	var fwd := b * Vector3(0, 0, 1)
 	var put := func(off: Vector2, size: Vector2, col: Color, depth: float) -> void:

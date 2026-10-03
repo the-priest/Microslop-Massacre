@@ -196,11 +196,10 @@ func _rent_is_due() -> void:
 	print("PHASE rent is due")
 	_day()
 	await _enter_world_at(Vector3(50, 0, -1360))
-	_expect("sq_rent", 10)
-	GameState.tracked_quest = "sq_rent"
-	await _follow("sq_rent") # -> Ms. Alvarez on the sidewalk
-	await _talk("alvarez", ["What's RentTrack", "Where's Carbone's office"])
+	_ok("walking past her starts nothing", GameState.quest_state("sq_rent") == "")
+	await _meet("alvarez", ["What's RentTrack", "Where's Carbone's office"]) # -> the sidewalk
 	_expect("sq_rent", 20)
+	GameState.tracked_quest = "sq_rent"
 	await _follow("sq_rent") # -> Carbone Realty's back office
 	await _talk("carbone", ["freezing", "Never mind"])
 	await _term("renttrack", ["Amenity fees", "Maintenance tickets", "Churn risk"], ["Turn the heat"])
@@ -218,6 +217,7 @@ func _cloud() -> void:
 	GameState.game_minutes = maxf(3.0, float(GameState.day())) * 1440.0 + 13 * 60.0
 	GameState.cash = 1000
 	await _enter_world_at(Vector3(1000, 0, 60))
+	await _wait_rules() # Trenton's text, answered
 	_expect("sq_cloud", 10)
 	GameState.tracked_quest = "sq_cloud"
 	await _follow("sq_cloud") # -> Raj at the Court Square Tavern

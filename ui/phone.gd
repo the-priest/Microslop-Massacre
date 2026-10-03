@@ -418,6 +418,19 @@ func _select_item(iid: String) -> void:
 
 # --------------------------------------------------------------------- data
 func _quests() -> void:
+	# Messages you haven't answered yet: answer one and that job starts.
+	var leads: Array = game.pending_leads() if game != null and game.has_method("pending_leads") else []
+	if not leads.is_empty():
+		_list.add_child(UI.label("MESSAGES  (answer one to take the job)", 14, UI.AMBER))
+		for l in leads:
+			var ld: Dictionary = l
+			var tid := str(ld["tid"])
+			var title := str(DB.QUESTS.get(str(ld["quest"]), {}).get("title", ""))
+			_row("✉ %s  ·  %s" % [str(ld["speaker"]), title], func() -> void:
+				close_modal()
+				game.reply_lead(tid), func() -> void:
+				_detail.text = "[b]%s[/b]\n\n%s\n\n[i]Click to answer.[/i]" % [str(ld["speaker"]), str(ld["text"])], UI.AMBER)
+		_list.add_child(UI.label("", 8))
 	# Group by quest line: the line you're following first, then main lines,
 	# then side lines; inside a line, the current mission, then what's done.
 	var lines: Dictionary = {} # line -> {active: [], done: []}
@@ -430,7 +443,7 @@ func _quests() -> void:
 		else:
 			(lines[ln]["done"] as Array).append(str(qid))
 	if lines.is_empty():
-		_detail.text = "No quests. Go outside. Talk to people. It's awful, but it works."
+		_detail.text = "No quests. Go outside. Talk to people (look for the gold [color=#ffd040]![/color]). It's awful, but it works."
 		return
 	var tl := DB.quest_line(GameState.tracked_quest) if GameState.tracked_quest != "" else ""
 	var order: Array = lines.keys()

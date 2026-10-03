@@ -223,6 +223,7 @@ const PERKS := [
 	{"id": "thick_skin", "name": "Thick Skin", "level": 8, "ranks": 1, "req": {}, "desc": "+3 Damage Threshold."},
 	{"id": "cascade_tuned", "name": "Cascade Tuned", "level": 10, "ranks": 1, "req": {"hacking": 60}, "desc": "+1 mistake allowed in cascade sequences."},
 	{"id": "better_criticals", "name": "Better Criticals", "level": 10, "ranks": 1, "req": {"guns": 50}, "desc": "Critical hits deal +50% damage."},
+	{"id": "bloody_mess", "name": "Bloody Mess", "level": 4, "ranks": 1, "req": {}, "desc": "People you kill come apart more often, and more spectacularly. You're not proud of it. You're not ashamed of it either."},
 	{"id": "ghost_protocol", "name": "Ghost Protocol", "level": 10, "ranks": 1, "req": {"sneak": 60}, "desc": "People take 25% longer to detect you."},
 	{"id": "paranoia", "name": "Paranoia Is Healthy", "level": 10, "ranks": 1, "req": {}, "desc": "Stability losses are halved."},
 	{"id": "signal_hound", "name": "Signal Hound", "level": 10, "ranks": 1, "req": {"hacking": 50}, "desc": "Signal tap windows are wider."},

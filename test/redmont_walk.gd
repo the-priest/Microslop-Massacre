@@ -46,8 +46,7 @@ func _route_9() -> void:
 	game.exit_vehicle(true)
 	await _settle()
 	await _wait_rules()
-	_expect("sq_rm1", 10)
-	_expect("sq_rm2", 10)
+	_ok("driving into town hands out nothing", GameState.quest_state("sq_rm1") == "" and GameState.quest_state("sq_rm2") == "")
 	# And back down to the port, and up again.
 	var g2: Array = Regions.GATES["redmont"]["rm_south"]["pos"]
 	game.enter_vehicle(game.player_car if game.player_car != null else v)
@@ -63,10 +62,9 @@ func _route_9() -> void:
 
 func _company_scrip() -> void:
 	print("PHASE company scrip")
-	GameState.tracked_quest = "sq_rm1"
-	await _follow("sq_rm1") # -> Dana at SlopMart
-	await _talk("dana", ["Store credit", "Somebody at this store"])
+	await _meet("dana", ["Store credit", "Somebody at this store"]) # -> SlopMart
 	_expect("sq_rm1", 20)
+	GameState.tracked_quest = "sq_rm1"
 	_ok("dana gave up the password", GameState.has_flag("rm_payroll_pw"))
 	await _follow("sq_rm1") # -> the payroll office
 	await _term("payroll_term", ["Scrip ledger", "Conversion fee", "retention pool"], ["Convert every balance"])
@@ -79,10 +77,9 @@ func _company_scrip() -> void:
 func _dry_county() -> void:
 	print("PHASE dry county")
 	_day()
-	GameState.tracked_quest = "sq_rm2"
-	await _follow("sq_rm2") # -> Marta at the boat launch
-	await _talk("marta", ["Where's it going", "Can you prove it"])
+	await _meet("marta", ["Where's it going", "Can you prove it"]) # -> the boat launch
 	_expect("sq_rm2", 20)
+	GameState.tracked_quest = "sq_rm2"
 	await _follow("sq_rm2") # -> the pump house
 	_expect("sq_rm2", 30)
 	await _spot("rm_pumps", [])
@@ -99,11 +96,11 @@ func _copilot() -> void:
 	await _enter_world_at(Vector3(-212, 0, -12))
 	await _enter_door("d_rm_hall")
 	await _wait_rules()
-	_expect("sq_rm3", 10)
-	GameState.tracked_quest = "sq_rm3"
+	_ok("walking into town hall starts nothing", GameState.quest_state("sq_rm3") == "")
 	await _spot("rm_mayors", [])
-	await _talk("edie", ["What happened to the mayors", "These things run on a system prompt"])
+	await _meet("edie", ["What happened to the mayors", "These things run on a system prompt"])
 	_expect("sq_rm3", 20)
+	GameState.tracked_quest = "sq_rm3"
 	await _follow("sq_rm3") # -> the clerk's desk
 	await _term("copilot_term", ["System prompt", "Vote history", "Telemetry"], ["Print the system prompt"])
 	_ok("the prompt is on the water bills", GameState.has_flag("copilot_public"))
@@ -116,11 +113,10 @@ func _day_one_patch() -> void:
 	print("PHASE day one patch")
 	await _enter_world_at(Vector3(340, 0, -236))
 	await _wait_rules()
-	_expect("sq_rm4", 10)
-	GameState.tracked_quest = "sq_rm4"
-	await _follow("sq_rm4") # -> Priya at Studio Redmont
-	await _talk("priya", ["Closed the day after", "Then I'll get it"])
+	_ok("walking past the studio starts nothing", GameState.quest_state("sq_rm4") == "")
+	await _meet("priya", ["Closed the day after", "Then I'll get it"]) # -> Studio Redmont
 	_expect("sq_rm4", 20)
+	GameState.tracked_quest = "sq_rm4"
 	await _follow("sq_rm4") # -> the server closet
 	await _spot("rm_countdown", [])
 	await _term("build_term", ["patch notes", "Wipe order"], ["Copy the patch"])

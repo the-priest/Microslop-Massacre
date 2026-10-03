@@ -52,6 +52,15 @@ var _land_dip: float = 0.0
 var _was_air: bool = false
 var _fall_start_y: float = 0.0
 var _move_amount: float = 0.0
+## Scoped rifles (zoom >= 3): the view through the glass, a slow breathing
+## sway you can hold steady (SHIFT) for a few seconds, and a second zoom step
+## on the mouse wheel.
+var scoped: bool = false
+var scope_level: int = 0 # 0 normal zoom, 1 doubled
+var breath: float = 1.0 # 1 = full lungs; holding drains it
+var holding_breath: bool = false
+var _sway_t: float = 0.0
+var _scope_off := Vector2.ZERO
 ## The body moves sixty times a second; the eye is drawn between the last two
 ## physics positions so walking and strafing are smooth at any frame rate.
 var _eye_y: float = 1.62
@@ -169,9 +178,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif mb.button_index == MOUSE_BUTTON_RIGHT:
 			aiming = mb.pressed
 		elif mb.pressed and mb.button_index == MOUSE_BUTTON_WHEEL_UP:
-			_cycle_weapon(-1)
+			if scoped:
+				scope_level = 1
+			else:
+				_cycle_weapon(-1)
 		elif mb.pressed and mb.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			_cycle_weapon(1)
+			if scoped:
+				scope_level = 0
+			else:
+				_cycle_weapon(1)
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		var k := (event as InputEventKey).physical_keycode
@@ -339,8 +354,14 @@ func _process(delta: float) -> void:
 	var w := DB.item(wid)
 	# FOV: aim zoom, sprint push.
 	var tfov := _base_fov
+	var zoom := float(w.get("zoom", 1.3))
+	scoped = aiming and zoom >= 3.0 and _reload_t <= 0.0
+	_vm_root.visible = not scoped
+	if not scoped:
+		scope_level = 0
+	_scope_tick(delta, w)
 	if aiming:
-		tfov = _base_fov / float(w.get("zoom", 1.3))
+		tfov = _base_fov / (zoom * (2.0 if scoped and scope_level == 1 else 1.0))
 	elif sprinting and _move_amount > 1.0:
 		tfov = _base_fov + 6.0
 	cam.fov = lerpf(cam.fov, tfov, minf(1.0, delta * 12.0))
@@ -359,6 +380,35 @@ func _process(delta: float) -> void:
 	if _flash_t > 0.0:
 		_flash_t -= delta
 		_flash.visible = _flash_t > 0.0
+
+
+## The scope drifts in a slow figure eight with your breathing (less when
+## crouched and the better you are with guns); hold SHIFT to hold your
+## breath and steady it, until your lungs give out.
+func _scope_tick(delta: float, w: Dictionary) -> void:
+	var want_hold := scoped and (Input.is_physical_key_pressed(KEY_SHIFT) or Pad.button(JOY_BUTTON_LEFT_STICK))
+	holding_breath = want_hold and breath > 0.0
+	if holding_breath:
+		breath = maxf(0.0, breath - delta / 4.0)
+	else:
+		breath = minf(1.0, breath + delta / (3.0 if breath > 0.0 else 5.0))
+	var target := Vector2.ZERO
+	if scoped:
+		_sway_t += delta
+		var amt := 0.012 * (1.6 - float(GameState.skill(str(w.get("skill", "guns")))) / 100.0)
+		if crouching:
+			amt *= 0.6
+		if holding_breath:
+			amt *= 0.08
+		elif breath <= 0.0:
+			amt *= 2.2 # gasping
+		target = Vector2(sin(_sway_t * 0.9), sin(_sway_t * 1.8) * 0.5) * amt
+	var prev := _scope_off
+	_scope_off = _scope_off.lerp(target, minf(1.0, delta * 3.0))
+	# Nudge the view by how much the sway moved this frame.
+	var dv := _scope_off - prev
+	if dv != Vector2.ZERO:
+		set_look(yaw + dv.x, pitch + dv.y)
 
 
 func _animate_viewmodel(delta: float, w: Dictionary) -> void:
@@ -407,6 +457,15 @@ func _refresh_viewmodel() -> void:
 
 
 # ------------------------------------------------------------------ combat
+## Where the centre of the view lands (for the scope's rangefinder).
+func aim_point() -> Variant:
+	var from := cam.global_position
+	var q := PhysicsRayQueryParameters3D.create(from, from - cam.global_transform.basis.z * 600.0, Phys.WORLD | Phys.NPC | Phys.CAR)
+	q.exclude = [get_rid()]
+	var res := get_world_3d().direct_space_state.intersect_ray(q)
+	return null if res.is_empty() else res["position"]
+
+
 func weapon() -> Dictionary:
 	return DB.item(str(GameState.equipped["weapon"]))
 
@@ -449,6 +508,8 @@ func spread_deg(w: Dictionary) -> float:
 	s *= 1.7 - sk / 100.0
 	if aiming:
 		s *= 0.45
+	if scoped:
+		s *= 0.25 if not holding_breath else 0.1
 	if crouching:
 		s *= 0.75
 	if _move_amount > 1.0:
@@ -568,6 +629,8 @@ func _damage_npc(npc: Object, w: Dictionary, hit_pos: Vector3, exploit: bool) ->
 	if exploit:
 		dmg *= 1.15
 	var stun := float(w.get("stun", 0.0))
+	if npc.has_method("note_hit"):
+		npc.call("note_hit", hit_pos, (hit_pos - cam.global_position).normalized(), dmg * float(w.get("pellets", 1)), str(w.get("model", "")))
 	npc.call("take_hit", dmg, self, head, crit, stun)
 	if game != null:
 		game.hit_marker(head or crit)
@@ -652,12 +715,12 @@ func _update_interact() -> void:
 	if frozen or cam == null:
 		return
 	var from := cam.global_position
-	var to := from - cam.global_transform.basis.z * 3.0
+	var to := from - cam.global_transform.basis.z * 3.2
 	var q := PhysicsRayQueryParameters3D.create(from, to, Phys.WORLD | Phys.NPC | Phys.INTERACT)
 	q.collide_with_areas = true
 	q.exclude = [get_rid()]
 	var res := get_world_3d().direct_space_state.intersect_ray(q)
-	var max_t := 3.0
+	var max_t := 3.2
 	if not res.is_empty():
 		var c: Object = res["collider"]
 		if c != null and c.has_method("interact_info"):
@@ -665,10 +728,73 @@ func _update_interact() -> void:
 			if not info.is_empty():
 				interact_target = c
 				return
-		max_t = minf(3.0, from.distance_to(res["position"]) + 0.35)
+		max_t = minf(3.2, from.distance_to(res["position"]) + 0.35)
 	# Nothing with a node of its own: ask the city's prop index (dumpsters,
 	# parked cars, newsboxes, ATMs, generic doors...).
 	if game != null and game.has_method("loot_pick"):
 		var v: Object = game.loot_pick(from, -cam.global_transform.basis.z, max_t)
 		if v != null:
 			interact_target = v
+			return
+	# Still nothing dead ahead: the best thing you're roughly facing, close
+	# by, that you can see. Doors, subway stairs, terminals and people work
+	# from any side and any angle, without lining the crosshair up exactly.
+	interact_target = _assist_pick(from, -cam.global_transform.basis.z)
+	if interact_target == null and game != null and game.has_method("loot_assist"):
+		interact_target = game.loot_assist(from, -cam.global_transform.basis.z)
+
+
+const ASSIST_R := 3.4 # how far the assist reaches from your eyes
+const ASSIST_COS := 0.62 # about 52 degrees either side of where you look
+var _assist_shape: SphereShape3D = null
+
+
+func _assist_pick(from: Vector3, look: Vector3) -> Object:
+	if _assist_shape == null:
+		_assist_shape = SphereShape3D.new()
+		_assist_shape.radius = ASSIST_R
+	var space := get_world_3d().direct_space_state
+	var sq := PhysicsShapeQueryParameters3D.new()
+	sq.shape = _assist_shape
+	sq.transform = Transform3D(Basis.IDENTITY, from)
+	sq.collision_mask = Phys.NPC | Phys.INTERACT
+	sq.collide_with_areas = true
+	sq.exclude = [get_rid()]
+	var hits: Array = space.intersect_shape(sq, 24)
+	var best: Object = null
+	var best_score := -INF
+	# Looking a little down at a door handle or up at a sign shouldn't matter:
+	# weigh the horizontal direction most.
+	var flat_look := Vector3(look.x, look.y * 0.35, look.z).normalized()
+	for h in hits:
+		var c: Object = (h as Dictionary)["collider"]
+		if c == null or not c.has_method("interact_info") or c == self:
+			continue
+		var info: Dictionary = c.call("interact_info")
+		if info.is_empty():
+			continue
+		var tp: Vector3 = (c as Node3D).global_position if c is Node3D else from
+		if c is NPC or c is Vehicle:
+			tp += Vector3(0, 1.0, 0)
+		var d := tp - from
+		var dist := d.length()
+		if dist > ASSIST_R + 0.6 or dist < 0.01:
+			continue
+		var dir := Vector3(d.x, d.y * 0.35, d.z).normalized()
+		var facing := dir.dot(flat_look)
+		# Very close things count even if you're half turned away.
+		if facing < ASSIST_COS and not (dist < 1.4 and facing > 0.1):
+			continue
+		# Not through a wall.
+		var lq := PhysicsRayQueryParameters3D.create(from, tp, Phys.WORLD)
+		lq.exclude = [get_rid()]
+		if c is CollisionObject3D:
+			lq.exclude.append((c as CollisionObject3D).get_rid())
+		var blk := space.intersect_ray(lq)
+		if not blk.is_empty() and from.distance_to(blk["position"]) < dist - 0.6:
+			continue
+		var score := facing * 2.0 - dist * 0.35
+		if score > best_score:
+			best_score = score
+			best = c
+	return best
